@@ -17,13 +17,12 @@ androidx-core = "1.17.0"
 androidx-lifecycle = "2.9.6"
 
 # Architecture & Logic
-koin = "4.2.0"
+koin = "4.1.1"
 kotlinx-datetime = "0.7.0"
 kotlinx-serialization = "1.8.0"
 kotlinx-coroutines = "1.10.1"
 
 # UI & Server
-material = "1.13.0"
 logback = "1.5.24"
 
 [libraries]
@@ -62,6 +61,7 @@ sqldelight-driver-js = { module = "app.cash.sqldelight:web-worker-driver", versi
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koin" }
+koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koin" }
 
 # --- KTOR (Client for Mobile/Web) ---
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }

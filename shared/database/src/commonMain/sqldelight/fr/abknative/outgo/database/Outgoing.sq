@@ -1,0 +1,32 @@
+/**
+ * Inserts a new subscription or replaces an existing one (Upsert).
+ */
+upsert:
+INSERT OR REPLACE INTO OutgoingEntity(
+    id, name, amountInCents, cycle, billingDay,
+    createdAt, updatedAt, isDeleted, syncStatus
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+/**
+ * Retrieves all subscriptions that are not logically deleted.
+ */
+selectAllActive:
+SELECT * FROM OutgoingEntity
+WHERE isDeleted = 0;
+
+/**
+ * Performs a soft delete and marks the record for remote synchronization.
+ */
+markAsDeleted:
+UPDATE OutgoingEntity
+SET isDeleted = 1,
+    syncStatus = 'PENDING_DELETE',
+    updatedAt = ?
+WHERE id = ?;
+
+/**
+ * Fetches all records that have local changes pending synchronization.
+ */
+selectAllPendingSync:
+SELECT * FROM OutgoingEntity
+WHERE syncStatus != 'SYNCED';

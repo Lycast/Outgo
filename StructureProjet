@@ -1,0 +1,159 @@
+🏗️ Structure Globale du Projet
+.
+├── androidApp/                 # Application Android Native (UI)
+├── iosApp/                     # Application iOS Native (SwiftUI)
+├── webApp/                     # Application Web Kotlin/JS
+├── server/                     # Backend Ktor (JVM)
+├── shared/                     # Le cœur battant du projet
+│   ├── app/                    # Module "Colle" (DI / Koin)
+│   ├── core/
+│   │   ├── api/                # Types globaux (ex: EpochMillis)
+│   │   └── impl/               # LA RÉALISATION (Caché de l'UI)
+│   ├── database/               # Persistance (SQLDelight)
+│   │       ├── src/commonMain/sqldelight/
+│   │       └── src/commonMain/kotlin/
+│   └── feature/
+│       └── outgoing/           # Fonctionnalité "Dépenses/Abonnements"
+│           ├── api/            # LE CONTRAT (Ce que l'UI voit)
+│           └── impl/           # LA RÉALISATION (Caché de l'UI)
+├── gradle/                     # Catalogues de versions (libs.versions.toml)
+└── settings.gradle.kts         # Déclaration des modules
+
+
+🏗️ Structure par Module du Projet
+
+.
+└── androidApp/  # Application Android Native (UI)
+    ├── components/
+    │   ├── Header.kt
+    │   ├── BudgetEditDialog.kt
+    │   ├── SyncIconLogic.kt
+    │   ├── SyncPromotionModal.kt
+    │   ├── HeroSection.kt
+    │   ├── HeroSectionContent.kt
+    │   ├── OutgoingCard.kt
+    │   ├── OutgoingCardContent.kt
+    │   ├── BottomNavigation.kt
+    │   ├── AddActionTrigger.kt
+    │   ├── OutgoingFormSheet.kt
+    │   ├── EmptyStateView.kt
+    │   └── LoaderItem.kt
+    ├── Extensions/
+    │   └── Formatter+Currency
+    ├── App.kt
+    └── MainActivity.kt
+
+.
+└── iosApp/ # Application iOS Native (SwiftUI)
+    ├── Components/
+    │   ├──  # Miroir Android
+    ├── Extensions/
+    │   └── # Miroir Android
+    └── iOSApp.swift
+
+.
+└── webApp/ # Application Web Kotlin/JS (Compose HTML/Canvas)
+    ├── components/
+    │   ├── Navbar.kt
+    │   ├── OutgoingList.kt
+    │   └── SummaryPanel.kt
+    └── Main.kt
+
+.
+└── server/ # Backend Ktor (JVM)
+    ├── routes/
+    │   ├── AuthRoutes.kt
+    │   └── OutgoingRoutes.kt
+    ├── services/
+    │   └── DatabaseService.kt
+    └── Application.kt
+
+.
+└── shared/app/ # Module "Colle" (DI / Koin)
+    └── di/
+    └── AppModule.kt
+
+.
+└── shared/core/api/ # Types globaux
+    ├──  model/
+    ├── Types.kt      # typealias EpochMillis = Long
+    ├── Result.kt     # Success / Failure
+    └── AppError.kt   # Sealed interface des erreurs
+
+.
+└── shared/core/impl/ # LA RÉALISATION (Caché de l'UI)
+    ├── network/
+    │   └── KtorClientFactory.kt
+    └── di/
+    └── CoreModule.kt
+
+.
+└── shared/database/ # Persistance (SQLDelight)
+    ├── sqldelight/
+    │   └── fr.abknative.outgo.database/
+    │       └── Outgoing.sq
+    └── fr.abknative.outgo.database/
+    └── DatabaseFactory.kt
+
+.
+└── shared/feature/outgoing/api/
+    ├── model/
+    │   ├── Outgoing.kt
+    │   └── OutgoingMapper.kt
+    ├── presentation/
+    │   ├── OutgoingIntent.kt
+    │   ├── OutgoingState.kt
+    │   └── OutgoingPresenter.kt
+    ├── repository/
+    │   └── OutgoingRepository.kt
+    └── usecase/
+        ├── GetMonthlyTotal.kt
+        └── GetRemainingToPay.kt
+
+.
+└── shared/feature/outgoing/impl/
+    ├── presentation/
+    │   └── OutgoingPresenterImpl.kt
+    ├── repository/
+    │   └── OutgoingRepositoryImpl.kt
+    ├── mapper/
+    ├── usecase/
+    │   ├── GetMonthlyTotalImpl.kt
+    │   └── GetRemainingToPayImpl.kt
+    └── di/
+        └── OutgoingModule.kt
+
+
+Voici la version "Cheatsheet" ultra-concise de ta charte architecturale.
+C'est le document de référence idéal à garder sous les yeux pendant tout le développement d'Outgo.
+
+📜 Charte Architecturale "Outgo"
+1. MODULES PARTAGÉS (:shared)
+Règle d'or : 0% d'UI (ni Compose, ni SwiftUI). 100% Kotlin pur.
+
+1. Design Tokens : Valeurs brutes uniquement.
+Code : const val PAGE_SIZE = 20, const val COLOR_PRIMARY = 0xFFF8F2F9L
+
+2. Temps & Monnaie : Primitifs stricts pour l'exactitude mathématique.
+Code : typealias EpochMillis = Long, montants stockés en centimes (Long).
+
+3. Exceptions : Contrat d'erreurs universel.
+Code : sealed class AppException : Exception()
+
+4. Réponses (Result) : Pas de throw dans la logique métier, on encapsule.
+Code : sealed interface Result<T, E> (Success ou Error).
+
+5. Threads (Dispatchers) : Jamais de Dispatchers.IO en dur (pour les tests et iOS).
+Code : On injecte une interface interface AppDispatchers.
+
+2. MODULES UI (androidApp, iosApp, webApp)
+Règle d'or : Ne fait aucun calcul métier. Ne gère que l'affichage, le formatage local et la traduction.
+
+1. Formatage Localisé : L'UI transforme la donnée brute en information humaine.
+Code : val Long.asCurrency: String (transforme 1000 en "10,00 €").
+
+2. UI Mappers (Erreurs) : L'UI traduit l'exception métier dans la langue du téléphone.
+Code : fun AppException.toUIString(): StringResource
+
+3. Extensions Tampons : Le pont entre la donnée et le composant visuel.
+Code : val Outgoing.uiIcon: ImageVector ou Color(DesignTokens.COLOR_PRIMARY)

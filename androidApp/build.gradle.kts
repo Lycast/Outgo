@@ -45,7 +45,8 @@ tasks.withType<KotlinJvmCompile>().configureEach {
 dependencies {
     implementation(projects.shared.app)
     implementation(projects.shared.core.api)
-    implementation(projects.sharedFeature.outgoing.api)
+    implementation(projects.shared.feature.outgoing.api)
+    implementation(projects.shared.database)
 
     implementation(libs.androidx.activity.compose)
     implementation(libs.compose.runtime)
@@ -59,6 +60,13 @@ dependencies {
 
     implementation(libs.androidx.lifecycle.viewmodel)
     implementation(libs.androidx.lifecycle.runtime)
+
+    implementation(libs.koin.core)
+    implementation(libs.koin.android)
+    implementation(libs.koin.compose)
+    implementation(libs.koin.androidx.compose)
+
+    implementation(libs.sqldelight.driver.android)
 
     // 5. TESTS
     testImplementation(libs.kotlin.test)

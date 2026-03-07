@@ -10,12 +10,17 @@ kotlin {
     androidTarget { compilerOptions { jvmTarget.set(JvmTarget.JVM_11) } }
     iosArm64()
     iosSimulatorArm64()
-    jvm()
-    js(IR) { browser() }
     
     sourceSets {
         commonMain.dependencies {
-            // put your Multiplatform dependencies here
+            // Koin Core
+            implementation(libs.koin.core)
+
+            // Importation des réalisations (qui contiennent les Koin Modules locaux)
+            implementation(projects.shared.core.impl)
+            implementation(projects.shared.database)
+            implementation(projects.shared.feature.outgoing.impl)
+
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
