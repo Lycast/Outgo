@@ -6,10 +6,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import fr.abknative.outgo.android.outgoing.OutgoingScreen // Import de notre vrai écran
+import fr.abknative.outgo.android.screens.DashboardScreen
+import fr.abknative.outgo.outgoing.api.presenter.OutgoingPresenter
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun App() {
+
+    val presenter: OutgoingPresenter = koinViewModel()
+
     MaterialTheme {
         Surface(
             modifier = Modifier
@@ -17,8 +22,7 @@ fun App() {
                 .safeContentPadding(),
             color = MaterialTheme.colorScheme.background
         ) {
-            // On appelle notre écran MVI !
-            OutgoingScreen()
+            DashboardScreen(presenter = presenter)
         }
     }
 }

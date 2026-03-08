@@ -53,15 +53,16 @@ internal class OutgoingPresenterImpl(
 
     override fun onIntent(intent: OutgoingIntent) {
         when (intent) {
-            is OutgoingIntent.Add -> handleAdd(intent)
+            is OutgoingIntent.Save -> handleAdd(intent)
             is OutgoingIntent.Delete -> handleDelete(intent)
+            is OutgoingIntent.UpdateBudget -> {}//handleUpdateBudget(intent)
             is OutgoingIntent.DismissError -> {
                 _state.update { it.copy(error = null) }
             }
         }
     }
 
-    private fun handleAdd(intent: OutgoingIntent.Add) {
+    private fun handleAdd(intent: OutgoingIntent.Save) {
         viewModelScope.safeLaunch(onError = onCoroutineError) {
             _state.update { it.copy(isLoading = true) }
 

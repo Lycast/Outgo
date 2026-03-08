@@ -1,10 +1,11 @@
-package fr.abknative.outgo.android
+package fr.abknative.outgo.android.ui
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
+import fr.abknative.outgo.android.R
 import fr.abknative.outgo.core.api.AppException
 import fr.abknative.outgo.core.api.CommonError
 import fr.abknative.outgo.outgoing.api.OutgoingError
-import androidx.compose.ui.res.stringResource
 
 @Composable
 fun AppException.toUIString(): String {
