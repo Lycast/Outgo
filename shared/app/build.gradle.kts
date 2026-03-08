@@ -1,13 +1,12 @@
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
-    alias(libs.plugins.android.library)
+    id("outgo.android.library")
+    id("outgo.jvm")
 }
 
 kotlin {
 
-    androidTarget { compilerOptions { jvmTarget.set(JvmTarget.JVM_11) } }
+    androidTarget()
     iosArm64()
     iosSimulatorArm64()
     

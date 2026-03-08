@@ -1,9 +1,8 @@
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
-    alias(libs.plugins.android.library)
     alias(libs.plugins.sqldelight)
+    id("outgo.android.library")
+    id("outgo.jvm")
 }
 
 kotlin {
@@ -12,7 +11,7 @@ kotlin {
         freeCompilerArgs.add("-Xexpect-actual-classes")
     }
 
-    androidTarget { compilerOptions { jvmTarget.set(JvmTarget.JVM_11) } }
+    androidTarget()
     iosArm64()
     iosSimulatorArm64()
 

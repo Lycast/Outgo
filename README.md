@@ -1,77 +1,73 @@
-This is a Kotlin Multiplatform project targeting Android, iOS, Web, Server.
+# Outgo — Kotlin Multiplatform Showcase
 
-* [/composeApp](./composeApp/src) is for code that will be shared across your Compose Multiplatform applications.
-  It contains several subfolders:
-  - [commonMain](./composeApp/src/commonMain/kotlin) is for code that’s common for all targets.
-  - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-    For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-    the [iosMain](./composeApp/src/iosMain/kotlin) folder would be the right place for such calls.
-    Similarly, if you want to edit the Desktop (JVM) specific part, the [jvmMain](./composeApp/src/jvmMain/kotlin)
-    folder is the appropriate location.
+![Status: Under Construction](https://img.shields.io/badge/Status-Work_In_Progress-orange)
+![Kotlin: 2.x](https://img.shields.io/badge/Kotlin-2.x-blue?logo=kotlin)
 
-* [/iosApp](./iosApp/iosApp) contains iOS applications. Even if you’re sharing your UI with Compose Multiplatform,
-  you need this entry point for your iOS app. This is also where you should add SwiftUI code for your project.
+> [!IMPORTANT]
+> **Development Status:** This project is currently a **Work in Progress**.
+> The **Shared Architecture**, **Database layer**, and **Business Logic** are fully implemented and stable.
+> The **UI (Android, iOS, Web)** and **Ktor Server** modules are under active development and are not yet feature-complete.
 
-* [/server](./server/src/main/kotlin) is for the Ktor server application.
+**Outgo** is a subscription and expense management application built with an **Offline-First** approach and a strict modular architecture. This project serves as a comprehensive demonstration of **Kotlin Multiplatform (KMP)** best practices in 2026.
 
-* [/shared](./shared/src) is for the code that will be shared between all targets in the project.
-  The most important subfolder is [commonMain](./shared/src/commonMain/kotlin). If preferred, you
-  can add code to the platform-specific folders here too.
+## Project Vision
+The goal is to provide a seamless experience across Android, iOS, and Web, while sharing **95% of business logic**, persistence, and networking—all backed by a robust Ktor server.
 
-* [/webApp](./webApp) contains web React application. It uses the Kotlin/JS library produced
-  by the [shared](./shared) module.
+## 🛠 Tech Stack
+* **Core**: Kotlin Multiplatform (KMP)
+* **Android UI**: Jetpack Compose (Native)
+* **iOS UI**: SwiftUI (Native Apple)
+* **Web UI**: Compose HTML + Tailwind CSS (Kotlin/JS)
+* **DI**: Koin (with platform-specific setup for iOS injection)
+* **Database**: SQLDelight (Native drivers for each target)
+* **Network**: Ktor Client & Server
+* **Logic**: `kotlinx-datetime` (precise timezone handling), Coroutines & Flow
+* **Build System**: Gradle with **Convention Plugins** (`build-logic`) for centralized, type-safe configuration.
 
-### Build and Run Android Application
+## Architecture
+The project follows **Clean Architecture** principles with a feature-based modular structure.
 
-To build and run the development version of the Android app, use the run configuration from the run widget
-in your IDE’s toolbar or build it directly from the terminal:
-- on macOS/Linux
-  ```shell
-  ./gradlew :composeApp:assembleDebug
-  ```
-- on Windows
-  ```shell
-  .\gradlew.bat :composeApp:assembleDebug
-  ```
+### The API / Implementation Pattern
+Each module within `shared/` is split into two parts:
+* **`:api`**: Contains interfaces, domain models, and Use Cases. This is the only part exposed to the UI.
+* **`:impl`**: Contains concrete logic (SQL, Ktor, etc.). This module is internal to ensure total **Dependency Inversion**.
 
-### Build and Run Server
+### Module Structure
+```plaintext
+├── build-logic          # Convention Plugins (Shared build logic)
+├── shared/
+│   ├── core/            # Global types and utilities (Time, Exceptions)
+│   ├── database/        # SQLDelight persistence layer
+│   └── feature/
+│       └── outgoing/    # "Expenses" business logic (api/impl)
+├── server/              # Ktor Backend (JVM)
+└── (androidApp|iosApp)  # Native client applications
+```
 
-To build and run the development version of the server, use the run configuration from the run widget
-in your IDE’s toolbar or run it directly from the terminal:
-- on macOS/Linux
-  ```shell
-  ./gradlew :server:run
-  ```
-- on Windows
-  ```shell
-  .\gradlew.bat :server:run
-  ```
+💎 Technical Highlights
+Time Abstraction: Implementation of a TimeProvider to ensure full testability of subscription calculations.
 
-### Build and Run Web Application
+Dependency Inversion: Strict use of Koin to decouple implementations from contracts.
 
-To build and run the development version of the web app, use the run configuration from the run widget
-in your IDE’s toolbar or run it directly from the terminal:
-1. Install [Node.js](https://nodejs.org/en/download) (which includes `npm`)
-2. Build Kotlin/JS shared code:
-   - on macOS/Linux
-     ```shell
-     ./gradlew :shared:jsBrowserDevelopmentLibraryDistribution
-     ```
-   - on Windows
-     ```shell
-     .\gradlew.bat :shared:jsBrowserDevelopmentLibraryDistribution
-     ```
-3. Build and run the web application
-   ```shell
-   npm install
-   npm run start
-   ```
+Error Handling: Typed exception system (AppException) mapped to UI states through result flows.
 
-### Build and Run iOS Application
+Modern Build Logic: Advanced Gradle configuration using Kotlin DSL and Version Catalogs to eliminate configuration drift.
 
-To build and run the development version of the iOS app, use the run configuration from the run widget
-in your IDE’s toolbar or open the [/iosApp](./iosApp) directory in Xcode and run it from there.
+Quick Start
+To run the different components of the project, use the following commands:
 
----
+Android
+Bash
+./gradlew :androidApp:installDebug
 
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)…
+iOS
+Open the iosApp/iosApp.xcworkspace in Xcode and press Cmd + R.
+(Note: Ensure you have run ./gradlew :shared:assembleXCFramework first if you are not using the KMP Xcode Plugin).
+
+Web (Compose HTML)
+Bash
+./gradlew :webApp:jsBrowserDevelopmentRun --continuous
+
+Server (Ktor)
+Bash
+./gradlew :server:run
