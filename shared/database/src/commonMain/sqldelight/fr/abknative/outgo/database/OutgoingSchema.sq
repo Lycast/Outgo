@@ -4,6 +4,7 @@ CREATE TABLE OutgoingEntity (
     amountInCents INTEGER NOT NULL,
     cycle TEXT NOT NULL,
     billingDay INTEGER NOT NULL,
+    billingMonth INTEGER,
 
     -- Métadonnées
     createdAt INTEGER NOT NULL,

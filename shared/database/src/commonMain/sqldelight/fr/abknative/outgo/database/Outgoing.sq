@@ -1,11 +1,21 @@
 /**
- * Inserts a new subscription or replaces an existing one (Upsert).
+ * Inserts a subscription or updates it if it already exists.
+ * Uses ON CONFLICT to avoid unnecessary deletions/reinsertions (REPLACE).
  */
 upsert:
-INSERT OR REPLACE INTO OutgoingEntity(
-    id, name, amountInCents, cycle, billingDay,
+INSERT INTO OutgoingEntity(
+    id, name, amountInCents, cycle, billingDay, billingMonth,
     createdAt, updatedAt, isDeleted, syncStatus
-) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+ON CONFLICT(id) DO UPDATE SET
+    name = excluded.name,
+    amountInCents = excluded.amountInCents,
+    cycle = excluded.cycle,
+    billingDay = excluded.billingDay,
+    billingMonth = excluded.billingMonth,
+    updatedAt = excluded.updatedAt,
+    isDeleted = excluded.isDeleted,
+    syncStatus = excluded.syncStatus;
 
 /**
  * Retrieves all subscriptions that are not logically deleted.

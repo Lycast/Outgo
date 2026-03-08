@@ -9,6 +9,7 @@ import fr.abknative.outgo.outgoing.impl.usecase.*
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
+import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
 fun outgoingModule() = module {
@@ -21,5 +22,5 @@ fun outgoingModule() = module {
     factoryOf(::CalculateMonthlyTotalUseCaseImpl) { bind<CalculateMonthlyTotalUseCase>() }
     factoryOf(::CalculateRemainingToPayThisMonthUseCaseImpl) { bind<CalculateRemainingToPayThisMonthUseCase>() }
 
-    factoryOf(::OutgoingPresenterImpl) { bind<OutgoingPresenter>() }
+    viewModelOf(::OutgoingPresenterImpl) { bind<OutgoingPresenter>() }
 }

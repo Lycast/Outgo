@@ -22,12 +22,19 @@ internal class SaveOutgoingUseCaseImpl(
         name: String,
         amountInCents: Long,
         cycle: BillingCycle,
-        billingDay: Int
+        billingDay: Int,
+        billingMonth: Int?
     ): Result<Unit, AppException> {
 
 
         if (name.isBlank()) return Result.Error(OutgoingError.EmptyName())
         if (amountInCents <= 0) return Result.Error(OutgoingError.InvalidAmount())
+        if (billingDay !in 1..31) return Result.Error(OutgoingError.InvalidDate())
+        val finalBillingMonth = when (cycle) {
+            BillingCycle.MONTHLY -> { null }
+            BillingCycle.YEARLY -> { if (billingMonth == null || billingMonth !in 1..12) { return Result.Error(OutgoingError.InvalidDate()) } else billingMonth }
+            BillingCycle.UNKNOWN -> return Result.Error(OutgoingError.UnknownCycle())
+        }
 
         val currentTime = timeProvider.now()
         val outgoing = Outgoing(
@@ -36,6 +43,7 @@ internal class SaveOutgoingUseCaseImpl(
             amountInCents = amountInCents,
             cycle = cycle,
             billingDay = billingDay,
+            billingMonth = finalBillingMonth,
             createdAt = currentTime,
             updatedAt = currentTime,
             isDeleted = false,

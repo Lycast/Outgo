@@ -2,12 +2,7 @@ package fr.abknative.outgo.outgoing.impl.repository
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
-import fr.abknative.outgo.core.api.AppDispatchers
-import fr.abknative.outgo.core.api.AppException
-import fr.abknative.outgo.core.api.CommonError
-import fr.abknative.outgo.core.api.Result
-import fr.abknative.outgo.core.api.asResult
-import fr.abknative.outgo.core.api.TimeProvider
+import fr.abknative.outgo.core.api.*
 import fr.abknative.outgo.database.OutgoDatabase
 import fr.abknative.outgo.outgoing.api.model.Outgoing
 import fr.abknative.outgo.outgoing.api.repository.OutgoingRepository
@@ -45,6 +40,8 @@ internal class OutgoingRepositoryImpl(
             amountInCents = outgoing.amountInCents,
             cycle = outgoing.cycle.name,
             billingDay = outgoing.billingDay.toLong(),
+            billingMonth = outgoing.billingMonth?.toLong(),
+
             createdAt = outgoing.createdAt,
             updatedAt = outgoing.updatedAt,
             isDeleted = if (outgoing.isDeleted) 1L else 0L,

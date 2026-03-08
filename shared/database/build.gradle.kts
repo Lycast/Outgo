@@ -45,6 +45,7 @@ android {
 sqldelight {
     databases {
         create("OutgoDatabase") {
+            dialect(libs.sqldelight.dialect.get().toString())
             packageName.set("fr.abknative.outgo.database")
         }
     }

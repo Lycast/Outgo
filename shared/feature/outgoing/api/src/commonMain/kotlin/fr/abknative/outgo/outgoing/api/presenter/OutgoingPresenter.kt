@@ -1,22 +1,26 @@
 package fr.abknative.outgo.outgoing.api.presenter
 
+import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.StateFlow
 
+
 /**
- * Contract for the UI-agnostic presentation logic.
+ * Base contract for the Outgoing screen presentation logic, implementing a
+ * Unidirectional Data Flow (UDF) pattern.
  *
- * Implements a Unidirectional Data Flow (UDF) where the [state] represents the
- * single source of truth and [onIntent] serves as the unique entry point for user actions.
+ * **Architectural Note:** This class extends [ViewModel] as a strategic choice
+ * to leverage a unified, lifecycle-aware primitive across platforms (Android, iOS, Web).
+ * This approach ensures consistent **structured concurrency** and automatic memory management while maintaining a UI-agnostic contract.
  */
-interface OutgoingPresenter {
+abstract class OutgoingPresenter : ViewModel() {
     /**
-     * Observable stream of the current UI state to be consumed by native views.
+     * Observable stream of the current UI state.
      */
-    val state: StateFlow<OutgoingState>
+    abstract val state: StateFlow<OutgoingState>
 
     /**
-    * Dispatches a user intention to be processed by the business logic.
-    ** @param intent The action representing the user's goal.
-    */
-    fun onIntent(intent: OutgoingIntent)
+     * Dispatches a user intention to the business logic.
+     * @param intent The action representing the user's goal.
+     */
+    abstract fun onIntent(intent: OutgoingIntent)
 }

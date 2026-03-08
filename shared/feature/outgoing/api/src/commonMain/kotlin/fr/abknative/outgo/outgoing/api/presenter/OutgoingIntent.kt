@@ -7,7 +7,8 @@ sealed interface OutgoingIntent {
         val name: String,
         val amountInCents: Long,
         val cycle: BillingCycle,
-        val billingDay: Int
+        val billingDay: Int,
+        val billingMonth: Int? = null
     ) : OutgoingIntent
 
     data class Delete(val id: String) : OutgoingIntent

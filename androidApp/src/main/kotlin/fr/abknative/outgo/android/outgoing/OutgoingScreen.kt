@@ -14,14 +14,15 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import fr.abknative.outgo.android.toUIString
 import fr.abknative.outgo.outgoing.api.BillingCycle
 import fr.abknative.outgo.outgoing.api.presenter.OutgoingIntent
+import fr.abknative.outgo.outgoing.api.presenter.OutgoingPresenter
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun OutgoingScreen(
-    viewModel: OutgoingViewModel = koinViewModel()
+    presenter: OutgoingPresenter = koinViewModel()
 ) {
     // 1. Observation réactive de l'état
-    val state by viewModel.state.collectAsStateWithLifecycle()
+    val state by presenter.state.collectAsStateWithLifecycle()
 
     Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
 
@@ -31,7 +32,7 @@ fun OutgoingScreen(
                 Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
                     // Utilisation du mapper sémantique -> UI créé précédemment
                     Text(text = error.toUIString(), color = Color.Red, modifier = Modifier.weight(1f))
-                    Button(onClick = { viewModel.onIntent(OutgoingIntent.DismissError) }) {
+                    Button(onClick = { presenter.onIntent(OutgoingIntent.DismissError) }) {
                         Text("OK")
                     }
                 }
@@ -51,7 +52,7 @@ fun OutgoingScreen(
             modifier = Modifier.fillMaxWidth(),
             onClick = {
                 // Envoi d'une intention d'ajout avec des données statiques pour valider le flux
-                viewModel.onIntent(
+                presenter.onIntent(
                     OutgoingIntent.Add(
                         name = "Netflix",
                         amountInCents = 1399, // 13.99 €
@@ -86,7 +87,7 @@ fun OutgoingScreen(
                             Text(text = "${outgoing.amountInCents / 100} €")
                             Spacer(modifier = Modifier.width(8.dp))
                             Button(
-                                onClick = { viewModel.onIntent(OutgoingIntent.Delete(outgoing.id)) },
+                                onClick = { presenter.onIntent(OutgoingIntent.Delete(outgoing.id)) },
                                 colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
                             ) {
                                 Text("X")
