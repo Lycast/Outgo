@@ -1,33 +1,33 @@
 package fr.abknative.outgo.outgoing.impl.usecase
 
 import fr.abknative.outgo.core.api.TimeProvider
-import fr.abknative.outgo.outgoing.api.BillingCycle
+import fr.abknative.outgo.outgoing.api.Recurrence
 import fr.abknative.outgo.outgoing.api.repository.OutgoingRepository
-import fr.abknative.outgo.outgoing.api.usecase.CalculateMonthlyTotalUseCase
+import fr.abknative.outgo.outgoing.api.usecase.CalculateTotalOutgoingsUseCase
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-internal class CalculateMonthlyTotalUseCaseImpl(
+internal class CalculateTotalOutgoingsUseCaseImpl(
     private val repository: OutgoingRepository,
     private val timeProvider: TimeProvider
-) : CalculateMonthlyTotalUseCase {
+) : CalculateTotalOutgoingsUseCase {
 
     override fun invoke(): Flow<Long> {
         return repository.observeActiveOutgoings().map { list ->
             val currentMonthIndex = timeProvider.monthValue() // De 1 à 12
 
             list.sumOf { item ->
-                when (item.cycle) {
-                    BillingCycle.MONTHLY -> item.amountInCents
+                when (item.recurrence) {
+                    Recurrence.MONTHLY -> item.amountInCents
 
-                    BillingCycle.YEARLY -> {
+                    Recurrence.YEARLY -> {
                         calculateYearlyShareForMonth(
                             totalYearlyInCents = item.amountInCents,
                             monthIndex = currentMonthIndex
                         )
                     }
 
-                    BillingCycle.UNKNOWN -> 0L
+                    Recurrence.UNKNOWN -> 0L
                 }
             }
         }

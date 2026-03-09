@@ -73,8 +73,8 @@ fun DashboardScreen(
             // --- En-tête : Le Budget (Hero Section) ---
             item {
                 HeroSection(
-                    monthlyBudgetInCents = state.userBudgetInCents,
-                    remainingToPayThisMonthInCents = state.remainingToPayThisMonthInCents,
+                    monthlyBudgetInCents = state.monthlyIncomeInCents,
+                    remainingToPayThisMonthInCents = state.remainingToPayInCents,
                     onEditBudgetClick = { showBudgetDialog = true }
                 )
             }
@@ -118,7 +118,7 @@ fun DashboardScreen(
 
     if (showBudgetDialog) {
         BudgetEditDialog(
-            initialBudgetInEuros = (state.userBudgetInCents / 100.0).toString().replace(".0", ""),
+            initialBudgetInEuros = (state.monthlyIncomeInCents / 100.0).toString().replace(".0", ""),
             onDismiss = { showBudgetDialog = false },
             onSave = { newBudgetString ->
                 val cents = (newBudgetString.toDoubleOrNull() ?: 0.0) * 100

@@ -4,8 +4,8 @@ import fr.abknative.outgo.core.api.AppException
 import fr.abknative.outgo.core.api.Result
 import fr.abknative.outgo.core.api.SyncStatus
 import fr.abknative.outgo.core.api.TimeProvider
-import fr.abknative.outgo.outgoing.api.BillingCycle
 import fr.abknative.outgo.outgoing.api.OutgoingError
+import fr.abknative.outgo.outgoing.api.Recurrence
 import fr.abknative.outgo.outgoing.api.model.Outgoing
 import fr.abknative.outgo.outgoing.api.repository.OutgoingRepository
 import fr.abknative.outgo.outgoing.api.usecase.SaveOutgoingUseCase
@@ -19,35 +19,41 @@ internal class SaveOutgoingUseCaseImpl(
 
     @OptIn(ExperimentalUuidApi::class)
     override suspend fun invoke(
+        id: String?,
         name: String,
         amountInCents: Long,
-        cycle: BillingCycle,
-        billingDay: Int,
-        billingMonth: Int?
+        recurrence: Recurrence,
+        dueDay: Int,
+        dueMonth: Int?
     ): Result<Unit, AppException> {
 
 
         if (name.isBlank()) return Result.Error(OutgoingError.EmptyName())
         if (amountInCents <= 0) return Result.Error(OutgoingError.InvalidAmount())
-        if (billingDay !in 1..31) return Result.Error(OutgoingError.InvalidDate())
-        val finalBillingMonth = when (cycle) {
-            BillingCycle.MONTHLY -> { null }
-            BillingCycle.YEARLY -> { if (billingMonth == null || billingMonth !in 1..12) { return Result.Error(OutgoingError.InvalidDate()) } else billingMonth }
-            BillingCycle.UNKNOWN -> return Result.Error(OutgoingError.UnknownCycle())
+        if (dueDay !in 1..31) return Result.Error(OutgoingError.InvalidDate())
+        val finalBillingMonth = when (recurrence) {
+            Recurrence.MONTHLY -> { null }
+            Recurrence.YEARLY -> { if (dueMonth == null || dueMonth !in 1..12) { return Result.Error(OutgoingError.InvalidDate()) } else dueMonth }
+            Recurrence.UNKNOWN -> return Result.Error(OutgoingError.UnknownCycle())
         }
 
         val currentTime = timeProvider.now()
+        val existingOutgoing = id?.let { repository.getOutgoingById(it) }
+        val finalId = id ?: Uuid.random().toString()
+        val finalCreatedAt = existingOutgoing?.createdAt ?: currentTime
+        val finalSyncStatus = if (id == null) SyncStatus.PENDING_CREATE else SyncStatus.PENDING_UPDATE
+
         val outgoing = Outgoing(
-            id = Uuid.random().toString(),
+            id = finalId,
             name = name.trim(),
             amountInCents = amountInCents,
-            cycle = cycle,
-            billingDay = billingDay,
-            billingMonth = finalBillingMonth,
-            createdAt = currentTime,
+            recurrence = recurrence,
+            dueDay = dueDay,
+            dueMonth = finalBillingMonth,
+            createdAt = finalCreatedAt,
             updatedAt = currentTime,
             isDeleted = false,
-            syncStatus = SyncStatus.PENDING_CREATE
+            syncStatus = finalSyncStatus
         )
 
         return repository.upsert(outgoing)

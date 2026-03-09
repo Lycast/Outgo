@@ -1,5 +1,5 @@
 package fr.abknative.outgo.outgoing.api
 
-enum class BillingCycle {
+enum class Recurrence {
     MONTHLY, YEARLY, UNKNOWN
 }

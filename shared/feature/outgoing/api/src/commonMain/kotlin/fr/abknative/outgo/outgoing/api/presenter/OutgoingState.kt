@@ -10,9 +10,10 @@ data class OutgoingState(
     val outgoings: List<Outgoing> = emptyList(),
 
     // --- Calculs et Budget ---
-    val monthlyTotalInCents: Long = 0L,
-    val userBudgetInCents: Long = 150000L,
-    val remainingToPayThisMonthInCents: Long = 45050L,
+    val monthlyIncomeInCents: Long = 0L,        // salaire / budget global
+    val totalOutgoingsInCents: Long = 0L,       // Somme lissée des charges
+    val disposableIncomeInCents: Long = 0L,     // ce qu'il te reste du budget
+    val remainingToPayInCents: Long = 0L,       // Ce qui va encore sortir ce mois-ci
 
     // --- État Global ---
     val isCloudSyncActive: Boolean = false,

@@ -2,7 +2,7 @@ package fr.abknative.outgo.outgoing.api.usecase
 
 import kotlinx.coroutines.flow.Flow
 
-interface CalculateRemainingToPayThisMonthUseCase {
+interface CalculateRemainingToPayUseCase {
     /**
      * Calculates the total outstanding balance for the current month.
      * Accounts for monthly subscriptions and any annual subscriptions due this month.

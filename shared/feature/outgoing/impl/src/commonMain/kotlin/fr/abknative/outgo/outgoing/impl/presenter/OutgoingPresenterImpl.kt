@@ -14,8 +14,10 @@ internal class OutgoingPresenterImpl(
     private val observeActiveOutgoings: ObserveActiveOutgoingsUseCase,
     private val saveOutgoing: SaveOutgoingUseCase,
     private val deleteOutgoing: DeleteOutgoingUseCase,
-    private val calculateMonthlyTotal: CalculateMonthlyTotalUseCase,
-    private val calculateRemainingToPay: CalculateRemainingToPayThisMonthUseCase,
+    private val calculateTotalOutgoings: CalculateTotalOutgoingsUseCase,
+    private val calculateRemainingToPay: CalculateRemainingToPayUseCase,
+    private val calculateDisposableIncome: CalculateDisposableIncomeUseCase,
+    private val updateIncome: UpdateIncomeUseCase,
 ) : OutgoingPresenter() {
 
     private val _state = MutableStateFlow(OutgoingState(isLoading = true))
@@ -31,23 +33,20 @@ internal class OutgoingPresenterImpl(
 
     private fun startObservingData() {
         viewModelScope.safeLaunch(onError = onCoroutineError) {
-
             combine(
                 observeActiveOutgoings(),
-                calculateMonthlyTotal(),
-                calculateRemainingToPay()
-            ) { outgoings, monthlyTotal, remainingToPay ->
-                Triple(outgoings, monthlyTotal, remainingToPay)
-            }.collect { (outgoings, monthlyTotal, remainingToPay) ->
-                _state.update { currentState ->
-                    currentState.copy(
-                        outgoings = outgoings,
-                        monthlyTotalInCents = monthlyTotal,
-                        remainingToPayThisMonthInCents = remainingToPay,
-                        isLoading = false
-                    )
-                }
-            }
+                calculateTotalOutgoings(),
+                calculateRemainingToPay(),
+                calculateDisposableIncome()
+            ) { outgoings, total, remaining, disposable ->
+                _state.update { it.copy(
+                    outgoings = outgoings,
+                    totalOutgoingsInCents = total,
+                    remainingToPayInCents = remaining,
+                    disposableIncomeInCents = disposable,
+                    isLoading = false
+                ) }
+            }.collect()
         }
     }
 
@@ -55,10 +54,8 @@ internal class OutgoingPresenterImpl(
         when (intent) {
             is OutgoingIntent.Save -> handleAdd(intent)
             is OutgoingIntent.Delete -> handleDelete(intent)
-            is OutgoingIntent.UpdateBudget -> {}//handleUpdateBudget(intent)
-            is OutgoingIntent.DismissError -> {
-                _state.update { it.copy(error = null) }
-            }
+            is OutgoingIntent.UpdateIncome -> handleUpdateIncome(intent)
+            is OutgoingIntent.DismissError -> { _state.update { it.copy(error = null) } }
         }
     }
 
@@ -69,9 +66,9 @@ internal class OutgoingPresenterImpl(
             val result = saveOutgoing(
                 name = intent.name,
                 amountInCents = intent.amountInCents,
-                cycle = intent.cycle,
-                billingDay = intent.billingDay,
-                billingMonth = intent.billingMonth
+                recurrence = intent.recurrence,
+                dueDay = intent.dueDay,
+                dueMonth = intent.dueMonth
             )
 
             when (result) {
@@ -91,6 +88,12 @@ internal class OutgoingPresenterImpl(
             if (result is Result.Error) {
                 _state.update { it.copy(error = result.error) }
             }
+        }
+    }
+
+    private fun handleUpdateIncome(intent: OutgoingIntent.UpdateIncome) {
+        viewModelScope.safeLaunch(onError = onCoroutineError) {
+            updateIncome(intent.amountInCents)
         }
     }
 }

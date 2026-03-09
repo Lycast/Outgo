@@ -1,16 +1,16 @@
 package fr.abknative.outgo.outgoing.impl.usecase
 
 import fr.abknative.outgo.core.api.TimeProvider
-import fr.abknative.outgo.outgoing.api.BillingCycle
+import fr.abknative.outgo.outgoing.api.Recurrence
 import fr.abknative.outgo.outgoing.api.repository.OutgoingRepository
-import fr.abknative.outgo.outgoing.api.usecase.CalculateRemainingToPayThisMonthUseCase
+import fr.abknative.outgo.outgoing.api.usecase.CalculateRemainingToPayUseCase
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-internal class CalculateRemainingToPayThisMonthUseCaseImpl(
+internal class CalculateRemainingToPayUseCaseImpl(
     private val repository: OutgoingRepository,
     private val timeProvider: TimeProvider
-) : CalculateRemainingToPayThisMonthUseCase {
+) : CalculateRemainingToPayUseCase {
 
     override fun invoke(): Flow<Long> {
         return repository.observeActiveOutgoings().map { list ->
@@ -19,15 +19,15 @@ internal class CalculateRemainingToPayThisMonthUseCaseImpl(
             val lastDayOfThisMonth = timeProvider.lastDayOfMonth()
 
             list.filter { item ->
-                val isDueThisMonth = when (item.cycle) {
-                    BillingCycle.MONTHLY -> true
-                    BillingCycle.YEARLY -> item.billingMonth == thisMonth
-                    BillingCycle.UNKNOWN -> false
+                val isDueThisMonth = when (item.recurrence) {
+                    Recurrence.MONTHLY -> true
+                    Recurrence.YEARLY -> item.dueMonth == thisMonth
+                    Recurrence.UNKNOWN -> false
                 }
 
                 if (!isDueThisMonth) return@filter false
 
-                val effectiveBillingDay = item.billingDay.coerceAtMost(lastDayOfThisMonth)
+                val effectiveBillingDay = item.dueDay.coerceAtMost(lastDayOfThisMonth)
 
                 effectiveBillingDay >= today
 

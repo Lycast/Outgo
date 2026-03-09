@@ -2,17 +2,17 @@
  * Inserts a subscription or updates it if it already exists.
  * Uses ON CONFLICT to avoid unnecessary deletions/reinsertions (REPLACE).
  */
-upsert:
+upsertOutgoing:
 INSERT INTO OutgoingEntity(
-    id, name, amountInCents, cycle, billingDay, billingMonth,
+    id, budgetId, name, amountInCents, recurrence, dueDay, dueMonth,
     createdAt, updatedAt, isDeleted, syncStatus
-) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+) VALUES (?, ?, ?,?, ?, ?, ?, ?, ?, ?, ?)
 ON CONFLICT(id) DO UPDATE SET
     name = excluded.name,
     amountInCents = excluded.amountInCents,
-    cycle = excluded.cycle,
-    billingDay = excluded.billingDay,
-    billingMonth = excluded.billingMonth,
+    recurrence = excluded.recurrence,
+    dueDay = excluded.dueDay,
+    dueMonth = excluded.dueMonth,
     updatedAt = excluded.updatedAt,
     isDeleted = excluded.isDeleted,
     syncStatus = excluded.syncStatus;
@@ -35,8 +35,8 @@ SET isDeleted = 1,
 WHERE id = ?;
 
 /**
- * Fetches all records that have local changes pending synchronization.
+ * Retrieves a specific expense by its ID.
  */
-selectAllPendingSync:
+getById:
 SELECT * FROM OutgoingEntity
-WHERE syncStatus != 'SYNCED';
+WHERE id = ?;

@@ -12,7 +12,7 @@ import fr.abknative.outgo.android.ui.CommonLabels
 import fr.abknative.outgo.android.ui.FormLabels
 import fr.abknative.outgo.android.ui.states.OutgoingFormEvent
 import fr.abknative.outgo.android.ui.states.OutgoingFormState
-import fr.abknative.outgo.outgoing.api.BillingCycle
+import fr.abknative.outgo.outgoing.api.Recurrence
 
 @Composable
 fun OutgoingFormContent(
@@ -76,14 +76,14 @@ fun OutgoingFormContent(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             FilterChip(
-                selected = state.cycleSelection == BillingCycle.MONTHLY,
-                onClick = { onEvent(OutgoingFormEvent.UpdateCycle(BillingCycle.MONTHLY)) },
+                selected = state.cycleSelection == Recurrence.MONTHLY,
+                onClick = { onEvent(OutgoingFormEvent.UpdateCycle(Recurrence.MONTHLY)) },
                 label = { Text(FormLabels.CYCLE_MONTHLY) },
                 modifier = Modifier.weight(1f)
             )
             FilterChip(
-                selected = state.cycleSelection == BillingCycle.YEARLY,
-                onClick = { onEvent(OutgoingFormEvent.UpdateCycle(BillingCycle.YEARLY)) },
+                selected = state.cycleSelection == Recurrence.YEARLY,
+                onClick = { onEvent(OutgoingFormEvent.UpdateCycle(Recurrence.YEARLY)) },
                 label = { Text(FormLabels.CYCLE_YEARLY) },
                 modifier = Modifier.weight(1f)
             )

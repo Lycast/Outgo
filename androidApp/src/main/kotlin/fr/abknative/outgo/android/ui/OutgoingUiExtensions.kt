@@ -2,7 +2,7 @@ package fr.abknative.outgo.android.ui
 
 import androidx.compose.ui.graphics.Color
 import fr.abknative.outgo.core.api.SyncStatus
-import fr.abknative.outgo.outgoing.api.BillingCycle
+import fr.abknative.outgo.outgoing.api.Recurrence
 import fr.abknative.outgo.outgoing.api.model.Outgoing
 
 // --- 1. Formattage de la Monnaie ---
@@ -15,11 +15,11 @@ val Long.uiAmount: String
     }
 
 // --- 2. Enums (Cycles et Sync) ---
-val BillingCycle.uiLabel: String
+val Recurrence.uiLabel: String
     get() = when (this) {
-        BillingCycle.MONTHLY -> "/ mois"
-        BillingCycle.YEARLY -> "/ an"
-        BillingCycle.UNKNOWN -> ""
+        Recurrence.MONTHLY -> "/ mois"
+        Recurrence.YEARLY -> "/ an"
+        Recurrence.UNKNOWN -> ""
     }
 
 val SyncStatus.uiColor: Color
@@ -35,6 +35,6 @@ val SyncStatus.uiColor: Color
 val Outgoing.uiTitle: String
     get() = this.name.ifBlank { "Dépense sans nom" }
 val Outgoing.uiAmountLabel: String
-    get() = "${this.amountInCents.uiAmount} ${this.cycle.uiLabel}"
+    get() = "${this.amountInCents.uiAmount} ${this.recurrence.uiLabel}"
 val Outgoing.uiBillingDayLabel: String
-    get() = "Le ${this.billingDay} du mois"
+    get() = "Le ${this.dueDay} du mois"

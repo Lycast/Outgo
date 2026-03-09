@@ -34,13 +34,14 @@ internal class OutgoingRepositoryImpl(
     override suspend fun upsert(outgoing: Outgoing): Result<Unit, AppException> = asResult(
         onError = { CommonError.DatabaseError(it) }
     ) {
-        queries.upsert(
+        queries.upsertOutgoing(
             id = outgoing.id,
+            budgetId = outgoing.budgetId,
             name = outgoing.name,
             amountInCents = outgoing.amountInCents,
-            cycle = outgoing.cycle.name,
-            billingDay = outgoing.billingDay.toLong(),
-            billingMonth = outgoing.billingMonth?.toLong(),
+            recurrence = outgoing.recurrence.name,
+            dueDay = outgoing.dueDay.toLong(),
+            dueMonth = outgoing.dueMonth?.toLong(),
 
             createdAt = outgoing.createdAt,
             updatedAt = outgoing.updatedAt,
@@ -58,9 +59,7 @@ internal class OutgoingRepositoryImpl(
         )
     }
 
-    override suspend fun getPendingSyncItems(): List<Outgoing> {
-        return queries.selectAllPendingSync()
-            .executeAsList()
-            .map { it.toDomain() }
+    override suspend fun getOutgoingById(id: String): Outgoing? {
+        return queries.getById(id).executeAsOneOrNull()?.toDomain()
     }
 }

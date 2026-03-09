@@ -1,13 +1,13 @@
 package fr.abknative.outgo.android.ui.states
 
 import androidx.compose.runtime.*
-import fr.abknative.outgo.outgoing.api.BillingCycle
+import fr.abknative.outgo.outgoing.api.Recurrence
 
 // --- ÉVÉNEMENTS UI (Brouillon) ---
 sealed interface OutgoingFormEvent {
     data class UpdateName(val name: String) : OutgoingFormEvent
     data class UpdateAmount(val amount: String) : OutgoingFormEvent
-    data class UpdateCycle(val cycle: BillingCycle) : OutgoingFormEvent
+    data class UpdateCycle(val cycle: Recurrence) : OutgoingFormEvent
     data class UpdateBillingDay(val day: String) : OutgoingFormEvent
 }
 
@@ -15,7 +15,7 @@ sealed interface OutgoingFormEvent {
 class OutgoingFormState(
     initialName: String = "",
     initialAmount: String = "",
-    initialCycle: BillingCycle = BillingCycle.MONTHLY,
+    initialCycle: Recurrence = Recurrence.MONTHLY,
     initialDay: String = ""
 ) {
     var nameBuffer by mutableStateOf(initialName)
@@ -49,7 +49,7 @@ class OutgoingFormState(
 fun rememberOutgoingFormState(
     initialName: String = "",
     initialAmount: String = "",
-    initialCycle: BillingCycle = BillingCycle.MONTHLY,
+    initialCycle: Recurrence = Recurrence.MONTHLY,
     initialDay: String = ""
 ): OutgoingFormState {
     return remember(initialName, initialAmount, initialCycle, initialDay) {

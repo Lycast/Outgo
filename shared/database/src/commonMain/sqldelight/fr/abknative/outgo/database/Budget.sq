@@ -1,0 +1,15 @@
+getBudgetById:
+SELECT * FROM BudgetEntity WHERE id = ?;
+
+/**
+ * Updates the income or creates the budget if it doesn't exist.
+ */
+upsertBudget:
+INSERT INTO BudgetEntity(id, monthlyIncomeInCents)
+VALUES (?, ?)
+ON CONFLICT(id) DO UPDATE SET
+    monthlyIncomeInCents = excluded.monthlyIncomeInCents;
+
+getActiveOutgoings:
+SELECT * FROM OutgoingEntity
+WHERE isDeleted = 0;
