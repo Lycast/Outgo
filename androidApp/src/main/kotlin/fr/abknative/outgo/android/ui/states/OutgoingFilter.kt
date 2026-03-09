@@ -1,5 +1,5 @@
 package fr.abknative.outgo.android.ui.states
 
-enum class ExpenseFilterType {
+enum class OutgoingFilter {
     ALL, PAID, REMAINING
 }

@@ -16,13 +16,16 @@ import fr.abknative.outgo.outgoing.api.Recurrence
 
 @Composable
 fun OutgoingFormContent(
+    modifier: Modifier = Modifier,
     state: OutgoingFormState,
     onEvent: (OutgoingFormEvent) -> Unit,
     onCancel: () -> Unit,
     onSave: () -> Unit,
-    modifier: Modifier = Modifier,
-    isEditMode: Boolean = false
+    onDelete: (() -> Unit)? = null,
 ) {
+
+    val isEditMode = state.outgoingId != null
+
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -44,6 +47,25 @@ fun OutgoingFormContent(
             modifier = Modifier.fillMaxWidth()
         )
 
+        // --- Sélecteur : Récurrence ---
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            FilterChip(
+                selected = state.recurrenceSelection == Recurrence.MONTHLY,
+                onClick = { onEvent(OutgoingFormEvent.UpdateRecurrence(Recurrence.MONTHLY)) },
+                label = { Text(FormLabels.CYCLE_MONTHLY) },
+                modifier = Modifier.weight(1f)
+            )
+            FilterChip(
+                selected = state.recurrenceSelection == Recurrence.YEARLY,
+                onClick = { onEvent(OutgoingFormEvent.UpdateRecurrence(Recurrence.YEARLY)) },
+                label = { Text(FormLabels.CYCLE_YEARLY) },
+                modifier = Modifier.weight(1f)
+            )
+        }
+
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
@@ -51,7 +73,11 @@ fun OutgoingFormContent(
             // --- Champ : Montant ---
             OutlinedTextField(
                 value = state.amountBuffer,
-                onValueChange = { onEvent(OutgoingFormEvent.UpdateAmount(it)) },
+                onValueChange = { newValue ->
+                    if (newValue.all { it.isDigit() || it == '.' || it == ',' }) {
+                        onEvent(OutgoingFormEvent.UpdateAmount(newValue))
+                    }
+                },
                 label = { Text(FormLabels.FIELD_AMOUNT) },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
@@ -61,49 +87,61 @@ fun OutgoingFormContent(
 
             // --- Champ : Jour de prélèvement ---
             OutlinedTextField(
-                value = state.billingDayBuffer,
-                onValueChange = { onEvent(OutgoingFormEvent.UpdateBillingDay(it)) },
+                value = state.dueDayBuffer,
+                onValueChange = { newValue ->
+                    if (newValue.all { it.isDigit() }) onEvent(OutgoingFormEvent.UpdateDueDay(newValue))
+                },
                 label = { Text(FormLabels.FIELD_DATE) },
                 singleLine = true,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword), // NumberPassword évite souvent les virgules
                 modifier = Modifier.weight(1f)
             )
         }
 
-        // --- Sélecteur : Cycle de facturation ---
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            FilterChip(
-                selected = state.cycleSelection == Recurrence.MONTHLY,
-                onClick = { onEvent(OutgoingFormEvent.UpdateCycle(Recurrence.MONTHLY)) },
-                label = { Text(FormLabels.CYCLE_MONTHLY) },
-                modifier = Modifier.weight(1f)
-            )
-            FilterChip(
-                selected = state.cycleSelection == Recurrence.YEARLY,
-                onClick = { onEvent(OutgoingFormEvent.UpdateCycle(Recurrence.YEARLY)) },
-                label = { Text(FormLabels.CYCLE_YEARLY) },
-                modifier = Modifier.weight(1f)
+        // --- Champ conditionnel : Mois de prélèvement (Uniquement si Annuel) ---
+        if (state.recurrenceSelection == Recurrence.YEARLY) {
+            OutlinedTextField(
+                value = state.dueMonthBuffer,
+                onValueChange = { newValue ->
+                    if (newValue.all { it.isDigit() }) onEvent(OutgoingFormEvent.UpdateDueMonth(newValue))
+                },
+                label = { Text(FormLabels.FIELD_MONTH) },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
+                modifier = Modifier.fillMaxWidth()
             )
         }
 
         // --- Actions (Boutons) ---
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.End,
+            horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            TextButton(onClick = onCancel) {
-                Text(CommonLabels.ACTION_CANCEL)
+            // Bouton Supprimer
+            if (isEditMode && onDelete != null) {
+                TextButton(
+                    onClick = onDelete,
+                    colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.error)
+                ) {
+                    Text(CommonLabels.ACTION_DELETE)
+                }
+            } else {
+                Spacer(modifier = Modifier.weight(1f))
             }
-            Spacer(modifier = Modifier.width(8.dp))
-            Button(
-                onClick = onSave,
-                enabled = state.isValid
-            ) {
-                Text(CommonLabels.ACTION_SAVE)
+
+            // Boutons Annuler / Enregistrer
+            Row(horizontalArrangement = Arrangement.End) {
+                TextButton(onClick = onCancel) {
+                    Text(CommonLabels.ACTION_CANCEL)
+                }
+                Spacer(modifier = Modifier.width(8.dp))
+                Button(
+                    onClick = onSave,
+                    enabled = state.isValid
+                ) {
+                    Text(CommonLabels.ACTION_SAVE)
+                }
             }
         }
     }

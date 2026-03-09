@@ -10,12 +10,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import fr.abknative.outgo.android.ui.DashboardLabels
-import fr.abknative.outgo.android.ui.states.ExpenseFilterType
+import fr.abknative.outgo.android.ui.states.OutgoingFilter
 
 @Composable
 fun ExpenseFilterSelector(
-    selectedFilter: ExpenseFilterType,
-    onFilterSelected: (ExpenseFilterType) -> Unit,
+    selectedFilter: OutgoingFilter,
+    onFilterSelected: (OutgoingFilter) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -25,20 +25,20 @@ fun ExpenseFilterSelector(
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         FilterChip(
-            selected = selectedFilter == ExpenseFilterType.ALL,
-            onClick = { onFilterSelected(ExpenseFilterType.ALL) },
+            selected = selectedFilter == OutgoingFilter.ALL,
+            onClick = { onFilterSelected(OutgoingFilter.ALL) },
             label = { Text(DashboardLabels.TAB_ALL) }
         )
 
         FilterChip(
-            selected = selectedFilter == ExpenseFilterType.PAID,
-            onClick = { onFilterSelected(ExpenseFilterType.PAID) },
+            selected = selectedFilter == OutgoingFilter.PAID,
+            onClick = { onFilterSelected(OutgoingFilter.PAID) },
             label = { Text(DashboardLabels.TAB_PAID) }
         )
 
         FilterChip(
-            selected = selectedFilter == ExpenseFilterType.REMAINING,
-            onClick = { onFilterSelected(ExpenseFilterType.REMAINING) },
+            selected = selectedFilter == OutgoingFilter.REMAINING,
+            onClick = { onFilterSelected(OutgoingFilter.REMAINING) },
             label = { Text(DashboardLabels.TAB_REMAINING) }
         )
     }

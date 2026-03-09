@@ -15,8 +15,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import fr.abknative.outgo.android.ui.uiAmountLabel
-import fr.abknative.outgo.android.ui.uiBillingDayLabel
 import fr.abknative.outgo.android.ui.uiColor
+import fr.abknative.outgo.android.ui.uiDueDayLabel
 import fr.abknative.outgo.android.ui.uiTitle
 import fr.abknative.outgo.outgoing.api.model.Outgoing
 
@@ -29,7 +29,6 @@ fun OutgoingCard(
     Card(
         modifier = modifier
             .fillMaxWidth()
-            // Le clic servira à ouvrir le BottomSheet en mode "Édition"
             .clickable { onClick() },
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant
@@ -53,7 +52,7 @@ fun OutgoingCard(
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = outgoing.uiBillingDayLabel,
+                    text = outgoing.uiDueDayLabel,
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

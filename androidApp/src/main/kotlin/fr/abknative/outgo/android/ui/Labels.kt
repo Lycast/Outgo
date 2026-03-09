@@ -14,13 +14,13 @@ object CommonLabels {
 
 // Fichier : DashboardLabels.kt
 object DashboardLabels {
-    // Header
-    const val HEADER_BUDGET_PREFIX = "Mon budget total :"
-    const val HEADER_BUDGET_EMPTY = "Entrer votre budget mensuel"
-
     // Hero Section
+    const val HERO_INCOME_LABEL = "Mon Revenu"
+    const val HERO_BUDGET_EMPTY = "Entrer votre budget mensuel"
+    const val HERO_DISPOSABLE_INCOME_LABEL = "Reste à vivre"
+    const val HERO_TOTAL_CHARGES_LABEL = "Total des charges"
+    const val HERO_REMAINING_TO_PAY_LABEL = "Reste à prélever"
     const val HERO_DATE_PREFIX = "Date du jour :"
-    const val HERO_REMAINING_PREFIX = "Restant pour finir le mois :"
 
     // Liste et Filtres
     const val SECTION_EXPENSES_TITLE = "Liste des dépenses"
@@ -46,7 +46,8 @@ object FormLabels {
     const val SHEET_TITLE_EDIT = "Modifier la dépense"
     const val FIELD_NAME = "Titre de la dépense"
     const val FIELD_AMOUNT = "Montant"
-    const val FIELD_DATE = "Date de prélèvement"
+    const val FIELD_DATE = "Jour de prélèvement"
+    const val FIELD_MONTH = "Mois de prélèvement (1-12)"
     const val CYCLE_MONTHLY = "Mensuel"
     const val CYCLE_YEARLY = "Annuel"
 }

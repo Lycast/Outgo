@@ -3,10 +3,12 @@ package fr.abknative.outgo.outgoing.impl.presenter
 import androidx.lifecycle.viewModelScope
 import fr.abknative.outgo.core.api.AppException
 import fr.abknative.outgo.core.api.Result
+import fr.abknative.outgo.core.api.TimeProvider
 import fr.abknative.outgo.core.api.extensions.safeLaunch
 import fr.abknative.outgo.outgoing.api.presenter.OutgoingIntent
 import fr.abknative.outgo.outgoing.api.presenter.OutgoingPresenter
 import fr.abknative.outgo.outgoing.api.presenter.OutgoingState
+import fr.abknative.outgo.outgoing.api.repository.BudgetRepository
 import fr.abknative.outgo.outgoing.api.usecase.*
 import kotlinx.coroutines.flow.*
 
@@ -18,6 +20,8 @@ internal class OutgoingPresenterImpl(
     private val calculateRemainingToPay: CalculateRemainingToPayUseCase,
     private val calculateDisposableIncome: CalculateDisposableIncomeUseCase,
     private val updateIncome: UpdateIncomeUseCase,
+    private val budgetRepository: BudgetRepository,
+    private val timeProvider: TimeProvider
 ) : OutgoingPresenter() {
 
     private val _state = MutableStateFlow(OutgoingState(isLoading = true))
@@ -33,17 +37,25 @@ internal class OutgoingPresenterImpl(
 
     private fun startObservingData() {
         viewModelScope.safeLaunch(onError = onCoroutineError) {
+
+            val day = timeProvider.dayOfMonth()
+            val month = timeProvider.monthValue()
+            val dateLabel = "$day|$month"
+
             combine(
                 observeActiveOutgoings(),
                 calculateTotalOutgoings(),
                 calculateRemainingToPay(),
-                calculateDisposableIncome()
-            ) { outgoings, total, remaining, disposable ->
+                calculateDisposableIncome(),
+                budgetRepository.observeBudget().map { it.monthlyIncomeInCents }
+            ) { outgoings, total, remaining, disposable, income ->
                 _state.update { it.copy(
                     outgoings = outgoings,
                     totalOutgoingsInCents = total,
                     remainingToPayInCents = remaining,
                     disposableIncomeInCents = disposable,
+                    monthlyIncomeInCents = income,
+                    todayLabel = dateLabel,
                     isLoading = false
                 ) }
             }.collect()
