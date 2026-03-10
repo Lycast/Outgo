@@ -1,4 +1,4 @@
-package fr.abknative.outgo.android.ui.components
+package fr.abknative.outgo.android.components
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
@@ -13,36 +13,49 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import fr.abknative.outgo.android.ui.AccessibilityLabels
 import fr.abknative.outgo.android.ui.DashboardLabels
+import fr.abknative.outgo.android.ui.states.OutgoingFilter
+import fr.abknative.outgo.android.ui.theme.AppTheme
 
 @Composable
 fun EmptyStateView(
+    filter: OutgoingFilter,
     modifier: Modifier = Modifier
 ) {
+
+    val message = when (filter) {
+        OutgoingFilter.ALL -> DashboardLabels.EMPTY_ALL
+        OutgoingFilter.PAID -> DashboardLabels.EMPTY_PAID
+        OutgoingFilter.REMAINING -> DashboardLabels.EMPTY_REMAINING
+    }
+
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(32.dp),
+            .padding(AppTheme.spacing.extraLarge),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
+        Spacer(modifier = Modifier.height(AppTheme.spacing.large))
         Icon(
             imageVector = Icons.Rounded.Info,
             contentDescription = AccessibilityLabels.INFO_EMPTY_STATE,
-            modifier = Modifier.size(48.dp),
-            tint = MaterialTheme.colorScheme.outline
+            modifier = Modifier.size(32.dp),
+            tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
         )
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(AppTheme.spacing.extraLarge))
         Text(
-            text = DashboardLabels.EMPTY_STATE_TITLE,
+            text = message,
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onSurface
         )
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            text = DashboardLabels.EMPTY_STATE_DESC,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            textAlign = TextAlign.Center
-        )
+        Spacer(modifier = Modifier.height(AppTheme.spacing.medium))
+        if (filter == OutgoingFilter.ALL) {
+            Text(
+                text = DashboardLabels.EMPTY_STATE_DESC,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center
+            )
+        }
     }
 }

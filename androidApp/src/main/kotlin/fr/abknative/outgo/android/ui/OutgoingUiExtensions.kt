@@ -4,30 +4,29 @@ import androidx.compose.ui.graphics.Color
 import fr.abknative.outgo.core.api.SyncStatus
 import fr.abknative.outgo.outgoing.api.Recurrence
 import fr.abknative.outgo.outgoing.api.model.Outgoing
+import kotlin.math.absoluteValue
 
 // --- 1. Formatage de la Monnaie (Précision & Lisibilité) ---
 val Long.uiAmount: String
     get() {
-        val euros = this / 100
-        val cents = this % 100
+        val isNegative = this < 0
+        val absoluteValue = this.absoluteValue
+
+        val euros = absoluteValue / 100
+        val cents = absoluteValue % 100
+
         val formattedCents = cents.toString().padStart(2, '0')
 
-        // Formatage des milliers pour la lisibilité (ex: 1 500)
+        // 3. Formatage des milliers
         val eurosString = euros.toString()
             .reversed()
             .chunked(3)
             .joinToString(" ")
             .reversed()
 
-        return "$eurosString,$formattedCents ${CommonLabels.CURRENCY_SYMBOL}"
-    }
+        val prefix = if (isNegative) "-" else ""
 
-// --- 2. Enums (Récurrence et Synchronisation) ---
-val Recurrence.uiLabel: String
-    get() = when (this) {
-        Recurrence.MONTHLY -> "/ mois"
-        Recurrence.YEARLY -> "/ an"
-        Recurrence.UNKNOWN -> ""
+        return "$prefix$eurosString,$formattedCents ${CommonLabels.CURRENCY_SYMBOL}"
     }
 
 val SyncStatus.uiColor: Color
@@ -43,9 +42,6 @@ val SyncStatus.uiColor: Color
 val Outgoing.uiTitle: String
     get() = this.name.ifBlank { "Sans nom" }
 
-val Outgoing.uiAmountLabel: String
-    get() = "${this.amountInCents.uiAmount} ${this.recurrence.uiLabel}"
-
 val Outgoing.uiDueDayLabel: String
     get() = if (this.recurrence == Recurrence.YEARLY && this.dueMonth != null) {
         val monthLabel = getMonthName(this.dueMonth!!)
@@ -54,23 +50,17 @@ val Outgoing.uiDueDayLabel: String
         "Le $dueDay du mois"
     }
 
-// --- 4. Helpers Internes ---
-private fun getMonthName(month: Int): String = when (month) {
-    1 -> "Janvier" ; 2 -> "Février" ; 3 -> "Mars" ; 4 -> "Avril"
-    5 -> "Mai" ; 6 -> "Juin" ; 7 -> "Juillet" ; 8 -> "Août"
-    9 -> "Septembre" ; 10 -> "Octobre" ; 11 -> "Novembre" ; 12 -> "Décembre"
+val Outgoing.uiFrequencySummary: String
+    get() = when (this.recurrence) {
+        Recurrence.MONTHLY -> "Mensuel"
+        Recurrence.YEARLY -> "Annuel"
+        Recurrence.UNKNOWN -> ""
+    }
+
+fun getMonthName(month: Int): String = when (month) {
+    0 -> "" ; 1 -> "Janvier" ; 2 -> "Février" ; 3 -> "Mars"
+    4 -> "Avril"; 5 -> "Mai" ; 6 -> "Juin" ; 7 -> "Juillet"
+    8 -> "Août"; 9 -> "Septembre" ; 10 -> "Octobre"
+    11 -> "Novembre" ; 12 -> "Décembre"
     else -> ""
 }
-
-// --- 5. Formatage de la date du State ---
-/**
- * Transforme le format "9|3" envoyé par le Presenter en "9 Mars".
- */
-val String.uiTodayDate: String
-    get() {
-        val parts = this.split("|")
-        if (parts.size != 2) return ""
-        val day = parts[0]
-        val month = parts[1].toIntOrNull() ?: return ""
-        return "$day ${getMonthName(month)}"
-    }

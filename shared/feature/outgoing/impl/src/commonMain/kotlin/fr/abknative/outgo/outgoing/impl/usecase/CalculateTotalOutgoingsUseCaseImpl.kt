@@ -14,42 +14,17 @@ internal class CalculateTotalOutgoingsUseCaseImpl(
 
     override fun invoke(): Flow<Long> {
         return repository.observeActiveOutgoings().map { list ->
-            val currentMonthIndex = timeProvider.monthValue() // De 1 à 12
+            val thisMonth = timeProvider.monthValue()
 
             list.sumOf { item ->
-                when (item.recurrence) {
-                    Recurrence.MONTHLY -> item.amountInCents
-
-                    Recurrence.YEARLY -> {
-                        calculateYearlyShareForMonth(
-                            totalYearlyInCents = item.amountInCents,
-                            monthIndex = currentMonthIndex
-                        )
-                    }
-
-                    Recurrence.UNKNOWN -> 0L
+                val isImpactedThisMonth = when (item.recurrence) {
+                    Recurrence.MONTHLY -> true
+                    Recurrence.YEARLY -> item.dueMonth == thisMonth
+                    Recurrence.UNKNOWN -> false
                 }
+
+                if (isImpactedThisMonth) item.amountInCents else 0L
             }
-        }
-    }
-
-    /**
-     * Calculates the exact portion of an annual amount for a given month (1-12).
-     * Distributes any remaining cents across the first months of the year.
-     */
-    private fun calculateYearlyShareForMonth(
-        totalYearlyInCents: Long,
-        monthIndex: Int
-    ): Long {
-        val baseMonthly = totalYearlyInCents / 12
-        val remainder = totalYearlyInCents % 12
-
-        // If the current month is within the first 'X' months (where X is the remainder),
-        // add a 1-cent "bonus".
-        return if (monthIndex <= remainder) {
-            baseMonthly + 1
-        } else {
-            baseMonthly
         }
     }
 }

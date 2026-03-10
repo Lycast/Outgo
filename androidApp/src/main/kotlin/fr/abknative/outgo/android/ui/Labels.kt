@@ -15,12 +15,11 @@ object CommonLabels {
 // Fichier : DashboardLabels.kt
 object DashboardLabels {
     // Hero Section
-    const val HERO_INCOME_LABEL = "Mon Revenu"
-    const val HERO_BUDGET_EMPTY = "Entrer votre budget mensuel"
+    const val HERO_INCOME_LABEL = "Mon Budget"
     const val HERO_DISPOSABLE_INCOME_LABEL = "Reste à vivre"
     const val HERO_TOTAL_CHARGES_LABEL = "Total des charges"
     const val HERO_REMAINING_TO_PAY_LABEL = "Reste à prélever"
-    const val HERO_DATE_PREFIX = "Date du jour :"
+    const val HERO_DATE_PREFIX = "Budget du mois de "
 
     // Liste et Filtres
     const val SECTION_EXPENSES_TITLE = "Liste des dépenses"
@@ -29,15 +28,10 @@ object DashboardLabels {
     const val TAB_REMAINING = "RESTANTES"
 
     // États de la liste
-    const val EMPTY_STATE_TITLE = "Aucune dépense"
+    const val EMPTY_ALL = "Aucune dépense."
+    const val EMPTY_PAID = "Vous n'avez pas encore réglé de dépenses."
+    const val EMPTY_REMAINING = "Félicitations, tout est payé !"
     const val EMPTY_STATE_DESC = "Appuyez sur + pour ajouter votre premier abonnement ou dépense récurrente."
-}
-
-// Fichier : NavigationLabels.kt
-object NavigationLabels {
-    const val TAB_HOME = "Accueil"
-    const val TAB_STATS = "Stats"
-    const val TAB_SETTINGS = "Paramètres"
 }
 
 // Fichier : OutgoingFormContent.kt (Pour le BottomSheet)

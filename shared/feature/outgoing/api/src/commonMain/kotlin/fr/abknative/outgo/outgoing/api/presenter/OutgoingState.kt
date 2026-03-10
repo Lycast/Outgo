@@ -8,7 +8,8 @@ data class OutgoingState(
 
     // --- Données de la liste ---
     val outgoings: List<Outgoing> = emptyList(),
-    val todayLabel: String = "",
+    val currentDay: Int? = 0,
+    val currentMonth: Int = 0,
 
     // --- Calculs et Budget ---
     val monthlyIncomeInCents: Long = 0L,        // salaire / budget global

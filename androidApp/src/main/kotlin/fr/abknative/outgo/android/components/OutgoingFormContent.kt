@@ -1,7 +1,10 @@
 package fr.abknative.outgo.android.components
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -12,6 +15,7 @@ import fr.abknative.outgo.android.ui.CommonLabels
 import fr.abknative.outgo.android.ui.FormLabels
 import fr.abknative.outgo.android.ui.states.OutgoingFormEvent
 import fr.abknative.outgo.android.ui.states.OutgoingFormState
+import fr.abknative.outgo.android.ui.theme.AppTheme
 import fr.abknative.outgo.outgoing.api.Recurrence
 
 @Composable
@@ -21,6 +25,7 @@ fun OutgoingFormContent(
     onEvent: (OutgoingFormEvent) -> Unit,
     onCancel: () -> Unit,
     onSave: () -> Unit,
+    onDuplicate: (() -> Unit)? = null,
     onDelete: (() -> Unit)? = null,
 ) {
 
@@ -29,8 +34,8 @@ fun OutgoingFormContent(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+            .padding( AppTheme.spacing.large),
+        verticalArrangement = Arrangement.spacedBy( AppTheme.spacing.large)
     ) {
         // --- Titre ---
         Text(
@@ -50,7 +55,7 @@ fun OutgoingFormContent(
         // --- Sélecteur : Récurrence ---
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy( AppTheme.spacing.medium)
         ) {
             FilterChip(
                 selected = state.recurrenceSelection == Recurrence.MONTHLY,
@@ -68,7 +73,7 @@ fun OutgoingFormContent(
 
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
+            horizontalArrangement = Arrangement.spacedBy( AppTheme.spacing.large)
         ) {
             // --- Champ : Montant ---
             OutlinedTextField(
@@ -93,7 +98,7 @@ fun OutgoingFormContent(
                 },
                 label = { Text(FormLabels.FIELD_DATE) },
                 singleLine = true,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword), // NumberPassword évite souvent les virgules
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
                 modifier = Modifier.weight(1f)
             )
         }
@@ -118,7 +123,7 @@ fun OutgoingFormContent(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Bouton Supprimer
+            // 1. Bouton Supprimer (Visible uniquement en édition)
             if (isEditMode && onDelete != null) {
                 TextButton(
                     onClick = onDelete,
@@ -126,22 +131,34 @@ fun OutgoingFormContent(
                 ) {
                     Text(CommonLabels.ACTION_DELETE)
                 }
-            } else {
-                Spacer(modifier = Modifier.weight(1f))
             }
 
-            // Boutons Annuler / Enregistrer
-            Row(horizontalArrangement = Arrangement.End) {
-                TextButton(onClick = onCancel) {
-                    Text(CommonLabels.ACTION_CANCEL)
-                }
-                Spacer(modifier = Modifier.width(8.dp))
-                Button(
-                    onClick = onSave,
-                    enabled = state.isValid
+            Spacer(modifier = Modifier.weight(1f))
+
+            // 2. Bouton Dupliquer
+            if (isEditMode && onDuplicate != null) {
+                OutlinedIconButton(
+                    onClick = onDuplicate,
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
                 ) {
-                    Text(CommonLabels.ACTION_SAVE)
+                    Icon(
+                        imageVector = Icons.Default.ContentCopy,
+                        contentDescription = "Dupliquer",
+                        tint = MaterialTheme.colorScheme.primary
+                    )
                 }
+            }
+
+            // 3. Boutons Annuler / Enregistrer
+            TextButton(onClick = onCancel) {
+                Text(CommonLabels.ACTION_CANCEL)
+            }
+
+            Button(
+                onClick = onSave,
+                enabled = state.isValid
+            ) {
+                Text(CommonLabels.ACTION_SAVE)
             }
         }
     }

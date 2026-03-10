@@ -22,50 +22,44 @@ class OutgoingFormState(
     initialDueMonth: String = ""
 ) {
     var nameBuffer by mutableStateOf(initialName)
-        private set
-
     var amountBuffer by mutableStateOf(initialAmount)
-        private set
-
     var recurrenceSelection by mutableStateOf(initialRecurrence)
-        private set
-
     var dueDayBuffer by mutableStateOf(initialDueDay)
-        private set
-
     var dueMonthBuffer by mutableStateOf(initialDueMonth)
-        private set
 
-    // --- Validation ---
     val isValid: Boolean
         get() {
             val isNameValid = nameBuffer.isNotBlank()
-
             val amountDouble = amountBuffer.replace(',', '.').toDoubleOrNull()
             val isAmountValid = amountDouble != null && amountDouble > 0
-
             val dayInt = dueDayBuffer.toIntOrNull()
             val isDayValid = dayInt != null && dayInt in 1..31
 
             val isMonthValid = if (recurrenceSelection == Recurrence.YEARLY) {
                 val monthInt = dueMonthBuffer.toIntOrNull()
                 monthInt != null && monthInt in 1..12
-            } else {
-                true
-            }
+            } else true
 
             return isNameValid && isAmountValid && isDayValid && isMonthValid
         }
 
-    // --- Helper de conversion ---
     val amountInCents: Long
-        get() = amountBuffer.replace(',', '.').toBigDecimalOrNull()?.movePointRight(2)?.toLong() ?: 0L
+        get() = try {
+            amountBuffer.replace(',', '.')
+                .toBigDecimalOrNull()
+                ?.setScale(2, java.math.RoundingMode.HALF_UP)
+                ?.movePointRight(2)
+                ?.toLong() ?: 0L
+        } catch (e: Exception) { 0L }
 
     fun onEvent(event: OutgoingFormEvent) {
         when(event) {
             is OutgoingFormEvent.UpdateName -> nameBuffer = event.name
             is OutgoingFormEvent.UpdateAmount -> amountBuffer = event.amount
-            is OutgoingFormEvent.UpdateRecurrence -> recurrenceSelection = event.recurrence
+            is OutgoingFormEvent.UpdateRecurrence -> {
+                recurrenceSelection = event.recurrence
+                if (event.recurrence == Recurrence.MONTHLY) dueMonthBuffer = ""
+            }
             is OutgoingFormEvent.UpdateDueDay -> dueDayBuffer = event.day
             is OutgoingFormEvent.UpdateDueMonth -> dueMonthBuffer = event.month
         }

@@ -38,9 +38,8 @@ internal class OutgoingPresenterImpl(
     private fun startObservingData() {
         viewModelScope.safeLaunch(onError = onCoroutineError) {
 
-            val day = timeProvider.dayOfMonth()
-            val month = timeProvider.monthValue()
-            val dateLabel = "$day|$month"
+            val currentDay = timeProvider.dayOfMonth()
+            val currentMonth = timeProvider.monthValue()
 
             combine(
                 observeActiveOutgoings(),
@@ -55,7 +54,8 @@ internal class OutgoingPresenterImpl(
                     remainingToPayInCents = remaining,
                     disposableIncomeInCents = disposable,
                     monthlyIncomeInCents = income,
-                    todayLabel = dateLabel,
+                    currentDay = currentDay,
+                    currentMonth = currentMonth,
                     isLoading = false
                 ) }
             }.collect()
@@ -76,6 +76,7 @@ internal class OutgoingPresenterImpl(
             _state.update { it.copy(isLoading = true) }
 
             val result = saveOutgoing(
+                id = intent.id,
                 name = intent.name,
                 amountInCents = intent.amountInCents,
                 recurrence = intent.recurrence,

@@ -19,16 +19,15 @@ internal class CalculateRemainingToPayUseCaseImpl(
             val lastDayOfThisMonth = timeProvider.lastDayOfMonth()
 
             list.filter { item ->
-                val isDueThisMonth = when (item.recurrence) {
+                val isImpactedThisMonth = when (item.recurrence) {
                     Recurrence.MONTHLY -> true
                     Recurrence.YEARLY -> item.dueMonth == thisMonth
                     Recurrence.UNKNOWN -> false
                 }
 
-                if (!isDueThisMonth) return@filter false
+                if (!isImpactedThisMonth) return@filter false
 
                 val effectiveBillingDay = item.dueDay.coerceAtMost(lastDayOfThisMonth)
-
                 effectiveBillingDay >= today
 
             }.sumOf { it.amountInCents }
