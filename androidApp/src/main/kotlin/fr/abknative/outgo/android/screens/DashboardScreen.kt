@@ -110,6 +110,8 @@ fun DashboardScreen(
                 onFilterSelected = { currentFilter = it }
             )
 
+            Spacer(modifier = Modifier.height(AppTheme.spacing.extraSmall))
+
             // --- APPEL DU COMPOSANT LISTE ---
             ExpenseListContainer(
                 isLoading = state.isLoading,

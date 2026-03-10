@@ -41,7 +41,7 @@ fun ExpenseListContainer(
             .padding(top = AppTheme.spacing.small),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         shape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp, bottomStart = 0.dp, bottomEnd = 0.dp),
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f))
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f))
     ) {
         LazyColumn(
             modifier = Modifier.fillMaxWidth(),
@@ -61,7 +61,7 @@ fun ExpenseListContainer(
                                     false
                                 }
                             },
-                            positionalThreshold = { totalDistance -> totalDistance * 0.4f }
+                            positionalThreshold = { totalDistance -> totalDistance * 0.6f }
                         )
 
                         SwipeToDismissBox(
@@ -104,7 +104,7 @@ fun ExpenseListContainer(
                                 )
                             }
                         )
-                        HorizontalDivider(color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
+                        HorizontalDivider(color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f))
                     }
                 }
             }

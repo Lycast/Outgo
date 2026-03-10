@@ -18,12 +18,12 @@ object Palette {
 
 
     // Light Mode
-    val BgLight = 0xFFF7F7F8       // Fond principal très légèrement teinté (respire mieux que le blanc pur)
+    val BgLight = 0xFFF5F5F5       // Fond principal très légèrement teinté (respire mieux que le blanc pur)
     val SurfaceLight = 0xFFFFFFFF  // Cartes en blanc pur (ressortent sur le BgLight)
 
     // Dark Mode
     val BgDark = 0xFF000000        // Noir profond (standard Material)
-    val SurfaceDark = 0xFF101010   // Gris anthracite très subtil. Crée un relief sans agresser l'œil.
+    val SurfaceDark = 0xFF090909   // Gris anthracite très subtil. Crée un relief sans agresser l'œil.
 
     // --- GRIS DE CONTENU (Textes secondaires et Bordures) ---
 

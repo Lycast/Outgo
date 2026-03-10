@@ -71,7 +71,7 @@ fun SettingsScreen(
                     subtitle = "Aidez à maintenir l'application gratuite",
                     onClick = onCoffeeClick
                 )
-                HorizontalDivider(color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
+                HorizontalDivider(color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f))
                 SettingsRowClickable(
                     icon = Icons.Rounded.Lightbulb,
                     title = "Astuces & Aide",

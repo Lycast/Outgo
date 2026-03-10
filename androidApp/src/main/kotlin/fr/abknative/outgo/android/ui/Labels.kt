@@ -8,8 +8,6 @@ object CommonLabels {
     const val ACTION_SAVE = "Enregistrer"
     const val ACTION_CANCEL = "Annuler"
     const val ACTION_DELETE = "Supprimer"
-    const val ACTION_EDIT = "Éditer"
-    const val ERROR_GENERIC = "Une erreur est survenue"
 }
 
 // Fichier : DashboardLabels.kt
@@ -18,11 +16,10 @@ object DashboardLabels {
     const val HERO_INCOME_LABEL = "Mon Budget"
     const val HERO_DISPOSABLE_INCOME_LABEL = "Reste à vivre"
     const val HERO_TOTAL_CHARGES_LABEL = "Total des charges"
-    const val HERO_REMAINING_TO_PAY_LABEL = "Reste à prélever"
+    const val HERO_REMAINING_TO_PAY_LABEL = "Reste à payer"
     const val HERO_DATE_PREFIX = "Budget du mois de "
 
     // Liste et Filtres
-    const val SECTION_EXPENSES_TITLE = "Liste des dépenses"
     const val TAB_ALL = "TOUTES"
     const val TAB_PAID = "PAYÉES"
     const val TAB_REMAINING = "RESTANTES"

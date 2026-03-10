@@ -28,45 +28,38 @@ fun ExpenseFilterSelector(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = AppTheme.spacing.medium),
-        color = Color.Transparent,
+        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.03f),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f)),
+        shape = MaterialTheme.shapes.medium
     ) {
-        Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.small)) {
-            Text(
-                text = DashboardLabels.SECTION_EXPENSES_TITLE.uppercase(),
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.primary,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(start = AppTheme.spacing.small)
+        // FILTER TAB ROW
+        Row(
+            modifier = Modifier.padding(AppTheme.spacing.extraSmall),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            // Filtre TOUT
+            FilterTabItem(
+                label = DashboardLabels.TAB_ALL,
+                isSelected = selectedFilter == OutgoingFilter.ALL,
+                onClick = { onFilterSelected(OutgoingFilter.ALL) },
+                modifier = Modifier.weight(1f)
             )
 
-            // FILTER TAB ROW
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                // Filtre TOUT
-                FilterTabItem(
-                    label = DashboardLabels.TAB_ALL,
-                    isSelected = selectedFilter == OutgoingFilter.ALL,
-                    onClick = { onFilterSelected(OutgoingFilter.ALL) },
-                    modifier = Modifier.weight(1f)
-                )
+            // Filtre PAYÉS
+            FilterTabItem(
+                label = DashboardLabels.TAB_PAID,
+                isSelected = selectedFilter == OutgoingFilter.PAID,
+                onClick = { onFilterSelected(OutgoingFilter.PAID) },
+                modifier = Modifier.weight(1f)
+            )
 
-                // Filtre PAYÉS
-                FilterTabItem(
-                    label = DashboardLabels.TAB_PAID,
-                    isSelected = selectedFilter == OutgoingFilter.PAID,
-                    onClick = { onFilterSelected(OutgoingFilter.PAID) },
-                    modifier = Modifier.weight(1f)
-                )
-
-                // Filtre RESTANT
-                FilterTabItem(
-                    label = DashboardLabels.TAB_REMAINING,
-                    isSelected = selectedFilter == OutgoingFilter.REMAINING,
-                    onClick = { onFilterSelected(OutgoingFilter.REMAINING) },
-                    modifier = Modifier.weight(1f)
-                )
-            }
+            // Filtre RESTANT
+            FilterTabItem(
+                label = DashboardLabels.TAB_REMAINING,
+                isSelected = selectedFilter == OutgoingFilter.REMAINING,
+                onClick = { onFilterSelected(OutgoingFilter.REMAINING) },
+                modifier = Modifier.weight(1f)
+            )
         }
     }
 }
@@ -83,7 +76,10 @@ private fun FilterTabItem(
         modifier = modifier.height(36.dp),
         shape = MaterialTheme.shapes.medium,
         color = if (isSelected) MaterialTheme.colorScheme.surface else Color.Transparent,
-        border = if (isSelected)  BorderStroke(1.dp, MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f)) else null,
+        border = if (isSelected) BorderStroke(
+            0.5.dp,
+            MaterialTheme.colorScheme.primary
+        ) else null,
         contentColor = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
     ) {
         Box(contentAlignment = Alignment.Center) {
@@ -99,7 +95,6 @@ private fun FilterTabItem(
 @Preview(showBackground = true, name = "Filtres - État Sélectionné")
 @Composable
 fun PreviewExpenseFilterSelector() {
-    // État local pour permettre de cliquer dans le mode interactif
     var currentFilter by remember { mutableStateOf(OutgoingFilter.ALL) }
 
     OutgoTheme {

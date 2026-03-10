@@ -46,7 +46,7 @@ fun HeroSection(
             style = MaterialTheme.typography.labelMedium,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.padding(start = AppTheme.spacing.small)
+            modifier = Modifier.padding(start = AppTheme.spacing.medium)
         )
 
         Spacer(modifier = Modifier.height(AppTheme.spacing.small))
@@ -54,7 +54,7 @@ fun HeroSection(
         Card(
             modifier = Modifier.fillMaxWidth(),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-            border = BorderStroke(1.dp, MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f)),
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f)),
             shape = MaterialTheme.shapes.medium,
             onClick = onEditIncomeClick,
 
@@ -62,41 +62,34 @@ fun HeroSection(
             Column(
                 modifier = Modifier
                     .padding(AppTheme.spacing.large)
-                    .padding(bottom = AppTheme.spacing.extraLarge, top = AppTheme.spacing.medium),
+                    .padding(bottom = AppTheme.spacing.large, top = AppTheme.spacing.large),
                 verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.extraLarge)
             ) {
 
-                // --- Les 4 Barres de Progression ---
-                // 1. BUDGET
-                BudgetBarRow(
-                    label = DashboardLabels.HERO_INCOME_LABEL,
-                    amount = monthlyIncomeInCents.uiAmount,
-                    progress = monthlyIncomeInCents / maxValue,
-                    barColor = AppTheme.dashboardColors.budget
+                // --- BLOC 1 : Budget vs Reste à vivre (Le Positif) ---
+                PairedBudgetBar(
+                    topLabel = DashboardLabels.HERO_INCOME_LABEL,
+                    topAmount = monthlyIncomeInCents.uiAmount,
+                    topProgress = monthlyIncomeInCents / maxValue,
+                    topBarColor = AppTheme.dashboardColors.budget,
+
+                    bottomLabel = DashboardLabels.HERO_DISPOSABLE_INCOME_LABEL,
+                    bottomAmount = disposableIncomeInCents.uiAmount,
+                    bottomProgress = disposableRatio,
+                    bottomBarColor = liveColor
                 )
 
-                // 2. CHARGES TOTALES
-                BudgetBarRow(
-                    label = DashboardLabels.HERO_TOTAL_CHARGES_LABEL,
-                    amount = totalOutgoingsInCents.uiAmount,
-                    progress = totalOutgoingsInCents / maxValue,
-                    barColor = AppTheme.dashboardColors.charges
-                )
+                // --- BLOC 2 : Charges Totales vs Reste à payer (Le Négatif) ---
+                PairedBudgetBar(
+                    topLabel = DashboardLabels.HERO_TOTAL_CHARGES_LABEL,
+                    topAmount = totalOutgoingsInCents.uiAmount,
+                    topProgress = totalOutgoingsInCents / maxValue,
+                    topBarColor = AppTheme.dashboardColors.charges,
 
-                // 3. RESTE À PAYER (Ce mois-ci)
-                BudgetBarRow(
-                    label = DashboardLabels.HERO_REMAINING_TO_PAY_LABEL,
-                    amount = remainingToPayInCents.uiAmount,
-                    progress = remainingToPayInCents / maxValue,
-                    barColor = AppTheme.dashboardColors.remainingPay
-                )
-
-                // 4. RESTE À VIVRE (L'indicateur de santé)
-                BudgetBarRow(
-                    label = DashboardLabels.HERO_DISPOSABLE_INCOME_LABEL,
-                    amount = disposableIncomeInCents.uiAmount,
-                    progress = disposableRatio,
-                    barColor = liveColor
+                    bottomLabel = DashboardLabels.HERO_REMAINING_TO_PAY_LABEL,
+                    bottomAmount = remainingToPayInCents.uiAmount,
+                    bottomProgress = remainingToPayInCents / maxValue,
+                    bottomBarColor = AppTheme.dashboardColors.remainingPay
                 )
             }
         }
@@ -122,7 +115,7 @@ fun PreviewHeroSectionNominal() {
 @Preview(
     showBackground = true,
     name = "Hero Section - Budget Négatif",
-    //uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES
+    uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES
 )
 @Composable
 fun PreviewHeroSectionNegative() {
