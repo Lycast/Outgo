@@ -1,8 +1,9 @@
-package fr.abknative.outgo.android.components
+package fr.abknative.outgo.android.components.settings
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ChevronRight
 import androidx.compose.material3.*
@@ -10,8 +11,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import fr.abknative.outgo.android.components.common.CircleIcon
+import fr.abknative.outgo.android.ui.SettingsLabels
 import fr.abknative.outgo.android.ui.theme.AppTheme
 
 @Composable
@@ -25,7 +29,7 @@ fun SettingsSection(
             style = MaterialTheme.typography.labelMedium,
             color = MaterialTheme.colorScheme.primary,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(start = AppTheme.spacing.small)
+            modifier = Modifier.padding(start = AppTheme.spacing.medium)
         )
         Card(
             modifier = Modifier.fillMaxWidth(),
@@ -47,7 +51,7 @@ fun SettingsRowClickable(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick)
+            .clickable(onClick = onClick, role = Role.Button)
             .padding(AppTheme.spacing.medium),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
@@ -55,7 +59,7 @@ fun SettingsRowClickable(
         SettingsRowContent(icon, title, subtitle)
         Icon(
             imageVector = Icons.Rounded.ChevronRight,
-            contentDescription = null,
+            contentDescription = SettingsLabels.CHEVRON_DESC,
             tint = MaterialTheme.colorScheme.onSurfaceVariant
         )
     }
@@ -72,6 +76,11 @@ fun SettingsRowToggle(
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .toggleable(
+                value = isChecked,
+                onValueChange = onCheckedChange,
+                role = Role.Switch
+            )
             .padding(AppTheme.spacing.medium),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
@@ -79,7 +88,18 @@ fun SettingsRowToggle(
         SettingsRowContent(icon, title, subtitle)
         Switch(
             checked = isChecked,
-            onCheckedChange = onCheckedChange
+            onCheckedChange = null,
+            colors = SwitchDefaults.colors(
+                // ENABLE
+                checkedThumbColor = MaterialTheme.colorScheme.onSurface,
+                checkedTrackColor = MaterialTheme.colorScheme.primary,
+                checkedBorderColor = MaterialTheme.colorScheme.primary,
+
+                // DISABLE
+                uncheckedThumbColor = MaterialTheme.colorScheme.primary,
+                uncheckedTrackColor = MaterialTheme.colorScheme.surface,
+                uncheckedBorderColor = MaterialTheme.colorScheme.primary,
+            )
         )
     }
 }

@@ -1,4 +1,4 @@
-package fr.abknative.outgo.android.components
+package fr.abknative.outgo.android.components.common
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box

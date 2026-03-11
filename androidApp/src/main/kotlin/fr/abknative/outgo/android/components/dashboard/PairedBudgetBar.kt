@@ -1,4 +1,4 @@
-package fr.abknative.outgo.android.components
+package fr.abknative.outgo.android.components.dashboard
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import fr.abknative.outgo.android.ui.theme.AppTheme
 
 @Composable
 fun PairedBudgetBar(
@@ -25,7 +26,7 @@ fun PairedBudgetBar(
     bottomProgress: Float,
     bottomBarColor: Color
 ) {
-    Column(modifier = Modifier.fillMaxWidth()) {
+    Column(modifier = Modifier.fillMaxWidth().padding(horizontal = AppTheme.spacing.large)) {
 
         // --- 1. TEXTE DU HAUT ---
         Row(
@@ -46,19 +47,19 @@ fun PairedBudgetBar(
             )
         }
 
-        // --- 2. LES BARRES (Le cœur du Sandwich) ---
+        // --- 2. LES BARRES (Sandwich) ---
         Column(
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(2.dp)
         ) {
-            // Barre du Haut (Arrondie seulement en haut)
+            // Barre du Haut
             ProgressBarItem(
                 progress = topProgress,
                 color = topBarColor,
                 shape = RoundedCornerShape(topStart = 2.dp, topEnd = 2.dp)
             )
 
-            // Barre du Bas (Arrondie seulement en bas)
+            // Barre du Bas
             ProgressBarItem(
                 progress = bottomProgress,
                 color = bottomBarColor,
@@ -88,7 +89,7 @@ fun PairedBudgetBar(
     }
 }
 
-// Helper pour dessiner une demi-barre
+
 @Composable
 private fun ProgressBarItem(
     progress: Float,

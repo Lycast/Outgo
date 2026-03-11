@@ -17,7 +17,7 @@ object DashboardLabels {
     const val HERO_DISPOSABLE_INCOME_LABEL = "Reste à vivre"
     const val HERO_TOTAL_CHARGES_LABEL = "Total des charges"
     const val HERO_REMAINING_TO_PAY_LABEL = "Reste à payer"
-    const val HERO_DATE_PREFIX = "Budget du mois de "
+    const val HERO_DATE_PREFIX = "Budget de"
 
     // Liste et Filtres
     const val TAB_ALL = "TOUTES"
@@ -35,10 +35,10 @@ object DashboardLabels {
 object FormLabels {
     const val SHEET_TITLE_ADD = "Nouvelle dépense"
     const val SHEET_TITLE_EDIT = "Modifier la dépense"
-    const val FIELD_NAME = "Titre de la dépense"
+    const val FIELD_NAME = "Nom de la dépense"
     const val FIELD_AMOUNT = "Montant"
-    const val FIELD_DATE = "Jour de prélèvement"
-    const val FIELD_MONTH = "Mois de prélèvement (1-12)"
+    const val FIELD_DATE = "Jour (1-31)"
+    const val FIELD_MONTH = "Mois (1-12)"
     const val CYCLE_MONTHLY = "Mensuel"
     const val CYCLE_YEARLY = "Annuel"
 }
@@ -71,4 +71,31 @@ object AccessibilityLabels {
 
     // --- États ---
     const val INFO_EMPTY_STATE = "Information : liste vide"
+}
+
+// Dans DashboardLabels.kt ou un nouveau fichier SettingsLabels.kt
+object SettingsLabels {
+    const val CHEVRON_DESC = "Ouvrir"
+
+    // Sections
+    const val SECTION_APPEARANCE = "Apparence"
+    const val SECTION_SUPPORT = "Soutenir le projet"
+    const val SECTION_DATA = "Données"
+
+    // Apparence
+    const val DARK_MODE_TITLE = "Mode Sombre"
+    const val DARK_MODE_SUBTITLE = "Réduire la fatigue visuelle"
+
+    // Soutien
+    const val COFFEE_TITLE = "Offrir un café ☕"
+    const val COFFEE_SUBTITLE = "Aidez à maintenir l'application gratuite"
+    const val TIPS_TITLE = "Astuces & Aide"
+    const val TIPS_SUBTITLE = "Découvrir comment optimiser son budget"
+
+    // Données
+    const val SYNC_TITLE = "Synchronisation Cloud"
+    const val SYNC_SUBTITLE = "Sauvegardez vos données en toute sécurité"
+
+    // Footer
+    const val APP_VERSION_PREFIX = "Outgo v1.0.0"
 }

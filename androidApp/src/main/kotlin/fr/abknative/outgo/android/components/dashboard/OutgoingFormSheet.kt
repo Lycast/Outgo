@@ -1,4 +1,4 @@
-package fr.abknative.outgo.android.components
+package fr.abknative.outgo.android.components.dashboard
 
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
@@ -17,20 +17,18 @@ fun OutgoingFormSheet(
     sheetState: SheetState,
     onEvent: (OutgoingFormEvent) -> Unit,
     onDismiss: () -> Unit,
-    onSave: (OutgoingIntent.Save) -> Unit,
-    onDuplicate: ((OutgoingIntent.Save) -> Unit)?,
-    onDelete: ((String) -> Unit)?
+    onSave: (OutgoingIntent.Save) -> Unit
 ) {
     val scope = rememberCoroutineScope()
 
     val closeSheet = {
         scope.launch { sheetState.hide() }.invokeOnCompletion {
-            if (!sheetState.isVisible) onDismiss() // CORRECTION ICI
+            if (!sheetState.isVisible) onDismiss()
         }
     }
 
     ModalBottomSheet(
-        onDismissRequest = onDismiss, // CORRECTION ICI
+        onDismissRequest = onDismiss,
         sheetState = sheetState
     ) {
         OutgoingFormContent(
@@ -38,7 +36,7 @@ fun OutgoingFormSheet(
             onEvent = onEvent,
             onCancel = { closeSheet() },
             onSave = {
-                onSave( // CORRECTION ICI
+                onSave(
                     OutgoingIntent.Save(
                         id = formState.outgoingId,
                         name = formState.nameBuffer,
@@ -49,28 +47,7 @@ fun OutgoingFormSheet(
                     )
                 )
                 closeSheet()
-            },
-            onDuplicate = if (onDuplicate != null) {
-                {
-                    onDuplicate( // CORRECTION ICI
-                        OutgoingIntent.Save(
-                            id = null,
-                            name = formState.nameBuffer,
-                            amountInCents = formState.amountInCents,
-                            recurrence = formState.recurrenceSelection,
-                            dueDay = formState.dueDayBuffer.toIntOrNull() ?: 1,
-                            dueMonth = formState.dueMonthBuffer.toIntOrNull()
-                        )
-                    )
-                    closeSheet()
-                }
-            } else null,
-            onDelete = if (onDelete != null && formState.outgoingId != null) {
-                {
-                    onDelete(formState.outgoingId)
-                    closeSheet()
-                }
-            } else null
+            }
         )
     }
 }

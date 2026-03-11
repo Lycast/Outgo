@@ -1,4 +1,4 @@
-package fr.abknative.outgo.android.components
+package fr.abknative.outgo.android.components.dashboard
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
@@ -7,6 +7,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import fr.abknative.outgo.android.ui.AccessibilityLabels
 
 @Composable
@@ -17,7 +18,7 @@ fun AddActionTrigger(
     FloatingActionButton(
         onClick = onClick,
         containerColor = MaterialTheme.colorScheme.primary,
-        contentColor = MaterialTheme.colorScheme.onPrimary,
+        contentColor = Color.White,
         modifier = modifier
     ) {
         Icon(

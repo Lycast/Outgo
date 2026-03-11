@@ -1,4 +1,4 @@
-package fr.abknative.outgo.android.components
+package fr.abknative.outgo.android.components.dashboard
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons

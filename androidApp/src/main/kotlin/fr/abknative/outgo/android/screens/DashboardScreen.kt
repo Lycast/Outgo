@@ -4,7 +4,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import fr.abknative.outgo.android.components.*
+import fr.abknative.outgo.android.components.common.Header
+import fr.abknative.outgo.android.components.common.SyncPromotionModal
+import fr.abknative.outgo.android.components.dashboard.*
 import fr.abknative.outgo.android.ui.getMonthName
 import fr.abknative.outgo.android.ui.states.OutgoingFilter
 import fr.abknative.outgo.android.ui.states.rememberOutgoingFormState
@@ -69,6 +71,7 @@ fun DashboardScreen(
         }
     }
 
+    // --- COMPOSANT PRINCIPAL ---
     Scaffold(
         modifier = modifier.fillMaxSize(),
         snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -80,14 +83,7 @@ fun DashboardScreen(
                 onSyncNavigationClick = { onNavigateToSettings() }
             )
         },
-        floatingActionButton = {
-            AddActionTrigger(
-                onClick = {
-                    selectedOutgoing = null
-                    showFormSheet = true
-                }
-            )
-        }
+        floatingActionButton = { AddActionTrigger(onClick = { selectedOutgoing = null; showFormSheet = true }) }
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -103,16 +99,16 @@ fun DashboardScreen(
                 onEditIncomeClick = { showBudgetDialog = true }
             )
 
-            Spacer(modifier = Modifier.height(AppTheme.spacing.large))
+            Spacer(modifier = Modifier.height(AppTheme.spacing.medium))
 
             ExpenseFilterSelector(
                 selectedFilter = currentFilter,
                 onFilterSelected = { currentFilter = it }
             )
 
-            Spacer(modifier = Modifier.height(AppTheme.spacing.extraSmall))
+            Spacer(modifier = Modifier.height(AppTheme.spacing.medium))
 
-            // --- APPEL DU COMPOSANT LISTE ---
+            // --- COMPOSANT LISTE ---
             ExpenseListContainer(
                 isLoading = state.isLoading,
                 filteredList = filteredList,
@@ -145,16 +141,14 @@ fun DashboardScreen(
         )
     }
 
-    // --- APPEL DU COMPOSANT MODALE ---
+    // --- COMPOSANT MODALE ---
     if (showFormSheet) {
         OutgoingFormSheet(
             formState = formState,
             sheetState = sheetState,
             onEvent = { event -> formState.onEvent(event) },
             onDismiss = { showFormSheet = false },
-            onSave = { intent -> presenter.onIntent(intent) },
-            onDuplicate = if (formState.outgoingId != null) { intent -> presenter.onIntent(intent) } else null,
-            onDelete = if (formState.outgoingId != null) { id -> presenter.onIntent(OutgoingIntent.Delete(id)) } else null
+            onSave = { intent -> presenter.onIntent(intent) }
         )
     }
 }

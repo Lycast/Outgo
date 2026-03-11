@@ -15,7 +15,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import fr.abknative.outgo.android.components.*
+import fr.abknative.outgo.android.components.common.Header
+import fr.abknative.outgo.android.components.common.SyncPromotionModal
+import fr.abknative.outgo.android.components.settings.SettingsRowClickable
+import fr.abknative.outgo.android.components.settings.SettingsRowToggle
+import fr.abknative.outgo.android.components.settings.SettingsSection
+import fr.abknative.outgo.android.ui.SettingsLabels
 import fr.abknative.outgo.android.ui.theme.AppTheme
 import fr.abknative.outgo.android.ui.theme.OutgoTheme
 
@@ -36,7 +41,7 @@ fun SettingsScreen(
         modifier = modifier.fillMaxSize(),
         topBar = {
             Header(
-                isConnected = false,
+                isConnected = false, // todo À lier à ton AuthState plus tard
                 isSettingsScreen = true,
                 onSyncIconClick = { showSyncModal = true },
                 onSyncNavigationClick = onNavigateBack
@@ -48,51 +53,51 @@ fun SettingsScreen(
                 .fillMaxSize()
                 .verticalScroll(scrollState)
                 .padding(paddingValues)
-                .padding(AppTheme.spacing.large),
+                .padding(AppTheme.spacing.medium),
             verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.large)
         ) {
 
             // --- SECTION 1 : Apparence ---
-            SettingsSection(title = "Apparence") {
+            SettingsSection(title = SettingsLabels.SECTION_APPEARANCE) {
                 SettingsRowToggle(
                     icon = Icons.Rounded.DarkMode,
-                    title = "Mode Sombre",
-                    subtitle = "Réduire la fatigue visuelle",
+                    title = SettingsLabels.DARK_MODE_TITLE,
+                    subtitle = SettingsLabels.DARK_MODE_SUBTITLE,
                     isChecked = isDarkMode,
                     onCheckedChange = onToggleDarkMode
                 )
             }
 
             // --- SECTION 2 : Soutien & Communauté ---
-            SettingsSection(title = "Soutenir le projet") {
+            SettingsSection(title = SettingsLabels.SECTION_SUPPORT) {
                 SettingsRowClickable(
                     icon = Icons.Rounded.LocalCafe,
-                    title = "Offrir un café ☕",
-                    subtitle = "Aidez à maintenir l'application gratuite",
+                    title = SettingsLabels.COFFEE_TITLE,
+                    subtitle = SettingsLabels.COFFEE_SUBTITLE,
                     onClick = onCoffeeClick
                 )
                 HorizontalDivider(color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f))
                 SettingsRowClickable(
                     icon = Icons.Rounded.Lightbulb,
-                    title = "Astuces & Aide",
-                    subtitle = "Découvrir comment optimiser son budget",
+                    title = SettingsLabels.TIPS_TITLE,
+                    subtitle = SettingsLabels.TIPS_SUBTITLE,
                     onClick = onTipsClick
                 )
             }
 
             // --- SECTION 3 : Compte & Données ---
-            SettingsSection(title = "Données") {
+            SettingsSection(title = SettingsLabels.SECTION_DATA) {
                 SettingsRowClickable(
                     icon = Icons.Rounded.CloudSync,
-                    title = "Synchronisation Cloud",
-                    subtitle = "Sauvegardez vos données en toute sécurité",
+                    title = SettingsLabels.SYNC_TITLE,
+                    subtitle = SettingsLabels.SYNC_SUBTITLE,
                     onClick = { showSyncModal = true }
                 )
             }
 
-            // Version de l'app en bas
+            // Version de l'app (Footer)
             Text(
-                text = "Outgo v1.0.0",
+                text = SettingsLabels.APP_VERSION_PREFIX,
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier
@@ -107,7 +112,7 @@ fun SettingsScreen(
             onDismiss = { showSyncModal = false },
             onNavigateToLogin = {
                 showSyncModal = false
-                // TODO: Naviguer vers l'écran d'authentification (Semaine 5)
+                // TODO: Navigation vers l'Auth (Semaine 5)
             }
         )
     }

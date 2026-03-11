@@ -1,4 +1,4 @@
-package fr.abknative.outgo.android.components
+package fr.abknative.outgo.android.components.common
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.CloudSync

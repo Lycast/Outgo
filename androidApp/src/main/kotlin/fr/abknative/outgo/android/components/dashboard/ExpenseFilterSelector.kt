@@ -1,4 +1,4 @@
-package fr.abknative.outgo.android.components
+package fr.abknative.outgo.android.components.dashboard
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
@@ -28,13 +28,13 @@ fun ExpenseFilterSelector(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = AppTheme.spacing.medium),
-        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.03f),
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f)),
+        color = MaterialTheme.colorScheme.surface,
+        border = BorderStroke(1.dp,MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f)),
         shape = MaterialTheme.shapes.medium
     ) {
         // FILTER TAB ROW
         Row(
-            modifier = Modifier.padding(AppTheme.spacing.extraSmall),
+            modifier = Modifier.padding(AppTheme.spacing.small),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             // Filtre TOUT
@@ -75,18 +75,15 @@ private fun FilterTabItem(
         onClick = onClick,
         modifier = modifier.height(36.dp),
         shape = MaterialTheme.shapes.medium,
-        color = if (isSelected) MaterialTheme.colorScheme.surface else Color.Transparent,
-        border = if (isSelected) BorderStroke(
-            0.5.dp,
-            MaterialTheme.colorScheme.primary
-        ) else null,
-        contentColor = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+        color = if (isSelected) MaterialTheme.colorScheme.primary else Color.Transparent,
+        border = if (isSelected) BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)) else null,
+        contentColor = if (isSelected) Color.White else MaterialTheme.colorScheme.primary
     ) {
         Box(contentAlignment = Alignment.Center) {
             Text(
                 text = label,
                 style = MaterialTheme.typography.labelMedium,
-                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
+                fontWeight = if (isSelected) FontWeight.Medium else FontWeight.Normal
             )
         }
     }
@@ -101,17 +98,6 @@ fun PreviewExpenseFilterSelector() {
         ExpenseFilterSelector(
             selectedFilter = currentFilter,
             onFilterSelected = { currentFilter = it }
-        )
-    }
-}
-
-@Preview(showBackground = true, name = "Filtres - État Payé (Dark)")
-@Composable
-fun PreviewExpenseFilterSelectorPaid() {
-    OutgoTheme(darkTheme = true) {
-        ExpenseFilterSelector(
-            selectedFilter = OutgoingFilter.ALL,
-            onFilterSelected = {}
         )
     }
 }
