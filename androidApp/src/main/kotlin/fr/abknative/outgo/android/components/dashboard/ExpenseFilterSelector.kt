@@ -75,15 +75,15 @@ private fun FilterTabItem(
         onClick = onClick,
         modifier = modifier.height(36.dp),
         shape = MaterialTheme.shapes.medium,
-        color = if (isSelected) MaterialTheme.colorScheme.primary else Color.Transparent,
-        border = if (isSelected) BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)) else null,
-        contentColor = if (isSelected) Color.White else MaterialTheme.colorScheme.primary
+        color = if (isSelected) MaterialTheme.colorScheme.primary.copy(alpha = 0.1f) else Color.Transparent,
+        border = if (isSelected) BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null,
+        contentColor = MaterialTheme.colorScheme.primary
     ) {
         Box(contentAlignment = Alignment.Center) {
             Text(
                 text = label,
                 style = MaterialTheme.typography.labelMedium,
-                fontWeight = if (isSelected) FontWeight.Medium else FontWeight.Normal
+                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
             )
         }
     }

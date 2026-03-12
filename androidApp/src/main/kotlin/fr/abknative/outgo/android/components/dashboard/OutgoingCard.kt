@@ -62,7 +62,7 @@ fun OutgoingCard(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = AppTheme.spacing.large, vertical = AppTheme.spacing.medium),
+                .padding(horizontal = AppTheme.spacing.large, vertical = AppTheme.spacing.large),
             verticalAlignment = Alignment.CenterVertically
         ) {
             CircleIcon(Icons.Rounded.CreditCard)
@@ -114,7 +114,7 @@ fun OutgoingCard(
         if (isExpanded) {
             HorizontalDivider(
                 modifier = Modifier.padding(horizontal = AppTheme.spacing.large),
-                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.1f)
+                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.05f)
             )
 
             Row(

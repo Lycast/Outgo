@@ -91,6 +91,8 @@ fun DashboardScreen(
                 .padding(paddingValues)
         ) {
             HeroSection(
+                isExpanded = state.isHeroExpanded,
+                onToggleExpand = { presenter.onIntent(OutgoingIntent.ToggleHeroSection(!state.isHeroExpanded)) },
                 formattedTodayDate = formattedMonth,
                 monthlyIncomeInCents = state.monthlyIncomeInCents,
                 totalOutgoingsInCents = state.totalOutgoingsInCents,
@@ -99,14 +101,14 @@ fun DashboardScreen(
                 onEditIncomeClick = { showBudgetDialog = true }
             )
 
-            Spacer(modifier = Modifier.height(AppTheme.spacing.medium))
+            Spacer(modifier = Modifier.height(AppTheme.spacing.large))
 
             ExpenseFilterSelector(
                 selectedFilter = currentFilter,
                 onFilterSelected = { currentFilter = it }
             )
 
-            Spacer(modifier = Modifier.height(AppTheme.spacing.medium))
+            Spacer(modifier = Modifier.height(AppTheme.spacing.large))
 
             // --- COMPOSANT LISTE ---
             ExpenseListContainer(

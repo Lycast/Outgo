@@ -19,5 +19,8 @@ data class OutgoingState(
 
     // --- État Global ---
     val isCloudSyncActive: Boolean = false,
-    val error: AppException? = null
+    val error: AppException? = null,
+
+    // --- KeyValueStorage ---
+    val isHeroExpanded: Boolean = true
 )

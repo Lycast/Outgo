@@ -14,5 +14,6 @@ sealed interface OutgoingIntent {
 
     data class Delete(val id: String) : OutgoingIntent
     data class UpdateIncome(val amountInCents: Long) : OutgoingIntent
+    data class ToggleHeroSection(val isExpanded: Boolean) : OutgoingIntent
     object DismissError : OutgoingIntent
 }

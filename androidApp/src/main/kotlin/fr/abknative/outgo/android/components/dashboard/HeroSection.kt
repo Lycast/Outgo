@@ -1,15 +1,18 @@
 package fr.abknative.outgo.android.components.dashboard
 
 import android.content.res.Configuration
+import androidx.compose.animation.*
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import fr.abknative.outgo.android.ui.DashboardLabels
@@ -20,12 +23,15 @@ import kotlin.math.absoluteValue
 
 @Composable
 fun HeroSection(
+    isExpanded: Boolean,
+    onToggleExpand: () -> Unit,
     formattedTodayDate: String,
     monthlyIncomeInCents: Long,
     totalOutgoingsInCents: Long,
     disposableIncomeInCents: Long,
     remainingToPayInCents: Long,
-    onEditIncomeClick: () -> Unit
+    onEditIncomeClick: () -> Unit,
+
 ) {
 
     val maxValue = maxOf(monthlyIncomeInCents, totalOutgoingsInCents).coerceAtLeast(1L).toFloat()
@@ -53,43 +59,74 @@ fun HeroSection(
                 onEditIncomeClick = onEditIncomeClick
             )
 
-
             HorizontalDivider(
                 modifier = Modifier.padding(horizontal = AppTheme.spacing.large),
-                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.1f)
+                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f)
             )
 
-            Spacer(modifier = Modifier.height(AppTheme.spacing.extraLarge))
+            // 2. Animation de visibilité pour les Blocs 1 et 2
+            AnimatedVisibility(
+                visible = isExpanded,
+                enter = expandVertically() + fadeIn(),
+                exit = shrinkVertically() + fadeOut()
+            ) {
+                Column(modifier = Modifier.fillMaxWidth()) {
 
-            // --- BLOC 1 : Budget vs Reste à vivre ---
-            PairedBudgetBar(
-                topLabel = DashboardLabels.HERO_INCOME_LABEL,
-                topAmount = monthlyIncomeInCents.uiAmount,
-                topProgress = monthlyIncomeInCents / maxValue,
-                topBarColor = AppTheme.dashboardColors.budget,
+                    Spacer(modifier = Modifier.height(AppTheme.spacing.extraLarge))
 
-                bottomLabel = DashboardLabels.HERO_DISPOSABLE_INCOME_LABEL,
-                bottomAmount = disposableIncomeInCents.uiAmount,
-                bottomProgress = disposableRatio,
-                bottomBarColor = liveColor
-            )
+                    // --- BLOC 1 : Budget vs Reste à vivre ---
+                    PairedBudgetBar(
+                        topLabel = DashboardLabels.HERO_INCOME_LABEL,
+                        topAmount = monthlyIncomeInCents.uiAmount,
+                        topProgress = monthlyIncomeInCents / maxValue,
+                        topBarColor = AppTheme.dashboardColors.budget,
 
-            Spacer(modifier = Modifier.height(AppTheme.spacing.extraLarge))
+                        bottomLabel = DashboardLabels.HERO_DISPOSABLE_INCOME_LABEL,
+                        bottomAmount = disposableIncomeInCents.uiAmount,
+                        bottomProgress = disposableRatio,
+                        bottomBarColor = liveColor,
+                        bottomTextFontWeight = if (isNegativeLive) FontWeight.Medium else FontWeight.Bold,
+                        bottomTextColor = liveColor
+                    )
 
-            // --- BLOC 2 : Charges Totales vs Reste à payer ---
-            PairedBudgetBar(
-                topLabel = DashboardLabels.HERO_TOTAL_CHARGES_LABEL,
-                topAmount = totalOutgoingsInCents.uiAmount,
-                topProgress = totalOutgoingsInCents / maxValue,
-                topBarColor = AppTheme.dashboardColors.charges,
+                    Spacer(modifier = Modifier.height(AppTheme.spacing.large))
+                    HorizontalDivider(
+                        modifier = Modifier.padding(horizontal = AppTheme.spacing.large),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f)
+                    )
+                    Spacer(modifier = Modifier.height(AppTheme.spacing.large))
 
-                bottomLabel = DashboardLabels.HERO_REMAINING_TO_PAY_LABEL,
-                bottomAmount = remainingToPayInCents.uiAmount,
-                bottomProgress = remainingToPayInCents / maxValue,
-                bottomBarColor = AppTheme.dashboardColors.remainingPay
-            )
+                    // --- BLOC 2 : Charges Totales vs Reste à payer ---
+                    PairedBudgetBar(
+                        topLabel = DashboardLabels.HERO_TOTAL_CHARGES_LABEL,
+                        topAmount = totalOutgoingsInCents.uiAmount,
+                        topProgress = totalOutgoingsInCents / maxValue,
+                        topBarColor = AppTheme.dashboardColors.charges,
 
-            Spacer(modifier = Modifier.height(AppTheme.spacing.big))
+                        bottomLabel = DashboardLabels.HERO_REMAINING_TO_PAY_LABEL,
+                        bottomAmount = remainingToPayInCents.uiAmount,
+                        bottomProgress = remainingToPayInCents / maxValue,
+                        bottomBarColor = AppTheme.dashboardColors.remainingPay
+                    )
+
+                    Spacer(modifier = Modifier.height(AppTheme.spacing.small))
+                }
+            }
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { onToggleExpand() }
+                    .padding(vertical = AppTheme.spacing.small),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = if (isExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                    contentDescription = if (isExpanded) "Réduire" else "Développer",
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+                    modifier = Modifier.size(24.dp)
+                )
+            }
         }
     }
 }
@@ -105,7 +142,9 @@ fun PreviewHeroSectionNominal() {
             totalOutgoingsInCents = 120000L, // 1200.00€
             disposableIncomeInCents = 130000L, // 1300.00€
             remainingToPayInCents = 45000L,   // 450.00€
-            onEditIncomeClick = { /* Action de test */ }
+            onEditIncomeClick = { /* Action de test */ },
+            onToggleExpand = { /* Action de test */ },
+            isExpanded = false
         )
     }
 }
@@ -124,7 +163,9 @@ fun PreviewHeroSectionNegative() {
             totalOutgoingsInCents = 180000L,  // 1800.00€
             disposableIncomeInCents = -30000L, // -300.00€ (Alerte rouge)
             remainingToPayInCents = 20000L,    // 200.00€
-            onEditIncomeClick = { /* Action de test */ }
+            onEditIncomeClick = { /* Action de test */ },
+            onToggleExpand = { /* Action de test */ },
+            isExpanded = true
         )
     }
 }

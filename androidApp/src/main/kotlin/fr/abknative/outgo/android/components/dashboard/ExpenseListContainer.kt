@@ -56,7 +56,7 @@ fun ExpenseListContainer(
 
                         HorizontalDivider(
                             modifier = Modifier.padding(horizontal = AppTheme.spacing.large),
-                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.1f)
+                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f)
                         )
                     }
                 }

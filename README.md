@@ -53,21 +53,10 @@ Error Handling: Typed exception system (AppException) mapped to UI states throug
 
 Modern Build Logic: Advanced Gradle configuration using Kotlin DSL and Version Catalogs to eliminate configuration drift.
 
-Quick Start
-To run the different components of the project, use the following commands:
+## 📄 License & Contact
 
-Android
-Bash
-./gradlew :androidApp:installDebug
+Copyright (c) 2026 ABK Native. Proprietary software. All rights reserved. No part of this project may be copied, distributed, or modified without permission.
 
-iOS
-Open the iosApp/iosApp.xcworkspace in Xcode and press Cmd + R.
-(Note: Ensure you have run ./gradlew :shared:assembleXCFramework first if you are not using the KMP Xcode Plugin).
+Interested in unified architecture for your iOS, Android, or Web projects?
 
-Web (Compose HTML)
-Bash
-./gradlew :webApp:jsBrowserDevelopmentRun --continuous
-
-Server (Ktor)
-Bash
-./gradlew :server:run
+**[Get in touch via the website](https://www.abknative.fr/contact)**.

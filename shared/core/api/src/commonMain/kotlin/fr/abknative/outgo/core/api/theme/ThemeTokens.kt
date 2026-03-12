@@ -5,9 +5,10 @@ package fr.abknative.outgo.core.api.theme
 * On utilise des Long (format 0xFFRRGGBB) pour que ce soit compatible partout.
 */
 object Palette {
-    val BrandPrimary = 0xFF285ABF   // Bleu profond
-    val BrandSecondary = 0xFFC7A63A // Or/Accent
-    val BrandTertiary = 0xFF7B77C9  // Violet/Lavande
+    val BrandPrimary = 0xFF285ABF
+    val BrandSecondary = 0xFFC7A63A
+    val BrandTertiary = 0xFF7B77C9
+    val RedError = 0xFFB00020
 
     // HERO SECTION BAR COLOR
     val BarBudget = 0xFFB0BEC5
@@ -18,23 +19,19 @@ object Palette {
 
 
     // Light Mode
-    val BgLight = 0xFFF5F5F5       // Fond principal très légèrement teinté (respire mieux que le blanc pur)
-    val SurfaceLight = 0xFFFFFFFF  // Cartes en blanc pur (ressortent sur le BgLight)
+    val BgLight = 0xFFF5F5F5
+    val SurfaceLight = 0xFFFFFFFF
 
     // Dark Mode
-    val BgDark = 0xFF000000        // Noir profond (standard Material)
-    val SurfaceDark = 0xFF090909   // Gris anthracite très subtil. Crée un relief sans agresser l'œil.
+    val BgDark = 0xFF000000
+    val SurfaceDark = 0xFF000000
 
     // --- GRIS DE CONTENU (Textes secondaires et Bordures) ---
-
     // Light Mode
-    val TextVariantLight = 0xFF757575 // Gris moyen/foncé. Parfaitement lisible sur du blanc.
+    val TextVariantLight = 0xFF757575
 
     // Dark Mode
-    val TextVariantDark = 0xFFAAAAAA  // Gris clair doux. Ne "brille" pas trop sur le fond noir.
-
-
-    val RedError = 0xFFB00020
+    val TextVariantDark = 0xFFAAAAAA
 }
 
 /**

@@ -2,6 +2,7 @@ package fr.abknative.outgo.outgoing.impl.presenter
 
 import androidx.lifecycle.viewModelScope
 import fr.abknative.outgo.core.api.AppException
+import fr.abknative.outgo.core.api.KeyValueStorage
 import fr.abknative.outgo.core.api.Result
 import fr.abknative.outgo.core.api.TimeProvider
 import fr.abknative.outgo.core.api.extensions.safeLaunch
@@ -21,10 +22,17 @@ internal class OutgoingPresenterImpl(
     private val calculateDisposableIncome: CalculateDisposableIncomeUseCase,
     private val updateIncome: UpdateIncomeUseCase,
     private val budgetRepository: BudgetRepository,
-    private val timeProvider: TimeProvider
+    private val timeProvider: TimeProvider,
+    private val storage: KeyValueStorage
 ) : OutgoingPresenter() {
 
-    private val _state = MutableStateFlow(OutgoingState(isLoading = true))
+    private val heroExpandedKey = "hero_section_expanded"
+    private val _state = MutableStateFlow(
+        OutgoingState(
+            isLoading = true,
+            isHeroExpanded = storage.getBoolean(heroExpandedKey, true)
+        )
+    )
     override val state: StateFlow<OutgoingState> = _state.asStateFlow()
 
     private val onCoroutineError: (AppException) -> Unit = { error ->
@@ -68,6 +76,10 @@ internal class OutgoingPresenterImpl(
             is OutgoingIntent.Delete -> handleDelete(intent)
             is OutgoingIntent.UpdateIncome -> handleUpdateIncome(intent)
             is OutgoingIntent.DismissError -> { _state.update { it.copy(error = null) } }
+            is OutgoingIntent.ToggleHeroSection -> {
+                storage.putBoolean(heroExpandedKey, intent.isExpanded)
+                _state.update { it.copy(isHeroExpanded = intent.isExpanded) }
+            }
         }
     }
 

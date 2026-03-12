@@ -20,11 +20,15 @@ fun PairedBudgetBar(
     topAmount: String,
     topProgress: Float,
     topBarColor: Color,
+    topTextColor: Color = MaterialTheme.colorScheme.onSurface,
+    topTextFontWeight: FontWeight = FontWeight.Medium,
     // --- Données du Bas ---
     bottomLabel: String,
     bottomAmount: String,
     bottomProgress: Float,
-    bottomBarColor: Color
+    bottomBarColor: Color,
+    bottomTextColor: Color = MaterialTheme.colorScheme.onSurface,
+    bottomTextFontWeight: FontWeight = FontWeight.Medium,
 ) {
     Column(modifier = Modifier.fillMaxWidth().padding(horizontal = AppTheme.spacing.large)) {
 
@@ -37,13 +41,13 @@ fun PairedBudgetBar(
             Text(
                 text = topLabel,
                 style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurface
+                color =  MaterialTheme.colorScheme.onSurface
             )
             Text(
                 text = topAmount,
                 style = MaterialTheme.typography.bodyLarge,
-                fontWeight = FontWeight.Medium,
-                color = MaterialTheme.colorScheme.onSurface
+                fontWeight = topTextFontWeight,
+                color = topTextColor
             )
         }
 
@@ -82,8 +86,8 @@ fun PairedBudgetBar(
             Text(
                 text = bottomAmount,
                 style = MaterialTheme.typography.bodyLarge,
-                fontWeight = FontWeight.Medium,
-                color = MaterialTheme.colorScheme.onSurface
+                fontWeight = bottomTextFontWeight,
+                color = bottomTextColor
             )
         }
     }

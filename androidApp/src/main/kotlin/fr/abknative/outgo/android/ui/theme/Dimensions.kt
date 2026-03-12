@@ -19,6 +19,6 @@ data class OutgoSpacing(
 )
 
 /**
- * 1. On crée le "Local" pour stocker l'instance.
+ * "Local" pour stocker l'instance.
  */
 val LocalSpacing = staticCompositionLocalOf { OutgoSpacing() }
