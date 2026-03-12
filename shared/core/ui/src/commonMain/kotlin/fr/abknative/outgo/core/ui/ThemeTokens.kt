@@ -1,4 +1,4 @@
-package fr.abknative.outgo.core.api.theme
+package fr.abknative.outgo.core.ui
 
 /**
 * Palette de couleurs "brutes" de l'application.

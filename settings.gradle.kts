@@ -24,6 +24,7 @@ include(":shared:app")
 include(":shared:database")
 include(":shared:core:api")
 include(":shared:core:impl")
+include(":shared:core:ui")
 include(":shared:feature:outgoing:api")
 include(":shared:feature:outgoing:impl")
 

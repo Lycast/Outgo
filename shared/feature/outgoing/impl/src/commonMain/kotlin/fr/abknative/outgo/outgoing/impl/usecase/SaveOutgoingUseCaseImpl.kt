@@ -27,30 +27,36 @@ internal class SaveOutgoingUseCaseImpl(
         dueMonth: Int?
     ): Result<Unit, AppException> {
 
-
         if (name.isBlank()) return Result.Error(OutgoingError.EmptyName())
         if (amountInCents <= 0) return Result.Error(OutgoingError.InvalidAmount())
         if (dueDay !in 1..31) return Result.Error(OutgoingError.InvalidDate())
+
         val finalBillingMonth = when (recurrence) {
-            Recurrence.MONTHLY -> { null }
-            Recurrence.YEARLY -> { if (dueMonth == null || dueMonth !in 1..12) { return Result.Error(OutgoingError.InvalidDate()) } else dueMonth }
+            Recurrence.MONTHLY -> null
+            Recurrence.YEARLY -> {
+                if (dueMonth == null || dueMonth !in 1..12) return Result.Error(OutgoingError.InvalidDate())
+                dueMonth
+            }
             Recurrence.UNKNOWN -> return Result.Error(OutgoingError.UnknownCycle())
         }
 
         val currentTime = timeProvider.now()
         val existingOutgoing = id?.let { repository.getOutgoingById(it) }
-        val finalId = id ?: Uuid.random().toString()
-        val finalCreatedAt = existingOutgoing?.createdAt ?: currentTime
-        val finalSyncStatus = if (id == null) SyncStatus.PENDING_CREATE else SyncStatus.PENDING_UPDATE
+
+        val finalSyncStatus = when {
+            existingOutgoing == null -> SyncStatus.PENDING_CREATE
+            existingOutgoing.syncStatus == SyncStatus.PENDING_CREATE -> SyncStatus.PENDING_CREATE
+            else -> SyncStatus.PENDING_UPDATE
+        }
 
         val outgoing = Outgoing(
-            id = finalId,
+            id = id ?: Uuid.random().toString(),
             name = name.trim(),
             amountInCents = amountInCents,
             recurrence = recurrence,
             dueDay = dueDay,
             dueMonth = finalBillingMonth,
-            createdAt = finalCreatedAt,
+            createdAt = existingOutgoing?.createdAt ?: currentTime,
             updatedAt = currentTime,
             isDeleted = false,
             syncStatus = finalSyncStatus

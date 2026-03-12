@@ -4,10 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.CloudSync
-import androidx.compose.material.icons.rounded.DarkMode
-import androidx.compose.material.icons.rounded.Lightbulb
-import androidx.compose.material.icons.rounded.LocalCafe
+import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -31,6 +28,7 @@ fun SettingsScreen(
     onToggleDarkMode: (Boolean) -> Unit,
     onCoffeeClick: () -> Unit,
     onTipsClick: () -> Unit,
+    onContactClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
 
@@ -72,17 +70,24 @@ fun SettingsScreen(
             // --- SECTION 2 : Soutien & Communauté ---
             SettingsSection(title = SettingsLabels.SECTION_SUPPORT) {
                 SettingsRowClickable(
-                    icon = Icons.Rounded.LocalCafe,
-                    title = SettingsLabels.COFFEE_TITLE,
-                    subtitle = SettingsLabels.COFFEE_SUBTITLE,
-                    onClick = onCoffeeClick
-                )
-                HorizontalDivider(color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f))
-                SettingsRowClickable(
                     icon = Icons.Rounded.Lightbulb,
                     title = SettingsLabels.TIPS_TITLE,
                     subtitle = SettingsLabels.TIPS_SUBTITLE,
                     onClick = onTipsClick
+                )
+                HorizontalDivider(color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f))
+                SettingsRowClickable(
+                    icon = Icons.Rounded.Email,
+                    title = SettingsLabels.CONTACT_TITLE,
+                    subtitle = SettingsLabels.CONTACT_SUBTITLE,
+                    onClick = onContactClick
+                )
+                HorizontalDivider(color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f))
+                SettingsRowClickable(
+                    icon = Icons.Rounded.LocalCafe,
+                    title = SettingsLabels.COFFEE_TITLE,
+                    subtitle = SettingsLabels.COFFEE_SUBTITLE,
+                    onClick = onCoffeeClick
                 )
             }
 
@@ -130,7 +135,8 @@ fun PreviewSettingsScreen() {
             isDarkMode = darkMode,
             onToggleDarkMode = { darkMode = it },
             onCoffeeClick = { /* Action café */ },
-            onTipsClick = { /* Action astuces */ }
+            onTipsClick = { /* Action astuces */ },
+            onContactClick = { /* Action contact */ }
         )
     }
 }
@@ -144,7 +150,8 @@ fun PreviewSettingsScreenDark() {
             isDarkMode = true,
             onToggleDarkMode = { },
             onCoffeeClick = { },
-            onTipsClick = { }
+            onTipsClick = { },
+            onContactClick = { }
         )
     }
 }

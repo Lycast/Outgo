@@ -35,6 +35,10 @@ SET isDeleted = 1,
     updatedAt = ?
 WHERE id = ?;
 
+deletePhysical:
+DELETE FROM OutgoingEntity
+WHERE id = ?;
+
 /**
  * Retrieves a specific expense by its ID.
  */

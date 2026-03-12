@@ -45,7 +45,7 @@ fun DashboardScreen(
         initialDueMonth = selectedOutgoing?.dueMonth?.toString() ?: ""
     )
 
-    val formattedSelectedMonth = remember(state.selectedMonth) { getMonthName(state.selectedMonth) }
+    val formattedSelectedMonth = getMonthName(state.selectedMonth)
 
     val currentDay = state.currentDay ?: 0
     val currentMonth = state.currentMonth

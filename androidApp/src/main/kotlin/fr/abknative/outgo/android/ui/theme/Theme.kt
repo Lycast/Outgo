@@ -8,7 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
-import fr.abknative.outgo.core.api.theme.DesignColors
+import fr.abknative.outgo.core.ui.DesignColors
 
 // --- Mapping Mode Clair ---
 private val LightColorScheme = lightColorScheme(

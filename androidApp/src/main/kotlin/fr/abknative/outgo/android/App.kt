@@ -11,8 +11,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalUriHandler
 import fr.abknative.outgo.android.screens.DashboardScreen
 import fr.abknative.outgo.android.screens.SettingsScreen
+import fr.abknative.outgo.android.ui.SettingsLabels
 import fr.abknative.outgo.android.ui.theme.OutgoTheme
 import fr.abknative.outgo.app.nav.AppCoordinator
 import fr.abknative.outgo.app.nav.AppStep
@@ -25,6 +27,7 @@ fun App() {
 
     val coordinator: AppCoordinator = koinInject()
     val storage: KeyValueStorage = koinInject()
+    val uriHandler = LocalUriHandler.current
 
     val navState by coordinator.state.collectAsState()
 
@@ -67,8 +70,9 @@ fun App() {
                                 isDarkMode = newThemeValue
                                 storage.putBoolean(themeKey, newThemeValue)
                             },
-                            onCoffeeClick = { /* ... */ },
-                            onTipsClick = { /* ... */ }
+                            onCoffeeClick = { uriHandler.openUri(SettingsLabels.URL_COFFEE) },
+                            onTipsClick = { uriHandler.openUri(SettingsLabels.URL_SITE) },
+                            onContactClick = { uriHandler.openUri(SettingsLabels.URL_CONTACT) }
                         )
                     }
                 }

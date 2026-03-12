@@ -35,6 +35,7 @@ android {
 
 dependencies {
     implementation(projects.shared.app)
+    implementation(projects.shared.core.ui)
     implementation(projects.shared.core.api)
     implementation(projects.shared.feature.outgoing.api)
     implementation(projects.shared.database)

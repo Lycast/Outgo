@@ -53,10 +53,16 @@ internal class OutgoingRepositoryImpl(
     override suspend fun markAsDeleted(id: String): Result<Unit, AppException> = asResult(
         onError = { CommonError.DatabaseError(it) }
     ) {
-        queries.markAsDeleted(
-            updatedAt = timeProvider.now(),
-            id = id
-        )
+        val current = queries.getById(id).executeAsOneOrNull()
+
+        if (current?.syncStatus == SyncStatus.PENDING_CREATE.name) {
+            queries.deletePhysical(id)
+        } else {
+            queries.markAsDeleted(
+                updatedAt = timeProvider.now(),
+                id = id
+            )
+        }
     }
 
     override suspend fun getOutgoingById(id: String): Outgoing? {

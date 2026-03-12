@@ -3,7 +3,7 @@ package fr.abknative.outgo.android.ui.theme
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import fr.abknative.outgo.core.api.theme.DesignSpacing
+import fr.abknative.outgo.core.ui.DesignSpacing
 
 /**
  * Cette classe fait le pont entre tes tokens "Shared" et les "dp" Android.
