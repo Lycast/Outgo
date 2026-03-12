@@ -18,19 +18,11 @@ ON CONFLICT(id) DO UPDATE SET
     syncStatus = excluded.syncStatus;
 
 /**
- * Retrieves all subscriptions that are not logically deleted.
- */
-selectAllActive:
-SELECT * FROM OutgoingEntity
-WHERE isDeleted = 0
-ORDER BY dueMonth ASC, dueDay ASC;
-
-/**
  * Retrieves all subscriptions filtered by month that are not logically deleted.
  */
 getOutgoingsByMonth:
 SELECT * FROM OutgoingEntity
-WHERE  isDeleted = 0 AND dueMonth IS NULL OR dueMonth = :currentMonth
+WHERE isDeleted = 0 AND (dueMonth IS NULL OR dueMonth = :currentMonth)
 ORDER BY dueDay ASC;
 
 /**

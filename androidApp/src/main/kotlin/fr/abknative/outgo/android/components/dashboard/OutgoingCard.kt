@@ -133,7 +133,7 @@ fun OutgoingCard(
                     },
                     colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.error)
                 ) {
-                    Icon(Icons.Default.Delete, contentDescription = null, modifier = Modifier.size(18.dp))
+                    Icon(Icons.Default.Delete, contentDescription = AccessibilityLabels.DELETE_EXPENSE, modifier = Modifier.size(18.dp))
                     Spacer(modifier = Modifier.width(AppTheme.spacing.extraSmall))
                     Text(CommonLabels.ACTION_DELETE)
                 }
@@ -147,11 +147,11 @@ fun OutgoingCard(
                 ) {
                     Icon(
                         Icons.Default.ContentCopy,
-                        contentDescription = null,
+                        contentDescription = AccessibilityLabels.DUPLICATE_EXPENSE,
                         modifier = Modifier.size(18.dp)
                     )
                     Spacer(modifier = Modifier.width(AppTheme.spacing.extraSmall))
-                    Text("Dupliquer")
+                    Text(CommonLabels.ACTION_DUPLICATE)
                 }
 
                 // Bouton Éditer
@@ -163,11 +163,11 @@ fun OutgoingCard(
                 ) {
                     Icon(
                         Icons.Default.Edit,
-                        contentDescription = null,
+                        contentDescription = AccessibilityLabels.EDIT_EXPENSE,
                         modifier = Modifier.size(18.dp)
                     )
                     Spacer(modifier = Modifier.width(AppTheme.spacing.extraSmall))
-                    Text("Éditer")
+                    Text(CommonLabels.ACTION_EDIT)
                 }
             }
         }

@@ -24,8 +24,8 @@ internal class OutgoingRepositoryImpl(
 
     private val queries = database.outgoingQueries
 
-    override fun observeActiveOutgoings(): Flow<List<Outgoing>> {
-        return queries.selectAllActive()
+    override fun observeOutgoingsByMonth(month: Int): Flow<List<Outgoing>> {
+        return queries.getOutgoingsByMonth(currentMonth = month.toLong())
             .asFlow()
             .mapToList(dispatchers.io)
             .map { entities -> entities.map { it.toDomain() } }

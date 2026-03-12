@@ -12,6 +12,7 @@ sealed interface OutgoingIntent {
         val dueMonth: Int? = null
     ) : OutgoingIntent
 
+    data class SelectMonth(val month: Int) : OutgoingIntent
     data class Delete(val id: String) : OutgoingIntent
     data class UpdateIncome(val amountInCents: Long) : OutgoingIntent
     data class ToggleHeroSection(val isExpanded: Boolean) : OutgoingIntent

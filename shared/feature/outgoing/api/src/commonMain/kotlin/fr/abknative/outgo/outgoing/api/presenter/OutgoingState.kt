@@ -10,6 +10,7 @@ data class OutgoingState(
     val outgoings: List<Outgoing> = emptyList(),
     val currentDay: Int? = 0,
     val currentMonth: Int = 0,
+    val selectedMonth: Int,
 
     // --- Calculs et Budget ---
     val monthlyIncomeInCents: Long = 0L,        // salaire / budget global

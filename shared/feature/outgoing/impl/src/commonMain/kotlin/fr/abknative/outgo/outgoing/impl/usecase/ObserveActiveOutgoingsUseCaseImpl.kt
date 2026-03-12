@@ -9,7 +9,7 @@ internal class ObserveActiveOutgoingsUseCaseImpl(
     private val repository: OutgoingRepository
 ) : ObserveActiveOutgoingsUseCase {
 
-    override fun invoke(): Flow<List<Outgoing>> {
-        return repository.observeActiveOutgoings()
+    override fun invoke(month: Int): Flow<List<Outgoing>> {
+        return repository.observeOutgoingsByMonth(month)
     }
 }

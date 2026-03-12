@@ -11,6 +11,7 @@ import fr.abknative.outgo.outgoing.api.presenter.OutgoingPresenter
 import fr.abknative.outgo.outgoing.api.presenter.OutgoingState
 import fr.abknative.outgo.outgoing.api.repository.BudgetRepository
 import fr.abknative.outgo.outgoing.api.usecase.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 
 internal class OutgoingPresenterImpl(
@@ -30,10 +31,15 @@ internal class OutgoingPresenterImpl(
     private val _state = MutableStateFlow(
         OutgoingState(
             isLoading = true,
-            isHeroExpanded = storage.getBoolean(heroExpandedKey, true)
+            isHeroExpanded = storage.getBoolean(heroExpandedKey, true),
+            currentDay = timeProvider.dayOfMonth(),
+            currentMonth = timeProvider.monthValue(),
+            selectedMonth = timeProvider.monthValue()
         )
     )
     override val state: StateFlow<OutgoingState> = _state.asStateFlow()
+
+    private val selectedMonthFlow = MutableStateFlow(timeProvider.monthValue())
 
     private val onCoroutineError: (AppException) -> Unit = { error ->
         _state.update { it.copy(isLoading = false, error = error) }
@@ -43,29 +49,32 @@ internal class OutgoingPresenterImpl(
         startObservingData()
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     private fun startObservingData() {
         viewModelScope.safeLaunch(onError = onCoroutineError) {
 
-            val currentDay = timeProvider.dayOfMonth()
-            val currentMonth = timeProvider.monthValue()
-
             combine(
-                observeActiveOutgoings(),
-                calculateTotalOutgoings(),
-                calculateRemainingToPay(),
-                calculateDisposableIncome(),
-                budgetRepository.observeBudget().map { it.monthlyIncomeInCents }
-            ) { outgoings, total, remaining, disposable, income ->
-                _state.update { it.copy(
-                    outgoings = outgoings,
-                    totalOutgoingsInCents = total,
-                    remainingToPayInCents = remaining,
-                    disposableIncomeInCents = disposable,
-                    monthlyIncomeInCents = income,
-                    currentDay = currentDay,
-                    currentMonth = currentMonth,
-                    isLoading = false
-                ) }
+                selectedMonthFlow.flatMapLatest { month ->
+                    observeActiveOutgoings(month).map { list -> Pair(month, list) }
+                },
+                budgetRepository.observeBudget()
+            ) { (selectedMonth, outgoings), budget ->
+                val income = budget.monthlyIncomeInCents
+                val total = calculateTotalOutgoings(outgoings)
+                val remaining = calculateRemainingToPay(outgoings, selectedMonth)
+                val disposable = calculateDisposableIncome(income, total)
+
+                _state.update {
+                    it.copy(
+                        outgoings = outgoings,
+                        totalOutgoingsInCents = total,
+                        remainingToPayInCents = remaining,
+                        disposableIncomeInCents = disposable,
+                        monthlyIncomeInCents = income,
+                        selectedMonth = selectedMonth,
+                        isLoading = false
+                    )
+                }
             }.collect()
         }
     }
@@ -75,6 +84,7 @@ internal class OutgoingPresenterImpl(
             is OutgoingIntent.Save -> handleAdd(intent)
             is OutgoingIntent.Delete -> handleDelete(intent)
             is OutgoingIntent.UpdateIncome -> handleUpdateIncome(intent)
+            is OutgoingIntent.SelectMonth -> selectedMonthFlow.value = intent.month
             is OutgoingIntent.DismissError -> { _state.update { it.copy(error = null) } }
             is OutgoingIntent.ToggleHeroSection -> {
                 storage.putBoolean(heroExpandedKey, intent.isExpanded)

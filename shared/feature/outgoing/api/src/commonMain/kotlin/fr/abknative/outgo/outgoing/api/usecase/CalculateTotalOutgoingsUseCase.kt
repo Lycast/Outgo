@@ -1,7 +1,7 @@
 package fr.abknative.outgo.outgoing.api.usecase
 
-import kotlinx.coroutines.flow.Flow
+import fr.abknative.outgo.outgoing.api.model.Outgoing
 
 interface CalculateTotalOutgoingsUseCase {
-    operator fun invoke(): Flow<Long>
+    operator fun invoke(outgoings: List<Outgoing>): Long
 }

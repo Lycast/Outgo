@@ -8,6 +8,8 @@ object CommonLabels {
     const val ACTION_SAVE = "Enregistrer"
     const val ACTION_CANCEL = "Annuler"
     const val ACTION_DELETE = "Supprimer"
+    const val ACTION_EDIT = "Modifier"
+    const val ACTION_DUPLICATE = "Dupliquer"
 }
 
 // Fichier : DashboardLabels.kt
@@ -17,7 +19,6 @@ object DashboardLabels {
     const val HERO_DISPOSABLE_INCOME_LABEL = "Reste à vivre"
     const val HERO_TOTAL_CHARGES_LABEL = "Total des charges"
     const val HERO_REMAINING_TO_PAY_LABEL = "Reste à payer"
-    const val HERO_DATE_PREFIX = "Budget de"
 
     // Liste et Filtres
     const val TAB_ALL = "TOUTES"
@@ -29,6 +30,16 @@ object DashboardLabels {
     const val EMPTY_PAID = "Vous n'avez pas encore réglé de dépenses."
     const val EMPTY_REMAINING = "Félicitations, tout est payé !"
     const val EMPTY_STATE_DESC = "Appuyez sur + pour ajouter votre premier abonnement ou dépense récurrente."
+
+    const val DEFAULT_NAME = "Sans nom"
+    const val DUE_PREFIX = "Le"
+    const val DUE_MONTHLY_SUFFIX = "du mois"
+
+    // Noms des mois pour l'affichage
+    const val MONTH_1 = "Janvier" ; const val MONTH_2 = "Février" ; const val MONTH_3 = "Mars"
+    const val MONTH_4 = "Avril"   ; const val MONTH_5 = "Mai"     ; const val MONTH_6 = "Juin"
+    const val MONTH_7 = "Juillet" ; const val MONTH_8 = "Août"    ; const val MONTH_9 = "Septembre"
+    const val MONTH_10 = "Octobre"; const val MONTH_11 = "Novembre"; const val MONTH_12 = "Décembre"
 }
 
 // Fichier : OutgoingFormContent.kt (Pour le BottomSheet)
@@ -63,7 +74,20 @@ object AccessibilityLabels {
     // --- Header & Synchronisation ---
     const val SYNCED = "Synchronisé avec le serveur"
     const val NOT_SYNCED = "Non synchronisé, appuyez pour configurer"
-    const val SYNC_ICON = "Icône de statut de synchronisation"
+    const val DELETE_EXPENSE = "Supprimer cette dépense"
+    const val EDIT_EXPENSE = "Modifier cette dépense"
+    const val DUPLICATE_EXPENSE = "Dupliquer cette dépense"
+
+    // --- Navigation & Header ---
+    const val EDIT_BUDGET = "Modifier le budget"
+    const val NAVIGATE_HOME = "Retour au Dashboard"
+    const val NAVIGATE_SETTINGS = "Paramètres"
+
+    // --- Dashboard & Hero Section ---
+    const val PREVIOUS_MONTH = "Mois précédent"
+    const val NEXT_MONTH = "Mois suivant"
+    const val EXPAND_HERO = "Développer les détails du budget"
+    const val COLLAPSE_HERO = "Réduire les détails du budget"
 
     // --- Actions ---
     const val ADD_EXPENSE = "Ajouter une nouvelle dépense"
@@ -72,7 +96,6 @@ object AccessibilityLabels {
     // --- États ---
     const val INFO_EMPTY_STATE = "Information : liste vide"
 }
-
 // Dans DashboardLabels.kt ou un nouveau fichier SettingsLabels.kt
 object SettingsLabels {
     const val CHEVRON_DESC = "Ouvrir"

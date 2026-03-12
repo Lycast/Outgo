@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import fr.abknative.outgo.android.ui.AccessibilityLabels
 import fr.abknative.outgo.android.ui.DashboardLabels
 import fr.abknative.outgo.android.ui.theme.AppTheme
 import fr.abknative.outgo.android.ui.theme.OutgoTheme
@@ -25,13 +26,13 @@ import kotlin.math.absoluteValue
 fun HeroSection(
     isExpanded: Boolean,
     onToggleExpand: () -> Unit,
-    formattedTodayDate: String,
+    formattedMonthDate: String,
     monthlyIncomeInCents: Long,
     totalOutgoingsInCents: Long,
     disposableIncomeInCents: Long,
     remainingToPayInCents: Long,
-    onEditIncomeClick: () -> Unit,
-
+    onPreviousMonthClick: () -> Unit,
+    onNextMonthClick: () -> Unit
 ) {
 
     val maxValue = maxOf(monthlyIncomeInCents, totalOutgoingsInCents).coerceAtLeast(1L).toFloat()
@@ -55,8 +56,9 @@ fun HeroSection(
 
             // --- TITRE ---
             MonthBudgetSelector(
-                formattedTodayDate = formattedTodayDate,
-                onEditIncomeClick = onEditIncomeClick
+                formattedMonthDate = formattedMonthDate,
+                onPreviousMonthClick = onPreviousMonthClick,
+                onNextMonthClick = onNextMonthClick
             )
 
             HorizontalDivider(
@@ -122,7 +124,7 @@ fun HeroSection(
             ) {
                 Icon(
                     imageVector = if (isExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
-                    contentDescription = if (isExpanded) "Réduire" else "Développer",
+                    contentDescription = if (isExpanded) AccessibilityLabels.COLLAPSE_HERO else AccessibilityLabels.EXPAND_HERO,
                     tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
                     modifier = Modifier.size(24.dp)
                 )
@@ -137,13 +139,14 @@ fun HeroSection(
 fun PreviewHeroSectionNominal() {
     OutgoTheme {
         HeroSection(
-            formattedTodayDate = "Mars",
+            formattedMonthDate = "Mars",
             monthlyIncomeInCents = 250000L, // 2500.00€
             totalOutgoingsInCents = 120000L, // 1200.00€
             disposableIncomeInCents = 130000L, // 1300.00€
             remainingToPayInCents = 45000L,   // 450.00€
-            onEditIncomeClick = { /* Action de test */ },
             onToggleExpand = { /* Action de test */ },
+            onPreviousMonthClick = { /* Action de test */ },
+            onNextMonthClick = { /* Action de test */ },
             isExpanded = false
         )
     }
@@ -158,13 +161,14 @@ fun PreviewHeroSectionNominal() {
 fun PreviewHeroSectionNegative() {
     OutgoTheme {
         HeroSection(
-            formattedTodayDate = "Mars",
+            formattedMonthDate = "Mars",
             monthlyIncomeInCents = 150000L,  // 1500.00€
             totalOutgoingsInCents = 180000L,  // 1800.00€
             disposableIncomeInCents = -30000L, // -300.00€ (Alerte rouge)
             remainingToPayInCents = 20000L,    // 200.00€
-            onEditIncomeClick = { /* Action de test */ },
             onToggleExpand = { /* Action de test */ },
+            onPreviousMonthClick = { /* Action de test */ },
+            onNextMonthClick = { /* Action de test */ },
             isExpanded = true
         )
     }

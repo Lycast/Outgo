@@ -44,7 +44,8 @@ fun SettingsScreen(
                 isConnected = false, // todo À lier à ton AuthState plus tard
                 isSettingsScreen = true,
                 onSyncIconClick = { showSyncModal = true },
-                onSyncNavigationClick = onNavigateBack
+                onSyncNavigationClick = onNavigateBack,
+                onEditBudgetClick = { /* Disable here */ }
             )
         }
     ) { paddingValues ->

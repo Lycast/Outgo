@@ -45,13 +45,29 @@ fun DashboardScreen(
         initialDueMonth = selectedOutgoing?.dueMonth?.toString() ?: ""
     )
 
-    val formattedMonth = remember(state.currentMonth) { getMonthName(state.currentMonth) }
+    val formattedSelectedMonth = remember(state.selectedMonth) { getMonthName(state.selectedMonth) }
+
     val currentDay = state.currentDay ?: 0
-    val filteredList = remember(state.outgoings, currentFilter, currentDay) {
+    val currentMonth = state.currentMonth
+    val selectedMonth = state.selectedMonth
+    val filteredList = remember(state.outgoings, currentFilter, currentDay, currentMonth, selectedMonth) {
         when (currentFilter) {
             OutgoingFilter.ALL -> state.outgoings
-            OutgoingFilter.PAID -> state.outgoings.filter { it.dueDay < currentDay }
-            OutgoingFilter.REMAINING -> state.outgoings.filter { it.dueDay >= currentDay }
+            OutgoingFilter.PAID -> {
+                when {
+                    selectedMonth < currentMonth -> state.outgoings
+                    selectedMonth > currentMonth -> emptyList()
+                    else -> state.outgoings.filter { it.dueDay < currentDay }
+                }
+            }
+
+            OutgoingFilter.REMAINING -> {
+                when {
+                    selectedMonth < currentMonth -> emptyList()
+                    selectedMonth > currentMonth -> state.outgoings
+                    else -> state.outgoings.filter { it.dueDay >= currentDay }
+                }
+            }
         }
     }
 
@@ -80,7 +96,8 @@ fun DashboardScreen(
                 isConnected = state.isCloudSyncActive,
                 isSettingsScreen = false,
                 onSyncIconClick = { showSyncModal = true },
-                onSyncNavigationClick = { onNavigateToSettings() }
+                onSyncNavigationClick = { onNavigateToSettings() },
+                onEditBudgetClick = { showBudgetDialog = true }
             )
         },
         floatingActionButton = { AddActionTrigger(onClick = { selectedOutgoing = null; showFormSheet = true }) }
@@ -93,12 +110,19 @@ fun DashboardScreen(
             HeroSection(
                 isExpanded = state.isHeroExpanded,
                 onToggleExpand = { presenter.onIntent(OutgoingIntent.ToggleHeroSection(!state.isHeroExpanded)) },
-                formattedTodayDate = formattedMonth,
+                formattedMonthDate = formattedSelectedMonth,
                 monthlyIncomeInCents = state.monthlyIncomeInCents,
                 totalOutgoingsInCents = state.totalOutgoingsInCents,
                 disposableIncomeInCents = state.disposableIncomeInCents,
                 remainingToPayInCents = state.remainingToPayInCents,
-                onEditIncomeClick = { showBudgetDialog = true }
+                onPreviousMonthClick = {
+                    val newMonth = if (state.selectedMonth == 1) 12 else state.selectedMonth - 1
+                    presenter.onIntent(OutgoingIntent.SelectMonth(newMonth))
+                },
+                onNextMonthClick = {
+                    val newMonth = if (state.selectedMonth == 12) 1 else state.selectedMonth + 1
+                    presenter.onIntent(OutgoingIntent.SelectMonth(newMonth))
+                }
             )
 
             Spacer(modifier = Modifier.height(AppTheme.spacing.large))

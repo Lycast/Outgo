@@ -4,5 +4,9 @@ import fr.abknative.outgo.outgoing.api.model.Outgoing
 import kotlinx.coroutines.flow.Flow
 
 interface ObserveActiveOutgoingsUseCase {
-    operator fun invoke(): Flow<List<Outgoing>>
+    /**
+     * Observe le flux des dépenses actives pour un mois donné.
+     * @param month Le mois sélectionné (1-12).
+     */
+    operator fun invoke(month: Int): Flow<List<Outgoing>>
 }

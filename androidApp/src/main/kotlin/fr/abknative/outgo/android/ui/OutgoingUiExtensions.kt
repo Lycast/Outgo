@@ -40,27 +40,27 @@ val SyncStatus.uiColor: Color
 
 // --- 3. L'Entité Outgoing (Mapping pour les Cards) ---
 val Outgoing.uiTitle: String
-    get() = this.name.ifBlank { "Sans nom" }
+    get() = this.name.ifBlank { DashboardLabels.DEFAULT_NAME }
 
 val Outgoing.uiDueDayLabel: String
     get() = if (this.recurrence == Recurrence.YEARLY && this.dueMonth != null) {
         val monthLabel = getMonthName(this.dueMonth!!)
-        "Le $dueDay $monthLabel"
+        "${DashboardLabels.DUE_PREFIX} $dueDay $monthLabel"
     } else {
-        "Le $dueDay du mois"
+        "${DashboardLabels.DUE_PREFIX} $dueDay ${DashboardLabels.DUE_MONTHLY_SUFFIX}"
     }
 
 val Outgoing.uiFrequencySummary: String
     get() = when (this.recurrence) {
-        Recurrence.MONTHLY -> "Mensuel"
-        Recurrence.YEARLY -> "Annuel"
+        Recurrence.MONTHLY -> FormLabels.CYCLE_MONTHLY
+        Recurrence.YEARLY -> FormLabels.CYCLE_YEARLY
         Recurrence.UNKNOWN -> ""
     }
 
 fun getMonthName(month: Int): String = when (month) {
-    1 -> "Janvier" ; 2 -> "Février" ; 3 -> "Mars"
-    4 -> "Avril"; 5 -> "Mai" ; 6 -> "Juin" ; 7 -> "Juillet"
-    8 -> "Août"; 9 -> "Septembre" ; 10 -> "Octobre"
-    11 -> "Novembre" ; 12 -> "Décembre"
+    1 -> DashboardLabels.MONTH_1 ; 2 -> DashboardLabels.MONTH_2 ; 3 -> DashboardLabels.MONTH_3
+    4 -> DashboardLabels.MONTH_4 ; 5 -> DashboardLabels.MONTH_5 ; 6 -> DashboardLabels.MONTH_6
+    7 -> DashboardLabels.MONTH_7 ; 8 -> DashboardLabels.MONTH_8 ; 9 -> DashboardLabels.MONTH_9
+    10 -> DashboardLabels.MONTH_10; 11 -> DashboardLabels.MONTH_11; 12 -> DashboardLabels.MONTH_12
     else -> ""
 }
