@@ -114,7 +114,7 @@ object SettingsLabels {
     val SYNC_TITLE @Composable get() = stringResource(Res.string.settings_sync_title)
     val SYNC_SUBTITLE @Composable get() = stringResource(Res.string.settings_sync_subtitle)
 
-    const val URL_COFFEE = "https://www.buymeacoffee.com/abknative"
+    const val URL_COFFEE = "https://buymeacoffee.com/lycast"
     const val URL_SITE = "https://abknative.fr"
     const val URL_CONTACT = "https://abknative.fr/contact"
 
