@@ -12,14 +12,13 @@ kotlin {
     
     sourceSets {
         commonMain.dependencies {
-            // Koin Core
-            implementation(libs.koin.core)
-
-            // Importation des réalisations (qui contiennent les Koin Modules locaux)
             implementation(projects.shared.core.impl)
             implementation(projects.shared.database)
             implementation(projects.shared.feature.outgoing.impl)
 
+            implementation(libs.koin.core)
+
+            implementation(libs.kotlinx.coroutines.core)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

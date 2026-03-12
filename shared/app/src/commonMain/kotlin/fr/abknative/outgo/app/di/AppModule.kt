@@ -1,10 +1,16 @@
 package fr.abknative.outgo.app.di
 
+import fr.abknative.outgo.app.nav.AppCoordinator
 import fr.abknative.outgo.core.impl.di.coreModule
 import fr.abknative.outgo.database.di.databaseModule
 import fr.abknative.outgo.outgoing.impl.di.outgoingModule
 import org.koin.core.context.startKoin
 import org.koin.dsl.KoinAppDeclaration
+import org.koin.dsl.module
+
+val navigationModule = module {
+    single { AppCoordinator() }
+}
 
 /**
  * Starts the Koin DI graph with shared modules.
@@ -14,6 +20,7 @@ import org.koin.dsl.KoinAppDeclaration
 fun initKoin(appDeclaration: KoinAppDeclaration = {}) = startKoin {
     appDeclaration()
     modules(
+        navigationModule,
         coreModule,
         databaseModule(),
         outgoingModule()

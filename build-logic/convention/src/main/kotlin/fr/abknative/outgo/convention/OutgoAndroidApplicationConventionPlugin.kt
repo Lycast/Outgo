@@ -1,6 +1,6 @@
 package fr.abknative.outgo.convention
 
-import com.android.build.api.dsl.ApplicationExtension // Attention: différent de LibraryExtension
+import com.android.build.api.dsl.ApplicationExtension
 import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
