@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Outgo</string>
-    <string name="error_outgoing_empty_name">Le nom de l'abonnement ne peut pas être vide.</string>
+    <string name="error_outgoing_empty_name">L'intitulé de la dépense ne peut pas être vide.</string>
     <string name="error_outgoing_invalid_amount">Le montant doit être supérieur à zéro.</string>
     <string name="error_global_network">Erreur de connexion réseau.</string>
     <string name="error_global_unknown">Une erreur technique est survenue.</string>
@@ -43,9 +43,9 @@
 
     <string name="form_sheet_title_add">Nouvelle dépense prévisible</string>
     <string name="form_sheet_title_edit">Modifier la dépense</string>
-    <string name="form_field_name">Intitulé de la dépense</string>
-    <string name="form_field_amount">Montant</string>
-    <string name="form_field_date_desc">Entrez la récurrence et la date de votre dépense.</string>
+    <string name="form_field_name">Entrez l'intitulé.</string>
+    <string name="form_field_amount">Entrez le montant</string>
+    <string name="form_field_date_desc">Sélectionnez la récurrence et entrez la date de votre dépense.</string>
     <string name="form_field_day">Jour (1-31)</string>
     <string name="form_field_month">Mois (1-12)</string>
     <string name="form_cycle_monthly">Mensuel</string>
@@ -64,7 +64,7 @@
     <string name="settings_section_appearance">Apparence</string>
     <string name="settings_section_support">Soutenir le projet</string>
     <string name="settings_section_data">Données</string>
-    <string name="settings_dark_mode_title">Mode Sombre</string>
+    <string name="settings_dark_mode_title">Mode sombre</string>
     <string name="settings_dark_mode_subtitle">Réduire la fatigue visuelle</string>
     <string name="settings_coffee_title">Offrir un café ☕</string>
     <string name="settings_coffee_subtitle">Aidez à maintenir l'application gratuite</string>
@@ -72,7 +72,7 @@
     <string name="settings_tips_subtitle">Présentation du projet, aide et astuces</string>
     <string name="settings_contact_title">Me contacter</string>
     <string name="settings_contact_subtitle">Une question, une idée ou un bug ?</string>
-    <string name="settings_sync_title">Synchronisation Cloud</string>
+    <string name="settings_sync_title">Synchronisation cloud</string>
     <string name="settings_sync_subtitle">Sauvegardez vos données en toute sécurité</string>
     <string name="settings_app_version_prefix">Outgo v1.0.0</string>
 
