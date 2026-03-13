@@ -86,7 +86,7 @@ fun SettingsScreen(
                     icon = Icons.Rounded.LocalCafe,
                     title = SettingsLabels.COFFEE_TITLE,
                     subtitle = SettingsLabels.COFFEE_SUBTITLE,
-                    onClick = onCoffeeClick
+                    onClick = { /*onCoffeeClick*/ }
                 )
             }
 
