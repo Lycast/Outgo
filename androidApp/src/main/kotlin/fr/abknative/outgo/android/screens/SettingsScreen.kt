@@ -43,7 +43,6 @@ fun SettingsScreen(
                 isSettingsScreen = true,
                 onSyncIconClick = { showSyncModal = true },
                 onSyncNavigationClick = onNavigateBack,
-                onEditBudgetClick = { /* Disable here */ }
             )
         }
     ) { paddingValues ->

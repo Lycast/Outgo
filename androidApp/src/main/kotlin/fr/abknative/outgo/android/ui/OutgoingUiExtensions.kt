@@ -3,12 +3,12 @@ package fr.abknative.outgo.android.ui
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import fr.abknative.outgo.core.api.SyncStatus
+import fr.abknative.outgo.core.ui.Palette
 import fr.abknative.outgo.outgoing.api.Recurrence
 import fr.abknative.outgo.outgoing.api.model.Outgoing
 import kotlin.math.absoluteValue
 
-// --- 1. Formatage de la Monnaie ---
-// Pas besoin de @Composable ici, CURRENCY_SYMBOL est une constante pure.
+// --- Formatage de la Monnaie ---
 val Long.uiAmount: String
     get() {
         val isNegative = this < 0
@@ -30,7 +30,6 @@ val Long.uiAmount: String
         return "$prefix$eurosString,$formattedCents ${CommonLabels.CURRENCY_SYMBOL}"
     }
 
-// Pas besoin de @Composable, Color ne dépend d'aucun contexte.
 val SyncStatus.uiColor: Color
     get() = when (this) {
         SyncStatus.SYNCED -> Color(0xFF4CAF50)
@@ -40,12 +39,17 @@ val SyncStatus.uiColor: Color
         SyncStatus.UNKNOWN -> Color.Gray
     }
 
+val Recurrence.uiRecurrenceColor: Color
+    get() = when (this) {
+        Recurrence.YEARLY -> Color(Palette.BrandSecondary)
+        Recurrence.MONTHLY -> Color(Palette.BrandTertiary)
+        Recurrence.UNKNOWN -> Color.Gray
+    }
+
 // --- 3. L'Entité Outgoing ---
-// Ajout de @Composable sur le getter
 val Outgoing.uiTitle: String
     @Composable get() = this.name.ifBlank { DashboardLabels.DEFAULT_NAME }
 
-// Ajout de @Composable sur le getter
 val Outgoing.uiDueDayLabel: String
     @Composable get() = if (this.recurrence == Recurrence.YEARLY && this.dueMonth != null) {
         val monthLabel = getMonthName(this.dueMonth!!)
@@ -54,7 +58,6 @@ val Outgoing.uiDueDayLabel: String
         "${DashboardLabels.DUE_PREFIX} $dueDay ${DashboardLabels.DUE_MONTHLY_SUFFIX}"
     }
 
-// Ajout de @Composable sur le getter
 val Outgoing.uiFrequencySummary: String
     @Composable get() = when (this.recurrence) {
         Recurrence.MONTHLY -> FormLabels.CYCLE_MONTHLY
@@ -62,7 +65,6 @@ val Outgoing.uiFrequencySummary: String
         Recurrence.UNKNOWN -> ""
     }
 
-// Ajout de @Composable sur la fonction car elle retourne des Labels
 @Composable
 fun getMonthName(month: Int): String = when (month) {
     1 -> DashboardLabels.MONTH_1 ; 2 -> DashboardLabels.MONTH_2 ; 3 -> DashboardLabels.MONTH_3

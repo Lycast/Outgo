@@ -59,7 +59,7 @@ internal class OutgoingPresenterImpl(
                 },
                 budgetRepository.observeBudget()
             ) { (selectedMonth, outgoings), budget ->
-                val income = budget.monthlyIncomeInCents
+                val income = budget?.monthlyIncomeInCents ?: 0L
                 val total = calculateTotalOutgoings(outgoings)
                 val remaining = calculateRemainingToPay(outgoings, selectedMonth)
                 val disposable = calculateDisposableIncome(income, total)

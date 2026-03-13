@@ -31,7 +31,7 @@ fun OutgoingFormContent(
         modifier = modifier
             .fillMaxWidth()
             .padding(AppTheme.spacing.large),
-        verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.large),
+        verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.medium),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // --- Titre ---
@@ -40,92 +40,118 @@ fun OutgoingFormContent(
             style = MaterialTheme.typography.titleLarge
         )
 
+        Spacer(modifier = Modifier.height(AppTheme.spacing.small))
+
         // --- Champ : Nom de la dépense ---
         OutlinedTextField(
             value = state.nameBuffer,
             onValueChange = { onEvent(OutgoingFormEvent.UpdateName(it)) },
             label = { Text(FormLabels.FIELD_NAME) },
             singleLine = true,
-            keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences, imeAction = ImeAction.Next),
+            keyboardOptions = KeyboardOptions(
+                capitalization = KeyboardCapitalization.Sentences,
+                imeAction = ImeAction.Next
+            ),
             modifier = Modifier.fillMaxWidth()
         )
 
-        // --- Sélecteur : Récurrence ---
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.medium)
-        ) {
-            val chipColors = FilterChipDefaults.filterChipColors(
-                containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
-                labelColor = MaterialTheme.colorScheme.onSurface,
-                selectedContainerColor = MaterialTheme.colorScheme.primary,
-                selectedLabelColor = Color.White,
+        // --- Champ : Montant ---
+        OutlinedTextField(
+            value = state.amountBuffer,
+            onValueChange = { newValue ->
+                if (newValue.all { it.isDigit() || it == '.' || it == ',' }) {
+                    onEvent(OutgoingFormEvent.UpdateAmount(newValue))
+                }
+            },
+            label = { Text(FormLabels.FIELD_AMOUNT) },
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal, imeAction = ImeAction.Next),
+            suffix = { Text(CommonLabels.CURRENCY_SYMBOL) },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(modifier = Modifier.height(AppTheme.spacing.small))
+
+        Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.small)) {
+
+            Text(
+                text = FormLabels.FIELD_DATE_DESC,
+                style = MaterialTheme.typography.bodyMedium
             )
 
-            FilterChip(
-                selected = state.recurrenceSelection == Recurrence.MONTHLY,
-                onClick = { onEvent(OutgoingFormEvent.UpdateRecurrence(Recurrence.MONTHLY)) },
-                label = { Text(FormLabels.CYCLE_MONTHLY) },
-                colors = chipColors,
-                border = null,
-                modifier = Modifier.weight(1f)
-            )
-            FilterChip(
-                selected = state.recurrenceSelection == Recurrence.YEARLY,
-                onClick = { onEvent(OutgoingFormEvent.UpdateRecurrence(Recurrence.YEARLY)) },
-                label = { Text(FormLabels.CYCLE_YEARLY) },
-                colors = chipColors,
-                border = null,
-                modifier = Modifier.weight(1f)
-            )
-        }
+            // --- Sélecteur : Récurrence ---
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.small)
+            ) {
+                val chipColors = FilterChipDefaults.filterChipColors(
+                    containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                    labelColor = MaterialTheme.colorScheme.onSurface,
+                    selectedContainerColor = MaterialTheme.colorScheme.primary,
+                    selectedLabelColor = Color.White,
+                )
 
-        Row(
-            modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min),
-            horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.large)
-        ) {
-            // --- Champ : Montant ---
-            OutlinedTextField(
-                value = state.amountBuffer,
-                onValueChange = { newValue ->
-                    if (newValue.all { it.isDigit() || it == '.' || it == ',' }) {
-                        onEvent(OutgoingFormEvent.UpdateAmount(newValue))
-                    }
-                },
-                label = { Text(FormLabels.FIELD_AMOUNT) },
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal, imeAction = ImeAction.Next),
-                suffix = { Text(CommonLabels.CURRENCY_SYMBOL) },
-                modifier = Modifier.weight(1f).fillMaxHeight()
-            )
+                FilterChip(
+                    selected = state.recurrenceSelection == Recurrence.MONTHLY,
+                    onClick = { onEvent(OutgoingFormEvent.UpdateRecurrence(Recurrence.MONTHLY)) },
+                    label = { Text(FormLabels.CYCLE_MONTHLY) },
+                    colors = chipColors,
+                    border = null,
+                    modifier = Modifier.weight(1f)
+                )
+                FilterChip(
+                    selected = state.recurrenceSelection == Recurrence.YEARLY,
+                    onClick = { onEvent(OutgoingFormEvent.UpdateRecurrence(Recurrence.YEARLY)) },
+                    label = { Text(FormLabels.CYCLE_YEARLY) },
+                    colors = chipColors,
+                    border = null,
+                    modifier = Modifier.weight(1f)
+                )
+            }
 
-            // --- Champ : Jour de prélèvement ---
-            OutlinedTextField(
-                value = state.dueDayBuffer,
-                onValueChange = { newValue ->
-                    if (newValue.all { it.isDigit() }) onEvent(OutgoingFormEvent.UpdateDueDay(newValue))
-                },
-                label = { Text(FormLabels.FIELD_DATE) },
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number,
-                    imeAction = if(state.recurrenceSelection == Recurrence.YEARLY) ImeAction.Next else ImeAction.Done
-                ),
-                modifier = Modifier.weight(1f).fillMaxHeight()
-            )
-        }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(IntrinsicSize.Min),
+                horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.large)
+            ) {
 
-        // --- Champ conditionnel : Mois de prélèvement ---
-        if (state.recurrenceSelection == Recurrence.YEARLY) {
-            OutlinedTextField(
-                value = state.dueMonthBuffer,
-                onValueChange = { newValue ->
-                    if (newValue.all { it.isDigit() }) onEvent(OutgoingFormEvent.UpdateDueMonth(newValue))
-                },
-                label = { Text(FormLabels.FIELD_MONTH) },
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
-                modifier = Modifier.fillMaxWidth()
-            )
+                // --- Champ : Jour de prélèvement ---
+                OutlinedTextField(
+                    value = state.dueDayBuffer,
+                    onValueChange = { newValue ->
+                        if (newValue.all { it.isDigit() }) onEvent(OutgoingFormEvent.UpdateDueDay(newValue))
+                    },
+                    label = { Text(FormLabels.FIELD_DAY) },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Number,
+                        imeAction = if (state.recurrenceSelection == Recurrence.YEARLY) ImeAction.Next else ImeAction.Done
+                    ),
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
+                )
+
+                // --- Champ conditionnel : Mois de prélèvement ---
+                if (state.recurrenceSelection == Recurrence.YEARLY) {
+                    OutlinedTextField(
+                        value = state.dueMonthBuffer,
+                        onValueChange = { newValue ->
+                            if (newValue.all { it.isDigit() }) onEvent(OutgoingFormEvent.UpdateDueMonth(newValue))
+                        },
+                        label = { Text(FormLabels.FIELD_MONTH) },
+                        singleLine = true,
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Number,
+                            imeAction = ImeAction.Done
+                        ),
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxHeight()
+                    )
+                }
+            }
         }
 
         // --- Actions Boutons ---
@@ -145,7 +171,7 @@ fun OutgoingFormContent(
                 onClick = onSave,
                 enabled = state.isValid
             ) {
-                Text(CommonLabels.ACTION_SAVE)
+                Text(CommonLabels.ACTION_SAVE, color = Color.White)
             }
         }
     }

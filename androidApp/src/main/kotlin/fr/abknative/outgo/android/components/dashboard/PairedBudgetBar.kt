@@ -11,7 +11,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import fr.abknative.outgo.android.ui.theme.AppTheme
+import fr.abknative.outgo.android.components.common.InfoTooltip
+import fr.abknative.outgo.android.ui.DashboardLabels
 
 @Composable
 fun PairedBudgetBar(
@@ -20,17 +21,13 @@ fun PairedBudgetBar(
     topAmount: String,
     topProgress: Float,
     topBarColor: Color,
-    topTextColor: Color = MaterialTheme.colorScheme.onSurface,
-    topTextFontWeight: FontWeight = FontWeight.Medium,
     // --- Données du Bas ---
     bottomLabel: String,
     bottomAmount: String,
     bottomProgress: Float,
     bottomBarColor: Color,
-    bottomTextColor: Color = MaterialTheme.colorScheme.onSurface,
-    bottomTextFontWeight: FontWeight = FontWeight.Medium,
 ) {
-    Column(modifier = Modifier.fillMaxWidth().padding(horizontal = AppTheme.spacing.large)) {
+    Column(modifier = Modifier.fillMaxWidth()) {
 
         // --- 1. TEXTE DU HAUT ---
         Row(
@@ -40,14 +37,12 @@ fun PairedBudgetBar(
         ) {
             Text(
                 text = topLabel,
-                style = MaterialTheme.typography.bodyLarge,
+                style = MaterialTheme.typography.bodySmall,
                 color =  MaterialTheme.colorScheme.onSurface
             )
             Text(
                 text = topAmount,
-                style = MaterialTheme.typography.bodyLarge,
-                fontWeight = topTextFontWeight,
-                color = topTextColor
+                color =  MaterialTheme.colorScheme.onSurface
             )
         }
 
@@ -72,23 +67,27 @@ fun PairedBudgetBar(
         }
 
 
-        // --- 3. TEXTE DU BAS ---
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.Top
+        InfoTooltip(
+            title = DashboardLabels.TOOLTIP_BALANCE_DUE_TITLE,
+            description = DashboardLabels.TOOLTIP_BALANCE_DUE_DESC,
         ) {
-            Text(
-                text = bottomLabel,
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-            Text(
-                text = bottomAmount,
-                style = MaterialTheme.typography.bodyLarge,
-                fontWeight = bottomTextFontWeight,
-                color = bottomTextColor
-            )
+            // --- 3. TEXTE DU BAS ---
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.Top
+            ) {
+                Text(
+                    text = bottomLabel,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Text(
+                    text = bottomAmount,
+                    fontWeight = FontWeight.SemiBold,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
         }
     }
 }

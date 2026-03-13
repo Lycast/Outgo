@@ -10,11 +10,14 @@
     <string name="common_action_delete">Supprimer</string>
     <string name="common_action_edit">Modifier</string>
     <string name="common_action_duplicate">Dupliquer</string>
+    <string name="common_action_close">Fermer</string>
 
-    <string name="dashboard_hero_income">Mon Budget</string>
-    <string name="dashboard_hero_disposable_income">Reste à vivre</string>
-    <string name="dashboard_hero_total_charges">Total des charges</string>
-    <string name="dashboard_hero_remaining_to_pay">Reste à payer</string>
+    <string name="dashboard_tooltip_balance_title">Votre reste à vivre</string>
+    <string name="dashboard_tooltip_balance_desc">C'est le montant final dont vous disposez (ou qu'il vous manque) après avoir soustrait l'ensemble de vos dépenses.</string>
+    <string name="dashboard_tooltip_balance_due_title">Votre reste à payer</string>
+    <string name="dashboard_tooltip_balance_due_desc">C'est le montant de vos dépenses prévisibles qu'il vous reste à payer pour ce mois-ci.</string>
+    <string name="dashboard_hero_total_charges">Total des dépenses</string>
+    <string name="dashboard_hero_remaining_to_pay">Dépenses restantes à payer</string>
     <string name="dashboard_tab_all">TOUTES</string>
     <string name="dashboard_tab_paid">PAYÉES</string>
     <string name="dashboard_tab_remaining">RESTANTES</string>
@@ -38,11 +41,12 @@
     <string name="dashboard_month_11">Novembre</string>
     <string name="dashboard_month_12">Décembre</string>
 
-    <string name="form_sheet_title_add">Nouvelle dépense</string>
+    <string name="form_sheet_title_add">Nouvelle dépense prévisible</string>
     <string name="form_sheet_title_edit">Modifier la dépense</string>
-    <string name="form_field_name">Nom de la dépense</string>
+    <string name="form_field_name">Intitulé de la dépense</string>
     <string name="form_field_amount">Montant</string>
-    <string name="form_field_date">Jour (1-31)</string>
+    <string name="form_field_date_desc">Entrez la récurrence et la date de votre dépense.</string>
+    <string name="form_field_day">Jour (1-31)</string>
     <string name="form_field_month">Mois (1-12)</string>
     <string name="form_cycle_monthly">Mensuel</string>
     <string name="form_cycle_yearly">Annuel</string>
@@ -53,7 +57,8 @@
     <string name="header_sync_promo_action_later">Plus tard</string>
 
     <string name="budget_dialog_title">Mon budget mensuel</string>
-    <string name="budget_dialog_desc">Saisissez le montant total alloué à vos dépenses fixes ce mois-ci.</string>
+    <string name="budget_dialog_desc">Saisissez votre budget total par mois.</string>
+    <string name="budget_dialog_info">Le montant de votre budget permettra ensuite de calculer ce qu'il vous restera en fonction de vos dépenses.</string>
     <string name="budget_dialog_field">Montant du budget</string>
 
     <string name="settings_section_appearance">Apparence</string>
@@ -87,4 +92,5 @@
     <string name="a11y_close_dialog">Fermer la boîte de dialogue</string>
     <string name="a11y_info_empty_state">Information : liste vide</string>
     <string name="a11y_chevron_desc">Ouvrir</string>
+    <string name="a11y_balance_desc">Votre reste à vivre</string>
 </resources>

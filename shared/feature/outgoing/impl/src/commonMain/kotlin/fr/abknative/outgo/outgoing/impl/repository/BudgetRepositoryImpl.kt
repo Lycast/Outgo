@@ -10,9 +10,6 @@ import fr.abknative.outgo.outgoing.impl.mapper.toDomain
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-/**
- * SQLDelight implementation of [BudgetRepository].
- */
 internal class BudgetRepositoryImpl(
     database: OutgoDatabase,
     private val dispatchers: AppDispatchers
@@ -20,24 +17,34 @@ internal class BudgetRepositoryImpl(
 
     private val queries = database.budgetQueries
 
-    override fun observeBudget(id: String): Flow<Budget> {
+    override fun observeBudget(id: String): Flow<Budget?> {
         return queries.getBudgetById(id)
             .asFlow()
             .mapToOneOrNull(dispatchers.io)
-            .map { entity ->
-                entity?.toDomain() ?: Budget(id = id, monthlyIncomeInCents = 0L)
-            }
+            .map { entity -> entity?.toDomain() }
     }
 
-    override suspend fun updateMonthlyIncome(
-        amountInCents: Long,
-        budgetId: String
-    ): Result<Unit, AppException> = asResult(
+    override suspend fun getBudget(id: String): Result<Budget?, AppException> = asResult(
         onError = { CommonError.DatabaseError(it) }
     ) {
-        queries.upsertBudget(
-            id = budgetId,
-            monthlyIncomeInCents = amountInCents
+        queries.getBudgetById(id).executeAsOneOrNull()?.toDomain()
+    }
+
+    override suspend fun insert(budget: Budget): Result<Unit, AppException> = asResult(
+        onError = { CommonError.DatabaseError(it) }
+    ) {
+        queries.insertBudget(
+            id = budget.id,
+            monthlyIncomeInCents = budget.monthlyIncomeInCents
+        )
+    }
+
+    override suspend fun update(budget: Budget): Result<Unit, AppException> = asResult(
+        onError = { CommonError.DatabaseError(it) }
+    ) {
+        queries.updateBudget(
+            monthlyIncomeInCents = budget.monthlyIncomeInCents,
+            id = budget.id
         )
     }
 }

@@ -6,6 +6,8 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountBalance
+import androidx.compose.material.icons.filled.Balance
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.*
@@ -15,22 +17,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import fr.abknative.outgo.android.components.common.InfoTooltip
 import fr.abknative.outgo.android.ui.AccessibilityLabels
 import fr.abknative.outgo.android.ui.DashboardLabels
 import fr.abknative.outgo.android.ui.theme.AppTheme
 import fr.abknative.outgo.android.ui.theme.OutgoTheme
 import fr.abknative.outgo.android.ui.uiAmount
-import kotlin.math.absoluteValue
+
 
 @Composable
 fun HeroSection(
     isExpanded: Boolean,
-    onToggleExpand: () -> Unit,
     formattedMonthDate: String,
     monthlyIncomeInCents: Long,
     totalOutgoingsInCents: Long,
     disposableIncomeInCents: Long,
     remainingToPayInCents: Long,
+    onToggleExpand: () -> Unit,
+    onEditBudgetClick: () -> Unit,
     onPreviousMonthClick: () -> Unit,
     onNextMonthClick: () -> Unit
 ) {
@@ -38,7 +42,6 @@ fun HeroSection(
     val maxValue = maxOf(monthlyIncomeInCents, totalOutgoingsInCents).coerceAtLeast(1L).toFloat()
     val isNegativeLive = disposableIncomeInCents < 0
     val liveColor = if (isNegativeLive) MaterialTheme.colorScheme.error else AppTheme.dashboardColors.remainingLive
-    val disposableRatio = (disposableIncomeInCents.absoluteValue / maxValue).coerceAtMost(1f)
 
     Card(
         modifier = Modifier
@@ -54,7 +57,7 @@ fun HeroSection(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            // --- TITRE ---
+            // --- EN-TETE : Mois + Sélecteur ---
             MonthBudgetSelector(
                 formattedMonthDate = formattedMonthDate,
                 onPreviousMonthClick = onPreviousMonthClick,
@@ -72,31 +75,58 @@ fun HeroSection(
                 enter = expandVertically() + fadeIn(),
                 exit = shrinkVertically() + fadeOut()
             ) {
-                Column(modifier = Modifier.fillMaxWidth()) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = AppTheme.spacing.large),
+                    verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.extraLarge),
+                ) {
 
-                    Spacer(modifier = Modifier.height(AppTheme.spacing.extraLarge))
+                    Spacer(modifier = Modifier.height(AppTheme.spacing.small))
 
                     // --- BLOC 1 : Budget vs Reste à vivre ---
-                    PairedBudgetBar(
-                        topLabel = DashboardLabels.HERO_INCOME_LABEL,
-                        topAmount = monthlyIncomeInCents.uiAmount,
-                        topProgress = monthlyIncomeInCents / maxValue,
-                        topBarColor = AppTheme.dashboardColors.budget,
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceEvenly
+                    ) {
 
-                        bottomLabel = DashboardLabels.HERO_DISPOSABLE_INCOME_LABEL,
-                        bottomAmount = disposableIncomeInCents.uiAmount,
-                        bottomProgress = disposableRatio,
-                        bottomBarColor = liveColor,
-                        bottomTextFontWeight = if (isNegativeLive) FontWeight.Medium else FontWeight.Bold,
-                        bottomTextColor = liveColor
-                    )
+                        // --- budget ---
+                        Row(modifier = Modifier.clickable(onClick = onEditBudgetClick)) {
+                            Icon(
+                                imageVector = Icons.Default.AccountBalance,
+                                contentDescription = AccessibilityLabels.EDIT_BUDGET,
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            Spacer(Modifier.width(AppTheme.spacing.medium))
+                            Text(
+                                text = monthlyIncomeInCents.uiAmount,
+                                fontWeight = FontWeight.SemiBold,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
 
-                    Spacer(modifier = Modifier.height(AppTheme.spacing.large))
-                    HorizontalDivider(
-                        modifier = Modifier.padding(horizontal = AppTheme.spacing.large),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f)
-                    )
-                    Spacer(modifier = Modifier.height(AppTheme.spacing.large))
+                        // --- Reste à vivre ---
+                        InfoTooltip(
+                            title = DashboardLabels.TOOLTIP_BALANCE_TITLE,
+                            description = DashboardLabels.TOOLTIP_BALANCE_DESC,
+                        ) {
+                            Row {
+                                Icon(
+                                    imageVector = Icons.Default.Balance,
+                                    contentDescription = AccessibilityLabels.ICON_BALANCE,
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                                Spacer(Modifier.width(AppTheme.spacing.medium))
+                                Text(
+                                    text = disposableIncomeInCents.uiAmount,
+                                    fontWeight = if (isNegativeLive) FontWeight.Medium else FontWeight.Bold,
+                                    color = liveColor
+                                )
+                            }
+                        }
+                    }
+
+                    HorizontalDivider(color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f))
 
                     // --- BLOC 2 : Charges Totales vs Reste à payer ---
                     PairedBudgetBar(
@@ -110,8 +140,6 @@ fun HeroSection(
                         bottomProgress = remainingToPayInCents / maxValue,
                         bottomBarColor = AppTheme.dashboardColors.remainingPay
                     )
-
-                    Spacer(modifier = Modifier.height(AppTheme.spacing.small))
                 }
             }
 
@@ -147,7 +175,8 @@ fun PreviewHeroSectionNominal() {
             onToggleExpand = { /* Action de test */ },
             onPreviousMonthClick = { /* Action de test */ },
             onNextMonthClick = { /* Action de test */ },
-            isExpanded = false
+            onEditBudgetClick = { /* Action de test */  },
+            isExpanded = true
         )
     }
 }
@@ -169,6 +198,7 @@ fun PreviewHeroSectionNegative() {
             onToggleExpand = { /* Action de test */ },
             onPreviousMonthClick = { /* Action de test */ },
             onNextMonthClick = { /* Action de test */ },
+            onEditBudgetClick = { /* Action de test */  },
             isExpanded = true
         )
     }

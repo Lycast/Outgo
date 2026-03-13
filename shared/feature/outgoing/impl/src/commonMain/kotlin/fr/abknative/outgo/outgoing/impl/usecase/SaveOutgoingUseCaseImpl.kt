@@ -37,11 +37,15 @@ internal class SaveOutgoingUseCaseImpl(
                 if (dueMonth == null || dueMonth !in 1..12) return Result.Error(OutgoingError.InvalidDate())
                 dueMonth
             }
+
             Recurrence.UNKNOWN -> return Result.Error(OutgoingError.UnknownCycle())
         }
 
+        val isNew = id.isNullOrBlank()
+        val finalId = if (isNew) Uuid.random().toString() else id
+        val existingOutgoing = if (!isNew) repository.getOutgoingById(finalId) else null
+
         val currentTime = timeProvider.now()
-        val existingOutgoing = id?.let { repository.getOutgoingById(it) }
 
         val finalSyncStatus = when {
             existingOutgoing == null -> SyncStatus.PENDING_CREATE
@@ -50,7 +54,7 @@ internal class SaveOutgoingUseCaseImpl(
         }
 
         val outgoing = Outgoing(
-            id = id ?: Uuid.random().toString(),
+            id = finalId,
             name = name.trim(),
             amountInCents = amountInCents,
             recurrence = recurrence,
@@ -62,6 +66,10 @@ internal class SaveOutgoingUseCaseImpl(
             syncStatus = finalSyncStatus
         )
 
-        return repository.upsert(outgoing)
+        return if (existingOutgoing == null) {
+            repository.insert(outgoing)
+        } else {
+            repository.update(outgoing)
+        }
     }
 }

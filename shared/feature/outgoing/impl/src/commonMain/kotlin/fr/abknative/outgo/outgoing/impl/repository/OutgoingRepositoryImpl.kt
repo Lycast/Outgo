@@ -31,10 +31,10 @@ internal class OutgoingRepositoryImpl(
             .map { entities -> entities.map { it.toDomain() } }
     }
 
-    override suspend fun upsert(outgoing: Outgoing): Result<Unit, AppException> = asResult(
+    override suspend fun insert(outgoing: Outgoing): Result<Unit, AppException> = asResult(
         onError = { CommonError.DatabaseError(it) }
     ) {
-        queries.upsertOutgoing(
+        queries.insertOutgoing(
             id = outgoing.id,
             budgetId = outgoing.budgetId,
             name = outgoing.name,
@@ -42,11 +42,26 @@ internal class OutgoingRepositoryImpl(
             recurrence = outgoing.recurrence.name,
             dueDay = outgoing.dueDay.toLong(),
             dueMonth = outgoing.dueMonth?.toLong(),
-
             createdAt = outgoing.createdAt,
             updatedAt = outgoing.updatedAt,
             isDeleted = if (outgoing.isDeleted) 1L else 0L,
             syncStatus = outgoing.syncStatus.name
+        )
+    }
+
+    override suspend fun update(outgoing: Outgoing): Result<Unit, AppException> = asResult(
+        onError = { CommonError.DatabaseError(it) }
+    ) {
+        queries.updateOutgoing(
+            name = outgoing.name,
+            amountInCents = outgoing.amountInCents,
+            recurrence = outgoing.recurrence.name,
+            dueDay = outgoing.dueDay.toLong(),
+            dueMonth = outgoing.dueMonth?.toLong(),
+            updatedAt = outgoing.updatedAt,
+            isDeleted = if (outgoing.isDeleted) 1L else 0L,
+            syncStatus = outgoing.syncStatus.name,
+            id = outgoing.id
         )
     }
 

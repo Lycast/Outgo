@@ -27,9 +27,14 @@ interface OutgoingRepository {
     suspend fun getOutgoingById(id: String): Outgoing?
 
     /**
-     * Persists a new subscription or updates an existing one.
+     * Inserts a new subscription. Fails if the ID already exists.
      */
-    suspend fun upsert(outgoing: Outgoing): Result<Unit, AppException>
+    suspend fun insert(outgoing: Outgoing): Result<Unit, AppException>
+
+    /**
+     * Updates an existing subscription by its ID.
+     */
+    suspend fun update(outgoing: Outgoing): Result<Unit, AppException>
 
     /**
      * Performs a logical deletion of a outgoing.

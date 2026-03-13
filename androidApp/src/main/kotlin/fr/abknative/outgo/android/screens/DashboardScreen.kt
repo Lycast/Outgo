@@ -96,8 +96,7 @@ fun DashboardScreen(
                 isConnected = state.isCloudSyncActive,
                 isSettingsScreen = false,
                 onSyncIconClick = { showSyncModal = true },
-                onSyncNavigationClick = { onNavigateToSettings() },
-                onEditBudgetClick = { showBudgetDialog = true }
+                onSyncNavigationClick = { onNavigateToSettings() }
             )
         },
         floatingActionButton = { AddActionTrigger(onClick = { selectedOutgoing = null; showFormSheet = true }) }
@@ -122,7 +121,8 @@ fun DashboardScreen(
                 onNextMonthClick = {
                     val newMonth = if (state.selectedMonth == 12) 1 else state.selectedMonth + 1
                     presenter.onIntent(OutgoingIntent.SelectMonth(newMonth))
-                }
+                },
+                onEditBudgetClick = { showBudgetDialog = true }
             )
 
             Spacer(modifier = Modifier.height(AppTheme.spacing.large))

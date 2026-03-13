@@ -80,12 +80,20 @@ fun OutgoingCard(
                     maxLines = 1
                 )
                 Spacer(modifier = Modifier.height(AppTheme.spacing.extraSmall))
-                Text(
-                    text = "${outgoing.uiDueDayLabel} • ${outgoing.uiFrequencySummary}",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    maxLines = 1
-                )
+                Row {
+                    Text(
+                        text = "${outgoing.uiDueDayLabel} • ",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        maxLines = 1
+                    )
+                    Text(
+                        text = outgoing.uiFrequencySummary,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = outgoing.recurrence.uiRecurrenceColor.copy(0.7f),
+                        maxLines = 1
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.width(AppTheme.spacing.small))

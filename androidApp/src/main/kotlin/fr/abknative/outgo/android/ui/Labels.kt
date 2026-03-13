@@ -13,12 +13,15 @@ object CommonLabels {
     val ACTION_DELETE @Composable get() = stringResource(Res.string.common_action_delete)
     val ACTION_EDIT @Composable get() = stringResource(Res.string.common_action_edit)
     val ACTION_DUPLICATE @Composable get() = stringResource(Res.string.common_action_duplicate)
+    val ACTION_CLOSE @Composable get() = stringResource(Res.string.common_action_close)
 }
 
 object DashboardLabels {
     // Hero Section
-    val HERO_INCOME_LABEL @Composable get() = stringResource(Res.string.dashboard_hero_income)
-    val HERO_DISPOSABLE_INCOME_LABEL @Composable get() = stringResource(Res.string.dashboard_hero_disposable_income)
+    val TOOLTIP_BALANCE_TITLE @Composable get()  = stringResource(Res.string.dashboard_tooltip_balance_title)
+    val TOOLTIP_BALANCE_DESC @Composable get()  = stringResource(Res.string.dashboard_tooltip_balance_desc)
+    val TOOLTIP_BALANCE_DUE_TITLE @Composable get()  = stringResource(Res.string.dashboard_tooltip_balance_due_title)
+    val TOOLTIP_BALANCE_DUE_DESC @Composable get()  = stringResource(Res.string.dashboard_tooltip_balance_due_desc)
     val HERO_TOTAL_CHARGES_LABEL @Composable get() = stringResource(Res.string.dashboard_hero_total_charges)
     val HERO_REMAINING_TO_PAY_LABEL @Composable get() = stringResource(Res.string.dashboard_hero_remaining_to_pay)
 
@@ -57,7 +60,8 @@ object FormLabels {
     val SHEET_TITLE_EDIT @Composable get() = stringResource(Res.string.form_sheet_title_edit)
     val FIELD_NAME @Composable get() = stringResource(Res.string.form_field_name)
     val FIELD_AMOUNT @Composable get() = stringResource(Res.string.form_field_amount)
-    val FIELD_DATE @Composable get() = stringResource(Res.string.form_field_date)
+    val FIELD_DATE_DESC @Composable get() = stringResource(Res.string.form_field_date_desc)
+    val FIELD_DAY @Composable get() = stringResource(Res.string.form_field_day)
     val FIELD_MONTH @Composable get() = stringResource(Res.string.form_field_month)
     val CYCLE_MONTHLY @Composable get() = stringResource(Res.string.form_cycle_monthly)
     val CYCLE_YEARLY @Composable get() = stringResource(Res.string.form_cycle_yearly)
@@ -73,6 +77,7 @@ object HeaderLabels {
 object BudgetEditDialogLabels {
     val DIALOG_BUDGET_TITLE @Composable get() = stringResource(Res.string.budget_dialog_title)
     val DIALOG_BUDGET_DESC @Composable get() = stringResource(Res.string.budget_dialog_desc)
+    val DIALOG_BUDGET_INFO @Composable get() = stringResource(Res.string.budget_dialog_info)
     val DIALOG_BUDGET_FIELD @Composable get() = stringResource(Res.string.budget_dialog_field)
 }
 
@@ -92,6 +97,7 @@ object AccessibilityLabels {
     val ADD_EXPENSE @Composable get() = stringResource(Res.string.a11y_add_expense)
     val CLOSE_DIALOG @Composable get() = stringResource(Res.string.a11y_close_dialog)
     val INFO_EMPTY_STATE @Composable get() = stringResource(Res.string.a11y_info_empty_state)
+    val ICON_BALANCE @Composable get() = stringResource(Res.string.a11y_balance_desc)
 }
 
 object SettingsLabels {

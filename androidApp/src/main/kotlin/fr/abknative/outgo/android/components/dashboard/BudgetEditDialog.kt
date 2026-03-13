@@ -8,10 +8,11 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.unit.dp
 import fr.abknative.outgo.android.ui.BudgetEditDialogLabels
 import fr.abknative.outgo.android.ui.CommonLabels
+import fr.abknative.outgo.android.ui.theme.AppTheme
 
 @Composable
 fun BudgetEditDialog(
@@ -36,9 +37,10 @@ fun BudgetEditDialog(
             Column {
                 Text(
                     text = BudgetEditDialogLabels.DIALOG_BUDGET_DESC,
-                    style = MaterialTheme.typography.bodyMedium
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(AppTheme.spacing.large))
                 OutlinedTextField(
                     value = textValue,
                     onValueChange = { newValue ->
@@ -53,6 +55,12 @@ fun BudgetEditDialog(
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth()
                 )
+                Spacer(modifier = Modifier.height(AppTheme.spacing.large))
+                Text(
+                    text = BudgetEditDialogLabels.DIALOG_BUDGET_INFO,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             }
         },
         confirmButton = {
@@ -65,7 +73,7 @@ fun BudgetEditDialog(
                 },
                 enabled = textValue.isNotBlank()
             ) {
-                Text(text = CommonLabels.ACTION_SAVE)
+                Text(text = CommonLabels.ACTION_SAVE, color = Color.White)
             }
         },
         dismissButton = {

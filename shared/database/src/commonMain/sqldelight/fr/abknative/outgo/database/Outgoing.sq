@@ -1,21 +1,27 @@
 /**
- * Inserts a subscription or updates it if it already exists.
- * Uses ON CONFLICT to avoid unnecessary deletions/reinsertions (REPLACE).
+ * Inserts a new subscription. Fails if the ID already exists.
  */
-upsertOutgoing:
+insertOutgoing:
 INSERT INTO OutgoingEntity(
     id, budgetId, name, amountInCents, recurrence, dueDay, dueMonth,
     createdAt, updatedAt, isDeleted, syncStatus
-) VALUES (?, ?, ?,?, ?, ?, ?, ?, ?, ?, ?)
-ON CONFLICT(id) DO UPDATE SET
-    name = excluded.name,
-    amountInCents = excluded.amountInCents,
-    recurrence = excluded.recurrence,
-    dueDay = excluded.dueDay,
-    dueMonth = excluded.dueMonth,
-    updatedAt = excluded.updatedAt,
-    isDeleted = excluded.isDeleted,
-    syncStatus = excluded.syncStatus;
+) VALUES (?, ?, ?,?, ?, ?, ?, ?, ?, ?, ?);
+
+/**
+ * Updates an existing subscription by its ID.
+ */
+updateOutgoing:
+UPDATE OutgoingEntity
+SET
+    name = ?,
+    amountInCents = ?,
+    recurrence = ?,
+    dueDay = ?,
+    dueMonth = ?,
+    updatedAt = ?,
+    isDeleted = ?,
+    syncStatus = ?
+WHERE id = ?;
 
 /**
  * Retrieves all subscriptions filtered by month that are not logically deleted.

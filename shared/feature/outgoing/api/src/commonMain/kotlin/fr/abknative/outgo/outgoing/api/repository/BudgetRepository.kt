@@ -11,16 +11,23 @@ import kotlinx.coroutines.flow.Flow
 interface BudgetRepository {
 
     /**
-     * Emits the budget (containing the income) reactively.
-     * Use "default" as ID for the MVP.
+     * Emits the budget reactively.
+     * Retourne un Flow<Budget?> car le budget "default" peut ne pas encore exister au premier lancement.
      */
-    fun observeBudget(id: String = "default"): Flow<Budget>
+    fun observeBudget(id: String = "default"): Flow<Budget?>
 
     /**
-     * Updates the reference monthly income.
+     * Retrieves the current budget to check its existence.
      */
-    suspend fun updateMonthlyIncome(
-        amountInCents: Long,
-        budgetId: String = "default"
-    ): Result<Unit, AppException>
+    suspend fun getBudget(id: String = "default"): Result<Budget?, AppException>
+
+    /**
+     * Inserts the initial budget into the database.
+     */
+    suspend fun insert(budget: Budget): Result<Unit, AppException>
+
+    /**
+     * Updates an existing budget.
+     */
+    suspend fun update(budget: Budget): Result<Unit, AppException>
 }

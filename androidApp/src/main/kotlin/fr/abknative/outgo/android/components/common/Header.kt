@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountBalance
 import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material3.*
@@ -26,7 +25,6 @@ fun Header(
     isSettingsScreen: Boolean = false,
     onSyncIconClick: () -> Unit,
     onSyncNavigationClick: () -> Unit,
-    onEditBudgetClick: () -> Unit
 ) {
     Row(
         modifier = modifier
@@ -49,16 +47,6 @@ fun Header(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.small)
         ) {
-            // Icône Budget
-            if (!isSettingsScreen) {
-                IconButton(onClick = onEditBudgetClick) {
-                    Icon(
-                        imageVector = Icons.Default.AccountBalance,
-                        contentDescription = AccessibilityLabels.EDIT_BUDGET,
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-            }
 
             // Icône Cloud
             SyncIconLogic(
@@ -91,7 +79,6 @@ fun HeaderPreview() {
                 isSettingsScreen = false,
                 onSyncIconClick = {},
                 onSyncNavigationClick = {},
-                onEditBudgetClick = {}
             )
         }
     }
