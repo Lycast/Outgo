@@ -59,9 +59,7 @@ fun OutgoingFormContent(
         OutlinedTextField(
             value = state.amountBuffer,
             onValueChange = { newValue ->
-                if (newValue.all { it.isDigit() || it == '.' || it == ',' }) {
-                    onEvent(OutgoingFormEvent.UpdateAmount(newValue))
-                }
+                onEvent(OutgoingFormEvent.UpdateAmount(newValue))
             },
             label = { Text(FormLabels.FIELD_AMOUNT) },
             singleLine = true,

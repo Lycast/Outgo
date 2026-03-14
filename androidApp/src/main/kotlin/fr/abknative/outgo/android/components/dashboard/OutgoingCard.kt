@@ -7,7 +7,6 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Delete
@@ -17,13 +16,17 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import fr.abknative.outgo.android.components.common.CircleIcon
 import fr.abknative.outgo.android.ui.*
 import fr.abknative.outgo.android.ui.theme.AppTheme
+import fr.abknative.outgo.android.ui.theme.OutgoTheme
 import fr.abknative.outgo.core.api.SyncStatus
+import fr.abknative.outgo.outgoing.api.Recurrence
 import fr.abknative.outgo.outgoing.api.model.Outgoing
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -65,54 +68,60 @@ fun OutgoingCard(
                 .padding(horizontal = AppTheme.spacing.large, vertical = AppTheme.spacing.large),
             verticalAlignment = Alignment.CenterVertically
         ) {
+
+            // Icon a gauche
             CircleIcon(Icons.Rounded.CreditCard)
             Spacer(modifier = Modifier.width(AppTheme.spacing.large))
 
-            Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.Center
-            ) {
-                Text(
-                    text = outgoing.uiTitle,
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.Medium,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    maxLines = 1
-                )
-                Spacer(modifier = Modifier.height(AppTheme.spacing.extraSmall))
-                Row {
+            Column(verticalArrangement = Arrangement.Center) {
+
+                // --- Textes label ---
+                Row( modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     Text(
-                        text = "${outgoing.uiDueDayLabel} • ",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        maxLines = 1
-                    )
-                    Text(
-                        text = outgoing.uiFrequencySummary,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = outgoing.recurrence.uiRecurrenceColor.copy(0.7f),
-                        maxLines = 1
+                        text = outgoing.uiTitle,
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
                 }
-            }
 
-            Spacer(modifier = Modifier.width(AppTheme.spacing.small))
+                Spacer(modifier = Modifier.height(AppTheme.spacing.small))
 
-            Column(horizontalAlignment = Alignment.End) {
-                Text(
-                    text = outgoing.amountInCents.uiAmount,
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Medium,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                if (isSyncIndicatorVisible) {
-                    Spacer(modifier = Modifier.width(AppTheme.spacing.small))
-                } else {
-                    Box(
-                        modifier = Modifier
-                            .size(12.dp)
-                            .clip(CircleShape)
-                            .background(outgoing.syncStatus.uiColor)
+                // --- Date et récurrence + Montant ---
+                Row(modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.Bottom
+                ) {
+
+                    // Date et récurrence
+                    Row(horizontalArrangement = Arrangement.End,) {
+                        Text(
+                            text = "${outgoing.uiDueDayLabel} • ",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Text(
+                            text = outgoing.uiFrequencySummary,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = outgoing.recurrence.uiRecurrenceColor.copy(0.7f)
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.width(AppTheme.spacing.medium))
+
+                    // Montant de la dépense
+                    Text(
+                        text = outgoing.amountInCents.uiAmount,
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.tertiary,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        textAlign = TextAlign.End,
+                        modifier = Modifier.weight(1f)
                     )
                 }
             }
@@ -141,7 +150,11 @@ fun OutgoingCard(
                     },
                     colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.error)
                 ) {
-                    Icon(Icons.Default.Delete, contentDescription = AccessibilityLabels.DELETE_EXPENSE, modifier = Modifier.size(18.dp))
+                    Icon(
+                        Icons.Default.Delete,
+                        contentDescription = AccessibilityLabels.DELETE_EXPENSE,
+                        modifier = Modifier.size(18.dp)
+                    )
                     Spacer(modifier = Modifier.width(AppTheme.spacing.extraSmall))
                     Text(CommonLabels.ACTION_DELETE)
                 }
@@ -179,5 +192,57 @@ fun OutgoingCard(
                 }
             }
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewOutgoingCard_LargeAmount() {
+    val mockOutgoing = Outgoing(
+        id = "1",
+        name = "Achat d'une île privée au soleil",
+        amountInCents = 1250000000000L, // 12,5 Milliard
+        recurrence = Recurrence.YEARLY,
+        dueDay = 15,
+        dueMonth = 6,
+        syncStatus = SyncStatus.PENDING_CREATE,
+        createdAt = 0L,
+        updatedAt = 0L
+    )
+
+    OutgoTheme {
+        Column(Modifier.padding(16.dp)) {
+            OutgoingCard(
+                outgoing = mockOutgoing,
+                onEdit = {},
+                onDelete = {},
+                onDuplicate = {}
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewOutgoingCard_Expanded() {
+    val mockOutgoing = Outgoing(
+        id = "2",
+        name = "Netflix",
+        amountInCents = 1999L,
+        recurrence = Recurrence.MONTHLY,
+        dueDay = 5,
+        syncStatus = SyncStatus.PENDING_UPDATE,
+        createdAt = 0L,
+        updatedAt = 0L
+    )
+
+    OutgoTheme {
+        // On peut tester l'état déplié en cliquant dessus dans l'onglet "Interactive" d'Android Studio
+        OutgoingCard(
+            outgoing = mockOutgoing,
+            onEdit = {},
+            onDelete = {},
+            onDuplicate = {}
+        )
     }
 }

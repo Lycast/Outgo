@@ -39,7 +39,7 @@ fun DashboardScreen(
     val formState = rememberOutgoingFormState(
         outgoingId = selectedOutgoing?.id,
         initialName = selectedOutgoing?.name ?: "",
-        initialAmount = selectedOutgoing?.amountInCents?.let { (it / 100.0).toString() } ?: "",
+        initialAmount = selectedOutgoing?.amountInCents?.toBigDecimal()?.movePointLeft(2)?.toPlainString() ?: "",
         initialRecurrence = selectedOutgoing?.recurrence ?: Recurrence.MONTHLY,
         initialDueDay = selectedOutgoing?.dueDay?.toString() ?: "",
         initialDueMonth = selectedOutgoing?.dueMonth?.toString() ?: ""
@@ -125,14 +125,14 @@ fun DashboardScreen(
                 onEditBudgetClick = { showBudgetDialog = true }
             )
 
-            Spacer(modifier = Modifier.height(AppTheme.spacing.large))
+            Spacer(modifier = Modifier.height(AppTheme.spacing.big))
 
             ExpenseFilterSelector(
                 selectedFilter = currentFilter,
                 onFilterSelected = { currentFilter = it }
             )
 
-            Spacer(modifier = Modifier.height(AppTheme.spacing.large))
+            Spacer(modifier = Modifier.height(AppTheme.spacing.small))
 
             // --- COMPOSANT LISTE ---
             ExpenseListContainer(

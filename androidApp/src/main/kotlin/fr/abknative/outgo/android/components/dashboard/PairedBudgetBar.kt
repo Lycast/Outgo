@@ -10,9 +10,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import fr.abknative.outgo.android.components.common.InfoTooltip
 import fr.abknative.outgo.android.ui.DashboardLabels
+import fr.abknative.outgo.android.ui.theme.AppTheme
+import fr.abknative.outgo.android.ui.theme.OutgoTheme
 
 @Composable
 fun PairedBudgetBar(
@@ -27,7 +30,7 @@ fun PairedBudgetBar(
     bottomProgress: Float,
     bottomBarColor: Color,
 ) {
-    Column(modifier = Modifier.fillMaxWidth()) {
+    Column(modifier = Modifier.fillMaxWidth().padding(horizontal = AppTheme.spacing.medium),) {
 
         // --- 1. TEXTE DU HAUT ---
         Row(
@@ -42,14 +45,15 @@ fun PairedBudgetBar(
             )
             Text(
                 text = topAmount,
+                style = MaterialTheme.typography.bodyLarge,
                 color =  MaterialTheme.colorScheme.onSurface
             )
         }
 
         // --- 2. LES BARRES (Sandwich) ---
         Column(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(2.dp)
+            modifier = Modifier.fillMaxWidth().padding(vertical = AppTheme.spacing.small),
+            verticalArrangement = Arrangement.spacedBy(1.dp)
         ) {
             // Barre du Haut
             ProgressBarItem(
@@ -84,8 +88,9 @@ fun PairedBudgetBar(
                 )
                 Text(
                     text = bottomAmount,
-                    fontWeight = FontWeight.SemiBold,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontWeight = FontWeight.Medium,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             }
         }
@@ -102,7 +107,7 @@ private fun ProgressBarItem(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(8.dp)
+            .height(4.dp)
             .background(
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f),
                 shape = shape
@@ -114,5 +119,46 @@ private fun ProgressBarItem(
                 .fillMaxHeight()
                 .background(color = color, shape = shape)
         )
+    }
+}
+
+
+@Preview(showBackground = true, name = "Paired Bar - Nominal")
+@Composable
+fun PreviewPairedBudgetBarNominal() {
+    OutgoTheme {
+        Box(modifier = Modifier.padding(16.dp).background(MaterialTheme.colorScheme.surface)) {
+            PairedBudgetBar(
+                topLabel = DashboardLabels.HERO_TOTAL_CHARGES_LABEL,
+                topAmount = "1 250,50 €",
+                topProgress = 0.7f,
+                topBarColor = AppTheme.dashboardColors.charges, // Ton nouveau violet
+
+                bottomLabel = DashboardLabels.HERO_REMAINING_TO_PAY_LABEL,
+                bottomAmount = "320,00 €",
+                bottomProgress = 0.25f,
+                bottomBarColor = AppTheme.dashboardColors.remainingPay // Ton nouvel or
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true, name = "Paired Bar - Billionaire")
+@Composable
+fun PreviewPairedBudgetBarBillionaire() {
+    OutgoTheme {
+        Box(modifier = Modifier.padding(16.dp).background(MaterialTheme.colorScheme.surface)) {
+            PairedBudgetBar(
+                topLabel = DashboardLabels.HERO_TOTAL_CHARGES_LABEL,
+                topAmount = "250 000 000 000,00 €",
+                topProgress = 0.9f,
+                topBarColor = AppTheme.dashboardColors.charges,
+
+                bottomLabel = DashboardLabels.HERO_REMAINING_TO_PAY_LABEL,
+                bottomAmount = "45 000 000,00 €",
+                bottomProgress = 0.1f,
+                bottomBarColor = AppTheme.dashboardColors.remainingPay
+            )
+        }
     }
 }

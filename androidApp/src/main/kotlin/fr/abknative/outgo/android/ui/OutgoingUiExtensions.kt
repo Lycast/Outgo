@@ -55,7 +55,7 @@ val Outgoing.uiDueDayLabel: String
         val monthLabel = getMonthName(this.dueMonth!!)
         "${DashboardLabels.DUE_PREFIX} $dueDay $monthLabel"
     } else {
-        "${DashboardLabels.DUE_PREFIX} $dueDay ${DashboardLabels.DUE_MONTHLY_SUFFIX}"
+        "${DashboardLabels.DUE_PREFIX} $dueDay"
     }
 
 val Outgoing.uiFrequencySummary: String

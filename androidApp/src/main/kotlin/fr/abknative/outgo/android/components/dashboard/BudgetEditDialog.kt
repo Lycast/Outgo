@@ -10,9 +10,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
 import fr.abknative.outgo.android.ui.BudgetEditDialogLabels
 import fr.abknative.outgo.android.ui.CommonLabels
 import fr.abknative.outgo.android.ui.theme.AppTheme
+import fr.abknative.outgo.android.ui.theme.OutgoTheme
 
 @Composable
 fun BudgetEditDialog(
@@ -22,7 +24,13 @@ fun BudgetEditDialog(
 ) {
 
     var textValue by remember {
-        mutableStateOf(if (currentIncomeInCents > 0) (currentIncomeInCents / 100.0).toString() else "")
+        mutableStateOf(
+            if (currentIncomeInCents > 0) {
+                currentIncomeInCents.toBigDecimal()
+                    .movePointLeft(2)
+                    .toPlainString()
+            } else ""
+        )
     }
 
     AlertDialog(
@@ -44,7 +52,7 @@ fun BudgetEditDialog(
                 OutlinedTextField(
                     value = textValue,
                     onValueChange = { newValue ->
-                        if (newValue.all { it.isDigit() || it == '.' || it == ',' }) {
+                        if (newValue.length <= 15 && newValue.all { it.isDigit() || it == '.' || it == ',' }) {
                             textValue = newValue.replace(',', '.')
                         }
                     },
@@ -82,4 +90,17 @@ fun BudgetEditDialog(
             }
         }
     )
+}
+
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewBudgetEditDialog_LargeAmount() {
+    OutgoTheme {
+        BudgetEditDialog(
+            currentIncomeInCents = 3549000000000L, // 35 000 000 000 d'euros
+            onDismiss = {},
+            onConfirm = {}
+        )
+    }
 }

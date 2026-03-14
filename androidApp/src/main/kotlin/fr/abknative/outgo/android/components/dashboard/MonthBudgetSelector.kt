@@ -42,8 +42,8 @@ fun MonthBudgetSelector(
         Text(
             text = formattedMonthDate.uppercase(),
             style = MaterialTheme.typography.bodyLarge,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.primary,
+            fontWeight = FontWeight.SemiBold,
+            color = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier.padding(AppTheme.spacing.large)
         )
 

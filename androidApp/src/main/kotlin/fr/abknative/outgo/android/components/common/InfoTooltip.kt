@@ -22,20 +22,17 @@ fun InfoTooltip(
     val tooltipState = rememberTooltipState(isPersistent = true)
     val scope = rememberCoroutineScope()
 
-    // 1. Définition d'une forme commune pour éviter les débordements graphiques
     val tooltipShape = MaterialTheme.shapes.medium
 
     TooltipBox(
         positionProvider = TooltipDefaults.rememberRichTooltipPositionProvider(),
         tooltip = {
             RichTooltip(
-                // 2. Application de la bordure via le Modifier
                 modifier = Modifier.border(
                     width = 1.dp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f), // Couleur de la bordure
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f),
                     shape = tooltipShape
                 ),
-                // 3. Application de la même forme au composant lui-même
                 shape = tooltipShape,
                 colors = TooltipDefaults.richTooltipColors(
                     containerColor = MaterialTheme.colorScheme.background,

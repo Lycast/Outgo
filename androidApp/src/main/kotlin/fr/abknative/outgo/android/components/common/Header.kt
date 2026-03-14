@@ -34,7 +34,7 @@ fun Header(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // --- 1. Titre (Gauche) ---
+        // --- Titre (Gauche) ---
         Text(
             text = CommonLabels.APP_NAME,
             style = MaterialTheme.typography.headlineMedium,
@@ -42,7 +42,7 @@ fun Header(
             color = MaterialTheme.colorScheme.primary
         )
 
-        // --- 2. Actions (Droite) ---
+        // --- Actions (Droite) ---
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.small)

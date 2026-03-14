@@ -30,8 +30,8 @@ class OutgoingFormState(
     val isValid: Boolean
         get() {
             val isNameValid = nameBuffer.isNotBlank()
-            val amountDouble = amountBuffer.replace(',', '.').toDoubleOrNull()
-            val isAmountValid = amountDouble != null && amountDouble > 0
+            val amountDecimal = amountBuffer.replace(',', '.').toBigDecimalOrNull()
+            val isAmountValid = amountDecimal != null && amountDecimal > java.math.BigDecimal.ZERO
             val dayInt = dueDayBuffer.toIntOrNull()
             val isDayValid = dayInt != null && dayInt in 1..31
 
@@ -44,18 +44,20 @@ class OutgoingFormState(
         }
 
     val amountInCents: Long
-        get() = try {
-            amountBuffer.replace(',', '.')
-                .toBigDecimalOrNull()
-                ?.setScale(2, java.math.RoundingMode.HALF_UP)
-                ?.movePointRight(2)
-                ?.toLong() ?: 0L
-        } catch (e: Exception) { 0L }
+        get() = amountBuffer
+            .toBigDecimalOrNull()
+            ?.setScale(2, java.math.RoundingMode.HALF_UP)
+            ?.movePointRight(2)
+            ?.toLong() ?: 0L
 
     fun onEvent(event: OutgoingFormEvent) {
         when(event) {
             is OutgoingFormEvent.UpdateName -> nameBuffer = event.name
-            is OutgoingFormEvent.UpdateAmount -> amountBuffer = event.amount
+            is OutgoingFormEvent.UpdateAmount -> {
+                if (event.amount.length <= 12 && event.amount.all { it.isDigit() || it == '.' || it == ',' }) {
+                    amountBuffer = event.amount.replace(',', '.')
+                }
+            }
             is OutgoingFormEvent.UpdateRecurrence -> {
                 recurrenceSelection = event.recurrence
                 if (event.recurrence == Recurrence.MONTHLY) dueMonthBuffer = ""
