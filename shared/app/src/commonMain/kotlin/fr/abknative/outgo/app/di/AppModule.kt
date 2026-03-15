@@ -26,11 +26,3 @@ fun initKoin(appDeclaration: KoinAppDeclaration = {}) = startKoin {
         outgoingModule()
     )
 }
-
-/**
- * Swift-friendly entry point for iOS.
- *
- * Provides a parameter-less signature to bypass Swift's limitations with
- * Kotlin default lambda parameters.
- */
-fun initKoinIOS() = initKoin {}

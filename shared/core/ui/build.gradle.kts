@@ -9,16 +9,9 @@ plugins {
 kotlin {
 
     androidTarget()
-    listOf(
-        iosArm64(),
-        iosSimulatorArm64()
-    ).forEach { iosTarget ->
-        iosTarget.binaries.framework {
-            baseName = "CoreUI"
-            isStatic = true
-            export(libs.compose.components.resources)
-        }
-    }
+    iosArm64()
+    iosSimulatorArm64()
+
     
     sourceSets {
         commonMain.dependencies {

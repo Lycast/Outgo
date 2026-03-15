@@ -9,7 +9,8 @@
 │   ├── app/
 │   ├── core/
 │   │   ├── api/
-│   │   └── impl/
+│   │   ├── impl/
+│   │   └── ui/
 │   ├── database/
 │   │       ├── src/commonMain/sqldelight/
 │   │       └── src/commonMain/kotlin/
