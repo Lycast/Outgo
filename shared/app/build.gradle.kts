@@ -1,5 +1,7 @@
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
+    alias(libs.plugins.compose.multiplatform)
+    alias(libs.plugins.compose.compiler)
     id("outgo.android.library")
     id("outgo.jvm")
     alias(libs.plugins.skie)
@@ -11,11 +13,18 @@ kotlin {
     listOf(
         iosArm64(),
         iosSimulatorArm64()
-    ).forEach { iosTarget ->
-        iosTarget.binaries.framework {
+    ).forEach { target ->
+        target.binaries.framework {
             baseName = "SharedApp"
-            isStatic = true
 
+            linkerOpts("-lsqlite3")
+
+            freeCompilerArgs += "-Xbinary=bundleId=fr.abknative.outgo.shared"
+
+            freeCompilerArgs += listOf("-Xoverride-konan-properties=min_os_version_ios_simulator_arm64=17.0")
+
+            export(projects.shared.core.ui)
+            export(projects.shared.core.api)
             export(projects.shared.feature.outgoing.api)
         }
     }
@@ -27,10 +36,11 @@ kotlin {
             implementation(projects.shared.feature.outgoing.impl)
 
             implementation(libs.koin.core)
-
             implementation(libs.kotlinx.coroutines.core)
+            implementation(libs.compose.runtime)
 
             api(projects.shared.feature.outgoing.api)
+            api(projects.shared.core.ui)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

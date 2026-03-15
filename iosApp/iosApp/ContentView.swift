@@ -1,41 +1,68 @@
 import SwiftUI
-import SharedApp // Votre framework Kotlin
+import SharedApp
 
 struct ContentView: View {
-    @State private var showContent = false
+    let coordinator = IosDependencyProvider.shared.appCoordinator
+    let storage = IosDependencyProvider.shared.keyValueStorage
     
-    // 1. Récupération du Presenter depuis Koin via votre Provider
-    let presenter = IosDependencyProvider.shared.outgoingPresenter
+    @State private var currentStep: any AppStep = AppStepDashboard.shared
+    @State private var isDarkMode: Bool = false
+    
+    @Environment(\.openURL) private var openURL
+    @Environment(\.colorScheme) private var systemColorScheme
+    
+    private let themeKey = "app_is_dark_mode"
+
+    private var stepAnimationKey: String {
+        String(describing: type(of: currentStep))
+    }
 
     var body: some View {
-        VStack {
-            Button("Click me!") {
-                withAnimation {
-                    showContent = !showContent
-                }
-            }
+        ZStack {
+            switch currentStep {
+            case is AppStepDashboard:
+                DashboardScreen(
+                    presenter: IosDependencyProvider.shared.outgoingPresenter,
+                    onNavigateToSettings: {
+                        // 4. On passe le singleton de l'écran Settings
+                        coordinator.navigateTo(step: AppStepSettings.shared)
+                    }
+                )
+                .transition(.opacity)
 
-            if showContent {
-                VStack(spacing: 16) {
-                    Image(systemName: "swift")
-                        .font(.system(size: 200))
-                        .foregroundColor(.accentColor)
-                    
-                    // 2. On remplace le Greeting.
-                    // Ici, j'affiche simplement la description de l'objet pour vérifier qu'il n'est pas nul.
-                    // Par la suite, vous pourrez appeler les variables d'état de votre Presenter.
-                    Text("Presenter chargé : \(String(describing: presenter))")
-                }
-                .transition(.move(edge: .top).combined(with: .opacity))
+            case is AppStepSettings:
+                SettingsScreen(
+                    isDarkMode: isDarkMode,
+                    onNavigateBack: { coordinator.handleBack() },
+                    onToggleDarkMode: { newValue in
+                        isDarkMode = newValue
+                        storage.putBoolean(key: themeKey, value: newValue)
+                    },
+                    onCoffeeClick: { openUrl(SettingsLabels.shared.URL_COFFEE) },
+                    onTipsClick: { openUrl(SettingsLabels.shared.URL_SITE) },
+                    onContactClick: { openUrl(SettingsLabels.shared.URL_CONTACT) }
+                )
+                .transition(.opacity)
+                
+            default:
+                EmptyView()
             }
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-        .padding()
+        .animation(.easeInOut, value: stepAnimationKey)
+        .preferredColorScheme(isDarkMode ? .dark : .light)
+        .task {
+            let systemIsDark = (systemColorScheme == .dark)
+            isDarkMode = storage.getBoolean(key: themeKey, defaultValue: systemIsDark)
+            
+            for await navState in coordinator.state {
+                self.currentStep = navState.currentStep
+            }
+        }
     }
-}
-
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
+    
+    private func openUrl(_ urlString: String) {
+        if let url = URL(string: urlString) {
+            openURL(url)
+        }
     }
 }
