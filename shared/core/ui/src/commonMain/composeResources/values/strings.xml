@@ -43,7 +43,7 @@
 
     <string name="form_sheet_title_add">Nouvelle dépense prévisible</string>
     <string name="form_sheet_title_edit">Modifier la dépense</string>
-    <string name="form_field_name">Entrez l'intitulé.</string>
+    <string name="form_field_name">Entrez l'intitulé</string>
     <string name="form_field_amount">Entrez le montant</string>
     <string name="form_field_date_desc">Sélectionnez la récurrence et entrez la date de votre dépense.</string>
     <string name="form_field_day">Jour (1-31)</string>

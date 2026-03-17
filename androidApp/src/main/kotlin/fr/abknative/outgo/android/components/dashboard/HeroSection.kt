@@ -21,9 +21,9 @@ import androidx.compose.ui.unit.dp
 import fr.abknative.outgo.android.components.common.CircleIcon
 import fr.abknative.outgo.android.components.common.InfoTooltip
 import fr.abknative.outgo.android.ui.DashboardLabels
+import fr.abknative.outgo.android.ui.extensions.uiAmount
 import fr.abknative.outgo.android.ui.theme.AppTheme
 import fr.abknative.outgo.android.ui.theme.OutgoTheme
-import fr.abknative.outgo.android.ui.uiAmount
 
 
 @Composable

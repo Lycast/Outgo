@@ -10,10 +10,8 @@ extension Int64 {
         let euros = absoluteValue / 100
         let cents = absoluteValue % 100
 
-        // Formatage des centimes pour toujours avoir 2 chiffres (ex: 05)
         let formattedCents = String(format: "%02d", cents)
 
-        // Swift possède un NumberFormatter très puissant pour grouper par milliers
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal
         formatter.groupingSeparator = " "
@@ -21,7 +19,6 @@ extension Int64 {
 
         let prefix = isNegative ? "-" : ""
 
-        // On suppose que CommonLabels a été créé comme vu précédemment
         return "\(prefix)\(eurosString),\(formattedCents) \(CommonLabels.shared.CURRENCY_SYMBOL)"
     }
 }
@@ -35,7 +32,6 @@ extension SyncStatus {
         case .pendingUpdate: return Color(hex: 0xFFFF9800)
         case .pendingDelete: return Color(hex: 0xFFF44336)
         case .unknown: return Color.gray
-        default: return Color.gray
         }
     }
 }
@@ -46,7 +42,6 @@ extension Recurrence {
         case .yearly: return Color(hex: Palette.shared.BrandSecondary)
         case .monthly: return Color(hex: Palette.shared.BrandTertiary)
         case .unknown: return Color.gray
-        default: return Color.gray
         }
     }
 }
@@ -73,7 +68,6 @@ extension Outgoing {
         case .monthly: return FormLabels.shared.CYCLE_MONTHLY
         case .yearly: return FormLabels.shared.CYCLE_YEARLY
         case .unknown: return ""
-        default: return ""
         }
     }
 }

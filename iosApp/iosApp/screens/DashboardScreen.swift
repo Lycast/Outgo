@@ -2,50 +2,158 @@ import SwiftUI
 import SharedApp
 
 struct DashboardScreen: View {
-    // 1. On reçoit le presenter KMP
     let presenter: OutgoingPresenter
     let onNavigateToSettings: () -> Void
     
-    // 2. On prépare une variable pour stocker l'état (avec une valeur initiale par défaut)
     @State private var state: OutgoingState = OutgoingState(
-        isLoading: false, outgoings: [], currentDay: 0, currentMonth: 0, selectedMonth: 0,
-        monthlyIncomeInCents: 0, totalOutgoingsInCents: 0, disposableIncomeInCents: 0,
-        remainingToPayInCents: 0, isCloudSyncActive: false, error: nil, isHeroExpanded: true
+        isLoading: true,
+        outgoings: [],
+        currentDay: nil,
+        currentMonth: 1,
+        selectedMonth: 1,
+        monthlyIncomeInCents: 0,
+        totalOutgoingsInCents: 0,
+        disposableIncomeInCents: 0,
+        remainingToPayInCents: 0,
+        isCloudSyncActive: false,
+        error: nil,
+        isHeroExpanded: true
     )
     
+    @State private var showBudgetDialog = false
+    @State private var showSyncModal = false
+    @State private var showFormSheet = false
+    @State private var selectedOutgoing: Outgoing? = nil
+    @State private var currentFilter: OutgoingFilter = .all
+    
+    @Environment(\.spacing) private var spacing
+    @Environment(\.outgoColors) private var colors
+
+    private var filteredList: [Outgoing] {
+        let currentDay = Int(truncating: state.currentDay ?? 0)
+        let currentMonth = Int(state.currentMonth)
+        let selectedMonth = Int(state.selectedMonth)
+        
+        switch currentFilter {
+        case .all:
+            return state.outgoings
+        case .paid:
+            if selectedMonth < currentMonth { return state.outgoings }
+            if selectedMonth > currentMonth { return [] }
+            return state.outgoings.filter { Int($0.dueDay) < currentDay }
+        case .remaining:
+            if selectedMonth < currentMonth { return [] }
+            if selectedMonth > currentMonth { return state.outgoings }
+            return state.outgoings.filter { Int($0.dueDay) >= currentDay }
+        }
+    }
+
     var body: some View {
-        VStack(spacing: 20) {
+        ZStack(alignment: .bottomTrailing) {
+            VStack(spacing: 0) {
+                Header(
+                    isConnected: state.isCloudSyncActive,
+                    isSettingsScreen: false,
+                    onSyncIconClick: { showSyncModal = true },
+                    onSyncNavigationClick: onNavigateToSettings
+                )
             
-            // --- LECTURE DE L'ÉTAT (State) ---
+                VStack(spacing: 0) {
+                    HeroSection(
+                        isExpanded: state.isHeroExpanded,
+                        formattedMonthDate: getMonthName(month: state.selectedMonth),
+                        monthlyIncomeInCents: state.monthlyIncomeInCents,
+                        totalOutgoingsInCents: state.totalOutgoingsInCents,
+                        disposableIncomeInCents: state.disposableIncomeInCents,
+                        remainingToPayInCents: state.remainingToPayInCents,
+                        onToggleExpand: {
+                            presenter.onIntent(intent: OutgoingIntentToggleHeroSection(isExpanded: !state.isHeroExpanded))
+                        },
+                        onEditBudgetClick: { showBudgetDialog = true },
+                        onPreviousMonthClick: {
+                            let newMonth = state.selectedMonth == 1 ? 12 : state.selectedMonth - 1
+                            presenter.onIntent(intent: OutgoingIntentSelectMonth(month: newMonth))
+                        },
+                        onNextMonthClick: {
+                            let newMonth = state.selectedMonth == 12 ? 1 : state.selectedMonth + 1
+                            presenter.onIntent(intent: OutgoingIntentSelectMonth(month: newMonth))
+                        }
+                    )
+                    Spacer().frame(height: spacing.extraLarge)
+                    
+                    ExpenseFilterSelector(
+                        selectedFilter: currentFilter,
+                        onFilterSelected: { currentFilter = $0 }
+                    )
+                    
+                    Spacer().frame(height: spacing.small)
+                    
+                    ExpenseListContainer(
+                        isLoading: state.isLoading,
+                        filteredList: filteredList,
+                        currentFilter: currentFilter,
+                        onDelete: { id in presenter.onIntent(intent: OutgoingIntentDelete(id: id)) },
+                        onEdit: { outgoing in
+                            selectedOutgoing = outgoing
+                            showFormSheet = true
+                        }
+                    )
+                }
+            }
             
-            if state.isLoading {
-                ProgressView("Chargement des données...")
-            } else {
-                Text("Budget Restant : \(state.disposableIncomeInCents.uiAmount)")
-                    .font(.title)
-                    .bold()
+            AddActionTrigger(onClick: {
+                selectedOutgoing = nil
+                showFormSheet = true
+            })
+            .padding(spacing.large)
+            
+            if showBudgetDialog {
+                Color.black.opacity(0.4).ignoresSafeArea()
+                    .onTapGesture { showBudgetDialog = false }
                 
-                Text("Vous avez \(state.outgoings.count) dépenses prévues.")
-            }
-            
-            // --- ENVOI D'INTENTIONS (Intent) ---
-            
-            Button("Simuler la suppression de la dépense 1") {
-                // On utilise la classe Kotlin générée pour l'Intent Delete
-                presenter.onIntent(intent: OutgoingIntentDelete(id: "1"))
-            }
-            .buttonStyle(.borderedProminent)
-            
-            Button("Aller aux paramètres") {
-                onNavigateToSettings()
+                BudgetEditDialog(
+                    currentIncomeInCents: state.monthlyIncomeInCents,
+                    onDismiss: { showBudgetDialog = false },
+                    onConfirm: { newAmount in
+                        presenter.onIntent(intent: OutgoingIntentUpdateIncome(amountInCents: newAmount))
+                        showBudgetDialog = false
+                    }
+                )
+                .padding(spacing.large)
             }
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(colors.background.ignoresSafeArea())
+        .syncPromotionModal(isPresented: $showSyncModal) { }
+        .sheet(isPresented: $showFormSheet) {
+            OutgoingFormSheet(
+                viewModel: OutgoingFormViewModel(
+                    outgoingId: selectedOutgoing?.id,
+                    initialName: selectedOutgoing?.name ?? "",
+                    initialAmount: selectedOutgoing != nil ? String(format: "%.2f", Double(selectedOutgoing!.amountInCents) / 100.0) : "",
+                    initialRecurrence: selectedOutgoing?.recurrence ?? .monthly,
+                    initialDueDay: selectedOutgoing != nil ? String(selectedOutgoing!.dueDay) : "",
+                    initialDueMonth: selectedOutgoing?.dueMonth?.stringValue ?? ""
+                ),
+                onDismiss: { showFormSheet = false },
+                onSave: { intent in
+                    presenter.onIntent(intent: intent)
+                }
+            )
+            .presentationDetents([.fraction(0.7), .large])
+        }
         .task {
-            // 3. LA MAGIE SKIE : On écoute le StateFlow de Kotlin en temps réel !
-            for await newState in presenter.state {
-                self.state = newState
+            for await currentState in presenter.state {
+                self.state = currentState
+                if !currentState.isLoading && currentState.monthlyIncomeInCents <= 0 {
+                    showBudgetDialog = true
+                }
             }
         }
+    }
+    
+    private func getMonthName(month: Int32) -> String {
+        let index = Int(month) - 1
+        let symbols = Calendar.current.monthSymbols
+        return (index >= 0 && index < symbols.count) ? symbols[index] : ""
     }
 }

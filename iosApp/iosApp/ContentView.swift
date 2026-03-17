@@ -7,6 +7,7 @@ struct ContentView: View {
     
     @State private var currentStep: any AppStep = AppStepDashboard.shared
     @State private var isDarkMode: Bool = false
+    @State private var outgoingPresenter = IosDependencyProvider.shared.outgoingPresenter
     
     @Environment(\.openURL) private var openURL
     @Environment(\.colorScheme) private var systemColorScheme
@@ -22,9 +23,8 @@ struct ContentView: View {
             switch currentStep {
             case is AppStepDashboard:
                 DashboardScreen(
-                    presenter: IosDependencyProvider.shared.outgoingPresenter,
+                    presenter: outgoingPresenter,
                     onNavigateToSettings: {
-                        // 4. On passe le singleton de l'écran Settings
                         coordinator.navigateTo(step: AppStepSettings.shared)
                     }
                 )
@@ -32,8 +32,8 @@ struct ContentView: View {
 
             case is AppStepSettings:
                 SettingsScreen(
-                    isDarkMode: isDarkMode,
                     onNavigateBack: { coordinator.handleBack() },
+                    isDarkMode: isDarkMode,
                     onToggleDarkMode: { newValue in
                         isDarkMode = newValue
                         storage.putBoolean(key: themeKey, value: newValue)
@@ -45,17 +45,20 @@ struct ContentView: View {
                 .transition(.opacity)
                 
             default:
-                EmptyView()
+                ProgressView()
             }
         }
         .animation(.easeInOut, value: stepAnimationKey)
         .preferredColorScheme(isDarkMode ? .dark : .light)
+        .outgoTheme(isDark: isDarkMode)
         .task {
             let systemIsDark = (systemColorScheme == .dark)
             isDarkMode = storage.getBoolean(key: themeKey, defaultValue: systemIsDark)
             
             for await navState in coordinator.state {
-                self.currentStep = navState.currentStep
+                withAnimation {
+                    self.currentStep = navState.currentStep
+                }
             }
         }
     }

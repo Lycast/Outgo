@@ -22,7 +22,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import fr.abknative.outgo.android.components.common.CircleIcon
-import fr.abknative.outgo.android.ui.*
+import fr.abknative.outgo.android.ui.AccessibilityLabels
+import fr.abknative.outgo.android.ui.CommonLabels
+import fr.abknative.outgo.android.ui.extensions.*
 import fr.abknative.outgo.android.ui.theme.AppTheme
 import fr.abknative.outgo.android.ui.theme.OutgoTheme
 import fr.abknative.outgo.core.api.SyncStatus

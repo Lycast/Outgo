@@ -1,7 +1,10 @@
-package fr.abknative.outgo.android.ui
+package fr.abknative.outgo.android.ui.extensions
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import fr.abknative.outgo.android.ui.CommonLabels
+import fr.abknative.outgo.android.ui.DashboardLabels
+import fr.abknative.outgo.android.ui.FormLabels
 import fr.abknative.outgo.core.api.SyncStatus
 import fr.abknative.outgo.core.ui.Palette
 import fr.abknative.outgo.outgoing.api.Recurrence

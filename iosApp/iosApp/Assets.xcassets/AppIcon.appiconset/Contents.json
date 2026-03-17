@@ -1,6 +1,7 @@
 {
   "images" : [
     {
+      "filename" : "outgo_logo_ios.png",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"

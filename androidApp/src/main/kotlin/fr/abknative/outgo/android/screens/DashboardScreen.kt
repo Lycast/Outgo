@@ -7,7 +7,7 @@ import androidx.compose.ui.Modifier
 import fr.abknative.outgo.android.components.common.Header
 import fr.abknative.outgo.android.components.common.SyncPromotionModal
 import fr.abknative.outgo.android.components.dashboard.*
-import fr.abknative.outgo.android.ui.getMonthName
+import fr.abknative.outgo.android.ui.extensions.getMonthName
 import fr.abknative.outgo.android.ui.states.OutgoingFilter
 import fr.abknative.outgo.android.ui.states.rememberOutgoingFormState
 import fr.abknative.outgo.android.ui.theme.AppTheme
