@@ -34,7 +34,7 @@ struct Header: View {
                 
                 // Icône Navigation (Settings <-> Home)
                 Button(action: onSyncNavigationClick) {
-                    OutgoIcon(iconName: isConnected ? "house_line" : "gear_six")
+                    OutgoIcon(iconName: isSettingsScreen ? "house_line" : "gear_six")
                         .frame(width: 36, height: 44, alignment: .center)
                         .contentShape(Rectangle())
                         .foregroundColor(.primary)

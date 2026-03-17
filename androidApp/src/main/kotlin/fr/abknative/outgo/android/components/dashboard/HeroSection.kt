@@ -5,19 +5,16 @@ import androidx.compose.animation.*
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountBalance
-import androidx.compose.material.icons.filled.Balance
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import fr.abknative.outgo.android.R
 import fr.abknative.outgo.android.components.common.CircleIcon
 import fr.abknative.outgo.android.components.common.InfoTooltip
 import fr.abknative.outgo.android.ui.DashboardLabels
@@ -137,7 +134,7 @@ fun HeroSection(
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
-                    imageVector = if (isExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                    painter = painterResource(id = if (isExpanded) R.drawable.caret_up else R.drawable.caret_down),
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
                     modifier = Modifier.size(24.dp)
@@ -157,7 +154,7 @@ private fun BudgetItem(
         modifier = Modifier.clickable(onClick = onClick),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        CircleIcon(Icons.Default.AccountBalance)
+        CircleIcon(R.drawable.bank_duotone)
         Spacer(Modifier.width(AppTheme.spacing.medium))
         Text(
             text = amount,
@@ -179,7 +176,7 @@ private fun LiveItem(
         description = DashboardLabels.TOOLTIP_BALANCE_DESC,
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            CircleIcon(Icons.Default.Balance)
+            CircleIcon(R.drawable.piggy_bank_duotone)
             Spacer(Modifier.width(AppTheme.spacing.medium))
             Text(
                 text = amount,

@@ -9,18 +9,18 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 
 
 @Composable
-fun CircleIcon(icon: ImageVector) {
+fun CircleIcon(icon: Int) {
     Box(
         modifier = Modifier
             .size(40.dp)
             .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.05f), CircleShape),
         contentAlignment = Alignment.Center
     ) {
-        Icon(imageVector = icon, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+        Icon(painter = painterResource(icon), contentDescription = null, tint = MaterialTheme.colorScheme.primary)
     }
 }

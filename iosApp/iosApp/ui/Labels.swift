@@ -45,7 +45,8 @@ struct DashboardLabels {
 
     var DEFAULT_NAME: String { getString(Res.string().dashboard_default_name) }
     var DUE_PREFIX: String { getString(Res.string().dashboard_due_prefix) }
-    var DUE_MONTHLY_SUFFIX: String { getString(Res.string().dashboard_due_monthly_suffix) }
+    
+    var MONTH_ALL: String { getString(Res.string().dashboard_month_all) }
 
     // Noms des mois
     var MONTH_1: String { getString(Res.string().dashboard_month_1) }
@@ -71,8 +72,6 @@ struct FormLabels {
     var FIELD_NAME: String { getString(Res.string().form_field_name) }
     var FIELD_AMOUNT: String { getString(Res.string().form_field_amount) }
     var FIELD_DATE_DESC: String { getString(Res.string().form_field_date_desc) }
-    var FIELD_DAY: String { getString(Res.string().form_field_day) }
-    var FIELD_MONTH: String { getString(Res.string().form_field_month) }
     var CYCLE_MONTHLY: String { getString(Res.string().form_cycle_monthly) }
     var CYCLE_YEARLY: String { getString(Res.string().form_cycle_yearly) }
 }

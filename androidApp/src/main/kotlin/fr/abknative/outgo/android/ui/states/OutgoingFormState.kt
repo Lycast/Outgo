@@ -32,13 +32,16 @@ class OutgoingFormState(
             val isNameValid = nameBuffer.isNotBlank()
             val amountDecimal = amountBuffer.replace(',', '.').toBigDecimalOrNull()
             val isAmountValid = amountDecimal != null && amountDecimal > java.math.BigDecimal.ZERO
+
             val dayInt = dueDayBuffer.toIntOrNull()
             val isDayValid = dayInt != null && dayInt in 1..31
 
+            val monthInt = dueMonthBuffer.toIntOrNull() ?: 0
             val isMonthValid = if (recurrenceSelection == Recurrence.YEARLY) {
-                val monthInt = dueMonthBuffer.toIntOrNull()
-                monthInt != null && monthInt in 1..12
-            } else true
+                monthInt in 1..12
+            } else {
+                monthInt == 0
+            }
 
             return isNameValid && isAmountValid && isDayValid && isMonthValid
         }
@@ -60,10 +63,18 @@ class OutgoingFormState(
             }
             is OutgoingFormEvent.UpdateRecurrence -> {
                 recurrenceSelection = event.recurrence
-                if (event.recurrence == Recurrence.MONTHLY) dueMonthBuffer = ""
+                if (event.recurrence == Recurrence.MONTHLY) dueMonthBuffer = "0"
             }
             is OutgoingFormEvent.UpdateDueDay -> dueDayBuffer = event.day
-            is OutgoingFormEvent.UpdateDueMonth -> dueMonthBuffer = event.month
+
+            is OutgoingFormEvent.UpdateDueMonth -> {
+                dueMonthBuffer = event.month
+                recurrenceSelection = if (event.month == "0" || event.month.isEmpty()) {
+                    Recurrence.MONTHLY
+                } else {
+                    Recurrence.YEARLY
+                }
+            }
         }
     }
 }

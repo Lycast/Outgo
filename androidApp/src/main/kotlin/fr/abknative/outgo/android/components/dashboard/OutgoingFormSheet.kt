@@ -1,6 +1,7 @@
 package fr.abknative.outgo.android.components.dashboard
 
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
 import androidx.compose.runtime.Composable
@@ -29,23 +30,24 @@ fun OutgoingFormSheet(
 
     ModalBottomSheet(
         onDismissRequest = onDismiss,
-        sheetState = sheetState
+        sheetState = sheetState,
+        containerColor = MaterialTheme.colorScheme.surface
     ) {
         OutgoingFormContent(
             state = formState,
             onEvent = onEvent,
             onCancel = { closeSheet() },
             onSave = {
-                onSave(
-                    OutgoingIntent.Save(
-                        id = formState.outgoingId,
-                        name = formState.nameBuffer,
-                        amountInCents = formState.amountInCents,
-                        recurrence = formState.recurrenceSelection,
-                        dueDay = formState.dueDayBuffer.toIntOrNull() ?: 1,
-                        dueMonth = formState.dueMonthBuffer.toIntOrNull()
-                    )
+                val monthValue = formState.dueMonthBuffer.toIntOrNull() ?: 0
+                val intent = OutgoingIntent.Save(
+                    id = formState.outgoingId,
+                    name = formState.nameBuffer,
+                    amountInCents = formState.amountInCents,
+                    recurrence = formState.recurrenceSelection,
+                    dueDay = formState.dueDayBuffer.toIntOrNull() ?: 1,
+                    dueMonth = if (monthValue == 0) null else monthValue
                 )
+                onSave(intent)
                 closeSheet()
             }
         )

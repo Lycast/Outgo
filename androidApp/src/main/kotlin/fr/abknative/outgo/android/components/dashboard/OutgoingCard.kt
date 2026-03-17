@@ -7,20 +7,17 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ContentCopy
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.rounded.CreditCard
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import fr.abknative.outgo.android.R
 import fr.abknative.outgo.android.components.common.CircleIcon
 import fr.abknative.outgo.android.ui.AccessibilityLabels
 import fr.abknative.outgo.android.ui.CommonLabels
@@ -72,7 +69,7 @@ fun OutgoingCard(
         ) {
 
             // Icon a gauche
-            CircleIcon(Icons.Rounded.CreditCard)
+            CircleIcon(R.drawable.credit_card_duotone)
             Spacer(modifier = Modifier.width(AppTheme.spacing.large))
 
             Column(verticalArrangement = Arrangement.Center) {
@@ -153,7 +150,7 @@ fun OutgoingCard(
                     colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.error)
                 ) {
                     Icon(
-                        Icons.Default.Delete,
+                        painter = painterResource(R.drawable.trash),
                         contentDescription = AccessibilityLabels.DELETE_EXPENSE,
                         modifier = Modifier.size(18.dp)
                     )
@@ -169,7 +166,7 @@ fun OutgoingCard(
                     }
                 ) {
                     Icon(
-                        Icons.Default.ContentCopy,
+                        painter = painterResource(R.drawable.copy),
                         contentDescription = AccessibilityLabels.DUPLICATE_EXPENSE,
                         modifier = Modifier.size(18.dp)
                     )
@@ -185,7 +182,7 @@ fun OutgoingCard(
                     },
                 ) {
                     Icon(
-                        Icons.Default.Edit,
+                        painter = painterResource(R.drawable.pencil_simple),
                         contentDescription = AccessibilityLabels.EDIT_EXPENSE,
                         modifier = Modifier.size(18.dp)
                     )

@@ -4,9 +4,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -14,9 +11,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import fr.abknative.outgo.android.R
 import fr.abknative.outgo.android.ui.AccessibilityLabels
 import fr.abknative.outgo.android.ui.theme.AppTheme
+
 
 @Composable
 fun MonthBudgetSelector(
@@ -33,7 +33,7 @@ fun MonthBudgetSelector(
     ){
         IconButton(onClick = onPreviousMonthClick) {
             Icon(
-                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                painter = painterResource(R.drawable.caret_left),
                 contentDescription = AccessibilityLabels.PREVIOUS_MONTH,
                 tint = MaterialTheme.colorScheme.primary
             )
@@ -49,7 +49,7 @@ fun MonthBudgetSelector(
 
         IconButton(onClick = onNextMonthClick) {
             Icon(
-                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                painter = painterResource(R.drawable.caret_right),
                 contentDescription = AccessibilityLabels.NEXT_MONTH,
                 tint = MaterialTheme.colorScheme.primary
             )

@@ -1,7 +1,7 @@
 import SwiftUI
 import SharedApp
 
-class OutgoingFormViewModel: ObservableObject {
+class OutgoingFormState: ObservableObject {
     
     let outgoingId: String?
     
@@ -29,19 +29,11 @@ class OutgoingFormViewModel: ObservableObject {
     
     var isValid: Bool {
         let isNameValid = !nameBuffer.trimmingCharacters(in: .whitespaces).isEmpty
+        let isAmountValid = amountInCents > 0
+        let isDayValid = (1...31).contains(Int(dueDayBuffer) ?? 0)
         
-        let cleanAmount = amountBuffer.replacingOccurrences(of: ",", with: ".")
-        let amountValue = Double(cleanAmount) ?? 0.0
-        let isAmountValid = amountValue > 0
-        
-        let dayInt = Int(dueDayBuffer) ?? 0
-        let isDayValid = (1...31).contains(dayInt)
-        
-        var isMonthValid = true
-        if recurrenceSelection == .yearly {
-            let monthInt = Int(dueMonthBuffer) ?? 0
-            isMonthValid = (1...12).contains(monthInt)
-        }
+        let monthInt = Int(dueMonthBuffer) ?? 0
+        let isMonthValid = (recurrenceSelection == .yearly) ? (1...12).contains(monthInt) : (monthInt == 0)
         
         return isNameValid && isAmountValid && isDayValid && isMonthValid
     }
@@ -63,11 +55,18 @@ class OutgoingFormViewModel: ObservableObject {
             }
         case .updateRecurrence(let rec):
             recurrenceSelection = rec
-            if rec == .monthly { dueMonthBuffer = "" }
+            if rec == .monthly { dueMonthBuffer = "0" }
+            
         case .updateDueDay(let day):
             dueDayBuffer = day
+            
         case .updateDueMonth(let month):
             dueMonthBuffer = month
+            if month == "0" || month.isEmpty {
+                recurrenceSelection = .monthly
+            } else {
+                recurrenceSelection = .yearly
+            }
         }
     }
 }

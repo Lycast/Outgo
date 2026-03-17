@@ -3,7 +3,7 @@ import SharedApp
 
 struct OutgoingFormSheet: View {
     // --- État ---
-    @ObservedObject var viewModel: OutgoingFormViewModel
+    @ObservedObject var viewModel: OutgoingFormState
     
     // --- Actions ---
     let onDismiss: () -> Void
@@ -21,14 +21,15 @@ struct OutgoingFormSheet: View {
                     onDismiss()
                 },
                 onSave: {
-                    // --- MAPPING : Buffer -> Intent ---
+                    let monthValue = Int32(viewModel.dueMonthBuffer) ?? 0
+                    
                     let intent = OutgoingIntentSave(
                         id: viewModel.outgoingId,
                         name: viewModel.nameBuffer,
                         amountInCents: viewModel.amountInCents,
                         recurrence: viewModel.recurrenceSelection,
                         dueDay: Int32(viewModel.dueDayBuffer) ?? 1,
-                        dueMonth: viewModel.dueMonthBuffer.isEmpty ? nil : KotlinInt(value: Int32(viewModel.dueMonthBuffer) ?? 1)
+                        dueMonth: (monthValue == 0) ? nil : KotlinInt(value: monthValue)
                     )
                     
                     onSave(intent)

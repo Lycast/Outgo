@@ -4,16 +4,15 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.selection.toggleable
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.ChevronRight
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import fr.abknative.outgo.android.R
 import fr.abknative.outgo.android.components.common.CircleIcon
 import fr.abknative.outgo.android.ui.SettingsLabels
 import fr.abknative.outgo.android.ui.theme.AppTheme
@@ -43,7 +42,7 @@ fun SettingsSection(
 
 @Composable
 fun SettingsRowClickable(
-    icon: ImageVector,
+    icon: Int,
     title: String,
     subtitle: String,
     onClick: () -> Unit
@@ -58,16 +57,16 @@ fun SettingsRowClickable(
     ) {
         SettingsRowContent(icon, title, subtitle)
         Icon(
-            imageVector = Icons.Rounded.ChevronRight,
+            painter = painterResource(R.drawable.caret_right),
             contentDescription = SettingsLabels.CHEVRON_DESC,
-            tint = MaterialTheme.colorScheme.onSurfaceVariant
+            tint = MaterialTheme.colorScheme.onSurface
         )
     }
 }
 
 @Composable
 fun SettingsRowToggle(
-    icon: ImageVector,
+    icon: Int,
     title: String,
     subtitle: String,
     isChecked: Boolean,
@@ -106,7 +105,7 @@ fun SettingsRowToggle(
 
 @Composable
 fun SettingsRowContent(
-    icon: ImageVector,
+    icon: Int,
     title: String,
     subtitle: String
 ) {

@@ -1,9 +1,9 @@
 package fr.abknative.outgo.android.components.common
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.CloudSync
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.painterResource
+import fr.abknative.outgo.android.R
 import fr.abknative.outgo.android.ui.HeaderLabels
 
 @Composable
@@ -15,7 +15,7 @@ fun SyncPromotionModal(
         onDismissRequest = onDismiss,
         icon = {
             Icon(
-                imageVector = Icons.Rounded.CloudSync,
+                painter = painterResource(R.drawable.cloud_check),
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary
             )

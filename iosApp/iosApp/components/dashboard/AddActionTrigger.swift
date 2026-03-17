@@ -10,9 +10,12 @@ struct AddActionTrigger: View {
     
     var body: some View {
         Button(action: onClick) {
-            Image(systemName: "plus")
-                .font(.system(size: 24, weight: .bold))
+            Image("plus_bold")
+                .renderingMode(.template)
+                .resizable()
+                .frame(width: 24, height: 24)
                 .foregroundColor(.white)
+            
                 .frame(width: 56, height: 56)
                 .background(colors.primary)
                 .clipShape(Circle())

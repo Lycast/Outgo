@@ -81,7 +81,7 @@ struct SettingsRowClickable: View {
                 
                 Spacer()
                 
-                OutgoIcon(iconName:"caret_right_bold")
+                OutgoIcon(iconName:"caret_right")
                     .accessibilityLabel(SettingsLabels.shared.CHEVRON_DESC)
             }
             .padding(spacing.medium)

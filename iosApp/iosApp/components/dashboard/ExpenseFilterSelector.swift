@@ -31,7 +31,7 @@ struct ExpenseFilterSelector: View {
             )
         }
         .padding(spacing.small)
-        .background(colors.surface)
+        .background(colors.background)
         .cornerRadius(12) // Material Medium Shape
         .overlay(
             RoundedRectangle(cornerRadius: 12)

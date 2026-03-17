@@ -3,7 +3,7 @@ import SharedApp
 
 struct OutgoingFormContent: View {
     // --- État ---
-    @ObservedObject var viewModel: OutgoingFormViewModel
+    @ObservedObject var viewModel: OutgoingFormState
     
     // --- Actions ---
     let onCancel: () -> Void
@@ -19,7 +19,7 @@ struct OutgoingFormContent: View {
             ScrollView(showsIndicators: false) {
                 
                 VStack(alignment: .center, spacing: spacing.large) {
-                    
+                    Spacer().frame(height: spacing.medium)
                     // --- Titre ---
                     Text(isEditMode ? FormLabels.shared.SHEET_TITLE_EDIT : FormLabels.shared.SHEET_TITLE_ADD)
                         .font(.title2)
@@ -53,40 +53,12 @@ struct OutgoingFormContent: View {
                             .multilineTextAlignment(.leading)
                             .fixedSize(horizontal: false, vertical: true)
 
-                        // --- Sélecteur : Récurrence (Chips) ---
-                        HStack(spacing: spacing.medium) {
-                            filterChip(
-                                title: FormLabels.shared.CYCLE_MONTHLY,
-                                isSelected: viewModel.recurrenceSelection == .monthly,
-                                action: { viewModel.onEvent(.updateRecurrence(.monthly)) }
-                            )
-                            filterChip(
-                                title: FormLabels.shared.CYCLE_YEARLY,
-                                isSelected: viewModel.recurrenceSelection == .yearly,
-                                action: { viewModel.onEvent(.updateRecurrence(.yearly)) }
-                            )
-                        }
-
-                        // --- Champs numériques (Jour / Mois) ---
-                        HStack(spacing: spacing.large) {
-                            OutlinedTextField(
-                                value: $viewModel.dueDayBuffer,
-                                label: FormLabels.shared.FIELD_DAY,
-                                placeholder: "1-31",
-                                keyboardType: .numberPad
-                            )
-                            .frame(maxWidth: .infinity)
-
-                            if viewModel.recurrenceSelection == .yearly {
-                                OutlinedTextField(
-                                    value: $viewModel.dueMonthBuffer,
-                                    label: FormLabels.shared.FIELD_MONTH,
-                                    placeholder: "1-12",
-                                    keyboardType: .numberPad
-                                )
-                                .frame(maxWidth: .infinity)
-                            }
-                        }
+                        OutgoingDateSelector(
+                            selectedDay: viewModel.dueDayBuffer,
+                            selectedMonth: viewModel.dueMonthBuffer,
+                            onDayChanged: { viewModel.onEvent(.updateDueDay($0)) },
+                            onMonthChanged: { viewModel.onEvent(.updateDueMonth($0)) }
+                        )
                     }
                     .padding(.top, spacing.small)
 

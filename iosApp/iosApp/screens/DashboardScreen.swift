@@ -79,7 +79,7 @@ struct DashboardScreen: View {
                             presenter.onIntent(intent: OutgoingIntentSelectMonth(month: newMonth))
                         }
                     )
-                    Spacer().frame(height: spacing.extraLarge)
+                    Spacer().frame(height: spacing.large)
                     
                     ExpenseFilterSelector(
                         selectedFilter: currentFilter,
@@ -126,7 +126,7 @@ struct DashboardScreen: View {
         .syncPromotionModal(isPresented: $showSyncModal) { }
         .sheet(isPresented: $showFormSheet) {
             OutgoingFormSheet(
-                viewModel: OutgoingFormViewModel(
+                viewModel: OutgoingFormState(
                     outgoingId: selectedOutgoing?.id,
                     initialName: selectedOutgoing?.name ?? "",
                     initialAmount: selectedOutgoing != nil ? String(format: "%.2f", Double(selectedOutgoing!.amountInCents) / 100.0) : "",

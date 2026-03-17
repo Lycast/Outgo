@@ -2,7 +2,7 @@ import SwiftUI
 
 struct OutgoIcon: View {
     let iconName: String
-    var size: CGFloat = 20
+    var size: CGFloat = 24
     var opacity: Double = 1
     
     var body: some View {

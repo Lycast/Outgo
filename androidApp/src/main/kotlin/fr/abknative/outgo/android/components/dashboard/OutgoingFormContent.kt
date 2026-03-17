@@ -1,12 +1,19 @@
 package fr.abknative.outgo.android.components.dashboard
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
@@ -15,7 +22,6 @@ import fr.abknative.outgo.android.ui.FormLabels
 import fr.abknative.outgo.android.ui.states.OutgoingFormEvent
 import fr.abknative.outgo.android.ui.states.OutgoingFormState
 import fr.abknative.outgo.android.ui.theme.AppTheme
-import fr.abknative.outgo.outgoing.api.Recurrence
 
 @Composable
 fun OutgoingFormContent(
@@ -25,12 +31,27 @@ fun OutgoingFormContent(
     onCancel: () -> Unit,
     onSave: () -> Unit
 ) {
+
+    val lockSheetConnection = remember {
+        object : NestedScrollConnection {
+            override fun onPostScroll(
+                consumed: Offset,
+                available: Offset,
+                source: NestedScrollSource
+            ): Offset {
+                return available
+            }
+        }
+    }
+
     val isEditMode = state.outgoingId != null
 
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(AppTheme.spacing.large),
+            .padding(AppTheme.spacing.large)
+            .nestedScroll(lockSheetConnection)
+            .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.medium),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -63,7 +84,10 @@ fun OutgoingFormContent(
             },
             label = { Text(FormLabels.FIELD_AMOUNT) },
             singleLine = true,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal, imeAction = ImeAction.Next),
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Decimal,
+                imeAction = ImeAction.Done
+            ),
             suffix = { Text(CommonLabels.CURRENCY_SYMBOL) },
             modifier = Modifier.fillMaxWidth()
         )
@@ -74,87 +98,27 @@ fun OutgoingFormContent(
 
             Text(
                 text = FormLabels.FIELD_DATE_DESC,
-                style = MaterialTheme.typography.bodyMedium
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(horizontal = AppTheme.spacing.small)
             )
 
-            // --- Sélecteur : Récurrence ---
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.small)
-            ) {
-                val chipColors = FilterChipDefaults.filterChipColors(
-                    containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
-                    labelColor = MaterialTheme.colorScheme.onSurface,
-                    selectedContainerColor = MaterialTheme.colorScheme.primary,
-                    selectedLabelColor = Color.White,
-                )
-
-                FilterChip(
-                    selected = state.recurrenceSelection == Recurrence.MONTHLY,
-                    onClick = { onEvent(OutgoingFormEvent.UpdateRecurrence(Recurrence.MONTHLY)) },
-                    label = { Text(FormLabels.CYCLE_MONTHLY) },
-                    colors = chipColors,
-                    border = null,
-                    modifier = Modifier.weight(1f)
-                )
-                FilterChip(
-                    selected = state.recurrenceSelection == Recurrence.YEARLY,
-                    onClick = { onEvent(OutgoingFormEvent.UpdateRecurrence(Recurrence.YEARLY)) },
-                    label = { Text(FormLabels.CYCLE_YEARLY) },
-                    colors = chipColors,
-                    border = null,
-                    modifier = Modifier.weight(1f)
-                )
-            }
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(IntrinsicSize.Min),
-                horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.large)
-            ) {
-
-                // --- Champ : Jour de prélèvement ---
-                OutlinedTextField(
-                    value = state.dueDayBuffer,
-                    onValueChange = { newValue ->
-                        if (newValue.all { it.isDigit() }) onEvent(OutgoingFormEvent.UpdateDueDay(newValue))
-                    },
-                    label = { Text(FormLabels.FIELD_DAY) },
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Number,
-                        imeAction = if (state.recurrenceSelection == Recurrence.YEARLY) ImeAction.Next else ImeAction.Done
-                    ),
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxHeight()
-                )
-
-                // --- Champ conditionnel : Mois de prélèvement ---
-                if (state.recurrenceSelection == Recurrence.YEARLY) {
-                    OutlinedTextField(
-                        value = state.dueMonthBuffer,
-                        onValueChange = { newValue ->
-                            if (newValue.all { it.isDigit() }) onEvent(OutgoingFormEvent.UpdateDueMonth(newValue))
-                        },
-                        label = { Text(FormLabels.FIELD_MONTH) },
-                        singleLine = true,
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Number,
-                            imeAction = ImeAction.Done
-                        ),
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxHeight()
-                    )
-                }
-            }
+            // --- Nouveau Sélecteur : Date et Récurrence unifiées ---
+            OutgoingDateSelector(
+                selectedDay = state.dueDayBuffer,
+                selectedMonth = state.dueMonthBuffer,
+                onDayChanged = { onEvent(OutgoingFormEvent.UpdateDueDay(it)) },
+                onMonthChanged = { onEvent(OutgoingFormEvent.UpdateDueMonth(it)) }
+            )
         }
+
+        Spacer(modifier = Modifier.height(AppTheme.spacing.medium))
 
         // --- Actions Boutons ---
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = AppTheme.spacing.medium),
             horizontalArrangement = Arrangement.End,
             verticalAlignment = Alignment.CenterVertically
         ) {

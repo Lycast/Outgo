@@ -125,7 +125,7 @@ fun DashboardScreen(
                 onEditBudgetClick = { showBudgetDialog = true }
             )
 
-            Spacer(modifier = Modifier.height(AppTheme.spacing.big))
+            Spacer(modifier = Modifier.height(AppTheme.spacing.extraLarge))
 
             ExpenseFilterSelector(
                 selectedFilter = currentFilter,

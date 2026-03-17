@@ -15,9 +15,8 @@ struct MonthBudgetSelector: View {
         HStack {
             // Bouton Précédent
             Button(action: onPreviousMonthClick) {
-                Image("caret_left_bold")
+                Image("caret_left")
                     .renderingMode(.template)
-                    .font(.system(size: 20, weight: .medium))
                     .foregroundColor(colors.primary)
                     .padding(spacing.small)
             }
@@ -35,9 +34,8 @@ struct MonthBudgetSelector: View {
             
             // Bouton Suivant
             Button(action: onNextMonthClick) {
-                Image("caret_right_bold")
+                Image("caret_right")
                     .renderingMode(.template)
-                    .font(.system(size: 20, weight: .medium))
                     .foregroundColor(colors.primary)
                     .padding(spacing.small)
             }

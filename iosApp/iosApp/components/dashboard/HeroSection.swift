@@ -89,7 +89,7 @@ struct HeroSection: View {
 
             // --- Bouton Toggle ---
             Button(action: onToggleExpand) {
-                OutgoIcon(iconName: isExpanded ? "caret_up_bold" : "caret_down_bold", opacity: 0.5)
+                OutgoIcon(iconName: isExpanded ? "caret_up" : "caret_down", opacity: 0.5)
             }
         }
         .background(colors.surface)

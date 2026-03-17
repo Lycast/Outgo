@@ -38,7 +38,7 @@ object DashboardLabels {
 
     val DEFAULT_NAME @Composable get() = stringResource(Res.string.dashboard_default_name)
     val DUE_PREFIX @Composable get() = stringResource(Res.string.dashboard_due_prefix)
-    val DUE_MONTHLY_SUFFIX @Composable get() = stringResource(Res.string.dashboard_due_monthly_suffix)
+    val MONTH_ALL @Composable get() = stringResource(Res.string.dashboard_month_all)
 
     // Noms des mois
     val MONTH_1 @Composable get() = stringResource(Res.string.dashboard_month_1)
@@ -61,8 +61,6 @@ object FormLabels {
     val FIELD_NAME @Composable get() = stringResource(Res.string.form_field_name)
     val FIELD_AMOUNT @Composable get() = stringResource(Res.string.form_field_amount)
     val FIELD_DATE_DESC @Composable get() = stringResource(Res.string.form_field_date_desc)
-    val FIELD_DAY @Composable get() = stringResource(Res.string.form_field_day)
-    val FIELD_MONTH @Composable get() = stringResource(Res.string.form_field_month)
     val CYCLE_MONTHLY @Composable get() = stringResource(Res.string.form_cycle_monthly)
     val CYCLE_YEARLY @Composable get() = stringResource(Res.string.form_cycle_yearly)
 }

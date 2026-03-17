@@ -75,7 +75,7 @@ struct OutgoingCard: View {
                     // Bouton Supprimer
                     actionButton(
                         title: CommonLabels.shared.ACTION_DELETE,
-                        icon: "trash.fill",
+                        icon: "trash",
                         color: colors.error,
                         accessibility: AccessibilityLabels.shared.DELETE_EXPENSE,
                         action: {
@@ -89,7 +89,7 @@ struct OutgoingCard: View {
                     // Bouton Dupliquer
                     actionButton(
                         title: CommonLabels.shared.ACTION_DUPLICATE,
-                        icon: "doc.on.doc.fill",
+                        icon: "copy",
                         color: colors.primary,
                         accessibility: AccessibilityLabels.shared.DUPLICATE_EXPENSE,
                         action: {
@@ -103,7 +103,7 @@ struct OutgoingCard: View {
                     // Bouton Éditer
                     actionButton(
                         title: CommonLabels.shared.ACTION_EDIT,
-                        icon: "pencil",
+                        icon: "pencil_simple",
                         color: colors.primary,
                         accessibility: AccessibilityLabels.shared.EDIT_EXPENSE,
                         action: {
@@ -112,8 +112,8 @@ struct OutgoingCard: View {
                         }
                     )
                 }
-                .padding(.horizontal, spacing.large)
-                .padding(.vertical, spacing.extraSmall)
+                .padding(.horizontal, spacing.extraLarge)
+                .padding(.vertical, spacing.medium)
                 .transition(.opacity.combined(with: .move(edge: .top)))
             }
         }
@@ -131,8 +131,11 @@ struct OutgoingCard: View {
     ) -> some View {
         Button(action: action) {
             HStack(spacing: spacing.extraSmall) {
-                Image(systemName: icon)
-                    .font(.system(size: 14))
+                Image(icon)
+                    .resizable()
+                    .renderingMode(.template)
+                    .frame(width: 16, height: 16)
+                    .foregroundColor(color)
                 Text(title)
                     .font(.footnote)
             }

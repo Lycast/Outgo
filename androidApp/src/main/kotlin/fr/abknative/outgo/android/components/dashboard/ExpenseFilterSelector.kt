@@ -28,7 +28,7 @@ fun ExpenseFilterSelector(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = AppTheme.spacing.medium),
-        color = MaterialTheme.colorScheme.surface,
+        color = MaterialTheme.colorScheme.background,
         border = BorderStroke(1.dp,MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f)),
         shape = MaterialTheme.shapes.medium
     ) {

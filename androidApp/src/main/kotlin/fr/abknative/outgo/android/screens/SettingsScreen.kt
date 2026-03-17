@@ -3,8 +3,6 @@ package fr.abknative.outgo.android.screens
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -12,6 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import fr.abknative.outgo.android.R
 import fr.abknative.outgo.android.components.common.Header
 import fr.abknative.outgo.android.components.common.SyncPromotionModal
 import fr.abknative.outgo.android.components.settings.SettingsRowClickable
@@ -58,7 +57,7 @@ fun SettingsScreen(
             // --- SECTION 1 : Apparence ---
             SettingsSection(title = SettingsLabels.SECTION_APPEARANCE) {
                 SettingsRowToggle(
-                    icon = Icons.Rounded.DarkMode,
+                    icon = R.drawable.moon_duotone,
                     title = SettingsLabels.DARK_MODE_TITLE,
                     subtitle = SettingsLabels.DARK_MODE_SUBTITLE,
                     isChecked = isDarkMode,
@@ -69,21 +68,21 @@ fun SettingsScreen(
             // --- SECTION 2 : Soutien & Communauté ---
             SettingsSection(title = SettingsLabels.SECTION_SUPPORT) {
                 SettingsRowClickable(
-                    icon = Icons.Rounded.Lightbulb,
+                    icon = R.drawable.lightbulb_duotone,
                     title = SettingsLabels.TIPS_TITLE,
                     subtitle = SettingsLabels.TIPS_SUBTITLE,
                     onClick = onTipsClick
                 )
                 HorizontalDivider(color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f))
                 SettingsRowClickable(
-                    icon = Icons.Rounded.Email,
+                    icon = R.drawable.envelope_duotone,
                     title = SettingsLabels.CONTACT_TITLE,
                     subtitle = SettingsLabels.CONTACT_SUBTITLE,
                     onClick = onContactClick
                 )
                 HorizontalDivider(color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f))
                 SettingsRowClickable(
-                    icon = Icons.Rounded.LocalCafe,
+                    icon = R.drawable.coffee_duotone,
                     title = SettingsLabels.COFFEE_TITLE,
                     subtitle = SettingsLabels.COFFEE_SUBTITLE,
                     onClick = { /*onCoffeeClick*/ }
@@ -93,7 +92,7 @@ fun SettingsScreen(
             // --- SECTION 3 : Compte & Données ---
             SettingsSection(title = SettingsLabels.SECTION_DATA) {
                 SettingsRowClickable(
-                    icon = Icons.Rounded.CloudSync,
+                    icon = R.drawable.arrows_clockwise_duotone,
                     title = SettingsLabels.SYNC_TITLE,
                     subtitle = SettingsLabels.SYNC_SUBTITLE,
                     onClick = { showSyncModal = true }

@@ -24,7 +24,7 @@ object Palette {
 
     // Dark Mode
     val BgDark = 0xFF000000
-    val SurfaceDark = 0xFF000000
+    val SurfaceDark = 0xFF0151515
 
     // --- GRIS DE CONTENU (Textes secondaires et Bordures) ---
     // Light Mode
