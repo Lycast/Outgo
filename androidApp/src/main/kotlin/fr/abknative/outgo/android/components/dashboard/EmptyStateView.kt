@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -15,6 +14,7 @@ import fr.abknative.outgo.android.ui.AccessibilityLabels
 import fr.abknative.outgo.android.ui.DashboardLabels
 import fr.abknative.outgo.android.ui.states.OutgoingFilter
 import fr.abknative.outgo.android.ui.theme.AppTheme
+import fr.abknative.outgo.android.ui.theme.toColor
 
 @Composable
 fun EmptyStateView(
@@ -36,24 +36,30 @@ fun EmptyStateView(
         verticalArrangement = Arrangement.Center
     ) {
         Spacer(modifier = Modifier.height(AppTheme.spacing.large))
+
         Icon(
             imageVector = Icons.Rounded.Info,
             contentDescription = AccessibilityLabels.INFO_EMPTY_STATE,
             modifier = Modifier.size(32.dp),
-            tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
+            tint = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.4f)
         )
+
         Spacer(modifier = Modifier.height(AppTheme.spacing.extraLarge))
+
         Text(
             text = message,
-            style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.onSurface
+            style = AppTheme.typo.subtitle,
+            color = AppTheme.colors.textPrimary.toColor(),
+            textAlign = TextAlign.Center
         )
+
         Spacer(modifier = Modifier.height(AppTheme.spacing.medium))
+
         if (filter == OutgoingFilter.ALL) {
             Text(
                 text = DashboardLabels.EMPTY_STATE_DESC,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = AppTheme.typo.body,
+                color = AppTheme.colors.textSecondary.toColor(),
                 textAlign = TextAlign.Center
             )
         }

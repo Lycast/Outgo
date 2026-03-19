@@ -8,6 +8,7 @@ struct SettingsSection<Content: View>: View {
 
     @Environment(\.spacing) private var spacing
     @Environment(\.outgoColors) private var colors
+    @Environment(\.outgoTypography) private var typo
 
     init(title: String, @ViewBuilder content: () -> Content) {
         self.title = title
@@ -18,20 +19,20 @@ struct SettingsSection<Content: View>: View {
         VStack(alignment: .leading, spacing: spacing.small) {
             // Titre de section en majuscules
             Text(title.uppercased())
-                .font(.caption2)
+                .font(typo.label)
                 .fontWeight(.bold)
                 .foregroundColor(colors.primary)
                 .padding(.leading, spacing.medium)
-            
+
             // La "Card" (VStack avec fond et bordure)
             VStack(spacing: 0) {
                 content
             }
-            .background(colors.surface)
-            .cornerRadius(12)
+            .background(colors.surface50)
+            .clipShape(RoundedRectangle(cornerRadius: spacing.medium))
             .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(colors.onSurfaceVariant.opacity(0.2), lineWidth: 1)
+                RoundedRectangle(cornerRadius: spacing.medium)
+                    .stroke(colors.textSecondary.opacity(0.1), lineWidth: 1)
             )
         }
     }
@@ -45,20 +46,26 @@ private struct SettingsRowContent: View {
 
     @Environment(\.spacing) private var spacing
     @Environment(\.outgoColors) private var colors
-
+    @Environment(\.outgoTypography) private var typo
+    
     var body: some View {
         HStack(spacing: spacing.medium) {
-            CircleIcon(iconName: icon)
+            
+            CircleIcon(
+                iconName: icon,
+                tintColor: colors.primary,
+                containerColor: colors.surface100
+            )
             
             VStack(alignment: .leading, spacing: 2) {
                 Text(title)
-                    .font(.body)
+                    .font(typo.body)
                     .fontWeight(.medium)
-                    .foregroundColor(colors.onSurface)
+                    .foregroundColor(colors.textPrimary)
                 
                 Text(subtitle)
-                    .font(.caption)
-                    .foregroundColor(colors.onSurfaceVariant)
+                    .font(typo.caption)
+                    .foregroundColor(colors.textSecondary)
             }
         }
     }
@@ -81,7 +88,12 @@ struct SettingsRowClickable: View {
                 
                 Spacer()
                 
-                OutgoIcon(iconName:"caret_right")
+                Image("caret_right")
+                    .resizable()
+                    .renderingMode(.template)
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 16, height: 16)
+                    .foregroundColor(colors.textSecondary)
                     .accessibilityLabel(SettingsLabels.shared.CHEVRON_DESC)
             }
             .padding(spacing.medium)

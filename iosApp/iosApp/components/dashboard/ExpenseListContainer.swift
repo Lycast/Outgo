@@ -12,16 +12,18 @@ struct ExpenseListContainer: View {
     @Environment(\.spacing) private var spacing
     
     var body: some View {
-        VStack(spacing: 0) {
-            ScrollView {
-                LazyVStack(spacing: 0) {
-                    if isLoading {
-                        LoaderItem()
-                    } else if filteredList.isEmpty {
-                        EmptyStateView(filter: currentFilter)
-                            .id("empty_state")
-                    } else {
-                        ForEach(filteredList, id: \.id) { (outgoing: Outgoing) in
+        ScrollView(showsIndicators: false) {
+            LazyVStack(spacing: spacing.medium) {
+                
+                if isLoading {
+                    LoaderItem()
+                } else if filteredList.isEmpty {
+                    EmptyStateView(filter: currentFilter)
+                        .id("empty_state")
+                } else {
+                    ForEach(filteredList, id: \.id) { outgoing in
+                        
+                        VStack(spacing: 0) {
                             OutgoingCard(
                                 outgoing: outgoing,
                                 onEdit: { onEdit(outgoing) },
@@ -43,35 +45,18 @@ struct ExpenseListContainer: View {
                                     onEdit(duplicated)
                                 }
                             )
-                            
-                            Divider()
-                                .background(colors.onSurfaceVariant.opacity(0.2))
-                                .padding(.horizontal, spacing.large)
                         }
+                        .background(colors.surface50)
+                        .cornerRadius(12)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 12)
+                                .stroke(colors.textSecondary.opacity(0.1), lineWidth: 1)
+                        )
+                        .padding(.horizontal, spacing.medium)
                     }
                 }
-                .padding(.bottom, 80)
             }
+            .padding(.bottom, 100)
         }
-        .frame(maxWidth: .infinity)
-        .background(colors.surface)
-        .clipShape(
-            UnevenRoundedRectangle(
-                topLeadingRadius: 12,
-                bottomLeadingRadius: 0,
-                bottomTrailingRadius: 0,
-                topTrailingRadius: 12
-            )
-        )
-        .overlay(
-            UnevenRoundedRectangle(
-                topLeadingRadius: 12,
-                bottomLeadingRadius: 0,
-                bottomTrailingRadius: 0,
-                topTrailingRadius: 12
-            )
-            .stroke(colors.onSurfaceVariant.opacity(0.2), lineWidth: 1)
-        )
-        .padding(.horizontal, spacing.medium)
     }
 }

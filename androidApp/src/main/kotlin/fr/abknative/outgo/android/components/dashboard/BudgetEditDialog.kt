@@ -8,13 +8,14 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import fr.abknative.outgo.android.ui.BudgetEditDialogLabels
 import fr.abknative.outgo.android.ui.CommonLabels
+import fr.abknative.outgo.android.ui.FormLabels
 import fr.abknative.outgo.android.ui.theme.AppTheme
 import fr.abknative.outgo.android.ui.theme.OutgoTheme
+import fr.abknative.outgo.android.ui.theme.toColor
 
 @Composable
 fun BudgetEditDialog(
@@ -35,20 +36,24 @@ fun BudgetEditDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
+        containerColor = AppTheme.colors.surface200.toColor(),
         title = {
             Text(
                 text = BudgetEditDialogLabels.DIALOG_BUDGET_TITLE,
-                style = MaterialTheme.typography.headlineSmall
+                style = AppTheme.typo.subtitle,
+                color = AppTheme.colors.textPrimary.toColor()
             )
         },
         text = {
             Column {
                 Text(
                     text = BudgetEditDialogLabels.DIALOG_BUDGET_DESC,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurface
+                    style = AppTheme.typo.body,
+                    color = AppTheme.colors.textSecondary.toColor()
                 )
+
                 Spacer(modifier = Modifier.height(AppTheme.spacing.large))
+
                 OutlinedTextField(
                     value = textValue,
                     onValueChange = { newValue ->
@@ -56,18 +61,41 @@ fun BudgetEditDialog(
                             textValue = newValue.replace(',', '.')
                         }
                     },
-                    label = { Text(BudgetEditDialogLabels.DIALOG_BUDGET_FIELD) },
-                    placeholder = { Text("0.00") },
-                    suffix = { Text(CommonLabels.CURRENCY_SYMBOL) },
+                    label = {
+                        Text(
+                            text = BudgetEditDialogLabels.DIALOG_BUDGET_FIELD,
+                            style = AppTheme.typo.caption
+                        )
+                    },
+                    placeholder = {
+                        Text(FormLabels.FIELD_PLACE_HOLDER_AMOUNT, style = AppTheme.typo.body)
+                    },
+                    suffix = {
+                        Text(CommonLabels.CURRENCY_SYMBOL, style = AppTheme.typo.body)
+                    },
+                    textStyle = AppTheme.typo.body.copy(color = AppTheme.colors.textPrimary.toColor()),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                     singleLine = true,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = AppTheme.colors.primary.toColor(),
+                        unfocusedBorderColor = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.3f),
+                        focusedLabelColor = AppTheme.colors.primary.toColor(),
+                        unfocusedLabelColor = AppTheme.colors.textSecondary.toColor(),
+                        cursorColor = AppTheme.colors.primary.toColor(),
+                        focusedTextColor = AppTheme.colors.textPrimary.toColor(),
+                        unfocusedTextColor = AppTheme.colors.textPrimary.toColor(),
+                        focusedPlaceholderColor = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.5f),
+                        unfocusedPlaceholderColor = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.5f),
+                    )
                 )
+
                 Spacer(modifier = Modifier.height(AppTheme.spacing.large))
+
                 Text(
                     text = BudgetEditDialogLabels.DIALOG_BUDGET_INFO,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    style = AppTheme.typo.caption,
+                    color = AppTheme.colors.textSecondary.toColor()
                 )
             }
         },
@@ -79,14 +107,31 @@ fun BudgetEditDialog(
                         ?.toLong() ?: 0L
                     onConfirm(amountInCents)
                 },
-                enabled = textValue.isNotBlank()
+                enabled = textValue.isNotBlank(),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = AppTheme.colors.primary.toColor(),
+                    contentColor = AppTheme.colors.textOnBrand.toColor(),
+                    disabledContainerColor = AppTheme.colors.surface100.toColor(),
+                    disabledContentColor = AppTheme.colors.textSecondary.toColor()
+                )
             ) {
-                Text(text = CommonLabels.ACTION_SAVE, color = Color.White)
+                Text(
+                    text = CommonLabels.ACTION_SAVE,
+                    style = AppTheme.typo.label
+                )
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text(text = CommonLabels.ACTION_CANCEL)
+            TextButton(
+                onClick = onDismiss,
+                colors = ButtonDefaults.textButtonColors(
+                    contentColor = AppTheme.colors.textSecondary.toColor()
+                )
+            ) {
+                Text(
+                    text = CommonLabels.ACTION_CANCEL,
+                    style = AppTheme.typo.label
+                )
             }
         }
     )

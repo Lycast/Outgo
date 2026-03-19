@@ -16,6 +16,9 @@
     <string name="dashboard_tooltip_balance_desc">C'est le montant final dont vous disposez (ou qu'il vous manque) après avoir soustrait l'ensemble de vos dépenses.</string>
     <string name="dashboard_tooltip_balance_due_title">Votre reste à payer</string>
     <string name="dashboard_tooltip_balance_due_desc">C'est le montant de vos dépenses prévisibles qu'il vous reste à payer pour ce mois-ci.</string>
+    <string name="dashboard_hero_total_income">Budget</string>
+    <string name="dashboard_hero_disposable_income">Restant</string>
+    <string name="dashboard_hero_missing_income">Manquant</string>
     <string name="dashboard_hero_total_charges">Total des dépenses</string>
     <string name="dashboard_hero_remaining_to_pay">Dépenses restantes à payer</string>
     <string name="dashboard_tab_all">TOUTES</string>
@@ -41,10 +44,12 @@
     <string name="dashboard_month_11">Novembre</string>
     <string name="dashboard_month_12">Décembre</string>
 
-    <string name="form_sheet_title_add">Nouvelle dépense prévisible</string>
+    <string name="form_sheet_title_add">Nouvelle dépense</string>
     <string name="form_sheet_title_edit">Modifier la dépense</string>
     <string name="form_field_name">Entrez l'intitulé</string>
+    <string name="form_field_place_holder_name">Ex: Loyer, Netflix...</string>
     <string name="form_field_amount">Entrez le montant</string>
+    <string name="form_field_place_holder_amount">0.00</string>
     <string name="form_field_date_desc">Sélectionnez la récurrence et entrez la date de votre dépense.</string>
     <string name="form_cycle_monthly">Mensuel</string>
     <string name="form_cycle_yearly">Annuel</string>

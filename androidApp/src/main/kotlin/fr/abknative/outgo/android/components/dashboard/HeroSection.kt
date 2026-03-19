@@ -2,7 +2,6 @@ package fr.abknative.outgo.android.components.dashboard
 
 import android.content.res.Configuration
 import androidx.compose.animation.*
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -21,6 +20,7 @@ import fr.abknative.outgo.android.ui.DashboardLabels
 import fr.abknative.outgo.android.ui.extensions.uiAmount
 import fr.abknative.outgo.android.ui.theme.AppTheme
 import fr.abknative.outgo.android.ui.theme.OutgoTheme
+import fr.abknative.outgo.android.ui.theme.toColor
 
 
 @Composable
@@ -38,17 +38,16 @@ fun HeroSection(
 ) {
     val maxValue = maxOf(monthlyIncomeInCents, totalOutgoingsInCents).coerceAtLeast(1L).toFloat()
     val isNegativeLive = disposableIncomeInCents < 0
-    val liveColor = if (isNegativeLive) MaterialTheme.colorScheme.error else AppTheme.dashboardColors.remainingLive
+    val liveColor = if (isNegativeLive) AppTheme.colors.error.toColor() else AppTheme.colors.tertiary.toColor()
 
     val totalLength = monthlyIncomeInCents.uiAmount.length + disposableIncomeInCents.uiAmount.length
-    val isTooLong = totalLength > 22
+    val isTooLong = totalLength > 18
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = AppTheme.spacing.medium),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f)),
+        colors = CardDefaults.cardColors(containerColor = AppTheme.colors.surface100.toColor()),
         shape = MaterialTheme.shapes.medium,
     ) {
         Column(
@@ -63,7 +62,7 @@ fun HeroSection(
 
             HorizontalDivider(
                 modifier = Modifier.padding(horizontal = AppTheme.spacing.large),
-                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f)
+                color = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.1f)
             )
 
             AnimatedVisibility(
@@ -84,7 +83,9 @@ fun HeroSection(
                             amount = monthlyIncomeInCents.uiAmount,
                             onClick = onEditBudgetClick
                         )
+                        Spacer(modifier = Modifier.width(AppTheme.spacing.large))
                         LiveItem(
+                            isNegativeLive = isNegativeLive,
                             amount = disposableIncomeInCents.uiAmount,
                             color = liveColor,
                             fontWeight = if (isNegativeLive) FontWeight.Medium else FontWeight.Bold
@@ -109,18 +110,18 @@ fun HeroSection(
                         }
                     }
 
-                    HorizontalDivider(color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f))
+                    HorizontalDivider(color = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.1f))
 
                     PairedBudgetBar(
                         topLabel = DashboardLabels.HERO_TOTAL_CHARGES_LABEL,
                         topAmount = totalOutgoingsInCents.uiAmount,
                         topProgress = totalOutgoingsInCents / maxValue,
-                        topBarColor = MaterialTheme.colorScheme.tertiary,
+                        topBarColor = AppTheme.colors.primary.toColor(),
 
                         bottomLabel = DashboardLabels.HERO_REMAINING_TO_PAY_LABEL,
                         bottomAmount = remainingToPayInCents.uiAmount,
                         bottomProgress = remainingToPayInCents / maxValue,
-                        bottomBarColor = MaterialTheme.colorScheme.secondary
+                        bottomBarColor = AppTheme.colors.tertiary.toColor()
                     )
                 }
             }
@@ -136,7 +137,7 @@ fun HeroSection(
                 Icon(
                     painter = painterResource(id = if (isExpanded) R.drawable.caret_up else R.drawable.caret_down),
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+                    tint = AppTheme.colors.textSecondary.toColor(),
                     modifier = Modifier.size(24.dp)
                 )
             }
@@ -151,22 +152,37 @@ private fun BudgetItem(
     onClick: () -> Unit
 ) {
     Row(
-        modifier = Modifier.clickable(onClick = onClick),
+        horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.medium),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        CircleIcon(R.drawable.bank_duotone)
-        Spacer(Modifier.width(AppTheme.spacing.medium))
-        Text(
-            text = amount,
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.SemiBold,
-            color = MaterialTheme.colorScheme.onSurface
+        CircleIcon(
+            icon = R.drawable.bank_duotone,
+            tintColor = AppTheme.colors.textOnBrand.toColor(),
+            containerColor = AppTheme.colors.primary.toColor()
         )
+        Column(
+            modifier = Modifier.clickable(onClick = onClick),
+            horizontalAlignment = Alignment.Start
+        ) {
+            Text(
+                text = DashboardLabels.HERO_TOTAL_INCOME_LABEL,
+                style = AppTheme.typo.caption,
+                color = AppTheme.colors.textSecondary.toColor(),
+                fontWeight = FontWeight.Medium
+            )
+
+            Text(
+                text = amount,
+                style = AppTheme.typo.title,
+                color = AppTheme.colors.textPrimary.toColor()
+            )
+        }
     }
 }
 
 @Composable
 private fun LiveItem(
+    isNegativeLive: Boolean,
     amount: String,
     color: Color,
     fontWeight: FontWeight
@@ -175,15 +191,33 @@ private fun LiveItem(
         title = DashboardLabels.TOOLTIP_BALANCE_TITLE,
         description = DashboardLabels.TOOLTIP_BALANCE_DESC,
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            CircleIcon(R.drawable.piggy_bank_duotone)
-            Spacer(Modifier.width(AppTheme.spacing.medium))
-            Text(
-                text = amount,
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = fontWeight,
-                color = color
+
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.medium),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            CircleIcon(
+                icon = R.drawable.piggy_bank_duotone,
+                tintColor = AppTheme.colors.textOnBrand.toColor(),
+                containerColor = color
             )
+            Column(
+                horizontalAlignment = Alignment.Start
+            ) {
+                Text(
+                    text = if (isNegativeLive) DashboardLabels.HERO_MISSING_INCOME_LABEL else DashboardLabels.HERO_DISPOSABLE_INCOME_LABEL,
+                    style = AppTheme.typo.caption,
+                    color = AppTheme.colors.textSecondary.toColor(),
+                    fontWeight = FontWeight.Medium
+                )
+
+                Text(
+                    text = amount,
+                    style = AppTheme.typo.title,
+                    color = color,
+                    fontWeight = fontWeight
+                )
+            }
         }
     }
 }

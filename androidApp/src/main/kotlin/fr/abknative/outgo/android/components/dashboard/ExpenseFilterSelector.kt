@@ -1,13 +1,14 @@
 package fr.abknative.outgo.android.components.dashboard
 
-import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -15,7 +16,7 @@ import androidx.compose.ui.unit.dp
 import fr.abknative.outgo.android.ui.DashboardLabels
 import fr.abknative.outgo.android.ui.states.OutgoingFilter
 import fr.abknative.outgo.android.ui.theme.AppTheme
-import fr.abknative.outgo.android.ui.theme.OutgoTheme
+import fr.abknative.outgo.android.ui.theme.toColor
 
 @Composable
 fun ExpenseFilterSelector(
@@ -23,44 +24,36 @@ fun ExpenseFilterSelector(
     onFilterSelected: (OutgoingFilter) -> Unit,
     modifier: Modifier = Modifier
 ) {
-
-    Surface(
+    Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = AppTheme.spacing.medium),
-        color = MaterialTheme.colorScheme.background,
-        border = BorderStroke(1.dp,MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f)),
-        shape = MaterialTheme.shapes.medium
+            .padding(horizontal = AppTheme.spacing.large),
+        horizontalArrangement = Arrangement.Start
     ) {
-        // FILTER TAB ROW
-        Row(
-            modifier = Modifier.padding(AppTheme.spacing.small),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            // Filtre TOUT
-            FilterTabItem(
-                label = DashboardLabels.TAB_ALL,
-                isSelected = selectedFilter == OutgoingFilter.ALL,
-                onClick = { onFilterSelected(OutgoingFilter.ALL) },
-                modifier = Modifier.weight(1f)
-            )
+        FilterTabItem(
+            modifier = Modifier.weight(1f),
+            label = DashboardLabels.TAB_ALL,
+            isSelected = selectedFilter == OutgoingFilter.ALL,
+            onClick = { onFilterSelected(OutgoingFilter.ALL) }
+        )
 
-            // Filtre PAYÉS
-            FilterTabItem(
-                label = DashboardLabels.TAB_PAID,
-                isSelected = selectedFilter == OutgoingFilter.PAID,
-                onClick = { onFilterSelected(OutgoingFilter.PAID) },
-                modifier = Modifier.weight(1f)
-            )
+        Spacer(modifier = Modifier.width(AppTheme.spacing.large))
 
-            // Filtre RESTANT
-            FilterTabItem(
-                label = DashboardLabels.TAB_REMAINING,
-                isSelected = selectedFilter == OutgoingFilter.REMAINING,
-                onClick = { onFilterSelected(OutgoingFilter.REMAINING) },
-                modifier = Modifier.weight(1f)
-            )
-        }
+        FilterTabItem(
+            modifier = Modifier.weight(1f),
+            label = DashboardLabels.TAB_PAID,
+            isSelected = selectedFilter == OutgoingFilter.PAID,
+            onClick = { onFilterSelected(OutgoingFilter.PAID) }
+        )
+
+        Spacer(modifier = Modifier.width(AppTheme.spacing.large))
+
+        FilterTabItem(
+            modifier = Modifier.weight(1f),
+            label = DashboardLabels.TAB_REMAINING,
+            isSelected = selectedFilter == OutgoingFilter.REMAINING,
+            onClick = { onFilterSelected(OutgoingFilter.REMAINING) }
+        )
     }
 }
 
@@ -71,30 +64,40 @@ private fun FilterTabItem(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Surface(
-        onClick = onClick,
-        modifier = modifier.height(36.dp),
-        shape = MaterialTheme.shapes.medium,
-        color = if (isSelected) MaterialTheme.colorScheme.primary.copy(alpha = 0.1f) else Color.Transparent,
-        border = if (isSelected) BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null,
-        contentColor = MaterialTheme.colorScheme.primary
+    Column(
+        modifier = modifier
+            .clip(RoundedCornerShape(AppTheme.spacing.small))
+            .clickable(onClick = onClick)
+            .padding(vertical = AppTheme.spacing.small),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Box(contentAlignment = Alignment.Center) {
-            Text(
-                text = label,
-                style = MaterialTheme.typography.labelMedium,
-                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
-            )
-        }
+        Text(
+            text = label.uppercase(),
+            style = AppTheme.typo.body,
+            color = if (isSelected) AppTheme.colors.primary.toColor() else AppTheme.colors.textSecondary.toColor(),
+            fontWeight = if (isSelected) FontWeight.Medium else FontWeight.Normal
+        )
+
+        Spacer(modifier = Modifier.height(4.dp))
+
+        Box(
+            modifier = Modifier
+                .height(3.dp)
+                .fillMaxWidth(if (isSelected) 1f else 0f)
+                .background(
+                    color = if (isSelected) AppTheme.colors.primary.toColor() else Color.Transparent,
+                    shape = RoundedCornerShape(percent = 50)
+                )
+        )
     }
 }
 
-@Preview(showBackground = true, name = "Filtres - État Sélectionné")
+@Preview(showBackground = true)
 @Composable
 fun PreviewExpenseFilterSelector() {
     var currentFilter by remember { mutableStateOf(OutgoingFilter.ALL) }
 
-    OutgoTheme {
+    Column(modifier = Modifier.background(Color.White).padding(16.dp)) {
         ExpenseFilterSelector(
             selectedFilter = currentFilter,
             onFilterSelected = { currentFilter = it }

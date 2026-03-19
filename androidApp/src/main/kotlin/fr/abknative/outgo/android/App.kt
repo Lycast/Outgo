@@ -7,7 +7,6 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -15,7 +14,9 @@ import androidx.compose.ui.platform.LocalUriHandler
 import fr.abknative.outgo.android.screens.DashboardScreen
 import fr.abknative.outgo.android.screens.SettingsScreen
 import fr.abknative.outgo.android.ui.SettingsLabels
+import fr.abknative.outgo.android.ui.theme.AppTheme
 import fr.abknative.outgo.android.ui.theme.OutgoTheme
+import fr.abknative.outgo.android.ui.theme.toColor
 import fr.abknative.outgo.app.nav.AppCoordinator
 import fr.abknative.outgo.app.nav.AppStep
 import fr.abknative.outgo.core.api.KeyValueStorage
@@ -44,7 +45,7 @@ fun App() {
     OutgoTheme(darkTheme = isDarkMode) {
         Surface(
             modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.background
+            color = AppTheme.colors.background.toColor()
         ) {
 
             AnimatedContent(

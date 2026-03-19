@@ -3,7 +3,7 @@ import SharedApp
 
 struct OutgoingFormSheet: View {
     // --- État ---
-    @ObservedObject var viewModel: OutgoingFormState
+    @ObservedObject var state: OutgoingFormState
     
     // --- Actions ---
     let onDismiss: () -> Void
@@ -11,24 +11,25 @@ struct OutgoingFormSheet: View {
     
     // --- Environnement ---
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.outgoColors) private var colors
     
     var body: some View {
         NavigationStack {
             OutgoingFormContent(
-                viewModel: viewModel,
+                state: state,
                 onCancel: {
                     dismiss()
                     onDismiss()
                 },
                 onSave: {
-                    let monthValue = Int32(viewModel.dueMonthBuffer) ?? 0
+                    let monthValue = Int32(state.dueMonthBuffer) ?? 0
                     
                     let intent = OutgoingIntentSave(
-                        id: viewModel.outgoingId,
-                        name: viewModel.nameBuffer,
-                        amountInCents: viewModel.amountInCents,
-                        recurrence: viewModel.recurrenceSelection,
-                        dueDay: Int32(viewModel.dueDayBuffer) ?? 1,
+                        id: state.outgoingId,
+                        name: state.nameBuffer,
+                        amountInCents: state.amountInCents,
+                        recurrence: state.recurrenceSelection,
+                        dueDay: Int32(state.dueDayBuffer) ?? 1,
                         dueMonth: (monthValue == 0) ? nil : KotlinInt(value: monthValue)
                     )
                     
@@ -48,5 +49,6 @@ struct OutgoingFormSheet: View {
         }
         .presentationDetents([.medium, .large])
         .presentationDragIndicator(.visible)
+        .background(colors.surface200.ignoresSafeArea())
     }
 }

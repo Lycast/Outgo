@@ -9,6 +9,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import fr.abknative.outgo.android.ui.CommonLabels
+import fr.abknative.outgo.android.ui.theme.AppTheme
+import fr.abknative.outgo.android.ui.theme.toColor
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -30,23 +32,41 @@ fun InfoTooltip(
             RichTooltip(
                 modifier = Modifier.border(
                     width = 1.dp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f),
+                    color = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.2f),
                     shape = tooltipShape
                 ),
                 shape = tooltipShape,
                 colors = TooltipDefaults.richTooltipColors(
-                    containerColor = MaterialTheme.colorScheme.background,
-                    titleContentColor = MaterialTheme.colorScheme.onSurface,
-                    contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                    actionContentColor = MaterialTheme.colorScheme.primary
+                    containerColor = AppTheme.colors.surface200.toColor(),
+                    titleContentColor = AppTheme.colors.textPrimary.toColor(),
+                    contentColor = AppTheme.colors.textSecondary.toColor(),
+                    actionContentColor = AppTheme.colors.primary.toColor()
                 ),
-                title = { Text(text = title) },
-                text = { Text(text = description) },
+                title = {
+                    Text(
+                        text = title,
+                        style = AppTheme.typo.body,
+                        color = AppTheme.colors.textPrimary.toColor()
+                    )
+                },
+                text = {
+                    Text(
+                        text = description,
+                        style = AppTheme.typo.caption,
+                        color = AppTheme.colors.textSecondary.toColor()
+                    )
+                },
                 action = {
                     OutlinedButton(
-                        onClick = { scope.launch { tooltipState.dismiss() } }
+                        onClick = { scope.launch { tooltipState.dismiss() } },
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            contentColor = AppTheme.colors.primary.toColor()
+                        )
                     ) {
-                        Text(text = CommonLabels.ACTION_CLOSE)
+                        Text(
+                            text = CommonLabels.ACTION_CLOSE,
+                            style = AppTheme.typo.caption
+                        )
                     }
                 }
             )

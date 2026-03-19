@@ -11,60 +11,68 @@ struct ExpenseFilterSelector: View {
     @Environment(\.spacing) private var spacing
     
     var body: some View {
-        HStack(spacing: spacing.small) {
+        HStack(spacing: 0) {
+            
             FilterTabItem(
                 label: DashboardLabels.shared.TAB_ALL,
                 isSelected: selectedFilter == .all,
                 onClick: { onFilterSelected(.all) }
             )
             
+            Spacer().frame(width: spacing.large)
+
             FilterTabItem(
                 label: DashboardLabels.shared.TAB_PAID,
                 isSelected: selectedFilter == .paid,
                 onClick: { onFilterSelected(.paid) }
             )
             
+            Spacer().frame(width: spacing.large)
+
             FilterTabItem(
                 label: DashboardLabels.shared.TAB_REMAINING,
                 isSelected: selectedFilter == .remaining,
                 onClick: { onFilterSelected(.remaining) }
             )
         }
-        .padding(spacing.small)
-        .background(colors.background)
-        .cornerRadius(12) // Material Medium Shape
-        .overlay(
-            RoundedRectangle(cornerRadius: 12)
-                .stroke(colors.onSurfaceVariant.opacity(0.2), lineWidth: 1)
-        )
-        .padding(.horizontal, spacing.medium)
+        .padding(.horizontal, spacing.large)
+        .frame(maxWidth: .infinity)
     }
 }
 
-// --- Sous-composant pour l'item de filtre ---
+// --- Sous-composant ---
 private struct FilterTabItem: View {
     let label: String
     let isSelected: Bool
     let onClick: () -> Void
     
     @Environment(\.outgoColors) private var colors
+    @Environment(\.outgoTypography) private var typo
+    @Environment(\.spacing) private var spacing
     
     var body: some View {
-        Button(action: onClick) {
-            Text(label)
-                .font(.caption)
-                .fontWeight(isSelected ? .bold : .regular)
-                .foregroundColor(colors.primary)
-                .frame(height: 36)
-                .frame(maxWidth: .infinity) // Équivalent de weight(1f)
-                .background(isSelected ? colors.primary.opacity(0.1) : Color.clear)
-                .cornerRadius(8)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 8)
-                        .stroke(isSelected ? colors.primary : Color.clear, lineWidth: 1)
-                )
+        Button(action: {
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                onClick()
+            }
+        }) {
+            VStack(alignment: .center, spacing: 4) {
+                Text(label.uppercased())
+                    .font(typo.body)
+                    .fontWeight(isSelected ? .medium : .regular)
+                    .foregroundColor(isSelected ? colors.primary : colors.textSecondary)
+                    .padding(.vertical, spacing.small)
+                
+                RoundedRectangle(cornerRadius: 50)
+                    .fill(isSelected ? colors.primary : Color.clear)
+                    .frame(height: 3)
+                    .frame(maxWidth: .infinity)
+                    .opacity(isSelected ? 1 : 0)
+                    .scaleEffect(x: isSelected ? 1 : 0.4, y: 1)
+            }
         }
         .buttonStyle(.plain)
+        .frame(maxWidth: .infinity)
     }
 }
 
@@ -73,14 +81,19 @@ private struct FilterTabItem: View {
     struct PreviewWrapper: View {
         @State var filter: OutgoingFilter = .all
         var body: some View {
-            VStack {
-                ExpenseFilterSelector(
-                    selectedFilter: filter,
-                    onFilterSelected: { filter = $0 }
-                )
+            ZStack {
+                AppTheme.colorScheme(isDark: false).background.ignoresSafeArea()
+                
+                VStack {
+                    ExpenseFilterSelector(
+                        selectedFilter: filter,
+                        onFilterSelected: { filter = $0 }
+                    )
+                    Spacer()
+                }
+                .padding(.top, 50)
             }
-            .frame(maxHeight: .infinity)
-            .background(Color.gray.opacity(0.1))
+            .outgoTheme()
         }
     }
     return PreviewWrapper()

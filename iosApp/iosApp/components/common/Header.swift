@@ -11,15 +11,14 @@ struct Header: View {
     // --- Environnement ---
     @Environment(\.spacing) private var spacing
     @Environment(\.outgoColors) private var colors
+    @Environment(\.outgoTypography) private var typo
     
     var body: some View {
         HStack(alignment: .center) {
             // --- Titre (Gauche) ---
             Text(CommonLabels.shared.APP_NAME)
-                .font(.system(.title, design: .rounded))
-                .fontWeight(.black)
+                .font(typo.title)
                 .foregroundColor(colors.primary)
-                .padding(.bottom, spacing.small)
             
             Spacer()
             
@@ -34,15 +33,18 @@ struct Header: View {
                 
                 // Icône Navigation (Settings <-> Home)
                 Button(action: onSyncNavigationClick) {
-                    OutgoIcon(iconName: isSettingsScreen ? "house_line" : "gear_six")
-                        .frame(width: 36, height: 44, alignment: .center)
-                        .contentShape(Rectangle())
-                        .foregroundColor(.primary)
+                    Image(isSettingsScreen ? "house_line" : "gear_six")
+                        .resizable()
+                        .renderingMode(.template)
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 24, height: 24)
+                        .padding(spacing.small)
+                        .foregroundColor(colors.primary)
                 }
                 .accessibilityLabel(isSettingsScreen ? AccessibilityLabels.shared.NAVIGATE_HOME : AccessibilityLabels.shared.NAVIGATE_SETTINGS)
             }
         }
-        .padding(.top, spacing.extraLarge)
+        .padding(.vertical, spacing.medium)
         .padding(.horizontal, spacing.large)
         .frame(maxWidth: .infinity)
     }

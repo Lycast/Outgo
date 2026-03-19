@@ -10,6 +10,7 @@ struct InfoTooltip<Content: View>: View {
     
     @Environment(\.outgoColors) private var colors
     @Environment(\.spacing) private var spacing
+    @Environment(\.outgoTypography) private var typo
 
     init(title: String, description: String, @ViewBuilder content: () -> Content) {
         self.title = title
@@ -24,27 +25,40 @@ struct InfoTooltip<Content: View>: View {
             .buttonStyle(.plain)
             .popover(isPresented: $isPresented) {
                 VStack(alignment: .leading, spacing: spacing.medium) {
+
+                    // --- Titre ---
                     Text(title)
-                        .font(.headline)
-                        .foregroundColor(colors.onSurface)
+                        .font(typo.body)
+                        .fontWeight(.semibold)
+                        .foregroundColor(colors.textPrimary)
                     
+                    // --- Description ---
                     Text(description)
-                        .font(.subheadline)
-                        .foregroundColor(colors.onSurfaceVariant)
+                        .font(typo.caption)
+                        .foregroundColor(colors.textSecondary)
                         .lineLimit(nil)
                         .fixedSize(horizontal: false, vertical: true)
                         .multilineTextAlignment(.leading)
                     
+                    // --- Bouton Fermer ---
                     Button(action: { isPresented = false }) {
-                        Text(CommonLabels.shared.ACTION_CLOSE)
+                        Text(CommonLabels.shared.ACTION_CLOSE.uppercased())
+                            .font(typo.label)
+                            .fontWeight(.bold)
+                            .padding(.vertical, 8)
                             .frame(maxWidth: .infinity)
                     }
-                    .buttonStyle(.bordered)
-                    .tint(colors.primary)
-                    .padding(.top, spacing.small)
+                    .buttonStyle(.plain)
+                    .foregroundColor(colors.primary)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(colors.primary.opacity(0.3), lineWidth: 1)
+                    )
+                    .padding(.top, spacing.medium)
                 }
-                .padding()
-                .frame(width: 300)
+                .padding(spacing.large)
+                .frame(width: 280)
+                .background(colors.surface200)
                 .presentationCompactAdaptation(.popover)
             }
         }
@@ -52,12 +66,17 @@ struct InfoTooltip<Content: View>: View {
 
 // --- Preview ---
 #Preview {
-    InfoTooltip(
-        title: "Titre du Tooltip",
-        description: "Ceci est une description détaillée qui explique quelque chose d'important à l'utilisateur. avec beaucoup d'explication inutiles. Pour que cela soit plus clair, on ajoute encore plus de détails. Et voilà, c'est prêt !"
-    ) {
-        Image(systemName: "info.circle")
-            .font(.title)
-            .foregroundColor(.blue)
+    ZStack {
+        Color.gray.opacity(0.1).ignoresSafeArea()
+        
+        InfoTooltip(
+            title: "Solde prévisionnel",
+            description: "Ce montant correspond à ce qu'il vous restera une fois toutes vos charges du mois payées."
+        ) {
+            Image(systemName: "info.circle.fill")
+                .foregroundColor(.blue)
+                .font(.title2)
+        }
     }
+    .outgoTheme()
 }

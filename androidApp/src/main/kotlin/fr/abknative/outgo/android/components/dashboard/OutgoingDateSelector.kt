@@ -1,6 +1,5 @@
 package fr.abknative.outgo.android.components.dashboard
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.*
@@ -8,7 +7,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -19,6 +17,8 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
 import fr.abknative.outgo.android.ui.DashboardLabels
+import fr.abknative.outgo.android.ui.theme.AppTheme
+import fr.abknative.outgo.android.ui.theme.toColor
 
 @Composable
 fun OutgoingDateSelector(
@@ -45,7 +45,7 @@ fun OutgoingDateSelector(
         "12" to DashboardLabels.MONTH_12
     )
 
-    val itemHeight = 32.dp
+    val itemHeight = 40.dp
     val visibleItems = 3
     val containerHeight = itemHeight * visibleItems
 
@@ -53,13 +53,9 @@ fun OutgoingDateSelector(
         modifier = modifier
             .fillMaxWidth()
             .height(containerHeight)
-            .background(
-                color = MaterialTheme.colorScheme.surface,
-                shape = RoundedCornerShape(4.dp)
-            )
             .border(
                 width = 1.dp,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                color = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.1f),
                 shape = RoundedCornerShape(4.dp)
             ),
         horizontalArrangement = Arrangement.SpaceEvenly,
@@ -146,7 +142,7 @@ private fun WheelPicker(
             HorizontalDivider(
                 modifier = Modifier.fillMaxWidth(dividerWidth),
                 thickness = 1.dp,
-                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)
+                color = AppTheme.colors.primary.toColor().copy(alpha = 0.2f)
             )
 
             Spacer(modifier = Modifier.height(itemHeight))
@@ -154,7 +150,7 @@ private fun WheelPicker(
             HorizontalDivider(
                 modifier = Modifier.fillMaxWidth(dividerWidth),
                 thickness = 1.dp,
-                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)
+                color = AppTheme.colors.primary.toColor().copy(alpha = 0.2f)
             )
         }
 
@@ -173,11 +169,11 @@ private fun WheelPicker(
                 ) {
                     Text(
                         text = itemLabels[index],
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
+                        style = AppTheme.typo.body,
+                        color = if (isSelected) AppTheme.colors.primary.toColor() else AppTheme.colors.textSecondary.toColor(),
                         modifier = Modifier
-                            .alpha(if (isSelected) 1f else 0.3f)
-                            .scale(if (isSelected) 1.1f else 1.0f)
+                            .alpha(if (isSelected) 1f else 0.4f)
+                            .scale(if (isSelected) 1.15f else 1.0f)
                     )
                 }
             }

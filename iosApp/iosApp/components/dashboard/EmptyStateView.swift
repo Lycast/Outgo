@@ -7,6 +7,7 @@ struct EmptyStateView: View {
     
     // --- Environnement ---
     @Environment(\.outgoColors) private var colors
+    @Environment(\.outgoTypography) private var typo
     @Environment(\.spacing) private var spacing
 
     // --- Logique du message ---
@@ -27,9 +28,11 @@ struct EmptyStateView: View {
                 .frame(height: spacing.large)
             
             // Icône Info
-            Image(systemName: "info.circle")
-                .font(.system(size: 32))
-                .foregroundColor(colors.onSurfaceVariant.opacity(0.5))
+            Image(systemName: "info.circle.fill")
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: 32, height: 32)
+                .foregroundColor(colors.textSecondary.opacity(0.4))
                 .accessibilityLabel(AccessibilityLabels.shared.INFO_EMPTY_STATE)
             
             Spacer()
@@ -37,20 +40,21 @@ struct EmptyStateView: View {
             
             // Message principal
             Text(message)
-                .font(.headline)
-                .foregroundColor(colors.onSurface)
+                .font(typo.subtitle)
+                .foregroundColor(colors.textPrimary)
                 .multilineTextAlignment(.center)
+                .padding(.horizontal, spacing.large)
             
             Spacer()
                 .frame(height: spacing.medium)
             
-            // Description subsidiaire (uniquement pour le filtre ALL)
+            // Description
             if filter == .all {
                 Text(DashboardLabels.shared.EMPTY_STATE_DESC)
-                    .font(.body)
-                    .foregroundColor(colors.onSurfaceVariant)
+                    .font(typo.body)
+                    .foregroundColor(colors.textSecondary)
                     .multilineTextAlignment(.center)
-                    .padding(.horizontal, spacing.large)
+                    .padding(.horizontal, spacing.extraLarge)
             }
             
             Spacer()
@@ -60,11 +64,13 @@ struct EmptyStateView: View {
     }
 }
 
-// --- Preview ---
-#Preview("All Empty") {
+// --- Previews ---
+#Preview("Mode Clair") {
     EmptyStateView(filter: .all)
+        .outgoTheme()
 }
 
-#Preview("Paid Empty") {
-    EmptyStateView(filter: .paid)
+#Preview("Mode Sombre") {
+    EmptyStateView(filter: .all)
+        .outgoTheme(isDark: true)
 }

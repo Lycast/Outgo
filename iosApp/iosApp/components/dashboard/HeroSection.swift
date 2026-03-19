@@ -18,7 +18,7 @@ struct HeroSection: View {
     // --- Environnement ---
     @Environment(\.outgoColors) private var colors
     @Environment(\.spacing) private var spacing
-    @Environment(\.dashboardColors) private var dashColors
+    @Environment(\.outgoTypography) private var typo
 
     // --- Logique Interne ---
     private var maxValue: Float {
@@ -27,13 +27,11 @@ struct HeroSection: View {
     
     private var isNegativeLive: Bool { disposableIncomeInCents < 0 }
     
-    private var liveColor: Color {
-        isNegativeLive ? colors.error : dashColors.remainingLive
-    }
+    private var liveColor: Color { isNegativeLive ? colors.error : colors.tertiary }
 
     private var isTooLong: Bool {
         let totalLength = monthlyIncomeInCents.uiAmount.count + disposableIncomeInCents.uiAmount.count
-        return totalLength > 22
+        return totalLength > 20
     }
 
     var body: some View {
@@ -47,71 +45,82 @@ struct HeroSection: View {
             )
 
             Divider()
-                .background(colors.onSurfaceVariant.opacity(0.2))
+                .background(colors.textSecondary.opacity(0.1))
                 .padding(.horizontal, spacing.large)
 
             // --- Contenu Dépliable ---
-            VStack(spacing: spacing.extraLarge) {
-                Spacer().frame(height: spacing.small)
+            if isExpanded {
+                VStack(spacing: spacing.extraLarge) {
+                    Spacer().frame(height: spacing.small)
 
-                Group {
+                    // Bloc Revenus / Reste à vivre
                     if isTooLong {
                         VStack(spacing: spacing.medium) { contentItems }
                     } else {
-                        HStack {
-                            Spacer()
+                        HStack(alignment: .center) {
+                        
                             contentItems
-                            Spacer()
                         }
                     }
+
+                    Divider().background(colors.textSecondary.opacity(0.1))
+
+                    // Barres de progression (PairedBudgetBar)
+                    PairedBudgetBar(
+                        topLabel: DashboardLabels.shared.HERO_TOTAL_CHARGES_LABEL,
+                        topAmount: totalOutgoingsInCents.uiAmount,
+                        topProgress: Float(totalOutgoingsInCents) / maxValue,
+                        topBarColor: colors.primary, // Bleu
+
+                        bottomLabel: DashboardLabels.shared.HERO_REMAINING_TO_PAY_LABEL,
+                        bottomAmount: remainingToPayInCents.uiAmount,
+                        bottomProgress: Float(remainingToPayInCents) / maxValue,
+                        bottomBarColor: colors.tertiary // Or
+                    )
                 }
-
-                Divider().background(colors.onSurfaceVariant.opacity(0.2))
-
-                // Barres de progression
-                PairedBudgetBar(
-                    topLabel: DashboardLabels.shared.HERO_TOTAL_CHARGES_LABEL,
-                    topAmount: totalOutgoingsInCents.uiAmount,
-                    topProgress: Float(totalOutgoingsInCents) / maxValue,
-                    topBarColor: colors.tertiary,
-                    
-                    bottomLabel: DashboardLabels.shared.HERO_REMAINING_TO_PAY_LABEL,
-                    bottomAmount: remainingToPayInCents.uiAmount,
-                    bottomProgress: Float(remainingToPayInCents) / maxValue,
-                    bottomBarColor: colors.secondary
-                )
+                .padding(.horizontal, spacing.large)
+                .transition(.opacity.combined(with: .offset(y: -5)))
             }
-            .padding(.horizontal, spacing.large)
-            .opacity(isExpanded ? 1 : 0)
-            .fixedSize(horizontal: false, vertical: true)
-            .frame(height: isExpanded ? nil : 0, alignment: .top)
-            .clipped()
 
             // --- Bouton Toggle ---
-            Button(action: onToggleExpand) {
-                OutgoIcon(iconName: isExpanded ? "caret_up" : "caret_down", opacity: 0.5)
+            Button(action: {
+                withAnimation(.spring(response: 0.2, dampingFraction: 1)) {
+                    onToggleExpand()
+                }
+            }) {
+                Image(isExpanded ? "caret_up" : "caret_down")
+                    .resizable()
+                    .renderingMode(.template)
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 24, height: 24)
+                    .foregroundColor(colors.textSecondary.opacity(0.5))
+                    .padding(.vertical, spacing.small)
+                    .frame(maxWidth: .infinity)
             }
         }
-        .background(colors.surface)
+        .background(colors.surface100)
         .cornerRadius(12)
         .overlay(
             RoundedRectangle(cornerRadius: 12)
-                .stroke(colors.onSurfaceVariant.opacity(0.2), lineWidth: 1)
+                .stroke(colors.textSecondary.opacity(0.1), lineWidth: 1)
         )
         .padding(.horizontal, spacing.medium)
-        //.padding(.top, spacing.small)
+        .animation(.spring(response: 0.2, dampingFraction: 1), value: isExpanded)
     }
 
     @ViewBuilder
     private var contentItems: some View {
-        BudgetItem(amount: monthlyIncomeInCents.uiAmount, onClick: onEditBudgetClick)
+        BudgetItem(
+            amount: monthlyIncomeInCents.uiAmount,
+            onClick: onEditBudgetClick
+        )
         
-        if !isTooLong { Spacer() }
+        Spacer()
         
         LiveItem(
+            isNegativeLive: isNegativeLive,
             amount: disposableIncomeInCents.uiAmount,
-            color: liveColor,
-            fontWeight: isNegativeLive ? .medium : .bold
+            color: liveColor
         )
     }
 }
@@ -121,27 +130,35 @@ private struct BudgetItem: View {
     let amount: String
     let onClick: () -> Void
     @Environment(\.spacing) var spacing
+    @Environment(\.outgoColors) var colors
+    @Environment(\.outgoTypography) var typo
     
     var body: some View {
         Button(action: onClick) {
             HStack(spacing: spacing.medium) {
-                CircleIcon(iconName: "bank_duotone")
-                Text(amount)
-                    .font(.body)
-                    .fontWeight(.semibold)
-                    .foregroundColor(.primary)
+                CircleIcon(iconName: "bank_duotone", tintColor: colors.textOnBrand, containerColor: colors.primary)
+                
+                VStack(alignment: .leading, spacing: 0) {
+                    Text(DashboardLabels.shared.HERO_TOTAL_INCOME_LABEL)
+                        .font(typo.caption)
+                        .foregroundColor(colors.textSecondary)
+                    Text(amount)
+                        .font(typo.title)
+                        .foregroundColor(colors.textPrimary)
+                }
             }
-            .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
     }
 }
 
 private struct LiveItem: View {
+    let isNegativeLive: Bool
     let amount: String
     let color: Color
-    let fontWeight: Font.Weight
     @Environment(\.spacing) var spacing
+    @Environment(\.outgoColors) var colors
+    @Environment(\.outgoTypography) var typo
 
     var body: some View {
         InfoTooltip(
@@ -149,11 +166,16 @@ private struct LiveItem: View {
             description: DashboardLabels.shared.TOOLTIP_BALANCE_DESC
         ) {
             HStack(spacing: spacing.medium) {
-                CircleIcon(iconName: "piggy_bank_duotone")
-                Text(amount)
-                    .font(.body)
-                    .fontWeight(fontWeight)
-                    .foregroundColor(color)
+                CircleIcon(iconName: "piggy_bank_duotone", tintColor: colors.textOnBrand, containerColor: color)
+                
+                VStack(alignment: .leading, spacing: 0) {
+                    Text(isNegativeLive ? DashboardLabels.shared.HERO_MISSING_INCOME_LABEL : DashboardLabels.shared.HERO_DISPOSABLE_INCOME_LABEL)
+                        .font(typo.caption)
+                        .foregroundColor(colors.textSecondary)
+                    Text(amount)
+                        .font(typo.title)
+                        .foregroundColor(color)
+                }
             }
         }
     }

@@ -16,6 +16,7 @@ struct PairedBudgetBar: View {
     
     @Environment(\.spacing) private var spacing
     @Environment(\.outgoColors) private var colors
+    @Environment(\.outgoTypography) private var typo
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -23,20 +24,20 @@ struct PairedBudgetBar: View {
             // --- TEXTE DU HAUT ---
             HStack(alignment: .bottom) {
                 Text(topLabel)
-                    .font(.caption)
-                    .foregroundColor(colors.onSurface)
+                    .font(typo.caption)
+                    .foregroundColor(colors.textSecondary)
                 
                 Spacer()
                 
                 Text(topAmount)
-                    .font(.body)
-                    .foregroundColor(colors.onSurface)
+                    .font(typo.body)
+                    .foregroundColor(colors.textPrimary)
             }
             
             // --- LES BARRES (Sandwich) ---
             VStack(spacing: 1) {
                 
-                // Barre du Haut (Coins arrondis supérieurs)
+                // Barre du Haut
                 ProgressBarItem(
                     progress: topProgress,
                     color: topBarColor,
@@ -44,7 +45,7 @@ struct PairedBudgetBar: View {
                     bottomRadius: 0
                 )
                 
-                // Barre du Bas (Coins arrondis inférieurs)
+                // Barre du Bas
                 ProgressBarItem(
                     progress: bottomProgress,
                     color: bottomBarColor,
@@ -61,15 +62,15 @@ struct PairedBudgetBar: View {
             ) {
                 HStack(alignment: .top) {
                     Text(bottomLabel)
-                        .font(.caption)
-                        .foregroundColor(colors.onSurface)
+                        .font(typo.caption)
+                        .foregroundColor(colors.textSecondary)
                     
                     Spacer()
                     
                     Text(bottomAmount)
-                        .font(.body)
+                        .font(typo.body)
                         .fontWeight(.medium)
-                        .foregroundColor(colors.onSurface)
+                        .foregroundColor(colors.textPrimary)
                 }
             }
         }
@@ -96,7 +97,7 @@ private struct ProgressBarItem: View {
                     bottomTrailingRadius: bottomRadius,
                     topTrailingRadius: topRadius
                 )
-                .fill(colors.onSurface.opacity(0.1))
+                .fill(colors.textSecondary.opacity(0.1))
                 
                 UnevenRoundedRectangle(
                     topLeadingRadius: topRadius,

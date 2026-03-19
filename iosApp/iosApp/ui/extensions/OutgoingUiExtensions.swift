@@ -1,7 +1,7 @@
 import SwiftUI
 import SharedApp
 
-// --- 1. Formatage de la Monnaie ---
+// --- Formatage de la Monnaie ---
 extension Int64 {
     var uiAmount: String {
         let isNegative = self < 0
@@ -23,30 +23,17 @@ extension Int64 {
     }
 }
 
-// --- 2. Couleurs des Statuts et Récurrences ---
-extension SyncStatus {
-    var uiColor: Color {
-        switch self {
-        case .synced: return Color(hex: 0xFF4CAF50)
-        case .pendingCreate: return Color(hex: 0xFF2196F3)
-        case .pendingUpdate: return Color(hex: 0xFFFF9800)
-        case .pendingDelete: return Color(hex: 0xFFF44336)
-        case .unknown: return Color.gray
-        }
-    }
-}
-
 extension Recurrence {
     var uiRecurrenceColor: Color {
         switch self {
-        case .yearly: return Color(hex: Palette.shared.BrandSecondary)
-        case .monthly: return Color(hex: Palette.shared.BrandTertiary)
+        case .yearly: return Color(hex: ColorPalette.shared.SECONDARY)
+        case .monthly: return Color(hex: ColorPalette.shared.TERTIARY)
         case .unknown: return Color.gray
         }
     }
 }
 
-// --- 3. L'Entité Outgoing ---
+// --- L'Entité Outgoing ---
 extension Outgoing {
     var uiTitle: String {
         let trimmedName = self.name.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -72,7 +59,7 @@ extension Outgoing {
     }
 }
 
-// --- 4. Fonction utilitaire pour les mois ---
+// --- Fonction utilitaire pour les mois ---
 private func getMonthName(month: Int) -> String {
     switch month {
     case 1: return DashboardLabels.shared.MONTH_1

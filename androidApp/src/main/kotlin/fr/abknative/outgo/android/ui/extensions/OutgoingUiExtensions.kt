@@ -5,8 +5,7 @@ import androidx.compose.ui.graphics.Color
 import fr.abknative.outgo.android.ui.CommonLabels
 import fr.abknative.outgo.android.ui.DashboardLabels
 import fr.abknative.outgo.android.ui.FormLabels
-import fr.abknative.outgo.core.api.SyncStatus
-import fr.abknative.outgo.core.ui.Palette
+import fr.abknative.outgo.core.ui.ColorPalette
 import fr.abknative.outgo.outgoing.api.Recurrence
 import fr.abknative.outgo.outgoing.api.model.Outgoing
 import kotlin.math.absoluteValue
@@ -33,19 +32,10 @@ val Long.uiAmount: String
         return "$prefix$eurosString,$formattedCents ${CommonLabels.CURRENCY_SYMBOL}"
     }
 
-val SyncStatus.uiColor: Color
-    get() = when (this) {
-        SyncStatus.SYNCED -> Color(0xFF4CAF50)
-        SyncStatus.PENDING_CREATE -> Color(0xFF2196F3)
-        SyncStatus.PENDING_UPDATE -> Color(0xFFFF9800)
-        SyncStatus.PENDING_DELETE -> Color(0xFFF44336)
-        SyncStatus.UNKNOWN -> Color.Gray
-    }
-
 val Recurrence.uiRecurrenceColor: Color
     get() = when (this) {
-        Recurrence.YEARLY -> Color(Palette.BrandSecondary)
-        Recurrence.MONTHLY -> Color(Palette.BrandTertiary)
+        Recurrence.YEARLY -> Color(ColorPalette.SECONDARY)
+        Recurrence.MONTHLY -> Color(ColorPalette.TERTIARY)
         Recurrence.UNKNOWN -> Color.Gray
     }
 

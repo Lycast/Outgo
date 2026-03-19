@@ -29,6 +29,9 @@ struct DashboardLabels {
     var TOOLTIP_BALANCE_DESC: String { getString(Res.string().dashboard_tooltip_balance_desc) }
     var TOOLTIP_BALANCE_DUE_TITLE: String { getString(Res.string().dashboard_tooltip_balance_due_title) }
     var TOOLTIP_BALANCE_DUE_DESC: String { getString(Res.string().dashboard_tooltip_balance_due_desc) }
+    var HERO_TOTAL_INCOME_LABEL: String { getString(Res.string().dashboard_hero_total_income) }
+    var HERO_DISPOSABLE_INCOME_LABEL: String { getString(Res.string().dashboard_hero_disposable_income) }
+    var HERO_MISSING_INCOME_LABEL: String { getString(Res.string().dashboard_hero_missing_income) }
     var HERO_TOTAL_CHARGES_LABEL: String { getString(Res.string().dashboard_hero_total_charges) }
     var HERO_REMAINING_TO_PAY_LABEL: String { getString(Res.string().dashboard_hero_remaining_to_pay) }
 
@@ -70,7 +73,9 @@ struct FormLabels {
     var SHEET_TITLE_ADD: String { getString(Res.string().form_sheet_title_add) }
     var SHEET_TITLE_EDIT: String { getString(Res.string().form_sheet_title_edit) }
     var FIELD_NAME: String { getString(Res.string().form_field_name) }
+    var FIELD_PLACE_HOLDER_NAME: String { getString(Res.string().form_field_place_holder_name) }
     var FIELD_AMOUNT: String { getString(Res.string().form_field_amount) }
+    var FIELD_PLACE_HOLDER_AMOUNT: String { getString(Res.string().form_field_place_holder_amount) }
     var FIELD_DATE_DESC: String { getString(Res.string().form_field_date_desc) }
     var CYCLE_MONTHLY: String { getString(Res.string().form_cycle_monthly) }
     var CYCLE_YEARLY: String { getString(Res.string().form_cycle_yearly) }

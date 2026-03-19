@@ -16,6 +16,7 @@ import fr.abknative.outgo.android.components.common.InfoTooltip
 import fr.abknative.outgo.android.ui.DashboardLabels
 import fr.abknative.outgo.android.ui.theme.AppTheme
 import fr.abknative.outgo.android.ui.theme.OutgoTheme
+import fr.abknative.outgo.android.ui.theme.toColor
 
 @Composable
 fun PairedBudgetBar(
@@ -40,13 +41,13 @@ fun PairedBudgetBar(
         ) {
             Text(
                 text = topLabel,
-                style = MaterialTheme.typography.bodySmall,
-                color =  MaterialTheme.colorScheme.onSurface
+                style = AppTheme.typo.caption,
+                color = AppTheme.colors.textSecondary.toColor()
             )
             Text(
                 text = topAmount,
-                style = MaterialTheme.typography.bodyLarge,
-                color =  MaterialTheme.colorScheme.onSurface
+                style =AppTheme.typo.body,
+                color = AppTheme.colors.textPrimary.toColor()
             )
         }
 
@@ -83,14 +84,14 @@ fun PairedBudgetBar(
             ) {
                 Text(
                     text = bottomLabel,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurface
+                    style = AppTheme.typo.caption,
+                    color = AppTheme.colors.textSecondary.toColor()
                 )
                 Text(
                     text = bottomAmount,
-                    style = MaterialTheme.typography.bodyLarge,
+                    style = AppTheme.typo.body,
                     fontWeight = FontWeight.Medium,
-                    color = MaterialTheme.colorScheme.onSurface
+                    color = AppTheme.colors.textPrimary.toColor()
                 )
             }
         }
@@ -109,7 +110,7 @@ private fun ProgressBarItem(
             .fillMaxWidth()
             .height(4.dp)
             .background(
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f),
+                color = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.1f),
                 shape = shape
             )
     ) {
@@ -132,12 +133,12 @@ fun PreviewPairedBudgetBarNominal() {
                 topLabel = DashboardLabels.HERO_TOTAL_CHARGES_LABEL,
                 topAmount = "1 250,50 €",
                 topProgress = 0.7f,
-                topBarColor = AppTheme.dashboardColors.charges, // Ton nouveau violet
+                topBarColor = AppTheme.colors.secondary.toColor(),
 
                 bottomLabel = DashboardLabels.HERO_REMAINING_TO_PAY_LABEL,
                 bottomAmount = "320,00 €",
                 bottomProgress = 0.25f,
-                bottomBarColor = AppTheme.dashboardColors.remainingPay // Ton nouvel or
+                bottomBarColor =  AppTheme.colors.tertiary.toColor()
             )
         }
     }
@@ -152,12 +153,12 @@ fun PreviewPairedBudgetBarBillionaire() {
                 topLabel = DashboardLabels.HERO_TOTAL_CHARGES_LABEL,
                 topAmount = "250 000 000 000,00 €",
                 topProgress = 0.9f,
-                topBarColor = AppTheme.dashboardColors.charges,
+                topBarColor =  AppTheme.colors.secondary.toColor(),
 
                 bottomLabel = DashboardLabels.HERO_REMAINING_TO_PAY_LABEL,
                 bottomAmount = "45 000 000,00 €",
                 bottomProgress = 0.1f,
-                bottomBarColor = AppTheme.dashboardColors.remainingPay
+                bottomBarColor =  AppTheme.colors.tertiary.toColor()
             )
         }
     }

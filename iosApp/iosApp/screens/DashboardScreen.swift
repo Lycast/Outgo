@@ -20,7 +20,7 @@ struct DashboardScreen: View {
         isHeroExpanded: true
     )
     
-    @State private var showBudgetDialog = false
+    @State private var showBudgetModal = false
     @State private var showSyncModal = false
     @State private var showFormSheet = false
     @State private var selectedOutgoing: Outgoing? = nil
@@ -50,6 +50,12 @@ struct DashboardScreen: View {
 
     var body: some View {
         ZStack(alignment: .bottomTrailing) {
+            colors.background.ignoresSafeArea()
+            
+            KeyboardPrewarmer()
+                            .frame(width: 0, height: 0)
+                            .allowsHitTesting(false)
+            
             VStack(spacing: 0) {
                 Header(
                     isConnected: state.isCloudSyncActive,
@@ -69,7 +75,7 @@ struct DashboardScreen: View {
                         onToggleExpand: {
                             presenter.onIntent(intent: OutgoingIntentToggleHeroSection(isExpanded: !state.isHeroExpanded))
                         },
-                        onEditBudgetClick: { showBudgetDialog = true },
+                        onEditBudgetClick: { showBudgetModal = true },
                         onPreviousMonthClick: {
                             let newMonth = state.selectedMonth == 1 ? 12 : state.selectedMonth - 1
                             presenter.onIntent(intent: OutgoingIntentSelectMonth(month: newMonth))
@@ -79,14 +85,14 @@ struct DashboardScreen: View {
                             presenter.onIntent(intent: OutgoingIntentSelectMonth(month: newMonth))
                         }
                     )
-                    Spacer().frame(height: spacing.large)
+                    Spacer().frame(height: spacing.extraLarge)
                     
                     ExpenseFilterSelector(
                         selectedFilter: currentFilter,
                         onFilterSelected: { currentFilter = $0 }
                     )
                     
-                    Spacer().frame(height: spacing.small)
+                    Spacer().frame(height: spacing.medium)
                     
                     ExpenseListContainer(
                         isLoading: state.isLoading,
@@ -99,6 +105,7 @@ struct DashboardScreen: View {
                         }
                     )
                 }
+                .animation(.spring(response: 0.4, dampingFraction: 1), value: state.isHeroExpanded)
             }
             
             AddActionTrigger(onClick: {
@@ -106,27 +113,18 @@ struct DashboardScreen: View {
                 showFormSheet = true
             })
             .padding(spacing.large)
-            
-            if showBudgetDialog {
-                Color.black.opacity(0.4).ignoresSafeArea()
-                    .onTapGesture { showBudgetDialog = false }
-                
-                BudgetEditDialog(
-                    currentIncomeInCents: state.monthlyIncomeInCents,
-                    onDismiss: { showBudgetDialog = false },
-                    onConfirm: { newAmount in
-                        presenter.onIntent(intent: OutgoingIntentUpdateIncome(amountInCents: newAmount))
-                        showBudgetDialog = false
-                    }
-                )
-                .padding(spacing.large)
-            }
         }
         .background(colors.background.ignoresSafeArea())
         .syncPromotionModal(isPresented: $showSyncModal) { }
+        .budgetEditModal(
+            isPresented: $showBudgetModal,
+            currentIncomeInCents: state.monthlyIncomeInCents
+        ) { newAmount in
+            presenter.onIntent(intent: OutgoingIntentUpdateIncome(amountInCents: newAmount))
+        }
         .sheet(isPresented: $showFormSheet) {
             OutgoingFormSheet(
-                viewModel: OutgoingFormState(
+                state: OutgoingFormState(
                     outgoingId: selectedOutgoing?.id,
                     initialName: selectedOutgoing?.name ?? "",
                     initialAmount: selectedOutgoing != nil ? String(format: "%.2f", Double(selectedOutgoing!.amountInCents) / 100.0) : "",
@@ -145,7 +143,7 @@ struct DashboardScreen: View {
             for await currentState in presenter.state {
                 self.state = currentState
                 if !currentState.isLoading && currentState.monthlyIncomeInCents <= 0 {
-                    showBudgetDialog = true
+                    showBudgetModal = true
                 }
             }
         }

@@ -4,18 +4,21 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.*
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import fr.abknative.outgo.android.R
 import fr.abknative.outgo.android.ui.AccessibilityLabels
 import fr.abknative.outgo.android.ui.CommonLabels
 import fr.abknative.outgo.android.ui.theme.AppTheme
 import fr.abknative.outgo.android.ui.theme.OutgoTheme
+import fr.abknative.outgo.android.ui.theme.toColor
 
 @Composable
 fun Header(
@@ -28,7 +31,7 @@ fun Header(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(top = AppTheme.spacing.extraLarge)
+            .padding(top = AppTheme.spacing.big)
             .padding(horizontal = AppTheme.spacing.large),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
@@ -36,9 +39,8 @@ fun Header(
         // --- Titre (Gauche) ---
         Text(
             text = CommonLabels.APP_NAME,
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Black,
-            color = MaterialTheme.colorScheme.primary
+            style = AppTheme.typo.title,
+            color = AppTheme.colors.primary.toColor()
         )
 
         // --- Actions (Droite) ---
@@ -60,7 +62,7 @@ fun Header(
                 Icon(
                     painter = painterResource( id = if (isSettingsScreen) R.drawable.house_line  else R.drawable.gear_six),
                     contentDescription = if (isSettingsScreen) AccessibilityLabels.NAVIGATE_HOME else AccessibilityLabels.NAVIGATE_SETTINGS,
-                    tint = MaterialTheme.colorScheme.onSurface
+                    tint = AppTheme.colors.primary.toColor()
                 )
             }
         }
@@ -72,7 +74,7 @@ fun Header(
 @Composable
 fun HeaderPreview() {
     OutgoTheme {
-        Surface(color = MaterialTheme.colorScheme.background) {
+        Surface(color = AppTheme.colors.background.toColor()) {
             Header(
                 isConnected = true,
                 isSettingsScreen = false,

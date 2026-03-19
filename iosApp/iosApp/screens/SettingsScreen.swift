@@ -16,10 +16,10 @@ struct SettingsScreen: View {
     // --- Environnement ---
     @Environment(\.spacing) private var spacing
     @Environment(\.outgoColors) private var colors
+    @Environment(\.outgoTypography) private var typo
     
     var body: some View {
         ZStack {
-            // Fond global
             colors.background.ignoresSafeArea()
             
             VStack(spacing: 0) {
@@ -56,7 +56,7 @@ struct SettingsScreen: View {
                                 onClick: onTipsClick
                             )
                             
-                            Divider().background(colors.onSurfaceVariant.opacity(0.2))
+                            customDivider
                             
                             SettingsRowClickable(
                                 icon: "envelope_duotone",
@@ -65,7 +65,7 @@ struct SettingsScreen: View {
                                 onClick: onContactClick
                             )
                             
-                            Divider().background(colors.onSurfaceVariant.opacity(0.2))
+                            customDivider
                             
                             SettingsRowClickable(
                                 icon: "coffee_duotone",
@@ -89,10 +89,8 @@ struct SettingsScreen: View {
                         
                         // Version de l'app (Footer)
                         Text(SettingsLabels.shared.APP_VERSION_PREFIX)
-                            .font(.caption2)
-                            .foregroundColor(colors.onSurfaceVariant)
-                            .multilineTextAlignment(.center)
-                            .frame(maxWidth: .infinity)
+                            .font(typo.caption)
+                            .foregroundColor(colors.textSecondary)
                             .padding(.top, spacing.large)
                     }
                     .padding(spacing.medium)
@@ -104,6 +102,10 @@ struct SettingsScreen: View {
             showSyncModal = false
             // TODO: Navigation vers Auth
         }
+    }
+    
+    private var customDivider: some View {
+        Divider().background(colors.textSecondary.opacity(0.1))
     }
 }
 

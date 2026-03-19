@@ -3,7 +3,7 @@ import SharedApp
 
 struct OutgoingFormContent: View {
     // --- État ---
-    @ObservedObject var viewModel: OutgoingFormState
+    @ObservedObject var state: OutgoingFormState
     
     // --- Actions ---
     let onCancel: () -> Void
@@ -12,8 +12,16 @@ struct OutgoingFormContent: View {
     // --- Environnement ---
     @Environment(\.outgoColors) private var colors
     @Environment(\.spacing) private var spacing
+    @Environment(\.outgoTypography) private var typo
     
-    private var isEditMode: Bool { viewModel.outgoingId != nil }
+    private enum Field {
+            case name
+            case amount
+        }
+    
+    @FocusState private var focusedField: Field?
+    
+    private var isEditMode: Bool { state.outgoingId != nil }
 
     var body: some View {
             ScrollView(showsIndicators: false) {
@@ -22,72 +30,81 @@ struct OutgoingFormContent: View {
                     Spacer().frame(height: spacing.medium)
                     // --- Titre ---
                     Text(isEditMode ? FormLabels.shared.SHEET_TITLE_EDIT : FormLabels.shared.SHEET_TITLE_ADD)
-                        .font(.title2)
-                        .fontWeight(.bold)
-                        .foregroundColor(colors.onSurface)
+                        .font(typo.subtitle)
+                        .foregroundColor(colors.textPrimary)
                         .toolbar(.hidden, for: .navigationBar)
                         .padding(.bottom, spacing.medium)
 
                     // --- Champ : Nom ---
                     OutlinedTextField(
-                        value: $viewModel.nameBuffer,
+                        value: $state.nameBuffer,
                         label: FormLabels.shared.FIELD_NAME,
-                        placeholder: "Ex: Netflix",
+                        placeholder: FormLabels.shared.FIELD_PLACE_HOLDER_NAME,
                         keyboardType: .default
                     )
+                    .focused($focusedField, equals: .name)
+                    .autocorrectionDisabled(true)
 
                     // --- Champ : Montant ---
                     OutlinedTextField(
-                        value: $viewModel.amountBuffer,
+                        value: $state.amountBuffer,
                         label: FormLabels.shared.FIELD_AMOUNT,
-                        placeholder: "0.00",
+                        placeholder: FormLabels.shared.FIELD_PLACE_HOLDER_AMOUNT,
                         suffix: CommonLabels.shared.CURRENCY_SYMBOL,
                         keyboardType: .decimalPad
                     )
+                    .focused($focusedField, equals: .amount)
+                    .autocorrectionDisabled(true)
 
                     // --- Section Date & Récurrence ---
-                    VStack(alignment: .leading, spacing: spacing.medium) {
+                    VStack(alignment: .leading) {
+                        
                         Text(FormLabels.shared.FIELD_DATE_DESC)
-                            .font(.body)
-                            .foregroundColor(colors.onSurfaceVariant)
+                            .font(typo.caption)
+                            .foregroundColor(colors.textSecondary)
                             .multilineTextAlignment(.leading)
                             .fixedSize(horizontal: false, vertical: true)
 
                         OutgoingDateSelector(
-                            selectedDay: viewModel.dueDayBuffer,
-                            selectedMonth: viewModel.dueMonthBuffer,
-                            onDayChanged: { viewModel.onEvent(.updateDueDay($0)) },
-                            onMonthChanged: { viewModel.onEvent(.updateDueMonth($0)) }
+                            selectedDay: state.dueDayBuffer,
+                            selectedMonth: state.dueMonthBuffer,
+                            onDayChanged: { state.onEvent(.updateDueDay($0)) },
+                            onMonthChanged: { state.onEvent(.updateDueMonth($0)) }
                         )
                     }
-                    .padding(.top, spacing.small)
+                    .padding(.vertical, spacing.small)
 
                     // --- Boutons d'actions ---
                     HStack {
                         Spacer()
                         
                         Button(CommonLabels.shared.ACTION_CANCEL) {
+                            focusedField = nil
                             onCancel()
                         }
                         .foregroundColor(colors.primary)
                         .padding(.trailing, spacing.medium)
 
-                        Button(action: onSave) {
+                        Button(action:{
+                            focusedField = nil
+                            onSave()
+                        }) {
                             Text(CommonLabels.shared.ACTION_SAVE)
+                                .font(typo.label)
                                 .fontWeight(.bold)
-                                .foregroundColor(.white)
+                                .foregroundColor(state.isValid ? colors.textOnBrand : colors.textSecondary.opacity(0.8))
                                 .padding(.horizontal, 24)
                                 .padding(.vertical, 12)
-                                .background(viewModel.isValid ? colors.primary : colors.primary.opacity(0.5))
+                                .background(state.isValid ? colors.primary : colors.textSecondary.opacity(0.2))
                                 .cornerRadius(100)
                         }
-                        .disabled(!viewModel.isValid)
+                        .disabled(!state.isValid)
                     }
                     .padding(.top, spacing.medium)
                 }
                 .padding(spacing.large)
             }
-            .background(colors.surface)
+            .onTapGesture { focusedField = nil }
         }
 
     // --- Helper : Style des Chips ---
@@ -100,7 +117,7 @@ struct OutgoingFormContent: View {
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 8)
                 .background(isSelected ? colors.primary : colors.primary.opacity(0.1))
-                .foregroundColor(isSelected ? .white : colors.onSurface)
+                .foregroundColor(isSelected ? .white : colors.textPrimary)
                 .cornerRadius(8)
         }
         .buttonStyle(.plain)
@@ -130,13 +147,13 @@ private struct OutlinedTextField: View {
                 
                 if let suffix = suffix {
                     Text(suffix)
-                        .foregroundColor(colors.onSurfaceVariant)
+                        .foregroundColor(colors.textSecondary)
                 }
             }
             .padding()
             .overlay(
                 RoundedRectangle(cornerRadius: 8)
-                    .stroke(colors.onSurfaceVariant.opacity(0.3), lineWidth: 1)
+                    .stroke(colors.textSecondary.opacity(0.3), lineWidth: 1)
             )
         }
     }

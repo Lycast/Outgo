@@ -4,11 +4,12 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import fr.abknative.outgo.android.R
 import fr.abknative.outgo.android.components.common.Header
@@ -19,6 +20,7 @@ import fr.abknative.outgo.android.components.settings.SettingsSection
 import fr.abknative.outgo.android.ui.SettingsLabels
 import fr.abknative.outgo.android.ui.theme.AppTheme
 import fr.abknative.outgo.android.ui.theme.OutgoTheme
+import fr.abknative.outgo.android.ui.theme.toColor
 
 @Composable
 fun SettingsScreen(
@@ -36,6 +38,7 @@ fun SettingsScreen(
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
+        containerColor = Color.Transparent,
         topBar = {
             Header(
                 isConnected = false, // todo À lier à ton AuthState plus tard
@@ -73,14 +76,14 @@ fun SettingsScreen(
                     subtitle = SettingsLabels.TIPS_SUBTITLE,
                     onClick = onTipsClick
                 )
-                HorizontalDivider(color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f))
+                HorizontalDivider(color = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.1f))
                 SettingsRowClickable(
                     icon = R.drawable.envelope_duotone,
                     title = SettingsLabels.CONTACT_TITLE,
                     subtitle = SettingsLabels.CONTACT_SUBTITLE,
                     onClick = onContactClick
                 )
-                HorizontalDivider(color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f))
+                HorizontalDivider(color = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.1f))
                 SettingsRowClickable(
                     icon = R.drawable.coffee_duotone,
                     title = SettingsLabels.COFFEE_TITLE,
@@ -102,12 +105,12 @@ fun SettingsScreen(
             // Version de l'app (Footer)
             Text(
                 text = SettingsLabels.APP_VERSION_PREFIX,
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = AppTheme.typo.caption,
+                color = AppTheme.colors.textPrimary.toColor(),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = AppTheme.spacing.large),
-                textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                textAlign = TextAlign.Center
             )
         }
     }

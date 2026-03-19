@@ -8,22 +8,31 @@ struct SyncIconLogic: View {
     
     // --- Environnement ---
     @Environment(\.outgoColors) private var colors
+    @Environment(\.spacing) private var spacing
     
     var body: some View {
             Button(action: onClick) {
-                OutgoIcon(iconName: isConnected ? "cloud_check" : "cloud_slash")
-                    .frame(width: 36, height: 44, alignment: .center)
-                    .contentShape(Rectangle())
-                    .accessibilityLabel(isConnected ? AccessibilityLabels.shared.SYNCED : AccessibilityLabels.shared.NOT_SYNCED)
+                Image(isConnected ? "cloud_check" : "cloud_slash")
+                    .resizable()
+                    .renderingMode(.template)
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 24, height: 24)
+                    .padding(spacing.small)
+                    .foregroundColor(colors.primary)
+            }
+            .accessibilityLabel(isConnected ? AccessibilityLabels.shared.SYNCED : AccessibilityLabels.shared.NOT_SYNCED)
+        }
+    }
+
+    // --- Preview ---
+    #Preview {
+        ZStack {
+            AppTheme.colorScheme(isDark: false).background.ignoresSafeArea()
+            
+            HStack(spacing: 20) {
+                SyncIconLogic(isConnected: true, onClick: {})
+                SyncIconLogic(isConnected: false, onClick: {})
             }
         }
-}
-
-// --- Preview ---
-#Preview {
-    HStack(spacing: 20) {
-        SyncIconLogic(isConnected: true, onClick: {})
-        SyncIconLogic(isConnected: false, onClick: {})
+        .outgoTheme()
     }
-    .padding()
-}

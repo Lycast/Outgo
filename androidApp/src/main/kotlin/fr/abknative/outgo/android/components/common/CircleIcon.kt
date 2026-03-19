@@ -5,22 +5,26 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 
 
 @Composable
-fun CircleIcon(icon: Int) {
+fun CircleIcon(
+    icon: Int,
+    tintColor: Color,
+    containerColor: Color
+) {
     Box(
         modifier = Modifier
             .size(40.dp)
-            .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.05f), CircleShape),
+            .background(color = containerColor, CircleShape),
         contentAlignment = Alignment.Center
     ) {
-        Icon(painter = painterResource(icon), contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+        Icon(painter = painterResource(icon), contentDescription = null, tint = tintColor)
     }
 }

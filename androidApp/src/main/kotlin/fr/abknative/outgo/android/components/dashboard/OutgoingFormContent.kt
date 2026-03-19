@@ -10,10 +10,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
@@ -22,6 +22,7 @@ import fr.abknative.outgo.android.ui.FormLabels
 import fr.abknative.outgo.android.ui.states.OutgoingFormEvent
 import fr.abknative.outgo.android.ui.states.OutgoingFormState
 import fr.abknative.outgo.android.ui.theme.AppTheme
+import fr.abknative.outgo.android.ui.theme.toColor
 
 @Composable
 fun OutgoingFormContent(
@@ -34,17 +35,21 @@ fun OutgoingFormContent(
 
     val lockSheetConnection = remember {
         object : NestedScrollConnection {
-            override fun onPostScroll(
-                consumed: Offset,
-                available: Offset,
-                source: NestedScrollSource
-            ): Offset {
-                return available
-            }
+            override fun onPostScroll(consumed: Offset, available: Offset, source: NestedScrollSource): Offset = available
         }
     }
 
     val isEditMode = state.outgoingId != null
+
+    val textFieldColors = OutlinedTextFieldDefaults.colors(
+        focusedBorderColor = AppTheme.colors.primary.toColor(),
+        unfocusedBorderColor = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.2f),
+        focusedLabelColor = AppTheme.colors.primary.toColor(),
+        unfocusedLabelColor = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.6f),
+        cursorColor = AppTheme.colors.primary.toColor(),
+        focusedTextColor = AppTheme.colors.textPrimary.toColor(),
+        unfocusedTextColor = AppTheme.colors.textPrimary.toColor()
+    )
 
     Column(
         modifier = modifier
@@ -58,7 +63,8 @@ fun OutgoingFormContent(
         // --- Titre ---
         Text(
             text = if (isEditMode) FormLabels.SHEET_TITLE_EDIT else FormLabels.SHEET_TITLE_ADD,
-            style = MaterialTheme.typography.titleLarge
+            style = AppTheme.typo.subtitle,
+            color = AppTheme.colors.textPrimary.toColor()
         )
 
         Spacer(modifier = Modifier.height(AppTheme.spacing.small))
@@ -67,8 +73,11 @@ fun OutgoingFormContent(
         OutlinedTextField(
             value = state.nameBuffer,
             onValueChange = { onEvent(OutgoingFormEvent.UpdateName(it)) },
-            label = { Text(FormLabels.FIELD_NAME) },
+            label = { Text(text = FormLabels.FIELD_NAME, style = AppTheme.typo.caption) },
+            placeholder = { Text(text = FormLabels.FIELD_PLACE_HOLDER_NAME, style = AppTheme.typo.body) },
             singleLine = true,
+            textStyle = AppTheme.typo.body,
+            colors = textFieldColors,
             keyboardOptions = KeyboardOptions(
                 capitalization = KeyboardCapitalization.Sentences,
                 imeAction = ImeAction.Next
@@ -79,27 +88,28 @@ fun OutgoingFormContent(
         // --- Champ : Montant ---
         OutlinedTextField(
             value = state.amountBuffer,
-            onValueChange = { newValue ->
-                onEvent(OutgoingFormEvent.UpdateAmount(newValue))
-            },
-            label = { Text(FormLabels.FIELD_AMOUNT) },
+            onValueChange = { onEvent(OutgoingFormEvent.UpdateAmount(it)) },
+            label = { Text(text = FormLabels.FIELD_AMOUNT, style = AppTheme.typo.caption) },
+            placeholder = { Text(text = FormLabels.FIELD_PLACE_HOLDER_AMOUNT, style = AppTheme.typo.body) },
             singleLine = true,
+            textStyle = AppTheme.typo.body,
+            colors = textFieldColors,
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Decimal,
                 imeAction = ImeAction.Done
             ),
-            suffix = { Text(CommonLabels.CURRENCY_SYMBOL) },
+            suffix = { Text(CommonLabels.CURRENCY_SYMBOL, style = AppTheme.typo.body) },
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(modifier = Modifier.height(AppTheme.spacing.small))
+        Spacer(modifier = Modifier.height(AppTheme.spacing.medium))
 
         Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.small)) {
 
             Text(
                 text = FormLabels.FIELD_DATE_DESC,
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = AppTheme.typo.caption,
+                color = AppTheme.colors.textSecondary.toColor(),
                 modifier = Modifier.padding(horizontal = AppTheme.spacing.small)
             )
 
@@ -124,16 +134,29 @@ fun OutgoingFormContent(
         ) {
             TextButton(
                 onClick = onCancel,
-                modifier = Modifier.padding(end = AppTheme.spacing.medium)
+                modifier = Modifier.padding(end = AppTheme.spacing.medium),
+                colors = ButtonDefaults.textButtonColors(
+                    contentColor = AppTheme.colors.textSecondary.toColor()
+                )
             ) {
-                Text(CommonLabels.ACTION_CANCEL)
+                Text(text = CommonLabels.ACTION_CANCEL, style = AppTheme.typo.label)
             }
 
             Button(
                 onClick = onSave,
-                enabled = state.isValid
+                enabled = state.isValid,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = AppTheme.colors.primary.toColor(),
+                    contentColor = AppTheme.colors.textOnBrand.toColor(),
+                    disabledContainerColor = AppTheme.colors.surface100.toColor().copy(alpha = 0.5f),
+                    disabledContentColor = AppTheme.colors.textSecondary.toColor()
+                )
             ) {
-                Text(CommonLabels.ACTION_SAVE, color = Color.White)
+                Text(
+                    text = CommonLabels.ACTION_SAVE,
+                    style = AppTheme.typo.label,
+                    fontWeight = FontWeight.Bold
+                )
             }
         }
     }

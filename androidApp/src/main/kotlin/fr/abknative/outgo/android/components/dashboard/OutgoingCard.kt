@@ -4,7 +4,6 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -12,7 +11,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -24,6 +22,7 @@ import fr.abknative.outgo.android.ui.CommonLabels
 import fr.abknative.outgo.android.ui.extensions.*
 import fr.abknative.outgo.android.ui.theme.AppTheme
 import fr.abknative.outgo.android.ui.theme.OutgoTheme
+import fr.abknative.outgo.android.ui.theme.toColor
 import fr.abknative.outgo.core.api.SyncStatus
 import fr.abknative.outgo.outgoing.api.Recurrence
 import fr.abknative.outgo.outgoing.api.model.Outgoing
@@ -44,7 +43,6 @@ fun OutgoingCard(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.surface)
             .combinedClickable(
                 onClick = { isExpanded = !isExpanded },
                 onLongClick = {
@@ -69,7 +67,7 @@ fun OutgoingCard(
         ) {
 
             // Icon a gauche
-            CircleIcon(R.drawable.credit_card_duotone)
+            CircleIcon(R.drawable.credit_card_duotone, AppTheme.colors.primary.toColor(), AppTheme.colors.surface100.toColor())
             Spacer(modifier = Modifier.width(AppTheme.spacing.large))
 
             Column(verticalArrangement = Arrangement.Center) {
@@ -80,9 +78,8 @@ fun OutgoingCard(
                 ) {
                     Text(
                         text = outgoing.uiTitle,
-                        style = MaterialTheme.typography.bodyMedium,
-                        fontWeight = FontWeight.SemiBold,
-                        color = MaterialTheme.colorScheme.onSurface,
+                        style = AppTheme.typo.body,
+                        color = AppTheme.colors.textPrimary.toColor(),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
@@ -99,12 +96,12 @@ fun OutgoingCard(
                     Row(horizontalArrangement = Arrangement.End,) {
                         Text(
                             text = "${outgoing.uiDueDayLabel} • ",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            style = AppTheme.typo.caption,
+                            color = AppTheme.colors.textSecondary.toColor()
                         )
                         Text(
                             text = outgoing.uiFrequencySummary,
-                            style = MaterialTheme.typography.bodySmall,
+                            style = AppTheme.typo.caption,
                             color = outgoing.recurrence.uiRecurrenceColor.copy(0.7f)
                         )
                     }
@@ -114,9 +111,8 @@ fun OutgoingCard(
                     // Montant de la dépense
                     Text(
                         text = outgoing.amountInCents.uiAmount,
-                        style = MaterialTheme.typography.bodyMedium,
-                        fontWeight = FontWeight.SemiBold,
-                        color = MaterialTheme.colorScheme.tertiary,
+                        style = AppTheme.typo.body,
+                        color = AppTheme.colors.secondary.toColor(),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         textAlign = TextAlign.End,
@@ -130,7 +126,7 @@ fun OutgoingCard(
         if (isExpanded) {
             HorizontalDivider(
                 modifier = Modifier.padding(horizontal = AppTheme.spacing.large),
-                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.05f)
+                color = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.05f)
             )
 
             Row(
@@ -147,7 +143,7 @@ fun OutgoingCard(
                         isExpanded = false
                         onDelete()
                     },
-                    colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.error)
+                    colors = ButtonDefaults.textButtonColors(contentColor = AppTheme.colors.error.toColor())
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.trash),
@@ -155,7 +151,11 @@ fun OutgoingCard(
                         modifier = Modifier.size(18.dp)
                     )
                     Spacer(modifier = Modifier.width(AppTheme.spacing.extraSmall))
-                    Text(CommonLabels.ACTION_DELETE)
+                    Text(
+                        text = CommonLabels.ACTION_DELETE,
+                        style = AppTheme.typo.caption,
+                        color = AppTheme.colors.error.toColor(),
+                    )
                 }
 
                 // Bouton Dupliquer
@@ -171,7 +171,11 @@ fun OutgoingCard(
                         modifier = Modifier.size(18.dp)
                     )
                     Spacer(modifier = Modifier.width(AppTheme.spacing.extraSmall))
-                    Text(CommonLabels.ACTION_DUPLICATE)
+                    Text(
+                        text = CommonLabels.ACTION_DUPLICATE,
+                        style = AppTheme.typo.caption,
+                        color = AppTheme.colors.primary.toColor(),
+                    )
                 }
 
                 // Bouton Éditer
@@ -187,7 +191,11 @@ fun OutgoingCard(
                         modifier = Modifier.size(18.dp)
                     )
                     Spacer(modifier = Modifier.width(AppTheme.spacing.extraSmall))
-                    Text(CommonLabels.ACTION_EDIT)
+                    Text(
+                        text = CommonLabels.ACTION_EDIT,
+                        style = AppTheme.typo.caption,
+                        color = AppTheme.colors.primary.toColor(),
+                    )
                 }
             }
         }

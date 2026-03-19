@@ -2,13 +2,13 @@ package fr.abknative.outgo.android.components.dashboard
 
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import fr.abknative.outgo.android.R
 import fr.abknative.outgo.android.ui.AccessibilityLabels
+import fr.abknative.outgo.android.ui.theme.AppTheme
+import fr.abknative.outgo.android.ui.theme.toColor
 
 @Composable
 fun AddActionTrigger(
@@ -17,8 +17,8 @@ fun AddActionTrigger(
 ) {
     FloatingActionButton(
         onClick = onClick,
-        containerColor = MaterialTheme.colorScheme.primary,
-        contentColor = Color.White,
+        containerColor = AppTheme.colors.primary.toColor(),
+        contentColor = AppTheme.colors.textOnBrand.toColor(),
         modifier = modifier
     ) {
         Icon(

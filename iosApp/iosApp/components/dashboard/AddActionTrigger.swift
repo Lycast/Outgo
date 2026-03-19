@@ -7,19 +7,20 @@ struct AddActionTrigger: View {
     
     // --- Environnement ---
     @Environment(\.outgoColors) private var colors
+    @Environment(\.spacing) private var spacing
     
     var body: some View {
         Button(action: onClick) {
             Image("plus_bold")
                 .renderingMode(.template)
                 .resizable()
+                .aspectRatio(contentMode: .fit)
                 .frame(width: 24, height: 24)
-                .foregroundColor(.white)
-            
+                .foregroundColor(colors.textOnBrand)
                 .frame(width: 56, height: 56)
                 .background(colors.primary)
-                .clipShape(Circle())
-                .shadow(color: Color.black.opacity(0.2), radius: 4, x: 0, y: 4)
+                .clipShape(RoundedRectangle(cornerRadius: spacing.large))
+                .shadow(color: colors.primary.opacity(0.3), radius: 8, x: 0, y: 4)
         }
         .accessibilityLabel(AccessibilityLabels.shared.ADD_EXPENSE)
     }
@@ -39,4 +40,5 @@ struct AddActionTrigger: View {
             }
         }
     }
+    .outgoTheme()
 }

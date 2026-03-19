@@ -3,70 +3,43 @@ import SharedApp
 
 // --- Définition des schémas de couleurs ---
 struct OutgoColorScheme {
+    let isDark: Bool
     let primary: Color
     let secondary: Color
     let tertiary: Color
-    let background: Color
-    let surface: Color
-    let onSurface: Color
-    let onSurfaceVariant: Color
-    let error: Color
-}
 
-struct DashboardColors {
-    let budget: Color
-    let charges: Color
-    let remainingPay: Color
-    let remainingLive: Color
-    let warning: Color
+    let background: Color
+    let surface50: Color
+    let surface100: Color
+    let surface200: Color
+
+    let textPrimary: Color
+    let textSecondary: Color
+    let textOnBrand: Color
+
+    let error: Color
 }
 
 // --- Générateur de Thème ---
 struct AppTheme {
     static func colorScheme(isDark: Bool) -> OutgoColorScheme {
-        if isDark {
-            return OutgoColorScheme(
-                primary: Color(hex: DesignColors.Dark.shared.Primary),
-                secondary: Color(hex: DesignColors.Dark.shared.Secondary),
-                tertiary: Color(hex: DesignColors.Dark.shared.Tertiary),
-                background: Color(hex: DesignColors.Dark.shared.Background),
-                surface: Color(hex: DesignColors.Dark.shared.Surface),
-                onSurface: Color(hex: DesignColors.Dark.shared.OnSurface),
-                onSurfaceVariant: Color(hex: DesignColors.Dark.shared.onSurfaceVariant),
-                error: Color(hex: DesignColors.Dark.shared.Error)
-            )
-        } else {
-            return OutgoColorScheme(
-                primary: Color(hex: DesignColors.Light.shared.Primary),
-                secondary: Color(hex: DesignColors.Light.shared.Secondary),
-                tertiary: Color(hex: DesignColors.Light.shared.Tertiary),
-                background: Color(hex: DesignColors.Light.shared.Background),
-                surface: Color(hex: DesignColors.Light.shared.Surface),
-                onSurface: Color(hex: DesignColors.Light.shared.OnSurface),
-                onSurfaceVariant: Color(hex: DesignColors.Light.shared.onSurfaceVariant),
-                error: Color(hex: DesignColors.Light.shared.Error)
-            )
-        }
-    }
-    
-    static func dashboardColors(isDark: Bool) -> DashboardColors {
-        if isDark {
-            return DashboardColors(
-                budget: Color(hex: DesignColors.Dark.shared.BarBudget),
-                charges: Color(hex: DesignColors.Dark.shared.BarCharges),
-                remainingPay: Color(hex: DesignColors.Dark.shared.BarRemainingPay),
-                remainingLive: Color(hex: DesignColors.Dark.shared.BarRemainingLive),
-                warning: Color(hex: DesignColors.Dark.shared.BarWarning)
-            )
-        } else {
-            return DashboardColors(
-                budget: Color(hex: DesignColors.Light.shared.BarBudget),
-                charges: Color(hex: DesignColors.Light.shared.BarCharges),
-                remainingPay: Color(hex: DesignColors.Light.shared.BarRemainingPay),
-                remainingLive: Color(hex: DesignColors.Light.shared.BarRemainingLive),
-                warning: Color(hex: DesignColors.Light.shared.BarWarning)
-            )
-        }
+
+        let theme = isDark ? DesignColor.shared.Dark : DesignColor.shared.Light
+
+        return OutgoColorScheme(
+            isDark: theme.isDark,
+            primary: Color(hex: theme.primary),
+            secondary: Color(hex: theme.secondary),
+            tertiary: Color(hex: theme.tertiary),
+            background: Color(hex: theme.background),
+            surface50: Color(hex: theme.surface50),
+            surface100: Color(hex: theme.surface100),
+            surface200: Color(hex: theme.surface200),
+            textPrimary: Color(hex: theme.textPrimary),
+            textSecondary: Color(hex: theme.textSecondary),
+            textOnBrand: Color(hex: theme.textOnBrand),
+            error: Color(hex: theme.error)
+        )
     }
 }
 
@@ -75,8 +48,8 @@ private struct ColorSchemeKey: EnvironmentKey {
     static let defaultValue = AppTheme.colorScheme(isDark: false)
 }
 
-private struct DashboardColorsKey: EnvironmentKey {
-    static let defaultValue = AppTheme.dashboardColors(isDark: false)
+private struct TypographyKey: EnvironmentKey {
+    static let defaultValue = AppTheme.typography(theme: DesignColor.shared.Light)
 }
 
 // --- Raccourcis SwiftUI ---
@@ -85,31 +58,45 @@ extension EnvironmentValues {
         get { self[ColorSchemeKey.self] }
         set { self[ColorSchemeKey.self] = newValue }
     }
-    
-    var dashboardColors: DashboardColors {
-        get { self[DashboardColorsKey.self] }
-        set { self[DashboardColorsKey.self] = newValue }
+}
+
+extension EnvironmentValues {
+    var outgoTypography: OutgoTypography {
+        get { self[TypographyKey.self] }
+        set { self[TypographyKey.self] = newValue }
     }
 }
 
 // --- Le composant d'injection ---
 struct OutgoThemeModifier: ViewModifier {
     @Environment(\.colorScheme) private var systemColorScheme
-    
     var forcedDarkMode: Bool?
 
     func body(content: Content) -> some View {
         let isDark = forcedDarkMode ?? (systemColorScheme == .dark)
+        let theme = isDark ? DesignColor.shared.Dark : DesignColor.shared.Light
         
+        let outgoColors = AppTheme.colorScheme(isDark: isDark)
+        let outgoTypography = AppTheme.typography(theme: theme)
+
         content
-            .environment(\.outgoColors, AppTheme.colorScheme(isDark: isDark))
-            .environment(\.dashboardColors, AppTheme.dashboardColors(isDark: isDark))
-            .background(AppTheme.colorScheme(isDark: isDark).background)
+            .environment(\.outgoColors, outgoColors)
+            .environment(\.outgoTypography, outgoTypography)
+            .environment(\.spacing, OutgoSpacing())
+            .background(outgoColors.background)
+            .preferredColorScheme(isDark ? .dark : .light)
     }
 }
 
 extension View {
     func outgoTheme(isDark: Bool? = nil) -> some View {
         self.modifier(OutgoThemeModifier(forcedDarkMode: isDark))
+    }
+}
+
+extension View {
+    func outgoFont(_ font: KeyPath<OutgoTypography, Font>, color: Color) -> some View {
+        self.font(AppTheme.typography(theme: DesignColor.shared.Light)[keyPath: font])
+            .foregroundColor(color)
     }
 }

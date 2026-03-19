@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import fr.abknative.outgo.android.components.common.Header
 import fr.abknative.outgo.android.components.common.SyncPromotionModal
 import fr.abknative.outgo.android.components.dashboard.*
@@ -90,6 +91,7 @@ fun DashboardScreen(
     // --- COMPOSANT PRINCIPAL ---
     Scaffold(
         modifier = modifier.fillMaxSize(),
+        containerColor = Color.Transparent,
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             Header(

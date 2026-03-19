@@ -13,42 +13,48 @@ struct OutgoingCard: View {
     
     // --- Environnement ---
     @Environment(\.outgoColors) private var colors
+    @Environment(\.outgoTypography) private var typo
     @Environment(\.spacing) private var spacing
 
     var body: some View {
         VStack(spacing: 0) {
-            // --- PARTIE 1 : Contenu toujours visible ---
+            
+            // --- Contenu toujours visible ---
             HStack(alignment: .center, spacing: spacing.large) {
                 
-                CircleIcon(iconName: "credit_card_duotone")
+                CircleIcon(
+                    iconName: "credit_card_duotone",
+                    tintColor: colors.primary,
+                    containerColor: colors.surface100
+                )
                 
-                VStack(alignment: .leading, spacing: spacing.small) {
+                VStack(alignment: .leading, spacing: 4) {
                     // Titre
                     Text(outgoing.uiTitle)
-                        .font(.body)
+                        .font(typo.body)
                         .fontWeight(.semibold)
-                        .foregroundColor(colors.onSurface)
+                        .foregroundColor(colors.textPrimary)
                         .lineLimit(1)
-                        .truncationMode(.tail)
                     
                     // Date, Récurrence et Montant
                     HStack(alignment: .bottom) {
                         HStack(spacing: 0) {
                             Text("\(outgoing.uiDueDayLabel) • ")
-                                .font(.caption)
-                                .foregroundColor(colors.onSurfaceVariant)
+                                .font(typo.caption)
+                                .foregroundColor(colors.textSecondary)
                             
                             Text(outgoing.uiFrequencySummary)
-                                .font(.caption)
-                                .foregroundColor(Color(outgoing.recurrence.uiRecurrenceColor).opacity(0.7))
+                                .font(typo.caption)
+                                .foregroundColor(outgoing.recurrence.uiRecurrenceColor.opacity(0.7))
                         }
                         
                         Spacer()
                         
+                        // Montant (Poppins Body + Secondary)
                         Text(outgoing.amountInCents.uiAmount)
-                            .font(.body)
+                            .font(typo.body)
                             .fontWeight(.semibold)
-                            .foregroundColor(colors.tertiary)
+                            .foregroundColor(colors.secondary)
                             .lineLimit(1)
                     }
                 }
@@ -61,18 +67,22 @@ struct OutgoingCard: View {
                 }
             }
             .onLongPressGesture {
+                // Vibration légère pour le feedback de clic long
+                let impact = UIImpactFeedbackGenerator(style: .medium)
+                impact.impactOccurred()
+                
                 isExpanded = false
                 onEdit()
             }
 
-            // --- PARTIE 2 : Actions (visibles si déplié) ---
+            // --- Actions (visibles si déplié) ---
             if isExpanded {
                 Divider()
-                    .background(colors.onSurfaceVariant.opacity(0.05))
+                    .background(colors.textSecondary.opacity(0.05))
                     .padding(.horizontal, spacing.large)
                 
                 HStack(spacing: 0) {
-                    // Bouton Supprimer
+                    // Bouton Supprimer (Error)
                     actionButton(
                         title: CommonLabels.shared.ACTION_DELETE,
                         icon: "trash",
@@ -86,7 +96,7 @@ struct OutgoingCard: View {
                     
                     Spacer()
                     
-                    // Bouton Dupliquer
+                    // Bouton Dupliquer (Primary)
                     actionButton(
                         title: CommonLabels.shared.ACTION_DUPLICATE,
                         icon: "copy",
@@ -100,7 +110,7 @@ struct OutgoingCard: View {
                     
                     Spacer()
                     
-                    // Bouton Éditer
+                    // Bouton Éditer (Primary)
                     actionButton(
                         title: CommonLabels.shared.ACTION_EDIT,
                         icon: "pencil_simple",
@@ -112,15 +122,15 @@ struct OutgoingCard: View {
                         }
                     )
                 }
-                .padding(.horizontal, spacing.extraLarge)
-                .padding(.vertical, spacing.medium)
+                .padding(.horizontal, spacing.large)
+                .padding(.vertical, spacing.extraSmall)
                 .transition(.opacity.combined(with: .move(edge: .top)))
             }
         }
-        .background(colors.surface)
+        .background(colors.surface50)
     }
 
-    // Helper pour créer les boutons d'action uniformes
+    // Helper pour créer les boutons d'action
     @ViewBuilder
     private func actionButton(
         title: String,
@@ -134,14 +144,18 @@ struct OutgoingCard: View {
                 Image(icon)
                     .resizable()
                     .renderingMode(.template)
-                    .frame(width: 16, height: 16)
-                    .foregroundColor(color)
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 18, height: 18)
+                
                 Text(title)
-                    .font(.footnote)
+                    .font(typo.caption)
+                    .fontWeight(.medium)
             }
             .foregroundColor(color)
-            .padding(.vertical, 8)
+            .padding(.vertical, 12)
+            .padding(.horizontal, 8)
         }
+        .buttonStyle(.plain)
         .accessibilityLabel(accessibility)
     }
 }

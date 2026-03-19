@@ -8,6 +8,7 @@ struct OutgoingDateSelector: View {
     let onMonthChanged: (String) -> Void
     
     @Environment(\.outgoColors) private var colors
+    @Environment(\.spacing) private var spacing
     
     private let months: [(String, String)] = [
         ("0", DashboardLabels.shared.MONTH_ALL),
@@ -19,23 +20,19 @@ struct OutgoingDateSelector: View {
         ("11", DashboardLabels.shared.MONTH_11), ("12", DashboardLabels.shared.MONTH_12)
     ]
     
-    private let itemHeight: CGFloat = 32
-    private let containerHeight: CGFloat = 96
+    private let itemHeight: CGFloat = 40
+    private let containerHeight: CGFloat = 120
 
     var body: some View {
         ZStack {
-            // --- 1. LE CONTENEUR UNIQUE (Fond et Bordure) ---
+            // --- LE CONTENEUR UNIQUE  ---
             RoundedRectangle(cornerRadius: 8)
-                .fill(colors.surface)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 8)
-                        .stroke(colors.onSurfaceVariant.opacity(0.3), lineWidth: 1)
-                )
+                .strokeBorder(colors.textSecondary.opacity(0.3), lineWidth: 1)
 
             // --- 2. LES COLONNES ENSEMBLE ---
             HStack(spacing: 0) {
                 
-                // Colonne JOUR (Sans fond, avec ses propres lignes)
+                // Colonne JOUR
                 WheelColumn(
                     items: (1...31).map { "\($0)" },
                     selection: selectedDay,
@@ -45,7 +42,7 @@ struct OutgoingDateSelector: View {
                 )
             
                 
-                // Colonne MOIS (Sans fond, avec ses propres lignes)
+                // Colonne MOIS
                 WheelColumn(
                     items: months.map { $0.0 },
                     labels: months.map { $0.1 },
@@ -75,10 +72,10 @@ private struct WheelColumn: View {
         ZStack {
             VStack(spacing: itemHeight) {
                 Rectangle()
-                    .fill(colors.primary.opacity(0.5))
+                    .fill(colors.primary.opacity(0.2))
                     .frame(width: dividerWidth, height: 1)
                 Rectangle()
-                    .fill(colors.primary.opacity(0.5))
+                    .fill(colors.primary.opacity(0.2))
                     .frame(width: dividerWidth, height: 1)
             }
 
@@ -95,7 +92,6 @@ private struct WheelColumn: View {
     }
 }
 
-// (Garder le composant CustomWheel tel quel, il fonctionne parfaitement)
 struct CustomWheel: View {
     let items: [String]
     var labels: [String]? = nil
@@ -104,6 +100,7 @@ struct CustomWheel: View {
     let itemHeight: CGFloat
     
     @Environment(\.outgoColors) private var colors
+    @Environment(\.outgoTypography) private var typo
 
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
@@ -111,10 +108,13 @@ struct CustomWheel: View {
                 ForEach(0..<items.count, id: \.self) { index in
                     let isSelected = items[index] == selection
                     Text(labels?[index] ?? items[index])
-                        .font(.system(size: 16, weight: isSelected ? .bold : .medium))
-                        .foregroundColor(isSelected ? colors.primary : colors.onSurfaceVariant)
+                        .font(typo.body)
+                        .fontWeight(isSelected ? .semibold : .regular)
+                        .foregroundColor(isSelected ? colors.primary : colors.textSecondary)
                         .frame(height: itemHeight)
                         .frame(maxWidth: .infinity)
+                        .opacity(isSelected ? 1.0 : 0.4)
+                        .scaleEffect(isSelected ? 1.15 : 1.0)
                 }
             }
             .scrollTargetLayout()
@@ -127,5 +127,14 @@ struct CustomWheel: View {
         }))
         .contentMargins(.vertical, itemHeight, for: .scrollContent)
         .sensoryFeedback(.selection, trigger: selection)
+        .onAppear {
+            if selection.isEmpty || !items.contains(selection) {
+                if let firstItem = items.first {
+                    onChanged(firstItem)
+                }
+            } else {
+                onChanged(selection)
+            }
+        }
     }
 }
