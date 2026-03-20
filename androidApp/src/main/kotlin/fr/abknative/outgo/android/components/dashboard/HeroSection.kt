@@ -6,9 +6,12 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -36,12 +39,18 @@ fun HeroSection(
     onPreviousMonthClick: () -> Unit,
     onNextMonthClick: () -> Unit
 ) {
+
+    val haptic = LocalHapticFeedback.current
+    LaunchedEffect(isExpanded) {
+        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+    }
+
     val maxValue = maxOf(monthlyIncomeInCents, totalOutgoingsInCents).coerceAtLeast(1L).toFloat()
     val isNegativeLive = disposableIncomeInCents < 0
     val liveColor = if (isNegativeLive) AppTheme.colors.error.toColor() else AppTheme.colors.tertiary.toColor()
 
     val totalLength = monthlyIncomeInCents.uiAmount.length + disposableIncomeInCents.uiAmount.length
-    val isTooLong = totalLength > 18
+    val isTooLong = totalLength > 20
 
     Card(
         modifier = Modifier
@@ -74,7 +83,7 @@ fun HeroSection(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = AppTheme.spacing.large),
-                    verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.extraLarge),
+                    verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.large),
                 ) {
                     Spacer(modifier = Modifier.height(AppTheme.spacing.small))
 
@@ -123,6 +132,7 @@ fun HeroSection(
                         bottomProgress = remainingToPayInCents / maxValue,
                         bottomBarColor = AppTheme.colors.tertiary.toColor()
                     )
+                    Spacer(modifier = Modifier.height(AppTheme.spacing.small))
                 }
             }
 

@@ -8,8 +8,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import fr.abknative.outgo.android.R
 import fr.abknative.outgo.android.ui.AccessibilityLabels
@@ -23,6 +26,11 @@ fun MonthBudgetSelector(
     onPreviousMonthClick: () -> Unit,
     onNextMonthClick: () -> Unit
 ){
+    val haptic = LocalHapticFeedback.current
+    LaunchedEffect(formattedMonthDate) {
+        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+    }
+
     Row(
         modifier = Modifier
             .fillMaxWidth()

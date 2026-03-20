@@ -47,13 +47,14 @@ struct InfoTooltip<Content: View>: View {
                             .fontWeight(.bold)
                             .padding(.vertical, 8)
                             .frame(maxWidth: .infinity)
+                            .background(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .stroke(colors.primary.opacity(0.3), lineWidth: 1)
+                            )
+                            .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
                     .foregroundColor(colors.primary)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 8)
-                            .stroke(colors.primary.opacity(0.3), lineWidth: 1)
-                    )
                     .padding(.top, spacing.medium)
                 }
                 .padding(spacing.large)

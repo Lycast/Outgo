@@ -1,154 +1,151 @@
 import Foundation
 import SharedApp
 
-private func getString(_ resource: Any) -> String {
-    return IosResourceHelper.shared.getStringSync(resource: resource)
+// 1. Le conteneur qui gardera les textes en mémoire vive
+class StringsCache {
+    static let shared = StringsCache()
+    var resources: IosStringsResources? = nil
 }
 
+// 2. Vos structures de labels adaptées
 
 struct CommonLabels {
     static let shared = CommonLabels()
-    
-    var APP_NAME: String { getString(Res.string().app_name) }
-    let CURRENCY_SYMBOL = "€" // Constante pure
-    
-    var ACTION_SAVE: String { getString(Res.string().common_action_save) }
-    var ACTION_CANCEL: String { getString(Res.string().common_action_cancel) }
-    var ACTION_DELETE: String { getString(Res.string().common_action_delete) }
-    var ACTION_EDIT: String { getString(Res.string().common_action_edit) }
-    var ACTION_DUPLICATE: String { getString(Res.string().common_action_duplicate) }
-    var ACTION_CLOSE: String { getString(Res.string().common_action_close) }
-}
+    private var data: CommonStrings? { StringsCache.shared.resources?.common }
 
+    var APP_NAME: String { data?.appName ?? "" }
+    let CURRENCY_SYMBOL = "€"
+
+    var ACTION_SAVE: String { data?.actionSave ?? "" }
+    var ACTION_CANCEL: String { data?.actionCancel ?? "" }
+    var ACTION_DELETE: String { data?.actionDelete ?? "" }
+    var ACTION_EDIT: String { data?.actionEdit ?? "" }
+    var ACTION_DUPLICATE: String { data?.actionDuplicate ?? "" }
+    var ACTION_CLOSE: String { data?.actionClose ?? "" }
+}
 
 struct DashboardLabels {
     static let shared = DashboardLabels()
-    
+    private var data: DashboardStrings? { StringsCache.shared.resources?.dashboard }
+
     // Hero Section
-    var TOOLTIP_BALANCE_TITLE: String { getString(Res.string().dashboard_tooltip_balance_title) }
-    var TOOLTIP_BALANCE_DESC: String { getString(Res.string().dashboard_tooltip_balance_desc) }
-    var TOOLTIP_BALANCE_DUE_TITLE: String { getString(Res.string().dashboard_tooltip_balance_due_title) }
-    var TOOLTIP_BALANCE_DUE_DESC: String { getString(Res.string().dashboard_tooltip_balance_due_desc) }
-    var HERO_TOTAL_INCOME_LABEL: String { getString(Res.string().dashboard_hero_total_income) }
-    var HERO_DISPOSABLE_INCOME_LABEL: String { getString(Res.string().dashboard_hero_disposable_income) }
-    var HERO_MISSING_INCOME_LABEL: String { getString(Res.string().dashboard_hero_missing_income) }
-    var HERO_TOTAL_CHARGES_LABEL: String { getString(Res.string().dashboard_hero_total_charges) }
-    var HERO_REMAINING_TO_PAY_LABEL: String { getString(Res.string().dashboard_hero_remaining_to_pay) }
+    var TOOLTIP_BALANCE_TITLE: String { data?.tooltipBalanceTitle ?? "" }
+    var TOOLTIP_BALANCE_DESC: String { data?.tooltipBalanceDesc ?? "" }
+    var TOOLTIP_BALANCE_DUE_TITLE: String { data?.tooltipBalanceDueTitle ?? "" }
+    var TOOLTIP_BALANCE_DUE_DESC: String { data?.tooltipBalanceDueDesc ?? "" }
+    var HERO_TOTAL_INCOME_LABEL: String { data?.heroTotalIncomeLabel ?? "" }
+    var HERO_DISPOSABLE_INCOME_LABEL: String { data?.heroDisposableIncomeLabel ?? "" }
+    var HERO_MISSING_INCOME_LABEL: String { data?.heroMissingIncomeLabel ?? "" }
+    var HERO_TOTAL_CHARGES_LABEL: String { data?.heroTotalChargesLabel ?? "" }
+    var HERO_REMAINING_TO_PAY_LABEL: String { data?.heroRemainingToPayLabel ?? "" }
 
     // Liste et Filtres
-    var TAB_ALL: String { getString(Res.string().dashboard_tab_all) }
-    var TAB_PAID: String { getString(Res.string().dashboard_tab_paid) }
-    var TAB_REMAINING: String { getString(Res.string().dashboard_tab_remaining) }
+    var TAB_ALL: String { data?.tabAll ?? "" }
+    var TAB_PAID: String { data?.tabPaid ?? "" }
+    var TAB_REMAINING: String { data?.tabRemaining ?? "" }
 
     // États de la liste
-    var EMPTY_ALL: String { getString(Res.string().dashboard_empty_all) }
-    var EMPTY_PAID: String { getString(Res.string().dashboard_empty_paid) }
-    var EMPTY_REMAINING: String { getString(Res.string().dashboard_empty_remaining) }
-    var EMPTY_STATE_DESC: String { getString(Res.string().dashboard_empty_state_desc) }
+    var EMPTY_ALL: String { data?.emptyAll ?? "" }
+    var EMPTY_PAID: String { data?.emptyPaid ?? "" }
+    var EMPTY_REMAINING: String { data?.emptyRemaining ?? "" }
+    var EMPTY_STATE_DESC: String { data?.emptyStateDesc ?? "" }
 
-    var DEFAULT_NAME: String { getString(Res.string().dashboard_default_name) }
-    var DUE_PREFIX: String { getString(Res.string().dashboard_due_prefix) }
-    
-    var MONTH_ALL: String { getString(Res.string().dashboard_month_all) }
+    var DEFAULT_NAME: String { data?.defaultName ?? "" }
+    var DUE_PREFIX: String { data?.duePrefix ?? "" }
+    var MONTH_ALL: String { data?.monthAll ?? "" }
 
     // Noms des mois
-    var MONTH_1: String { getString(Res.string().dashboard_month_1) }
-    var MONTH_2: String { getString(Res.string().dashboard_month_2) }
-    var MONTH_3: String { getString(Res.string().dashboard_month_3) }
-    var MONTH_4: String { getString(Res.string().dashboard_month_4) }
-    var MONTH_5: String { getString(Res.string().dashboard_month_5) }
-    var MONTH_6: String { getString(Res.string().dashboard_month_6) }
-    var MONTH_7: String { getString(Res.string().dashboard_month_7) }
-    var MONTH_8: String { getString(Res.string().dashboard_month_8) }
-    var MONTH_9: String { getString(Res.string().dashboard_month_9) }
-    var MONTH_10: String { getString(Res.string().dashboard_month_10) }
-    var MONTH_11: String { getString(Res.string().dashboard_month_11) }
-    var MONTH_12: String { getString(Res.string().dashboard_month_12) }
+    var MONTH_1: String { data?.month1 ?? "" }
+    var MONTH_2: String { data?.month2 ?? "" }
+    var MONTH_3: String { data?.month3 ?? "" }
+    var MONTH_4: String { data?.month4 ?? "" }
+    var MONTH_5: String { data?.month5 ?? "" }
+    var MONTH_6: String { data?.month6 ?? "" }
+    var MONTH_7: String { data?.month7 ?? "" }
+    var MONTH_8: String { data?.month8 ?? "" }
+    var MONTH_9: String { data?.month9 ?? "" }
+    var MONTH_10: String { data?.month10 ?? "" }
+    var MONTH_11: String { data?.month11 ?? "" }
+    var MONTH_12: String { data?.month12 ?? "" }
 }
-
 
 struct FormLabels {
     static let shared = FormLabels()
-    
-    var SHEET_TITLE_ADD: String { getString(Res.string().form_sheet_title_add) }
-    var SHEET_TITLE_EDIT: String { getString(Res.string().form_sheet_title_edit) }
-    var FIELD_NAME: String { getString(Res.string().form_field_name) }
-    var FIELD_PLACE_HOLDER_NAME: String { getString(Res.string().form_field_place_holder_name) }
-    var FIELD_AMOUNT: String { getString(Res.string().form_field_amount) }
-    var FIELD_PLACE_HOLDER_AMOUNT: String { getString(Res.string().form_field_place_holder_amount) }
-    var FIELD_DATE_DESC: String { getString(Res.string().form_field_date_desc) }
-    var CYCLE_MONTHLY: String { getString(Res.string().form_cycle_monthly) }
-    var CYCLE_YEARLY: String { getString(Res.string().form_cycle_yearly) }
-}
+    private var data: FormStrings? { StringsCache.shared.resources?.form }
 
+    var SHEET_TITLE_ADD: String { data?.sheetTitleAdd ?? "" }
+    var SHEET_TITLE_EDIT: String { data?.sheetTitleEdit ?? "" }
+    var FIELD_NAME: String { data?.fieldName ?? "" }
+    var FIELD_PLACE_HOLDER_NAME: String { data?.fieldPlaceHolderName ?? "" }
+    var FIELD_AMOUNT: String { data?.fieldAmount ?? "" }
+    var FIELD_PLACE_HOLDER_AMOUNT: String { data?.fieldPlaceHolderAmount ?? "" }
+    var FIELD_DATE_DESC: String { data?.fieldDateDesc ?? "" }
+    var CYCLE_MONTHLY: String { data?.cycleMonthly ?? "" }
+    var CYCLE_YEARLY: String { data?.cycleYearly ?? "" }
+}
 
 struct HeaderLabels {
     static let shared = HeaderLabels()
-    
-    var SYNC_PROMO_TITLE: String { getString(Res.string().header_sync_promo_title) }
-    var SYNC_PROMO_DESC: String { getString(Res.string().header_sync_promo_desc) }
-    var SYNC_PROMO_ACTION_LOGIN: String { getString(Res.string().header_sync_promo_action_login) }
-    var SYNC_PROMO_ACTION_LATER: String { getString(Res.string().header_sync_promo_action_later) }
-}
+    private var data: HeaderStrings? { StringsCache.shared.resources?.header }
 
+    var SYNC_PROMO_TITLE: String { data?.syncPromoTitle ?? "" }
+    var SYNC_PROMO_DESC: String { data?.syncPromoDesc ?? "" }
+    var SYNC_PROMO_ACTION_LOGIN: String { data?.syncPromoActionLogin ?? "" }
+    var SYNC_PROMO_ACTION_LATER: String { data?.syncPromoActionLater ?? "" }
+}
 
 struct BudgetEditDialogLabels {
     static let shared = BudgetEditDialogLabels()
-    
-    var DIALOG_BUDGET_TITLE: String { getString(Res.string().budget_dialog_title) }
-    var DIALOG_BUDGET_DESC: String { getString(Res.string().budget_dialog_desc) }
-    var DIALOG_BUDGET_INFO: String { getString(Res.string().budget_dialog_info) }
-    var DIALOG_BUDGET_FIELD: String { getString(Res.string().budget_dialog_field) }
-}
+    private var data: BudgetDialogStrings? { StringsCache.shared.resources?.budgetDialog }
 
+    var DIALOG_BUDGET_TITLE: String { data?.title ?? "" }
+    var DIALOG_BUDGET_DESC: String { data?.desc ?? "" }
+    var DIALOG_BUDGET_INFO: String { data?.info ?? "" }
+    var DIALOG_BUDGET_FIELD: String { data?.field ?? "" }
+}
 
 struct AccessibilityLabels {
     static let shared = AccessibilityLabels()
-    
-    var SYNCED: String { getString(Res.string().a11y_synced) }
-    var NOT_SYNCED: String { getString(Res.string().a11y_not_synced) }
-    var DELETE_EXPENSE: String { getString(Res.string().a11y_delete_expense) }
-    var EDIT_EXPENSE: String { getString(Res.string().a11y_edit_expense) }
-    var DUPLICATE_EXPENSE: String { getString(Res.string().a11y_duplicate_expense) }
-    var EDIT_BUDGET: String { getString(Res.string().a11y_edit_budget) }
-    var NAVIGATE_HOME: String { getString(Res.string().a11y_navigate_home) }
-    var NAVIGATE_SETTINGS: String { getString(Res.string().a11y_navigate_settings) }
-    var PREVIOUS_MONTH: String { getString(Res.string().a11y_previous_month) }
-    var NEXT_MONTH: String { getString(Res.string().a11y_next_month) }
-    var EXPAND_HERO: String { getString(Res.string().a11y_expand_hero) }
-    var COLLAPSE_HERO: String { getString(Res.string().a11y_collapse_hero) }
-    var ADD_EXPENSE: String { getString(Res.string().a11y_add_expense) }
-    var CLOSE_DIALOG: String { getString(Res.string().a11y_close_dialog) }
-    var INFO_EMPTY_STATE: String { getString(Res.string().a11y_info_empty_state) }
-    var ICON_BALANCE: String { getString(Res.string().a11y_balance_desc) }
-}
+    private var data: A11yStrings? { StringsCache.shared.resources?.a11y }
 
+    var SYNCED: String { data?.synced ?? "" }
+    var NOT_SYNCED: String { data?.notSynced ?? "" }
+    var DELETE_EXPENSE: String { data?.deleteExpense ?? "" }
+    var EDIT_EXPENSE: String { data?.editExpense ?? "" }
+    var DUPLICATE_EXPENSE: String { data?.duplicateExpense ?? "" }
+    var EDIT_BUDGET: String { data?.editBudget ?? "" }
+    var NAVIGATE_HOME: String { data?.navigateHome ?? "" }
+    var NAVIGATE_SETTINGS: String { data?.navigateSettings ?? "" }
+    var PREVIOUS_MONTH: String { data?.previousMonth ?? "" }
+    var NEXT_MONTH: String { data?.nextMonth ?? "" }
+    var EXPAND_HERO: String { data?.expandHero ?? "" }
+    var COLLAPSE_HERO: String { data?.collapseHero ?? "" }
+    var ADD_EXPENSE: String { data?.addExpense ?? "" }
+    var CLOSE_DIALOG: String { data?.closeDialog ?? "" }
+    var INFO_EMPTY_STATE: String { data?.infoEmptyState ?? "" }
+    var ICON_BALANCE: String { data?.iconBalance ?? "" }
+}
 
 struct SettingsLabels {
     static let shared = SettingsLabels()
-    
-    var CHEVRON_DESC: String { getString(Res.string().a11y_chevron_desc) }
+    private var data: SettingsStrings? { StringsCache.shared.resources?.settings }
 
-    var SECTION_APPEARANCE: String { getString(Res.string().settings_section_appearance) }
-    var SECTION_SUPPORT: String { getString(Res.string().settings_section_support) }
-    var SECTION_DATA: String { getString(Res.string().settings_section_data) }
+    var CHEVRON_DESC: String { data?.chevronDesc ?? "" }
+    var SECTION_APPEARANCE: String { data?.sectionAppearance ?? "" }
+    var SECTION_SUPPORT: String { data?.sectionSupport ?? "" }
+    var SECTION_DATA: String { data?.sectionData ?? "" }
+    var DARK_MODE_TITLE: String { data?.darkModeTitle ?? "" }
+    var DARK_MODE_SUBTITLE: String { data?.darkModeSubtitle ?? "" }
+    var COFFEE_TITLE: String { data?.coffeeTitle ?? "" }
+    var COFFEE_SUBTITLE: String { data?.coffeeSubtitle ?? "" }
+    var TIPS_TITLE: String { data?.tipsTitle ?? "" }
+    var TIPS_SUBTITLE: String { data?.tipsSubtitle ?? "" }
+    var CONTACT_TITLE: String { data?.contactTitle ?? "" }
+    var CONTACT_SUBTITLE: String { data?.contactSubtitle ?? "" }
+    var SYNC_TITLE: String { data?.syncTitle ?? "" }
+    var SYNC_SUBTITLE: String { data?.syncSubtitle ?? "" }
+    var APP_VERSION_PREFIX: String { data?.appVersionPrefix ?? "" }
 
-    var DARK_MODE_TITLE: String { getString(Res.string().settings_dark_mode_title) }
-    var DARK_MODE_SUBTITLE: String { getString(Res.string().settings_dark_mode_subtitle) }
-
-    var COFFEE_TITLE: String { getString(Res.string().settings_coffee_title) }
-    var COFFEE_SUBTITLE: String { getString(Res.string().settings_coffee_subtitle) }
-    var TIPS_TITLE: String { getString(Res.string().settings_tips_title) }
-    var TIPS_SUBTITLE: String { getString(Res.string().settings_tips_subtitle) }
-    var CONTACT_TITLE: String { getString(Res.string().settings_contact_title) }
-    var CONTACT_SUBTITLE: String { getString(Res.string().settings_contact_subtitle) }
-
-    var SYNC_TITLE: String { getString(Res.string().settings_sync_title) }
-    var SYNC_SUBTITLE: String { getString(Res.string().settings_sync_subtitle) }
-    
-    var APP_VERSION_PREFIX: String { getString(Res.string().settings_app_version_prefix) }
-
-    // Constantes pures
     let URL_COFFEE = "https://buymeacoffee.com/lycast"
     let URL_SITE = "https://abknative.fr"
     let URL_CONTACT = "https://abknative.fr/contact"

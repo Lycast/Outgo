@@ -17,7 +17,7 @@ struct Header: View {
         HStack(alignment: .center) {
             // --- Titre (Gauche) ---
             Text(CommonLabels.shared.APP_NAME)
-                .font(typo.title)
+                .font(.custom("Poppins-Bold", size: 24))
                 .foregroundColor(colors.primary)
             
             Spacer()

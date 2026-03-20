@@ -52,10 +52,6 @@ struct DashboardScreen: View {
         ZStack(alignment: .bottomTrailing) {
             colors.background.ignoresSafeArea()
             
-            KeyboardPrewarmer()
-                            .frame(width: 0, height: 0)
-                            .allowsHitTesting(false)
-            
             VStack(spacing: 0) {
                 Header(
                     isConnected: state.isCloudSyncActive,

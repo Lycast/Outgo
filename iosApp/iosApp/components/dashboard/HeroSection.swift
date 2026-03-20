@@ -50,7 +50,7 @@ struct HeroSection: View {
 
             // --- Contenu Dépliable ---
             if isExpanded {
-                VStack(spacing: spacing.extraLarge) {
+                VStack(spacing: spacing.large) {
                     Spacer().frame(height: spacing.small)
 
                     // Bloc Revenus / Reste à vivre
@@ -81,7 +81,9 @@ struct HeroSection: View {
                 .padding(.horizontal, spacing.large)
                 .transition(.opacity.combined(with: .offset(y: -5)))
             }
-
+            
+            Spacer().frame(height: spacing.medium)
+            
             // --- Bouton Toggle ---
             Button(action: {
                 withAnimation(.spring(response: 0.2, dampingFraction: 1)) {
@@ -106,6 +108,7 @@ struct HeroSection: View {
         )
         .padding(.horizontal, spacing.medium)
         .animation(.spring(response: 0.2, dampingFraction: 1), value: isExpanded)
+        .sensoryFeedback(.impact(weight: .light), trigger: isExpanded)
     }
 
     @ViewBuilder
@@ -174,6 +177,7 @@ private struct LiveItem: View {
                         .foregroundColor(colors.textSecondary)
                     Text(amount)
                         .font(typo.title)
+                        .fontWeight(isNegativeLive ? .medium : .bold)
                         .foregroundColor(color)
                 }
             }

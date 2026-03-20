@@ -4,17 +4,21 @@ import SharedApp
 extension AppException {
     
     var uiString: String {
+        guard let e = StringsCache.shared.resources?.error else {
+            return ""
+        }
+        
         if self is OutgoingError.EmptyName {
-            return IosResourceHelper.shared.getStringSync(resource: Res.string().error_outgoing_empty_name)
+            return e.errorEmptyName
         }
         else if self is OutgoingError.InvalidAmount {
-            return IosResourceHelper.shared.getStringSync(resource: Res.string().error_outgoing_invalid_amount)
+            return e.errorInvalidAmount
         }
         else if self is CommonError.NetworkError {
-            return IosResourceHelper.shared.getStringSync(resource: Res.string().error_global_network)
+            return e.errorNetwork
         }
         else {
-            return IosResourceHelper.shared.getStringSync(resource: Res.string().error_global_unknown)
+            return e.errorUnknown
         }
     }
 }

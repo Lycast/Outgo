@@ -37,6 +37,7 @@ struct ExpenseFilterSelector: View {
         }
         .padding(.horizontal, spacing.large)
         .frame(maxWidth: .infinity)
+        .sensoryFeedback(.selection, trigger: selectedFilter)
     }
 }
 

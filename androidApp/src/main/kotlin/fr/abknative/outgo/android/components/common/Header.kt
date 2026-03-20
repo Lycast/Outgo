@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.sp
 import fr.abknative.outgo.android.R
 import fr.abknative.outgo.android.ui.AccessibilityLabels
 import fr.abknative.outgo.android.ui.CommonLabels
@@ -40,6 +41,7 @@ fun Header(
         Text(
             text = CommonLabels.APP_NAME,
             style = AppTheme.typo.title,
+            fontSize = 24.sp,
             color = AppTheme.colors.primary.toColor()
         )
 

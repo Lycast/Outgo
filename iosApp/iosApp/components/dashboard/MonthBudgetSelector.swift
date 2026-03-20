@@ -55,6 +55,7 @@ struct MonthBudgetSelector: View {
         .padding(.horizontal, spacing.large)
         .frame(maxWidth: .infinity)
         .frame(height: 56)
+        .sensoryFeedback(.selection, trigger: formattedMonthDate)
     }
 }
 
