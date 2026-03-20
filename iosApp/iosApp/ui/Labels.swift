@@ -1,13 +1,11 @@
 import Foundation
 import SharedApp
 
-// 1. Le conteneur qui gardera les textes en mémoire vive
+
 class StringsCache {
     static let shared = StringsCache()
     var resources: IosStringsResources? = nil
 }
-
-// 2. Vos structures de labels adaptées
 
 struct CommonLabels {
     static let shared = CommonLabels()

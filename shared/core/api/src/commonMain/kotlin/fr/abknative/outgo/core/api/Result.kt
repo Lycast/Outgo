@@ -26,7 +26,7 @@ inline fun <T> asResult(
     return try {
         Result.Success(block())
     } catch (e: CancellationException) {
-        throw e // Required for Coroutines to work properly
+        throw e
     } catch (e: Exception) {
         Result.Error(onError(e))
     }

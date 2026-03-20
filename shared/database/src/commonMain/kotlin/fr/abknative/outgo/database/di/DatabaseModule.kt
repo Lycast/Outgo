@@ -7,7 +7,7 @@ import org.koin.dsl.module
 fun databaseModule() = module {
     single {
         val driverFactory = get<DatabaseDriverFactory>()
-
-        OutgoDatabase(driverFactory.createDriver())
+        val driver = driverFactory.createDriver(OutgoDatabase.Schema)
+        OutgoDatabase(driver)
     }
 }

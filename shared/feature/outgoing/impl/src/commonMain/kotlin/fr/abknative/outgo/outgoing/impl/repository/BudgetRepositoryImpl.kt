@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 internal class BudgetRepositoryImpl(
-    database: OutgoDatabase,
+    private val database: OutgoDatabase,
     private val dispatchers: AppDispatchers
 ) : BudgetRepository {
 
@@ -33,18 +33,22 @@ internal class BudgetRepositoryImpl(
     override suspend fun insert(budget: Budget): Result<Unit, AppException> = asResult(
         onError = { CommonError.DatabaseError(it) }
     ) {
-        queries.insertBudget(
-            id = budget.id,
-            monthlyIncomeInCents = budget.monthlyIncomeInCents
-        )
+        queries.transaction {
+            queries.insertBudget(
+                id = budget.id,
+                monthlyIncomeInCents = budget.monthlyIncomeInCents
+            )
+        }
     }
 
     override suspend fun update(budget: Budget): Result<Unit, AppException> = asResult(
         onError = { CommonError.DatabaseError(it) }
     ) {
-        queries.updateBudget(
-            monthlyIncomeInCents = budget.monthlyIncomeInCents,
-            id = budget.id
-        )
+        queries.transaction {
+            queries.updateBudget(
+                monthlyIncomeInCents = budget.monthlyIncomeInCents,
+                id = budget.id
+            )
+        }
     }
 }
