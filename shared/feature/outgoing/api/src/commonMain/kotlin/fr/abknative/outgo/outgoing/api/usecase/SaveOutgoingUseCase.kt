@@ -19,7 +19,7 @@ interface SaveOutgoingUseCase {
      * @param recurrence The frequency of the expense ([Recurrence.MONTHLY] or [Recurrence.YEARLY]).
      * @param dueDay The day of the month the expense is due (1-31).
      * @param dueMonth The specific month the expense is due. Required only if recurrence is YEARLY.
-     * @return A [Result] indicating success or containing a specific [OutgoingError] on validation failure.
+     * @return A [Result] indicating success or containing a specific OutgoingError on validation failure.
      */
     suspend operator fun invoke(
         id: String? = null,
