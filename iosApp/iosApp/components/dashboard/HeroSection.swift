@@ -99,6 +99,7 @@ struct HeroSection: View {
                     .padding(.vertical, spacing.small)
                     .frame(maxWidth: .infinity)
             }
+            .accessibilityLabel(isExpanded ? AccessibilityLabels.shared.COLLAPSE_HERO : AccessibilityLabels.shared.EXPAND_HERO)
         }
         .background(colors.surface100)
         .cornerRadius(12)

@@ -15,7 +15,12 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import fr.abknative.outgo.android.ui.AccessibilityLabels
 import fr.abknative.outgo.android.ui.DashboardLabels
 import fr.abknative.outgo.android.ui.theme.AppTheme
 import fr.abknative.outgo.android.ui.theme.toColor
@@ -67,6 +72,7 @@ fun OutgoingDateSelector(
             selectedValue = selectedDay,
             onSelectionChanged = onDayChanged,
             itemHeight = itemHeight,
+            contentDescription = AccessibilityLabels.DAY_SELECTOR,
             dividerWidth = 0.4f,
             modifier = Modifier.weight(1f)
         )
@@ -77,6 +83,7 @@ fun OutgoingDateSelector(
             selectedValue = selectedMonth,
             onSelectionChanged = onMonthChanged,
             itemHeight = itemHeight,
+            contentDescription = AccessibilityLabels.MONTH_SELECTOR,
             dividerWidth = 0.7f,
             modifier = Modifier.weight(1.5f)
         )
@@ -90,7 +97,8 @@ private fun WheelPicker(
     itemLabels: List<String>,
     selectedValue: String,
     onSelectionChanged: (String) -> Unit,
-    itemHeight: androidx.compose.ui.unit.Dp,
+    itemHeight: Dp,
+    contentDescription: String,
     dividerWidth: Float = 1f
 ) {
     val listState = rememberLazyListState()
@@ -129,8 +137,16 @@ private fun WheelPicker(
         }
     }
 
+    val currentLabelIndex = items.indexOf(selectedValue).coerceAtLeast(0)
+    val currentSelectedLabel = itemLabels.getOrElse(currentLabelIndex) { "" }
+
     Box(
-        modifier = modifier.fillMaxHeight(),
+        modifier = modifier
+            .fillMaxHeight()
+            .semantics {
+                this.contentDescription = contentDescription
+                this.stateDescription = currentSelectedLabel
+            },
         contentAlignment = Alignment.Center
     ) {
         Column(

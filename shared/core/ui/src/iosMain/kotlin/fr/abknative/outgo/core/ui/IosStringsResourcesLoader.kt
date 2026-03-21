@@ -116,6 +116,7 @@ object IosStringsResourcesLoader {
     )
 
     private suspend fun loadA11y() = A11yStrings(
+        loading = getString(Res.string.a11y_loading),
         synced = getString(Res.string.a11y_synced),
         notSynced = getString(Res.string.a11y_not_synced),
         deleteExpense = getString(Res.string.a11y_delete_expense),
@@ -128,14 +129,16 @@ object IosStringsResourcesLoader {
         nextMonth = getString(Res.string.a11y_next_month),
         expandHero = getString(Res.string.a11y_expand_hero),
         collapseHero = getString(Res.string.a11y_collapse_hero),
+        expandDesc = getString(Res.string.a11y_expand_hero_desc),
+        collapseDesc = getString(Res.string.a11y_collapse_hero_desc),
         addExpense = getString(Res.string.a11y_add_expense),
-        closeDialog = getString(Res.string.a11y_close_dialog),
+        infoTooltip = getString(Res.string.a11y_info_tooltip),
         infoEmptyState = getString(Res.string.a11y_info_empty_state),
-        iconBalance = getString(Res.string.a11y_balance_desc)
+        daySelector = getString(Res.string.a11y_day_selector),
+        monthSelector = getString(Res.string.a11y_month_selector)
     )
 
     private suspend fun loadSettings() = SettingsStrings(
-        chevronDesc = getString(Res.string.a11y_chevron_desc),
         sectionAppearance = getString(Res.string.settings_section_appearance),
         sectionSupport = getString(Res.string.settings_section_support),
         sectionData = getString(Res.string.settings_section_data),

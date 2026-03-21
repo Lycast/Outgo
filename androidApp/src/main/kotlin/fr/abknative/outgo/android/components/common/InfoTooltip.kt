@@ -7,7 +7,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
+import fr.abknative.outgo.android.ui.AccessibilityLabels
 import fr.abknative.outgo.android.ui.CommonLabels
 import fr.abknative.outgo.android.ui.theme.AppTheme
 import fr.abknative.outgo.android.ui.theme.toColor
@@ -19,6 +21,7 @@ fun InfoTooltip(
     title: String,
     description: String,
     modifier: Modifier = Modifier,
+    onClickLabel: String = AccessibilityLabels.INFO_TOOLTIP,
     content: @Composable () -> Unit
 ) {
     val tooltipState = rememberTooltipState(isPersistent = true)
@@ -75,7 +78,10 @@ fun InfoTooltip(
         modifier = modifier,
     ) {
         Box(
-            modifier = Modifier.clickable {
+            modifier = Modifier.clickable(
+                onClickLabel = onClickLabel,
+                role = Role.Button
+            ) {
                 scope.launch { tooltipState.show() }
             }
         ) {

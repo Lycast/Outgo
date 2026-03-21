@@ -11,6 +11,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -39,10 +43,15 @@ fun OutgoingCard(
 
     val isSyncIndicatorVisible = outgoing.syncStatus != SyncStatus.SYNCED
     var isExpanded by remember { mutableStateOf(false) }
+    val stateDesc = if (isExpanded) AccessibilityLabels.COLLAPSE_DESC else AccessibilityLabels.EXPAND_DESC
 
     Column(
         modifier = modifier
             .fillMaxWidth()
+            .semantics {
+                stateDescription = stateDesc
+                role = Role.Button
+            }
             .combinedClickable(
                 onClick = { isExpanded = !isExpanded },
                 onLongClick = {

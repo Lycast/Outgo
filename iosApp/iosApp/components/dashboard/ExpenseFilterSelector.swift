@@ -74,6 +74,7 @@ private struct FilterTabItem: View {
         }
         .buttonStyle(.plain)
         .frame(maxWidth: .infinity)
+        .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
 }
 

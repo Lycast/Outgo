@@ -85,6 +85,7 @@ object BudgetEditDialogLabels {
 }
 
 object AccessibilityLabels {
+    val LOADING @Composable get() = stringResource(Res.string.a11y_loading)
     val SYNCED @Composable get() = stringResource(Res.string.a11y_synced)
     val NOT_SYNCED @Composable get() = stringResource(Res.string.a11y_not_synced)
     val DELETE_EXPENSE @Composable get() = stringResource(Res.string.a11y_delete_expense)
@@ -97,14 +98,16 @@ object AccessibilityLabels {
     val NEXT_MONTH @Composable get() = stringResource(Res.string.a11y_next_month)
     val EXPAND_HERO @Composable get() = stringResource(Res.string.a11y_expand_hero)
     val COLLAPSE_HERO @Composable get() = stringResource(Res.string.a11y_collapse_hero)
+    val EXPAND_DESC @Composable get() = stringResource(Res.string.a11y_expand_hero_desc)
+    val COLLAPSE_DESC @Composable get() = stringResource(Res.string.a11y_collapse_hero_desc)
     val ADD_EXPENSE @Composable get() = stringResource(Res.string.a11y_add_expense)
-    val CLOSE_DIALOG @Composable get() = stringResource(Res.string.a11y_close_dialog)
+    val INFO_TOOLTIP @Composable get() = stringResource(Res.string.a11y_info_tooltip)
     val INFO_EMPTY_STATE @Composable get() = stringResource(Res.string.a11y_info_empty_state)
-    val ICON_BALANCE @Composable get() = stringResource(Res.string.a11y_balance_desc)
+    val DAY_SELECTOR @Composable get() = stringResource(Res.string.a11y_day_selector)
+    val MONTH_SELECTOR @Composable get() = stringResource(Res.string.a11y_month_selector)
 }
 
 object SettingsLabels {
-    val CHEVRON_DESC @Composable get() = stringResource(Res.string.a11y_chevron_desc)
 
     val SECTION_APPEARANCE @Composable get() = stringResource(Res.string.settings_section_appearance)
     val SECTION_SUPPORT @Composable get() = stringResource(Res.string.settings_section_support)

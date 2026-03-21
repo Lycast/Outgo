@@ -79,6 +79,7 @@
     <string name="settings_sync_subtitle">Sauvegardez vos données en toute sécurité</string>
     <string name="settings_app_version_prefix">Outgo v1.0.0</string>
 
+    <string name="a11y_loading">Chargement en cours</string>
     <string name="a11y_synced">Synchronisé avec le serveur</string>
     <string name="a11y_not_synced">Non synchronisé, appuyez pour configurer</string>
     <string name="a11y_delete_expense">Supprimer cette dépense</string>
@@ -89,11 +90,14 @@
     <string name="a11y_navigate_settings">Paramètres</string>
     <string name="a11y_previous_month">Mois précédent</string>
     <string name="a11y_next_month">Mois suivant</string>
-    <string name="a11y_expand_hero">Développer les détails du budget</string>
-    <string name="a11y_collapse_hero">Réduire les détails du budget</string>
+    <string name="a11y_expand_hero">Développer les détails</string>
+    <string name="a11y_collapse_hero">Réduire les détails</string>
+    <string name="a11y_expand_hero_desc">Déplié</string>
+    <string name="a11y_collapse_hero_desc">Replié</string>
     <string name="a11y_add_expense">Ajouter une nouvelle dépense</string>
-    <string name="a11y_close_dialog">Fermer la boîte de dialogue</string>
+    <string name="a11y_info_tooltip">Afficher les détails</string>
     <string name="a11y_info_empty_state">Information : liste vide</string>
-    <string name="a11y_chevron_desc">Ouvrir</string>
-    <string name="a11y_balance_desc">Votre reste à vivre</string>
+    <string name="a11y_day_selector">Selection de jour</string>
+    <string name="a11y_month_selector">Selection de mois</string>
+
 </resources>

@@ -6,6 +6,7 @@ struct LoaderItem: View {
             ProgressView()
                 .progressViewStyle(.linear)
                 .frame(maxWidth: .infinity)
+                .accessibilityLabel(AccessibilityLabels.shared.LOADING)
         }
         .padding(32)
         .frame(maxWidth: .infinity)

@@ -94,7 +94,7 @@ struct SettingsRowClickable: View {
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 16, height: 16)
                     .foregroundColor(colors.textSecondary)
-                    .accessibilityLabel(SettingsLabels.shared.CHEVRON_DESC)
+                    .accessibilityHidden(true)
             }
             .padding(spacing.medium)
             .contentShape(Rectangle())
@@ -114,15 +114,10 @@ struct SettingsRowToggle: View {
     @Environment(\.outgoColors) private var colors
 
     var body: some View {
-        HStack {
-            SettingsRowContent(icon: icon, title: title, subtitle: subtitle)
-            
-            Spacer()
-            
-            Toggle("", isOn: $isChecked)
-                .labelsHidden()
-                .tint(colors.primary)
+            Toggle(isOn: $isChecked) {
+                SettingsRowContent(icon: icon, title: title, subtitle: subtitle)
+            }
+            .tint(colors.primary)
+            .padding(spacing.medium)
         }
-        .padding(spacing.medium)
-    }
 }

@@ -12,11 +12,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import fr.abknative.outgo.android.R
 import fr.abknative.outgo.android.components.common.CircleIcon
-import fr.abknative.outgo.android.ui.SettingsLabels
 import fr.abknative.outgo.android.ui.theme.AppTheme
 import fr.abknative.outgo.android.ui.theme.toColor
 
@@ -63,7 +63,7 @@ fun SettingsRowClickable(
         SettingsRowContent(icon, title, subtitle)
         Icon(
             painter = painterResource(R.drawable.caret_right),
-            contentDescription = SettingsLabels.CHEVRON_DESC,
+            contentDescription = null,
             tint = AppTheme.colors.textSecondary.toColor()
         )
     }
@@ -93,6 +93,7 @@ fun SettingsRowToggle(
         Switch(
             checked = isChecked,
             onCheckedChange = null,
+            modifier = Modifier.clearAndSetSemantics {},
             colors = SwitchDefaults.colors(
                 checkedThumbColor = AppTheme.colors.surface50.toColor(),
                 checkedTrackColor = AppTheme.colors.primary.toColor(),

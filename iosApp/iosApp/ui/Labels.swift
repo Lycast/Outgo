@@ -106,6 +106,7 @@ struct AccessibilityLabels {
     static let shared = AccessibilityLabels()
     private var data: A11yStrings? { StringsCache.shared.resources?.a11y }
 
+    var LOADING: String { data?.loading ?? "" }
     var SYNCED: String { data?.synced ?? "" }
     var NOT_SYNCED: String { data?.notSynced ?? "" }
     var DELETE_EXPENSE: String { data?.deleteExpense ?? "" }
@@ -118,17 +119,19 @@ struct AccessibilityLabels {
     var NEXT_MONTH: String { data?.nextMonth ?? "" }
     var EXPAND_HERO: String { data?.expandHero ?? "" }
     var COLLAPSE_HERO: String { data?.collapseHero ?? "" }
+    var EXPAND_DESC: String { data?.expandDesc ?? "" }
+    var COLLAPSE_DESC: String { data?.collapseDesc ?? "" }
     var ADD_EXPENSE: String { data?.addExpense ?? "" }
-    var CLOSE_DIALOG: String { data?.closeDialog ?? "" }
+    var INFO_TOOLTIP: String { data?.infoTooltip ?? "" }
     var INFO_EMPTY_STATE: String { data?.infoEmptyState ?? "" }
-    var ICON_BALANCE: String { data?.iconBalance ?? "" }
+    var DAY_SELECTOR: String { data?.daySelector ?? "" }
+    var MONTH_SELECTOR: String { data?.monthSelector ?? "" }
 }
 
 struct SettingsLabels {
     static let shared = SettingsLabels()
     private var data: SettingsStrings? { StringsCache.shared.resources?.settings }
 
-    var CHEVRON_DESC: String { data?.chevronDesc ?? "" }
     var SECTION_APPEARANCE: String { data?.sectionAppearance ?? "" }
     var SECTION_SUPPORT: String { data?.sectionSupport ?? "" }
     var SECTION_DATA: String { data?.sectionData ?? "" }

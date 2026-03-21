@@ -4,10 +4,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import fr.abknative.outgo.android.ui.BudgetEditDialogLabels
@@ -34,6 +36,11 @@ fun BudgetEditDialog(
         )
     }
 
+    val parsedAmount = remember(textValue) {
+        textValue.toBigDecimalOrNull()?.movePointRight(2)?.toLong()
+    }
+    val isValidInput = parsedAmount != null && textValue.isNotBlank()
+
     AlertDialog(
         onDismissRequest = onDismiss,
         containerColor = AppTheme.colors.surface200.toColor(),
@@ -57,8 +64,14 @@ fun BudgetEditDialog(
                 OutlinedTextField(
                     value = textValue,
                     onValueChange = { newValue ->
-                        if (newValue.length <= 15 && newValue.all { it.isDigit() || it == '.' || it == ',' }) {
-                            textValue = newValue.replace(',', '.')
+                        if (newValue.length <= 15) {
+                            val sanitizedValue = newValue.replace(',', '.')
+                            if (sanitizedValue.isEmpty()
+                                || sanitizedValue.count { it == '.' } <= 1
+                                && sanitizedValue.all { it.isDigit() || it == '.' }
+                            ) {
+                                textValue = sanitizedValue
+                            }
                         }
                     },
                     label = {
@@ -74,7 +87,15 @@ fun BudgetEditDialog(
                         Text(CommonLabels.CURRENCY_SYMBOL, style = AppTheme.typo.body)
                     },
                     textStyle = AppTheme.typo.body.copy(color = AppTheme.colors.textPrimary.toColor()),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Decimal,
+                        imeAction = ImeAction.Done
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            if (isValidInput) onConfirm(parsedAmount)
+                        }
+                    ),
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
                     colors = OutlinedTextFieldDefaults.colors(
@@ -101,13 +122,8 @@ fun BudgetEditDialog(
         },
         confirmButton = {
             Button(
-                onClick = {
-                    val amountInCents = textValue.toBigDecimalOrNull()
-                        ?.movePointRight(2)
-                        ?.toLong() ?: 0L
-                    onConfirm(amountInCents)
-                },
-                enabled = textValue.isNotBlank(),
+                onClick = { if (isValidInput) onConfirm(parsedAmount) },
+                enabled = isValidInput,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = AppTheme.colors.primary.toColor(),
                     contentColor = AppTheme.colors.textOnBrand.toColor(),

@@ -92,6 +92,7 @@ data class BudgetDialogStrings(
 )
 
 data class A11yStrings(
+    val loading: String,
     val synced: String,
     val notSynced: String,
     val deleteExpense: String,
@@ -104,14 +105,16 @@ data class A11yStrings(
     val nextMonth: String,
     val expandHero: String,
     val collapseHero: String,
+    val expandDesc:String,
+    val collapseDesc: String,
     val addExpense: String,
-    val closeDialog: String,
+    val infoTooltip: String,
     val infoEmptyState: String,
-    val iconBalance: String
+    val daySelector: String,
+    val monthSelector: String,
 )
 
 data class SettingsStrings(
-    val chevronDesc: String,
     val sectionAppearance: String,
     val sectionSupport: String,
     val sectionData: String,

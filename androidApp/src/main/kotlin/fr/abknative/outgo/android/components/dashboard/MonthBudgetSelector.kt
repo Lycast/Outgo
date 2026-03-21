@@ -38,7 +38,9 @@ fun MonthBudgetSelector(
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically
     ){
-        IconButton(onClick = onPreviousMonthClick) {
+        IconButton(
+            onClick = onPreviousMonthClick,
+        ) {
             Icon(
                 painter = painterResource(R.drawable.caret_left),
                 contentDescription = AccessibilityLabels.PREVIOUS_MONTH,

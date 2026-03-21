@@ -13,12 +13,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import fr.abknative.outgo.android.R
 import fr.abknative.outgo.android.components.common.CircleIcon
 import fr.abknative.outgo.android.components.common.InfoTooltip
+import fr.abknative.outgo.android.ui.AccessibilityLabels
 import fr.abknative.outgo.android.ui.DashboardLabels
 import fr.abknative.outgo.android.ui.extensions.uiAmount
 import fr.abknative.outgo.android.ui.theme.AppTheme
@@ -136,11 +140,20 @@ fun HeroSection(
                 }
             }
 
+            val stateDesc = if (isExpanded) AccessibilityLabels.COLLAPSE_DESC else AccessibilityLabels.EXPAND_DESC
+            val clickLabel = if (isExpanded) AccessibilityLabels.COLLAPSE_HERO else AccessibilityLabels.EXPAND_HERO
+
             // Bouton de déploiement
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable { onToggleExpand() }
+                    .semantics {
+                        stateDescription = stateDesc
+                    }
+                    .clickable(
+                        onClickLabel = clickLabel,
+                        role = Role.Button
+                    ) { onToggleExpand() }
                     .padding(vertical = AppTheme.spacing.small),
                 contentAlignment = Alignment.Center
             ) {
@@ -171,7 +184,12 @@ private fun BudgetItem(
             containerColor = AppTheme.colors.primary.toColor()
         )
         Column(
-            modifier = Modifier.clickable(onClick = onClick),
+            modifier = Modifier
+                .clickable(
+                    onClickLabel = AccessibilityLabels.EDIT_BUDGET,
+                    role = Role.Button,
+                    onClick = onClick
+                ),
             horizontalAlignment = Alignment.Start
         ) {
             Text(
@@ -201,7 +219,6 @@ private fun LiveItem(
         title = DashboardLabels.TOOLTIP_BALANCE_TITLE,
         description = DashboardLabels.TOOLTIP_BALANCE_DESC,
     ) {
-
         Row(
             horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.medium),
             verticalAlignment = Alignment.CenterVertically
