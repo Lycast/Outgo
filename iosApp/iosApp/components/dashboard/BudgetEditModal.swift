@@ -21,7 +21,10 @@ struct BudgetEditModal: ViewModifier {
                 // --- Fond sombre ---
                 Color.black.opacity(0.4)
                     .ignoresSafeArea()
-                    .onTapGesture { dismiss() }
+                    .onTapGesture {
+                        isInputActive = false
+                        dismiss()
+                    }
                     .transition(.opacity)
                 
                 // --- La Carte ---
@@ -116,6 +119,7 @@ struct BudgetEditModal: ViewModifier {
             }
         }
         .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isPresented)
+        .toolbar { if isInputActive { CustomToolbarGroup( title: "OK" ) { isInputActive = false }}}
     }
     
     // --- Logique ---

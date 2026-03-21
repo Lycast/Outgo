@@ -60,7 +60,7 @@ struct OutgoingCard: View {
                 }
             }
             .padding(spacing.large)
-            .contentShape(Rectangle()) // Rend toute la zone cliquable
+            .contentShape(Rectangle())
             .onTapGesture {
                 withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
                     isExpanded.toggle()

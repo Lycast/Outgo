@@ -85,7 +85,8 @@ private struct WheelColumn: View {
                 labels: labels,
                 selection: selection,
                 onChanged: onChanged,
-                itemHeight: itemHeight
+                itemHeight: itemHeight,
+                dividerWidth: dividerWidth
             )
         }
         .frame(maxWidth: .infinity)
@@ -98,43 +99,89 @@ struct CustomWheel: View {
     let selection: String
     let onChanged: (String) -> Void
     let itemHeight: CGFloat
+    let dividerWidth: CGFloat
     
     @Environment(\.outgoColors) private var colors
     @Environment(\.outgoTypography) private var typo
 
+    // --- États pour le mode manuel ---
+    @State private var isManualMode = false
+    @State private var textBuffer = ""
+    @FocusState private var isFocused: Bool
+
     var body: some View {
-        ScrollView(.vertical, showsIndicators: false) {
-            LazyVStack(spacing: 0) {
-                ForEach(0..<items.count, id: \.self) { index in
-                    let isSelected = items[index] == selection
-                    Text(labels?[index] ?? items[index])
-                        .font(typo.body)
-                        .fontWeight(isSelected ? .semibold : .regular)
-                        .foregroundColor(isSelected ? colors.primary : colors.textSecondary)
-                        .frame(height: itemHeight)
-                        .frame(maxWidth: .infinity)
-                        .opacity(isSelected ? 1.0 : 0.4)
-                        .scaleEffect(isSelected ? 1.15 : 1.0)
-                }
-            }
-            .scrollTargetLayout()
-        }
-        .scrollTargetBehavior(.viewAligned)
-        .scrollPosition(id: .init(get: {
-            items.firstIndex(of: selection)
-        }, set: { newIndex in
-            if let i = newIndex { onChanged(items[i]) }
-        }))
-        .contentMargins(.vertical, itemHeight, for: .scrollContent)
-        .sensoryFeedback(.selection, trigger: selection)
-        .onAppear {
-            if selection.isEmpty || !items.contains(selection) {
-                if let firstItem = items.first {
-                    onChanged(firstItem)
-                }
+        ZStack {
+            if isManualMode {
+                TextField("", text: $textBuffer)
+                    .keyboardType(.numberPad)
+                    .focused($isFocused)
+                    .font(typo.body.weight(.bold))
+                    .multilineTextAlignment(.center)
+                    .foregroundColor(colors.primary)
+                    .frame(maxWidth: dividerWidth)
+                    .frame(height: itemHeight)
+                    .background(colors.background)
+                    .cornerRadius(8)
+                    .onSubmit { validateManualInput() }
+                    .onAppear { textBuffer = selection }
             } else {
-                onChanged(selection)
+                // --- TON DESIGN ORIGINAL ---
+                ScrollView(.vertical, showsIndicators: false) {
+                    LazyVStack(spacing: 0) {
+                        ForEach(0..<items.count, id: \.self) { index in
+                            let isSelected = items[index] == selection
+                            Text(labels?[index] ?? items[index])
+                                .font(typo.body)
+                                .fontWeight(isSelected ? .semibold : .regular)
+                                .foregroundColor(isSelected ? colors.primary : colors.textSecondary)
+                                .frame(height: itemHeight)
+                                .frame(maxWidth: .infinity)
+                                .opacity(isSelected ? 1.0 : 0.4)
+                                .scaleEffect(isSelected ? 1.15 : 1.0)
+                        }
+                    }
+                    .scrollTargetLayout()
+                }
+                .scrollTargetBehavior(.viewAligned)
+                .scrollPosition(id: .init(get: {
+                    items.firstIndex(of: selection)
+                }, set: { newIndex in
+                    if let i = newIndex { onChanged(items[i]) }
+                }))
+                .contentMargins(.vertical, itemHeight, for: .scrollContent)
+                .disabled(isManualMode)
             }
+        }
+        .sensoryFeedback(.selection, trigger: selection)
+        .onAppear { if selection.isEmpty || !items.contains(selection) {
+            if let firstItem = items.first { onChanged(firstItem) }} else { onChanged(selection) }
+        }
+        .contentShape(Rectangle())
+        .onLongPressGesture(minimumDuration: 0.5) { enableManualMode() }
+        .onTapGesture { if isManualMode { validateManualInput() } }
+        .toolbar { if isFocused { CustomToolbarGroup( title: "OK") { validateManualInput() }}}
+        // --- ACCESSIBILITÉ ---
+        .accessibilityElement(children: .ignore)
+        .accessibilityValue(labels?[items.firstIndex(of: selection) ?? 0] ?? selection)
+        .accessibilityAction {
+            enableManualMode()
+        }
+    }
+
+    private func enableManualMode() {
+        let impact = UIImpactFeedbackGenerator(style: .medium)
+            impact.impactOccurred()
+        
+        isManualMode = true
+        isFocused = true
+    }
+
+    private func validateManualInput() {
+        isManualMode = false
+        isFocused = false
+        
+        if items.contains(textBuffer) {
+            onChanged(textBuffer)
         }
     }
 }

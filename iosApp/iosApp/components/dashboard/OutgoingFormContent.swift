@@ -105,6 +105,12 @@ struct OutgoingFormContent: View {
                 .padding(spacing.large)
             }
             .onTapGesture { focusedField = nil }
+            .toolbar {
+                CustomToolbarGroup(
+                    title: focusedField == .name ? "SUIVANT" : "OK",
+                    action: handleToolbarAction
+                )
+            }
         }
 
     // --- Helper : Style des Chips ---
@@ -121,6 +127,14 @@ struct OutgoingFormContent: View {
                 .cornerRadius(8)
         }
         .buttonStyle(.plain)
+    }
+    
+    private func handleToolbarAction() {
+        if focusedField == .name {
+            focusedField = .amount // On passe au montant
+        } else {
+            focusedField = nil // On ferme le clavier
+        }
     }
 }
 
