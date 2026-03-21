@@ -30,7 +30,7 @@ internal fun OutgoingNetworkDto.toDomain(): Outgoing {
         createdAt = this.createdAt,
         updatedAt = this.updatedAt,
         isDeleted = this.isDeleted,
-        // RÈGLE MÉTIER : Un objet qui provient du réseau est, par définition, déjà synchronisé.
+        // BUSINESS RULE: An object coming from the network is, by definition, already synchronized.
         syncStatus = SyncStatus.SYNCED
     )
 }

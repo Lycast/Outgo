@@ -1,10 +1,16 @@
 package fr.abknative.outgo.outgoing.api.usecase
 
+/**
+ * Encapsulates the business rule for calculating the user's disposable income.
+ */
 interface CalculateDisposableIncomeUseCase {
+
     /**
-     * Calculates the "remaining income" (Monthly income - Total smoothed expenses).
-     * @param incomeInCents Le revenu total (ou budget).
-     * @param totalOutgoingsInCents Le total des charges calculées pour le mois.
+     * Calculates the remaining income after deducting all smoothed expenses.
+     *
+     * @param incomeInCents The total monthly income or baseline budget.
+     * @param totalOutgoingsInCents The sum of all calculated expenses for the month.
+     * @return The disposable income available, in cents.
      */
     operator fun invoke(incomeInCents: Long, totalOutgoingsInCents: Long): Long
 }

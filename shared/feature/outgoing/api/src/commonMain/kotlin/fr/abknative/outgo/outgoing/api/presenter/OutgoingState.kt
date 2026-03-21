@@ -3,22 +3,39 @@ package fr.abknative.outgo.outgoing.api.presenter
 import fr.abknative.outgo.core.api.AppException
 import fr.abknative.outgo.outgoing.api.model.Outgoing
 
+/**
+ * Represents the complete UI state for the Outgoing screen.
+ * Acts as the single source of truth for the view.
+ *
+ * @property isLoading Indicates if a background operation (fetch, sync) is in progress.
+ * @property outgoings The list of expenses to display for the currently selected period.
+ * @property currentDay The current physical day of the month.
+ * @property currentMonth The current physical month.
+ * @property selectedMonth The month currently being viewed or navigated to by the user.
+ * @property monthlyIncomeInCents The user's total base income or overall budget.
+ * @property totalOutgoingsInCents The smoothed sum of all expenses (e.g., accounting for yearly recurrences).
+ * @property disposableIncomeInCents The remaining budget after subtracting [totalOutgoingsInCents] from income.
+ * @property remainingToPayInCents The exact sum of expenses still due in the [selectedMonth] based on the [currentDay].
+ * @property isCloudSyncActive Indicates if the app is actively synchronizing data with the remote server.
+ * @property error The current error state to be handled by the UI, or null if successful.
+ * @property isHeroExpanded Persisted user preference indicating if the top summary section is expanded.
+ */
 data class OutgoingState(
     val isLoading: Boolean = false,
 
-    // --- Données de la liste ---
+    // --- List Data ---
     val outgoings: List<Outgoing> = emptyList(),
     val currentDay: Int? = 0,
     val currentMonth: Int = 0,
     val selectedMonth: Int,
 
-    // --- Calculs et Budget ---
-    val monthlyIncomeInCents: Long = 0L,        // salaire / budget global
-    val totalOutgoingsInCents: Long = 0L,       // Somme lissée des charges
-    val disposableIncomeInCents: Long = 0L,     // ce qu'il te reste du budget
-    val remainingToPayInCents: Long = 0L,       // Ce qui va encore sortir ce mois-ci
+    // --- Calculations & Budget ---
+    val monthlyIncomeInCents: Long = 0L,
+    val totalOutgoingsInCents: Long = 0L,
+    val disposableIncomeInCents: Long = 0L,
+    val remainingToPayInCents: Long = 0L,
 
-    // --- État Global ---
+    // --- Global State ---
     val isCloudSyncActive: Boolean = false,
     val error: AppException? = null,
 

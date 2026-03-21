@@ -10,8 +10,12 @@ internal class UpdateIncomeUseCaseImpl(
     private val repository: BudgetRepository
 ) : UpdateIncomeUseCase {
 
+    /**
+     * Implementation details:
+     * Resolves the "upsert" logic by first querying the current state.
+     * Delegates to [BudgetRepository.insert] for first-time setup or [BudgetRepository.update] for subsequent modifications.
+     */
     override suspend operator fun invoke(amountInCents: Long, budgetId: String): Result<Unit, AppException> {
-
         return when (val existingBudgetResult = repository.getBudget(budgetId)) {
 
             is Result.Success -> {

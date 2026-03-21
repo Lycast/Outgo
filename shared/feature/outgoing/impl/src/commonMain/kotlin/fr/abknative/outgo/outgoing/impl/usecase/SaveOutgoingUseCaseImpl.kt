@@ -17,6 +17,14 @@ internal class SaveOutgoingUseCaseImpl(
     private val timeProvider: TimeProvider
 ) : SaveOutgoingUseCase {
 
+    /**
+     * Implementation details:
+     * 1. Validates input bounds and enforces recurrence rules (e.g., stripping dueMonth for monthly items).
+     * 2. Resolves offline-first metadata ([createdAt], [updatedAt]).
+     * 3. Determines the correct [SyncStatus] state transition:
+     * - A record that has never been synced remotely remains in [SyncStatus.PENDING_CREATE] even if updated locally.
+     * - Already synced records transition to [SyncStatus.PENDING_UPDATE].
+     */
     @OptIn(ExperimentalUuidApi::class)
     override suspend fun invoke(
         id: String?,
