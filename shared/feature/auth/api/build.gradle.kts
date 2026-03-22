@@ -14,7 +14,6 @@ kotlin {
         commonMain.dependencies {
             implementation(projects.shared.core.api)
             implementation(libs.kotlinx.coroutines.core)
-            implementation(libs.androidx.lifecycle.viewmodel)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -23,5 +22,5 @@ kotlin {
 }
 
 android {
-    namespace = "fr.abknative.outgo.shared.feature.outgoing.api"
+    namespace = "fr.abknative.outgo.shared.feature.auth.api"
 }

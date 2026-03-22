@@ -17,14 +17,16 @@ dependencyResolutionManagement {
     }
 }
 
-include(":server")
-
+include(":server:api")
+include(":server:core")
+include(":server:data")
 include(":shared:app")
-
 include(":shared:database")
 include(":shared:core:api")
 include(":shared:core:impl")
 include(":shared:core:ui")
+include(":shared:feature:auth:api")
+include(":shared:feature:auth:impl")
 include(":shared:feature:outgoing:api")
 include(":shared:feature:outgoing:impl")
 

@@ -11,6 +11,9 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 class OutgoJvmConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
+
+            pluginManager.apply("org.jetbrains.kotlin.jvm")
+
             // Java
             tasks.withType<JavaCompile>().configureEach {
                 sourceCompatibility = JavaVersion.VERSION_17.toString()

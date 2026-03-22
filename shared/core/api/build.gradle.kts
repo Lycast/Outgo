@@ -1,12 +1,12 @@
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
     id("outgo.android.library")
-    id("outgo.jvm")
 }
 
 kotlin {
 
     androidTarget()
+    jvm()
     iosArm64()
     iosSimulatorArm64()
     

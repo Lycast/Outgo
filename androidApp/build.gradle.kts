@@ -2,7 +2,6 @@ plugins {
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.google.android.secrets)
     id("outgo.android.application")
-    id("outgo.jvm")
 }
 
 android {

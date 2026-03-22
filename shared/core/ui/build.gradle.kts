@@ -3,7 +3,6 @@ plugins {
     alias(libs.plugins.compose.multiplatform)
     alias(libs.plugins.compose.compiler)
     id("outgo.android.library")
-    id("outgo.jvm")
 }
 
 kotlin {

@@ -16,7 +16,8 @@ struct CustomToolbarGroup: ToolbarContent {
                         .font(typo.body)
                         .fontWeight(.bold)
                         .foregroundColor(colors.primary)
-                        .frame(maxWidth: .infinity, alignment: .init(horizontal: .leading, vertical: .center))
+                        .frame(maxWidth: .infinity, alignment: .init(horizontal: .trailing, vertical: .center))
+                        .padding(.trailing, 24)
                 }
             }
             .buttonStyle(.plain)

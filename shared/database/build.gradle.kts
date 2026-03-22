@@ -2,7 +2,6 @@ plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.sqldelight)
     id("outgo.android.library")
-    id("outgo.jvm")
 }
 
 kotlin {

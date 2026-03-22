@@ -3,7 +3,6 @@ plugins {
     alias(libs.plugins.compose.multiplatform)
     alias(libs.plugins.compose.compiler)
     id("outgo.android.library")
-    id("outgo.jvm")
     alias(libs.plugins.skie)
 }
 
@@ -26,6 +25,7 @@ kotlin {
             export(projects.shared.core.ui)
             export(projects.shared.core.api)
             export(projects.shared.feature.outgoing.api)
+            export(projects.shared.feature.auth.api)
         }
     }
     
@@ -33,6 +33,7 @@ kotlin {
         commonMain.dependencies {
             implementation(projects.shared.core.impl)
             implementation(projects.shared.database)
+            implementation(projects.shared.feature.auth.impl)
             implementation(projects.shared.feature.outgoing.impl)
 
             implementation(libs.koin.core)
@@ -41,6 +42,7 @@ kotlin {
 
             api(projects.shared.feature.outgoing.api)
             api(projects.shared.core.ui)
+            api(projects.shared.feature.auth.api)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
