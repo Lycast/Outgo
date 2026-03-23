@@ -14,6 +14,9 @@ dependencies {
     implementation(project(":shared:core:api"))
     implementation(project(":shared:feature:auth:api"))
     implementation(project(":shared:feature:outgoing:api"))
+    implementation(project(":shared:feature:outgoing:network"))
+
+    implementation(libs.ktor.server.auth)
 
     implementation(libs.logback)
     implementation(libs.ktor.server.core)

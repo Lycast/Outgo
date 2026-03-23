@@ -15,10 +15,14 @@ kotlin {
             implementation(projects.shared.feature.outgoing.api)
             implementation(projects.shared.core.api)
             implementation(projects.shared.database)
+            implementation(projects.shared.feature.outgoing.network)
 
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.serialization.json)
+
             implementation(libs.ktor.client.core)
+            implementation(libs.ktor.client.content.negotiation)
+            implementation(libs.ktor.serialization.json)
 
             implementation(libs.koin.core)
             implementation(libs.koin.core.viewmodel)

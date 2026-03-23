@@ -1,0 +1,15 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: outgo-db
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=outgo_user
+      - POSTGRES_PASSWORD=outgo_pass
+      - POSTGRES_DB=outgo_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:

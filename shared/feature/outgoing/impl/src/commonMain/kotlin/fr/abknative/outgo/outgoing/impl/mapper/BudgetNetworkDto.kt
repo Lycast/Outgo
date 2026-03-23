@@ -1,17 +1,19 @@
 package fr.abknative.outgo.outgoing.impl.mapper
 
 import fr.abknative.outgo.outgoing.api.model.Budget
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
+import fr.abknative.outgo.outgoing.network.BudgetNetworkDto
 
-@Serializable
-internal data class BudgetNetworkDto (
-    @SerialName("id") val id: String,
-    @SerialName("monthly_income_cents") val monthlyIncomeInCents: Long
-)
-
+// Réseau -> Domaine (PULL)
 internal fun BudgetNetworkDto.toDomain(): Budget {
     return Budget(
+        id = this.id,
+        monthlyIncomeInCents = this.monthlyIncomeInCents
+    )
+}
+
+// Domaine -> Réseau (PUSH)
+internal fun Budget.toNetworkDto(): BudgetNetworkDto {
+    return BudgetNetworkDto(
         id = this.id,
         monthlyIncomeInCents = this.monthlyIncomeInCents
     )

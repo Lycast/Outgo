@@ -29,6 +29,7 @@ include(":shared:feature:auth:api")
 include(":shared:feature:auth:impl")
 include(":shared:feature:outgoing:api")
 include(":shared:feature:outgoing:impl")
+include(":shared:feature:outgoing:network")
 
 include(":androidApp")
 include(":webApp")

@@ -3,8 +3,8 @@
 agp = "8.12.3"
 kotlin = "2.2.21"
 compose-multiplatform = "1.7.3"
-sqldelight = "2.2.1"
-ktor = "3.3.3"
+sqldelight = "2.3.2"
+ktor = "3.4.1"
 google-secrets-plugin = "2.0.1"
 
 # Android Specific
@@ -19,21 +19,22 @@ androidx-lifecycle = "2.9.6"
 # Architecture & Logic
 koin = "4.1.1"
 kotlinx-datetime = "0.7.0"
-kotlinx-serialization = "1.8.0"
-kotlinx-coroutines = "1.10.1"
+kotlinx-serialization = "1.10.0"
+kotlinx-coroutines = "1.10.2"
 
 # Persistence & Database (New)
-exposed = "0.60.0"
-hikaricp = "6.2.1"
-postgresql = "42.7.5"
-h2 = "2.3.232"
+exposed = "1.1.1"
+hikaricp = "7.0.2"
+postgresql = "42.7.10"
+h2 = "2.4.240"
+flyway = "12.1.1"
 
 # UI & Server
-logback = "1.5.24"
+logback = "1.5.32"
 skie = "0.10.10"
 
 # Tests
-kotest = "5.9.1"
+kotest = "6.1.7"
 
 [libraries]
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
@@ -108,6 +109,10 @@ ktor-server-auth = { module = "io.ktor:ktor-server-auth", version.ref = "ktor" }
 ktor-server-content-negotiation = { module = "io.ktor:ktor-server-content-negotiation", version.ref = "ktor" }
 ktor-server-test-host = { module = "io.ktor:ktor-server-test-host", version.ref = "ktor" }
 logback = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
+
+# --- FLYWAY (Migrations) ---
+flyway-core = { module = "org.flywaydb:flyway-core", version.ref = "flyway" }
+flyway-database-postgresql = { module = "org.flywaydb:flyway-database-postgresql", version.ref = "flyway" }
 
 # --- TESTING ---
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinx-coroutines" }
