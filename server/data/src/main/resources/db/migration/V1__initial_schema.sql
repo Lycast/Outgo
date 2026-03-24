@@ -9,7 +9,7 @@ CREATE TABLE users (
 CREATE TABLE budgets (
     id VARCHAR(36) PRIMARY KEY, -- L'ID généré par le mobile
     user_id VARCHAR(128) NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    monthly_income_in_cents INTEGER NOT NULL DEFAULT 0,
+    monthly_income_in_cents BIGINT NOT NULL DEFAULT 0,
     server_updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -18,7 +18,7 @@ CREATE TABLE outgoings (
     budget_id VARCHAR(36) NOT NULL REFERENCES budgets(id) ON DELETE CASCADE,
     user_id VARCHAR(128) NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     name VARCHAR(255) NOT NULL,
-    amount_in_cents INTEGER NOT NULL,
+    amount_in_cents BIGINT NOT NULL,
     recurrence VARCHAR(50) NOT NULL,
     due_day INTEGER NOT NULL,
     due_month INTEGER, -- Optionnel (null pour mensuel)

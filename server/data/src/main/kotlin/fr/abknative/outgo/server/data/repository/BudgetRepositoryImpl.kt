@@ -1,0 +1,42 @@
+package fr.abknative.outgo.server.data.repository
+
+import fr.abknative.outgo.outgoing.network.BudgetNetworkDto
+import fr.abknative.outgo.server.core.repository.BudgetRepository
+import fr.abknative.outgo.server.data.mapper.toExposedQueryInstant
+import fr.abknative.outgo.server.data.tables.BudgetsTable
+import org.jetbrains.exposed.v1.core.and
+import org.jetbrains.exposed.v1.core.eq
+import org.jetbrains.exposed.v1.core.greater
+import org.jetbrains.exposed.v1.jdbc.selectAll
+import org.jetbrains.exposed.v1.jdbc.transactions.transaction
+import org.jetbrains.exposed.v1.jdbc.upsert
+
+
+class BudgetRepositoryImpl : BudgetRepository {
+
+    override fun upsertFromDto(userId: String, dto: BudgetNetworkDto) {
+        transaction {
+            BudgetsTable.upsert { row ->
+                row[id] = dto.id
+                row[this.userId] = userId
+                row[monthlyIncomeInCents] = dto.monthlyIncomeInCents
+                // serverUpdatedAt est géré automatiquement par la base de données (CurrentTimestamp)
+            }
+        }
+    }
+
+    override fun getBudgetsSince(userId: String, since: Long): List<BudgetNetworkDto> {
+        return transaction {
+            val sinceInstant = since.toExposedQueryInstant()
+
+            BudgetsTable.selectAll().where {
+                (BudgetsTable.userId eq userId) and (BudgetsTable.serverUpdatedAt greater sinceInstant)
+            }.map { row ->
+                BudgetNetworkDto(
+                    id = row[BudgetsTable.id],
+                    monthlyIncomeInCents = row[BudgetsTable.monthlyIncomeInCents]
+                )
+            }
+        }
+    }
+}

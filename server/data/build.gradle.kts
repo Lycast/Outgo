@@ -4,6 +4,7 @@ plugins {
 
 dependencies {
     implementation(project(":server:core"))
+    implementation(project(":shared:feature:outgoing:network"))
 
     // SQL & Persistence
     implementation(libs.exposed.core)
