@@ -88,6 +88,59 @@ internal class OutgoingRepositoryImpl(
         }
     }
 
+    override suspend fun getPendingOutgoings(): Result<List<Outgoing>, AppException> = asResult(
+        onError = { CommonError.DatabaseError(it) }
+    ) {
+        queries.getPendingOutgoings().executeAsList().map { it.toDomain() }
+    }
+
+    override suspend fun updateSyncStatus(
+        id: String,
+        status: SyncStatus
+    ): Result<Unit, AppException> = asResult(
+        onError = { CommonError.DatabaseError(it) }
+    ) {
+        queries.updateSyncStatus(syncStatus = status.name, id = id)
+    }
+
+    override suspend fun syncFromServer(outgoings: List<Outgoing>): Result<Unit, AppException> = asResult(
+        onError = { CommonError.DatabaseError(it) }
+    ) {
+        queries.transaction {
+            outgoings.forEach { remote ->
+                val exists = queries.getById(remote.id).executeAsOneOrNull() != null
+
+                if (exists) {
+                    queries.updateOutgoing(
+                        name = remote.name,
+                        amountInCents = remote.amountInCents,
+                        recurrence = remote.recurrence.name,
+                        dueDay = remote.dueDay.toLong(),
+                        dueMonth = remote.dueMonth?.toLong(),
+                        updatedAt = remote.updatedAt,
+                        isDeleted = if (remote.isDeleted) 1L else 0L,
+                        syncStatus = SyncStatus.SYNCED.name, // Toujours SYNCED car vient du serveur
+                        id = remote.id
+                    )
+                } else {
+                    queries.insertOutgoing(
+                        id = remote.id,
+                        budgetId = remote.budgetId,
+                        name = remote.name,
+                        amountInCents = remote.amountInCents,
+                        recurrence = remote.recurrence.name,
+                        dueDay = remote.dueDay.toLong(),
+                        dueMonth = remote.dueMonth?.toLong(),
+                        createdAt = remote.createdAt,
+                        updatedAt = remote.updatedAt,
+                        isDeleted = if (remote.isDeleted) 1L else 0L,
+                        syncStatus = SyncStatus.SYNCED.name
+                    )
+                }
+            }
+        }
+    }
+
     override suspend fun getOutgoingById(id: String): Outgoing? {
         return queries.getById(id).executeAsOneOrNull()?.toDomain()
     }

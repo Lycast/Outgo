@@ -1,14 +1,14 @@
 /**
- * Inserts a new subscription. Fails if the ID already exists.
+ * Inserts a new outgoing expense. Fails if the ID already exists.
  */
 insertOutgoing:
 INSERT INTO OutgoingEntity(
     id, budgetId, name, amountInCents, recurrence, dueDay, dueMonth,
     createdAt, updatedAt, isDeleted, syncStatus
-) VALUES (?, ?, ?,?, ?, ?, ?, ?, ?, ?, ?);
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
 /**
- * Updates an existing subscription by its ID.
+ * Updates an existing outgoing expense by its ID.
  */
 updateOutgoing:
 UPDATE OutgoingEntity
@@ -24,7 +24,7 @@ SET
 WHERE id = ?;
 
 /**
- * Retrieves all subscriptions filtered by month that are not logically deleted.
+ * Retrieves all outgoing expenses filtered by month that are not logically deleted.
  */
 getOutgoingsByMonth:
 SELECT * FROM OutgoingEntity
@@ -41,6 +41,26 @@ SET isDeleted = 1,
     updatedAt = ?
 WHERE id = ?;
 
+/**
+ * Retrieves all outgoing expenses with local changes pending server synchronization.
+ * Includes CREATED, UPDATED, and DELETED items.
+ */
+getPendingOutgoings:
+SELECT * FROM OutgoingEntity
+WHERE syncStatus != 'SYNCED';
+
+/**
+ * Updates only the synchronization status of an expense.
+ */
+updateSyncStatus:
+UPDATE OutgoingEntity
+SET syncStatus = ?
+WHERE id = ?;
+
+/**
+ * Hard delete (physical removal).
+ * Used for items deleted before being synced or for local cleanup.
+ */
 deletePhysical:
 DELETE FROM OutgoingEntity
 WHERE id = ?;

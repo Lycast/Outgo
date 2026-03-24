@@ -2,6 +2,7 @@ package fr.abknative.outgo.outgoing.api.repository
 
 import fr.abknative.outgo.core.api.AppException
 import fr.abknative.outgo.core.api.Result
+import fr.abknative.outgo.core.api.SyncStatus
 import fr.abknative.outgo.outgoing.api.model.Budget
 import kotlinx.coroutines.flow.Flow
 
@@ -12,7 +13,7 @@ interface BudgetRepository {
 
     /**
      * Emits the budget reactively.
-     * * @param id The budget identifier to observe.
+     * @param id The budget identifier to observe.
      * @return A [Flow] that can emit null if the budget hasn't been created yet on first launch.
      */
     fun observeBudget(id: String = "default"): Flow<Budget?>
@@ -40,4 +41,22 @@ interface BudgetRepository {
      * @return A [Result] indicating success or an [AppException] on failure.
      */
     suspend fun update(budget: Budget): Result<Unit, AppException>
+
+    /**
+     * Retrieves all budgets that have local changes not yet synchronized with the server.
+     * Used by the sync engine to collect data for the 'Push' operation.
+     */
+    suspend fun getPendingBudgets(): Result<List<Budget>, AppException>
+
+    /**
+     * Updates the synchronization status of a specific budget identified by its [id].
+     * Typically called after a successful upload to the server.
+     */
+    suspend fun updateSyncStatus(id: String, status: SyncStatus): Result<Unit, AppException>
+
+    /**
+     * Integrates budget data received from the remote server into the local database.
+     * Resolves state between local and remote data to maintain a consistent 'Pull' operation.
+     */
+    suspend fun syncFromServer(budgets: List<Budget>): Result<Unit, AppException>
 }

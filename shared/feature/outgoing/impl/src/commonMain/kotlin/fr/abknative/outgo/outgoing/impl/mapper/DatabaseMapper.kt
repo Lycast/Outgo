@@ -25,6 +25,9 @@ internal fun OutgoingEntity.toDomain(): Outgoing {
 internal fun BudgetEntity.toDomain(): Budget {
     return Budget(
         id = this.id,
-        monthlyIncomeInCents = this.monthlyIncomeInCents
+        monthlyIncomeInCents = this.monthlyIncomeInCents,
+        createdAt = this.createdAt,
+        updatedAt = this.updatedAt,
+        syncStatus = SyncStatus.entries.find { it.name == this.syncStatus } ?: SyncStatus.UNKNOWN
     )
 }

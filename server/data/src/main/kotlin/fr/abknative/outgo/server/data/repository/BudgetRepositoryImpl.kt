@@ -2,6 +2,7 @@ package fr.abknative.outgo.server.data.repository
 
 import fr.abknative.outgo.outgoing.network.BudgetNetworkDto
 import fr.abknative.outgo.server.core.repository.BudgetRepository
+import fr.abknative.outgo.server.data.mapper.toEpochMillis
 import fr.abknative.outgo.server.data.mapper.toExposedQueryInstant
 import fr.abknative.outgo.server.data.tables.BudgetsTable
 import org.jetbrains.exposed.v1.core.and
@@ -34,7 +35,9 @@ class BudgetRepositoryImpl : BudgetRepository {
             }.map { row ->
                 BudgetNetworkDto(
                     id = row[BudgetsTable.id],
-                    monthlyIncomeInCents = row[BudgetsTable.monthlyIncomeInCents]
+                    monthlyIncomeInCents = row[BudgetsTable.monthlyIncomeInCents],
+                    createdAt = row[BudgetsTable.createdAt].toEpochMillis(),
+                    updatedAt = row[BudgetsTable.updatedAt].toEpochMillis()
                 )
             }
         }

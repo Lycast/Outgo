@@ -36,7 +36,10 @@ internal class BudgetRepositoryImpl(
         queries.transaction {
             queries.insertBudget(
                 id = budget.id,
-                monthlyIncomeInCents = budget.monthlyIncomeInCents
+                monthlyIncomeInCents = budget.monthlyIncomeInCents,
+                createdAt = budget.createdAt,
+                updatedAt = budget.updatedAt,
+                syncStatus = budget.syncStatus.name
             )
         }
     }
@@ -47,8 +50,51 @@ internal class BudgetRepositoryImpl(
         queries.transaction {
             queries.updateBudget(
                 monthlyIncomeInCents = budget.monthlyIncomeInCents,
+                updatedAt = budget.updatedAt,
+                syncStatus = budget.syncStatus.name,
                 id = budget.id
             )
+        }
+    }
+
+    override suspend fun getPendingBudgets(): Result<List<Budget>, AppException> = asResult(
+        onError = { CommonError.DatabaseError(it) }
+    ) {
+        queries.getPendingBudgets().executeAsList().map { it.toDomain() }
+    }
+
+    override suspend fun updateSyncStatus(
+        id: String,
+        status: SyncStatus
+    ): Result<Unit, AppException> = asResult(
+        onError = { CommonError.DatabaseError(it) }
+    ) {
+        queries.updateSyncStatus(syncStatus = status.name, id = id)
+    }
+
+    override suspend fun syncFromServer(budgets: List<Budget>): Result<Unit, AppException> = asResult(
+        onError = { CommonError.DatabaseError(it) }
+    ) {
+        queries.transaction {
+            budgets.forEach { remoteBudget ->
+                val exists = queries.getBudgetById(remoteBudget.id).executeAsOneOrNull() != null
+                if (exists) {
+                    queries.updateBudget(
+                        monthlyIncomeInCents = remoteBudget.monthlyIncomeInCents,
+                        updatedAt = remoteBudget.updatedAt,
+                        syncStatus = SyncStatus.SYNCED.name,
+                        id = remoteBudget.id
+                    )
+                } else {
+                    queries.insertBudget(
+                        id = remoteBudget.id,
+                        monthlyIncomeInCents = remoteBudget.monthlyIncomeInCents,
+                        createdAt = remoteBudget.createdAt,
+                        updatedAt = remoteBudget.updatedAt,
+                        syncStatus = SyncStatus.SYNCED.name
+                    )
+                }
+            }
         }
     }
 }

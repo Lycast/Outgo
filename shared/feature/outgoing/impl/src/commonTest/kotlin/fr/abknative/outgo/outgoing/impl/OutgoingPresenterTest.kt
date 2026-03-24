@@ -43,7 +43,7 @@ class OutgoingPresenterTest {
             calculateTotalOutgoings = CalculateTotalOutgoingsUseCaseImpl(),
             calculateRemainingToPay = CalculateRemainingToPayUseCaseImpl(timeProvider),
             calculateDisposableIncome = CalculateDisposableIncomeUseCaseImpl(),
-            updateIncome = UpdateIncomeUseCaseImpl(budgetRepository),
+            updateIncome = UpdateIncomeUseCaseImpl(budgetRepository, timeProvider),
             budgetRepository = budgetRepository,
             timeProvider = timeProvider,
             storage = storage
@@ -58,7 +58,14 @@ class OutgoingPresenterTest {
     @Test
     fun `should calculate financial summary when budget and outgoings are emitted`() = runTest {
         // 1. Simuler un budget de 2000€
-        budgetRepository.emit(Budget(id = "default", monthlyIncomeInCents = 2000_00))
+        budgetRepository.emit(
+            Budget(
+                id = "default",
+                monthlyIncomeInCents = 2000_00,
+                createdAt = 0,
+                updatedAt = 0
+            )
+        )
 
         // 2. Vérifier que le revenu est mis à jour dans l'état
         presenter.state.value.monthlyIncomeInCents shouldBe 2000_00

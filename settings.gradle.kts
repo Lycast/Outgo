@@ -30,6 +30,8 @@ include(":shared:feature:auth:impl")
 include(":shared:feature:outgoing:api")
 include(":shared:feature:outgoing:impl")
 include(":shared:feature:outgoing:network")
+include(":shared:feature:sync:api")
+include(":shared:feature:sync:impl")
 
 include(":androidApp")
 include(":webApp")
