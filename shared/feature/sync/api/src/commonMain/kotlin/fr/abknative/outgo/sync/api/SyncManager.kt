@@ -4,24 +4,24 @@ import fr.abknative.outgo.core.api.AppException
 import fr.abknative.outgo.core.api.Result
 
 /**
- * Interface principale pour la synchronisation des données.
- * C'est ce contrat que le WorkManager (Android) ou les Backgrounds Tasks (iOS) appelleront.
+ * Main interface for data synchronization.
+ * This contract is intended to be called by WorkManager (Android) or Background Tasks (iOS).
  */
 interface SyncManager {
 
     /**
-     * Exécute une synchronisation complète : Envoie les données locales (Push)
-     * puis récupère les nouveautés du serveur (Pull).
+     * Performs a full synchronization: sends local data (Push)
+     * and then fetches updates from the server (Pull).
      */
     suspend fun syncAll(): Result<Unit, AppException>
 
     /**
-     * Envoie uniquement les modifications locales vers le serveur (Push).
+     * Sends local modifications to the server only (Push).
      */
     suspend fun syncOut(): Result<Unit, AppException>
 
     /**
-     * Récupère uniquement les nouveautés du serveur (Pull).
+     * Fetches updates from the server only (Pull).
      */
     suspend fun syncIn(): Result<Unit, AppException>
 }

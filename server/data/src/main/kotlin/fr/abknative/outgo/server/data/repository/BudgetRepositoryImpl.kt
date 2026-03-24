@@ -1,6 +1,6 @@
 package fr.abknative.outgo.server.data.repository
 
-import fr.abknative.outgo.outgoing.network.BudgetNetworkDto
+import fr.abknative.outgo.outgoing.network.dto.BudgetNetworkDto
 import fr.abknative.outgo.server.core.repository.BudgetRepository
 import fr.abknative.outgo.server.data.mapper.toEpochMillis
 import fr.abknative.outgo.server.data.mapper.toExposedQueryInstant

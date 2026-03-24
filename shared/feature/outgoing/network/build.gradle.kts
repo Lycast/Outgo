@@ -12,6 +12,9 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
+            implementation(projects.shared.core.api)
+            implementation(projects.shared.feature.outgoing.api)
+
             implementation(libs.kotlinx.serialization.json)
         }
 

@@ -4,6 +4,7 @@ import fr.abknative.outgo.app.nav.AppCoordinator
 import fr.abknative.outgo.core.impl.di.coreModule
 import fr.abknative.outgo.database.di.databaseModule
 import fr.abknative.outgo.outgoing.impl.di.outgoingModule
+import fr.abknative.outgo.sync.impl.di.syncModule
 import org.koin.core.context.startKoin
 import org.koin.dsl.KoinAppDeclaration
 import org.koin.dsl.module
@@ -23,6 +24,7 @@ fun initKoin(appDeclaration: KoinAppDeclaration = {}) = startKoin {
         navigationModule,
         coreModule,
         databaseModule(),
-        outgoingModule()
+        outgoingModule(),
+        syncModule()
     )
 }

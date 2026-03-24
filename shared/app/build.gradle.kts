@@ -31,10 +31,11 @@ kotlin {
     
     sourceSets {
         commonMain.dependencies {
-            implementation(projects.shared.core.impl)
             implementation(projects.shared.database)
+            implementation(projects.shared.core.impl)
             implementation(projects.shared.feature.auth.impl)
             implementation(projects.shared.feature.outgoing.impl)
+            implementation(projects.shared.feature.sync.impl)
 
             implementation(libs.koin.core)
             implementation(libs.kotlinx.coroutines.core)

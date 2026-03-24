@@ -1,11 +1,12 @@
-package fr.abknative.outgo.outgoing.impl.mapper
+package fr.abknative.outgo.outgoing.network.mapper
 
 import fr.abknative.outgo.core.api.SyncStatus
+import fr.abknative.outgo.outgoing.api.mapToRecurrence
 import fr.abknative.outgo.outgoing.api.model.Outgoing
-import fr.abknative.outgo.outgoing.network.OutgoingNetworkDto
+import fr.abknative.outgo.outgoing.network.dto.OutgoingNetworkDto
 
 // Réseau -> Domaine (PULL)
-internal fun OutgoingNetworkDto.toDomain(): Outgoing {
+fun OutgoingNetworkDto.toDomain(): Outgoing {
     return Outgoing(
         id = this.id,
         budgetId = this.budgetId,
@@ -22,7 +23,7 @@ internal fun OutgoingNetworkDto.toDomain(): Outgoing {
 }
 
 // Domaine -> Réseau (PUSH)
-internal fun Outgoing.toNetworkDto(): OutgoingNetworkDto {
+fun Outgoing.toNetworkDto(): OutgoingNetworkDto {
     return OutgoingNetworkDto(
         id = this.id,
         budgetId = this.budgetId,

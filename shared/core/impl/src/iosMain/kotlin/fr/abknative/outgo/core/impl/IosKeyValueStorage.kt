@@ -17,4 +17,16 @@ class IosKeyValueStorage : KeyValueStorage {
     override fun putBoolean(key: String, value: Boolean) {
         defaults.setBool(value, forKey = key)
     }
+
+    override fun getLong(key: String, defaultValue: Long): Long {
+        return if (defaults.objectForKey(key) != null) {
+            defaults.stringForKey(key)?.toLongOrNull() ?: defaultValue
+        } else {
+            defaultValue
+        }
+    }
+
+    override fun putLong(key: String, value: Long) {
+        defaults.setObject(value.toString(), forKey = key)
+    }
 }

@@ -1,6 +1,6 @@
 package fr.abknative.outgo.server.data.repository
 
-import fr.abknative.outgo.outgoing.network.OutgoingNetworkDto
+import fr.abknative.outgo.outgoing.network.dto.OutgoingNetworkDto
 import fr.abknative.outgo.server.core.repository.OutgoingRepository
 import fr.abknative.outgo.server.data.mapper.toEpochMillis
 import fr.abknative.outgo.server.data.mapper.toExposedQueryInstant

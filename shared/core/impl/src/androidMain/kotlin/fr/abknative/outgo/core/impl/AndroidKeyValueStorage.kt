@@ -15,4 +15,12 @@ class AndroidKeyValueStorage(context: Context) : KeyValueStorage {
     override fun putBoolean(key: String, value: Boolean) {
         prefs.edit { putBoolean(key, value) }
     }
+
+    override fun getLong(key: String, defaultValue: Long): Long {
+        return prefs.getLong(key, defaultValue)
+    }
+
+    override fun putLong(key: String, value: Long) {
+        prefs.edit { putLong(key, value) }
+    }
 }

@@ -1,4 +1,4 @@
-package fr.abknative.outgo.outgoing.network
+package fr.abknative.outgo.outgoing.network.dto
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

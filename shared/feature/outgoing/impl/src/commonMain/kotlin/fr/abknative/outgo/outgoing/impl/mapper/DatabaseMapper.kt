@@ -3,6 +3,7 @@ package fr.abknative.outgo.outgoing.impl.mapper
 import fr.abknative.outgo.core.api.SyncStatus
 import fr.abknative.outgo.database.BudgetEntity
 import fr.abknative.outgo.database.OutgoingEntity
+import fr.abknative.outgo.outgoing.api.mapToRecurrence
 import fr.abknative.outgo.outgoing.api.model.Budget
 import fr.abknative.outgo.outgoing.api.model.Outgoing
 

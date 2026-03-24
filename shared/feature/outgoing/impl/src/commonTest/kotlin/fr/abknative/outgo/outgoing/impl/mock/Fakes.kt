@@ -135,4 +135,12 @@ class FakeKeyValueStorage : KeyValueStorage {
     override fun putBoolean(key: String, value: Boolean) {
         storage[key] = value
     }
+
+    override fun getLong(key: String, defaultValue: Long): Long {
+        return storage[key] as? Long ?: defaultValue
+    }
+
+    override fun putLong(key: String, value: Long) {
+        storage[key] = value
+    }
 }

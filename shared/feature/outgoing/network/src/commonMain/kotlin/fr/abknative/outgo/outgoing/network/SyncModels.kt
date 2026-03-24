@@ -1,5 +1,7 @@
 package fr.abknative.outgo.outgoing.network
 
+import fr.abknative.outgo.outgoing.network.dto.BudgetNetworkDto
+import fr.abknative.outgo.outgoing.network.dto.OutgoingNetworkDto
 import kotlinx.serialization.Serializable
 
 @Serializable

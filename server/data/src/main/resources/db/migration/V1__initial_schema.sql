@@ -10,6 +10,10 @@ CREATE TABLE budgets (
     id VARCHAR(36) PRIMARY KEY, -- L'ID généré par le mobile
     user_id VARCHAR(128) NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     monthly_income_in_cents BIGINT NOT NULL DEFAULT 0,
+
+    -- Timestamps pour la synchro
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL, -- Date de création sur le mobile
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL, -- Date de modif sur le mobile
     server_updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 

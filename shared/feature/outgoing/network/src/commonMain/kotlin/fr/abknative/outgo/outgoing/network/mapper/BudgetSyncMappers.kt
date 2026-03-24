@@ -1,11 +1,11 @@
-package fr.abknative.outgo.outgoing.impl.mapper
+package fr.abknative.outgo.outgoing.network.mapper
 
 import fr.abknative.outgo.core.api.SyncStatus
 import fr.abknative.outgo.outgoing.api.model.Budget
-import fr.abknative.outgo.outgoing.network.BudgetNetworkDto
+import fr.abknative.outgo.outgoing.network.dto.BudgetNetworkDto
 
 // Réseau -> Domaine (PULL)
-internal fun BudgetNetworkDto.toDomain(): Budget {
+fun BudgetNetworkDto.toDomain(): Budget {
     return Budget(
         id = this.id,
         monthlyIncomeInCents = this.monthlyIncomeInCents,
@@ -16,7 +16,7 @@ internal fun BudgetNetworkDto.toDomain(): Budget {
 }
 
 // Domaine -> Réseau (PUSH)
-internal fun Budget.toNetworkDto(): BudgetNetworkDto {
+fun Budget.toNetworkDto(): BudgetNetworkDto {
     return BudgetNetworkDto(
         id = this.id,
         monthlyIncomeInCents = this.monthlyIncomeInCents,
