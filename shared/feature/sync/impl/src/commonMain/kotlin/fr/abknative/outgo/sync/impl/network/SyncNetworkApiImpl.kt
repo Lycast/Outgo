@@ -20,7 +20,6 @@ internal class SyncNetworkApiImpl(
         onError = { CommonError.NetworkError(it) }
     ) {
         httpClient.post("/sync/push") {
-            header(HttpHeaders.Authorization, "Bearer debug")
             contentType(ContentType.Application.Json)
             setBody(request)
         }
