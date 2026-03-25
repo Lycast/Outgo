@@ -39,11 +39,15 @@ object IosStringsResourcesLoader {
     }
 
     private suspend fun loadError() = ErrorStrings(
-        errorEmptyName = getString(Res.string.error_outgoing_empty_name),
-        errorInvalidAmount = getString(Res.string.error_outgoing_invalid_amount),
-        errorNetwork = getString(Res.string.error_global_network),
-        errorUnknown = getString(Res.string.error_global_unknown)
-    )
+        OutgoingErrorEmptyName = getString(Res.string.error_outgoing_empty_name),
+        OutgoingErrorInvalidAmount = getString(Res.string.error_outgoing_invalid_amount),
+        OutgoingErrorInvalidDate = getString(Res.string.error_outgoing_invalid_date),
+        OutgoingErrorNotFound = getString(Res.string.error_outgoing_not_found),
+        OutgoingErrorUnknownCycle = getString(Res.string.error_outgoing_unknow_cycle),
+        CommonErrorNetwork = getString(Res.string.error_global_network),
+        CommonErrorDatabase = getString(Res.string.error_global_database),
+        CommonErrorUnknown = getString(Res.string.error_global_unknown)
+   )
 
     private suspend fun loadCommon() = CommonStrings(
         appName = getString(Res.string.app_name),

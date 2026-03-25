@@ -1,7 +1,8 @@
 package fr.abknative.outgo.core.api.extensions
 
-import fr.abknative.outgo.core.api.AppException
-import fr.abknative.outgo.core.api.CommonError
+import fr.abknative.outgo.core.api.logs.AppException
+import fr.abknative.outgo.core.api.logs.AppLogger
+import fr.abknative.outgo.core.api.logs.CommonError
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -27,6 +28,7 @@ fun CoroutineScope.safeLaunch(
 ) {
     val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
         val appException = throwable as? AppException ?: CommonError.UnknownError(cause = throwable)
+        AppLogger.get()?.e("SafeLaunch", "Unhandled coroutine exception", appException)
         onError(appException)
     }
 

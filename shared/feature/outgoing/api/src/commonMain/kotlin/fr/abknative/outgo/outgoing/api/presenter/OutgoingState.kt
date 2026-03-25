@@ -1,6 +1,6 @@
 package fr.abknative.outgo.outgoing.api.presenter
 
-import fr.abknative.outgo.core.api.AppException
+import fr.abknative.outgo.core.api.logs.AppException
 import fr.abknative.outgo.outgoing.api.model.Outgoing
 
 /**

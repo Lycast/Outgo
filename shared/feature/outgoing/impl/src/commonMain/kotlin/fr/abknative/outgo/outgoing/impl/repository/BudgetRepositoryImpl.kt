@@ -2,7 +2,9 @@ package fr.abknative.outgo.outgoing.impl.repository
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToOneOrNull
-import fr.abknative.outgo.core.api.*
+import fr.abknative.outgo.core.api.AppDispatchers
+import fr.abknative.outgo.core.api.SyncStatus
+import fr.abknative.outgo.core.api.logs.*
 import fr.abknative.outgo.database.OutgoDatabase
 import fr.abknative.outgo.outgoing.api.model.Budget
 import fr.abknative.outgo.outgoing.api.repository.BudgetRepository
@@ -16,6 +18,7 @@ internal class BudgetRepositoryImpl(
 ) : BudgetRepository {
 
     private val queries = database.budgetQueries
+    private val tag = "BudgetLocalRepo"
 
     override fun observeBudget(id: String): Flow<Budget?> {
         return queries.getBudgetById(id)
@@ -25,13 +28,19 @@ internal class BudgetRepositoryImpl(
     }
 
     override suspend fun getBudget(id: String): Result<Budget?, AppException> = asResult(
-        onError = { CommonError.DatabaseError(it) }
+        onError = {
+            AppLogger.get()?.e(tag, "Failed to fetch budget with id: $id", it)
+            CommonError.DatabaseError(it)
+        }
     ) {
         queries.getBudgetById(id).executeAsOneOrNull()?.toDomain()
     }
 
     override suspend fun insert(budget: Budget): Result<Unit, AppException> = asResult(
-        onError = { CommonError.DatabaseError(it) }
+        onError = {
+            AppLogger.get()?.e(tag, "Failed to insert budget: ${budget.id}", it)
+            CommonError.DatabaseError(it)
+        }
     ) {
         queries.transaction {
             queries.insertBudget(
@@ -45,7 +54,10 @@ internal class BudgetRepositoryImpl(
     }
 
     override suspend fun update(budget: Budget): Result<Unit, AppException> = asResult(
-        onError = { CommonError.DatabaseError(it) }
+        onError = {
+            AppLogger.get()?.e(tag, "Failed to update budget: ${budget.id}", it)
+            CommonError.DatabaseError(it)
+        }
     ) {
         queries.transaction {
             queries.updateBudget(
@@ -58,7 +70,10 @@ internal class BudgetRepositoryImpl(
     }
 
     override suspend fun getPendingBudgets(): Result<List<Budget>, AppException> = asResult(
-        onError = { CommonError.DatabaseError(it) }
+        onError = {
+            AppLogger.get()?.e(tag, "Failed to fetch pending budgets", it)
+            CommonError.DatabaseError(it)
+        }
     ) {
         queries.getPendingBudgets().executeAsList().map { it.toDomain() }
     }
@@ -67,13 +82,19 @@ internal class BudgetRepositoryImpl(
         id: String,
         status: SyncStatus
     ): Result<Unit, AppException> = asResult(
-        onError = { CommonError.DatabaseError(it) }
+        onError = {
+            AppLogger.get()?.e(tag, "Failed to update sync status ($status) for id: $id", it)
+            CommonError.DatabaseError(it)
+        }
     ) {
         queries.updateSyncStatus(syncStatus = status.name, id = id)
     }
 
     override suspend fun syncFromServer(budgets: List<Budget>): Result<Unit, AppException> = asResult(
-        onError = { CommonError.DatabaseError(it) }
+        onError = {
+            AppLogger.get()?.e(tag, "Failed to sync ${budgets.size} budgets from server", it)
+            CommonError.DatabaseError(it)
+        }
     ) {
         queries.transaction {
             budgets.forEach { remoteBudget ->

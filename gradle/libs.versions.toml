@@ -110,6 +110,9 @@ ktor-server-content-negotiation = { module = "io.ktor:ktor-server-content-negoti
 ktor-server-test-host = { module = "io.ktor:ktor-server-test-host", version.ref = "ktor" }
 logback = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
 
+# --- KTOR (Server Plugins) ---
+ktor-server-status-pages = { module = "io.ktor:ktor-server-status-pages", version.ref = "ktor" }
+
 # --- FLYWAY (Migrations) ---
 flyway-core = { module = "org.flywaydb:flyway-core", version.ref = "flyway" }
 flyway-database-postgresql = { module = "org.flywaydb:flyway-database-postgresql", version.ref = "flyway" }

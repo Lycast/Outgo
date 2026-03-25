@@ -1,11 +1,11 @@
 package fr.abknative.outgo.outgoing.impl.presenter
 
 import androidx.lifecycle.viewModelScope
-import fr.abknative.outgo.core.api.AppException
 import fr.abknative.outgo.core.api.KeyValueStorage
-import fr.abknative.outgo.core.api.Result
 import fr.abknative.outgo.core.api.TimeProvider
 import fr.abknative.outgo.core.api.extensions.safeLaunch
+import fr.abknative.outgo.core.api.logs.AppException
+import fr.abknative.outgo.core.api.logs.Result
 import fr.abknative.outgo.outgoing.api.presenter.OutgoingIntent
 import fr.abknative.outgo.outgoing.api.presenter.OutgoingPresenter
 import fr.abknative.outgo.outgoing.api.presenter.OutgoingState

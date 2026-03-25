@@ -1,9 +1,9 @@
 package fr.abknative.outgo.sync.impl
 
-import fr.abknative.outgo.core.api.AppException
 import fr.abknative.outgo.core.api.KeyValueStorage
-import fr.abknative.outgo.core.api.Result
 import fr.abknative.outgo.core.api.SyncStatus
+import fr.abknative.outgo.core.api.logs.AppException
+import fr.abknative.outgo.core.api.logs.Result
 import fr.abknative.outgo.outgoing.api.repository.BudgetRepository
 import fr.abknative.outgo.outgoing.api.repository.OutgoingRepository
 import fr.abknative.outgo.outgoing.network.SyncPushRequest

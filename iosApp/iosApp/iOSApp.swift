@@ -4,6 +4,9 @@ import SharedApp
 @main
 struct iOSApp: App {
     init() {
+        
+        AppLogger.shared.initialize(logger: iOSLogger())
+        
         IosDependencyProvider.shared.initializeKoin()
     }
 

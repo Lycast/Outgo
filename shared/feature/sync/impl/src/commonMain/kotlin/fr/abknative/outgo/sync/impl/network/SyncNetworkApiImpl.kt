@@ -1,9 +1,9 @@
 package fr.abknative.outgo.sync.impl.network
 
-import fr.abknative.outgo.core.api.AppException
-import fr.abknative.outgo.core.api.CommonError
-import fr.abknative.outgo.core.api.Result
-import fr.abknative.outgo.core.api.asResult
+import fr.abknative.outgo.core.api.logs.AppException
+import fr.abknative.outgo.core.api.logs.CommonError
+import fr.abknative.outgo.core.api.logs.Result
+import fr.abknative.outgo.core.api.logs.asResult
 import fr.abknative.outgo.outgoing.network.SyncPullResponse
 import fr.abknative.outgo.outgoing.network.SyncPushRequest
 import fr.abknative.outgo.sync.api.SyncNetworkApi

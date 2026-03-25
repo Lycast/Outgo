@@ -2,7 +2,10 @@ package fr.abknative.outgo.outgoing.impl.repository
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
-import fr.abknative.outgo.core.api.*
+import fr.abknative.outgo.core.api.AppDispatchers
+import fr.abknative.outgo.core.api.SyncStatus
+import fr.abknative.outgo.core.api.TimeProvider
+import fr.abknative.outgo.core.api.logs.*
 import fr.abknative.outgo.database.OutgoDatabase
 import fr.abknative.outgo.outgoing.api.model.Outgoing
 import fr.abknative.outgo.outgoing.api.repository.OutgoingRepository
@@ -24,6 +27,7 @@ internal class OutgoingRepositoryImpl(
 ) : OutgoingRepository {
 
     private val queries = database.outgoingQueries
+    private val tag = "OutgoingLocalRepo"
 
     override fun observeOutgoingsByMonth(month: Int): Flow<List<Outgoing>> {
         return queries.getOutgoingsByMonth(currentMonth = month.toLong())
@@ -34,7 +38,10 @@ internal class OutgoingRepositoryImpl(
     }
 
     override suspend fun insert(outgoing: Outgoing): Result<Unit, AppException> = asResult(
-        onError = { CommonError.DatabaseError(it) }
+        onError = {
+            AppLogger.get()?.e(tag, "Failed to insert outgoing: ${outgoing.id}", it)
+            CommonError.DatabaseError(it)
+        }
     ) {
         queries.transaction {
             queries.insertOutgoing(
@@ -54,7 +61,10 @@ internal class OutgoingRepositoryImpl(
     }
 
     override suspend fun update(outgoing: Outgoing): Result<Unit, AppException> = asResult(
-        onError = { CommonError.DatabaseError(it) }
+        onError = {
+            AppLogger.get()?.e(tag, "Failed to update outgoing: ${outgoing.id}", it)
+            CommonError.DatabaseError(it)
+        }
     ) {
         queries.transaction {
             queries.updateOutgoing(
@@ -72,7 +82,10 @@ internal class OutgoingRepositoryImpl(
     }
 
     override suspend fun markAsDeleted(id: String): Result<Unit, AppException> = asResult(
-        onError = { CommonError.DatabaseError(it) }
+        onError = {
+            AppLogger.get()?.e(tag, "Failed to mark outgoing as deleted: $id", it)
+            CommonError.DatabaseError(it)
+        }
     ) {
         queries.transaction {
             val current = queries.getById(id).executeAsOneOrNull()
@@ -89,7 +102,10 @@ internal class OutgoingRepositoryImpl(
     }
 
     override suspend fun getPendingOutgoings(): Result<List<Outgoing>, AppException> = asResult(
-        onError = { CommonError.DatabaseError(it) }
+        onError = {
+            AppLogger.get()?.e(tag, "Failed to fetch pending outgoings", it)
+            CommonError.DatabaseError(it)
+        }
     ) {
         queries.getPendingOutgoings().executeAsList().map { it.toDomain() }
     }
@@ -98,13 +114,19 @@ internal class OutgoingRepositoryImpl(
         id: String,
         status: SyncStatus
     ): Result<Unit, AppException> = asResult(
-        onError = { CommonError.DatabaseError(it) }
+        onError = {
+            AppLogger.get()?.e(tag, "Failed to update sync status ($status) for outgoing: $id", it)
+            CommonError.DatabaseError(it)
+        }
     ) {
         queries.updateSyncStatus(syncStatus = status.name, id = id)
     }
 
     override suspend fun syncFromServer(outgoings: List<Outgoing>): Result<Unit, AppException> = asResult(
-        onError = { CommonError.DatabaseError(it) }
+        onError = {
+            AppLogger.get()?.e(tag, "Failed to sync ${outgoings.size} outgoings from server", it)
+            CommonError.DatabaseError(it)
+        }
     ) {
         queries.transaction {
             outgoings.forEach { remote ->
@@ -119,7 +141,7 @@ internal class OutgoingRepositoryImpl(
                         dueMonth = remote.dueMonth?.toLong(),
                         updatedAt = remote.updatedAt,
                         isDeleted = if (remote.isDeleted) 1L else 0L,
-                        syncStatus = SyncStatus.SYNCED.name, // Toujours SYNCED car vient du serveur
+                        syncStatus = SyncStatus.SYNCED.name,
                         id = remote.id
                     )
                 } else {

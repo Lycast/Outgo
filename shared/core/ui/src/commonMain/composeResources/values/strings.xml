@@ -1,9 +1,13 @@
 <resources>
     <string name="app_name">Outgo</string>
     <string name="error_outgoing_empty_name">L'intitulé de la dépense ne peut pas être vide.</string>
-    <string name="error_outgoing_invalid_amount">Le montant doit être supérieur à zéro.</string>
-    <string name="error_global_network">Erreur de connexion réseau.</string>
-    <string name="error_global_unknown">Une erreur technique est survenue.</string>
+    <string name="error_outgoing_invalid_amount">Le montant doit être supérieur à 0 pour être enregistré.</string>
+    <string name="error_outgoing_not_found">La dépense avec l'identifiant %s n'a pas été trouvée.</string>
+    <string name="error_outgoing_invalid_date">La date de dépense est invalide.</string>
+    <string name="error_outgoing_unknow_cycle">Le cycle de facturation choisi n'est pas supporté.</string>
+    <string name="error_global_network">Impossible de se connecter. Vérifiez votre connexion internet et réessayez.</string>
+    <string name="error_global_database">Un problème technique empêche l'enregistrement de vos données. Si le problème persiste, redémarrez l'application.</string>
+    <string name="error_global_unknown">Oups ! Quelque chose s'est mal passé. Nous faisons de notre mieux pour corriger ça.</string>
 
     <string name="common_action_save">Enregistrer</string>
     <string name="common_action_cancel">Annuler</string>

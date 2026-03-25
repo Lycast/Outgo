@@ -1,7 +1,7 @@
 package fr.abknative.outgo.outgoing.impl
 
-import fr.abknative.outgo.core.api.Result
 import fr.abknative.outgo.core.api.SyncStatus
+import fr.abknative.outgo.core.api.logs.Result
 import fr.abknative.outgo.outgoing.api.OutgoingError
 import fr.abknative.outgo.outgoing.api.Recurrence
 import fr.abknative.outgo.outgoing.impl.mock.FakeOutgoingRepository

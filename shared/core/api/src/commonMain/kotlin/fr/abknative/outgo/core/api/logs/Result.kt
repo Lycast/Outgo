@@ -1,4 +1,4 @@
-package fr.abknative.outgo.core.api
+package fr.abknative.outgo.core.api.logs
 
 import kotlinx.coroutines.CancellationException
 
@@ -20,6 +20,7 @@ sealed interface Result<out D, out E : AppException> {
  * and maps other [Exception]s using [onError].
  */
 inline fun <T> asResult(
+    tag: String = "ResultWrapper",
     onError: (Exception) -> AppException = { CommonError.UnknownError(cause = it) },
     block: () -> T
 ): Result<T, AppException> {
@@ -28,6 +29,7 @@ inline fun <T> asResult(
     } catch (e: CancellationException) {
         throw e
     } catch (e: Exception) {
+        AppLogger.get()?.e(tag, "Operation failed", e)
         Result.Error(onError(e))
     }
 }

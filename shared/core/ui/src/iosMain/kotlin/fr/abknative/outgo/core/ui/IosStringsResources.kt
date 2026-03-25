@@ -15,10 +15,14 @@ data class IosStringsResources(
 )
 
 data class ErrorStrings(
-    val errorEmptyName: String,
-    val errorInvalidAmount: String,
-    val errorNetwork: String,
-    val errorUnknown: String
+    val OutgoingErrorEmptyName: String,
+    val OutgoingErrorInvalidAmount: String,
+    val OutgoingErrorInvalidDate: String,
+    val OutgoingErrorNotFound: String,
+    val OutgoingErrorUnknownCycle: String,
+    val CommonErrorNetwork: String,
+    val CommonErrorDatabase: String,
+    val CommonErrorUnknown: String
 )
 
 data class CommonStrings(
