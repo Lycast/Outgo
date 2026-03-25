@@ -22,6 +22,7 @@ fun Application.module() {
     configureSecurity()
     configureStatusPages()
     configureLogging()
+    configureValidation()
 
     routing {
         syncRoutes()
