@@ -33,6 +33,9 @@ sealed interface OutgoingIntent {
     /** Intent to expand or collapse the top summary (hero) section. */
     data class ToggleHeroSection(val isExpanded: Boolean) : OutgoingIntent
 
+    /** Intent to manually trigger a cloud synchronization. */
+    object Refresh : OutgoingIntent
+
     /** Intent to clear the current error state from the UI. */
     object DismissError : OutgoingIntent
 }

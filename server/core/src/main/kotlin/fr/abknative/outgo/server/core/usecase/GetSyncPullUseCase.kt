@@ -3,10 +3,12 @@ package fr.abknative.outgo.server.core.usecase
 import fr.abknative.outgo.outgoing.network.SyncPullResponse
 import fr.abknative.outgo.server.core.repository.BudgetRepository
 import fr.abknative.outgo.server.core.repository.OutgoingRepository
+import fr.abknative.outgo.server.core.repository.TransactionRunner
 
 class GetSyncPullUseCase(
     private val budgetRepository: BudgetRepository,
-    private val outgoingRepository: OutgoingRepository
+    private val outgoingRepository: OutgoingRepository,
+    private val transactionRunner: TransactionRunner
 ) {
     /**
      * Récupère toutes les données modifiées depuis le timestamp [since].
@@ -15,18 +17,17 @@ class GetSyncPullUseCase(
      * @return Un objet [SyncPullResponse] contenant les listes de données à renvoyer.
      */
     operator fun invoke(userId: String, since: Long): SyncPullResponse {
+        return transactionRunner {
+            val updatedBudgets = budgetRepository.getBudgetsSince(userId = userId, since = since)
+            val updatedOutgoings = outgoingRepository.getOutgoingsSince(userId = userId, since = since)
 
-        // 1. On interroge les Repositories
-        val updatedBudgets = budgetRepository.getBudgetsSince(userId = userId, since = since)
-        val updatedOutgoings = outgoingRepository.getOutgoingsSince(userId = userId, since = since)
+            val currentServerTime = System.currentTimeMillis()
 
-        val currentServerTime = System.currentTimeMillis()
-
-        // 2. On assemble le colis pour le mobile
-        return SyncPullResponse(
-            budgets = updatedBudgets,
-            outgoings = updatedOutgoings,
-            serverTimestamp = currentServerTime
-        )
+            SyncPullResponse(
+                budgets = updatedBudgets,
+                outgoings = updatedOutgoings,
+                serverTimestamp = currentServerTime
+            )
+        }
     }
 }

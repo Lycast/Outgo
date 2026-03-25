@@ -2,10 +2,7 @@ package fr.abknative.outgo.outgoing.impl
 
 import fr.abknative.outgo.outgoing.api.model.Budget
 import fr.abknative.outgo.outgoing.api.presenter.OutgoingIntent
-import fr.abknative.outgo.outgoing.impl.mock.FakeBudgetRepository
-import fr.abknative.outgo.outgoing.impl.mock.FakeKeyValueStorage
-import fr.abknative.outgo.outgoing.impl.mock.FakeOutgoingRepository
-import fr.abknative.outgo.outgoing.impl.mock.FakeTimeProvider
+import fr.abknative.outgo.outgoing.impl.mock.*
 import fr.abknative.outgo.outgoing.impl.presenter.OutgoingPresenterImpl
 import fr.abknative.outgo.outgoing.impl.usecase.*
 import io.kotest.matchers.shouldBe
@@ -28,6 +25,7 @@ class OutgoingPresenterTest {
     private val outgoRepository = FakeOutgoingRepository()
     private val budgetRepository = FakeBudgetRepository()
     private val timeProvider = FakeTimeProvider()
+    private val syncManager = FakeSyncManager()
     private val storage = FakeKeyValueStorage()
 
     private lateinit var presenter: OutgoingPresenterImpl
@@ -46,6 +44,7 @@ class OutgoingPresenterTest {
             updateIncome = UpdateIncomeUseCaseImpl(budgetRepository, timeProvider),
             budgetRepository = budgetRepository,
             timeProvider = timeProvider,
+            syncManager = syncManager,
             storage = storage
         )
     }

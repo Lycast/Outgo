@@ -11,6 +11,7 @@ import fr.abknative.outgo.outgoing.api.model.Budget
 import fr.abknative.outgo.outgoing.api.model.Outgoing
 import fr.abknative.outgo.outgoing.api.repository.BudgetRepository
 import fr.abknative.outgo.outgoing.api.repository.OutgoingRepository
+import fr.abknative.outgo.sync.api.SyncManager
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
@@ -129,6 +130,22 @@ class FakeBudgetRepository : BudgetRepository {
         budgets.forEach { emit(it.copy(syncStatus = SyncStatus.SYNCED)) }
         return Result.Success(Unit)
     }
+}
+
+class FakeSyncManager : SyncManager {
+
+    override suspend fun syncAll(): Result<Unit, AppException> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun syncOut(): Result<Unit, AppException> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun syncIn(): Result<Unit, AppException> {
+        TODO("Not yet implemented")
+    }
+
 }
 
 class FakeKeyValueStorage : KeyValueStorage {

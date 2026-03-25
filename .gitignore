@@ -19,3 +19,4 @@ captures
 node_modules/
 kotlin-js-store/
 /.env
+/shared/core/impl/src/commonMain/kotlin/fr/abknative/outgo/core/impl/di/SecretConfig.kt

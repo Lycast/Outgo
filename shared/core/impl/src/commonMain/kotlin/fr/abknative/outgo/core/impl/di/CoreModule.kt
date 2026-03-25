@@ -8,6 +8,7 @@ import io.ktor.client.*
 import io.ktor.client.engine.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
@@ -42,7 +43,8 @@ fun commonCoreModule() = module {
             }
 
             defaultRequest {
-                url("http://10.0.2.2:8080") // todo IP locale pour simulateur Android
+                url(SecretConfig.BASE_URL) // todo url pour les tests locaux
+                header(HttpHeaders.Authorization, "Bearer ${SecretConfig.DEBUG_TOKEN}")
             }
         }
     }

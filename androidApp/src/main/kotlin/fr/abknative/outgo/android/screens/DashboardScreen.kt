@@ -97,7 +97,10 @@ fun DashboardScreen(
             Header(
                 isConnected = state.isCloudSyncActive,
                 isSettingsScreen = false,
-                onSyncIconClick = { showSyncModal = true },
+                onSyncIconClick = {
+                    // showSyncModal = true todo modifier pour le dev il faudra mettre en place une vrai logique de connection puis de refresh si connecté.
+                    presenter.onIntent(OutgoingIntent.Refresh)
+                },
                 onSyncNavigationClick = { onNavigateToSettings() }
             )
         },

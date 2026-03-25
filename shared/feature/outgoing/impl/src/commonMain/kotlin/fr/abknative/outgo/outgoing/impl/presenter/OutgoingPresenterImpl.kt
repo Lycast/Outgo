@@ -11,6 +11,7 @@ import fr.abknative.outgo.outgoing.api.presenter.OutgoingPresenter
 import fr.abknative.outgo.outgoing.api.presenter.OutgoingState
 import fr.abknative.outgo.outgoing.api.repository.BudgetRepository
 import fr.abknative.outgo.outgoing.api.usecase.*
+import fr.abknative.outgo.sync.api.SyncManager
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 
@@ -24,6 +25,7 @@ internal class OutgoingPresenterImpl(
     private val updateIncome: UpdateIncomeUseCase,
     private val budgetRepository: BudgetRepository,
     private val timeProvider: TimeProvider,
+    private val syncManager: SyncManager,
     private val storage: KeyValueStorage
 ) : OutgoingPresenter() {
 
@@ -82,14 +84,16 @@ internal class OutgoingPresenterImpl(
     override fun onIntent(intent: OutgoingIntent) {
         when (intent) {
             is OutgoingIntent.Save -> handleAdd(intent)
+            is OutgoingIntent.SelectMonth -> selectedMonthFlow.value = intent.month
             is OutgoingIntent.Delete -> handleDelete(intent)
             is OutgoingIntent.UpdateIncome -> handleUpdateIncome(intent)
-            is OutgoingIntent.SelectMonth -> selectedMonthFlow.value = intent.month
-            is OutgoingIntent.DismissError -> { _state.update { it.copy(error = null) } }
             is OutgoingIntent.ToggleHeroSection -> {
                 storage.putBoolean(heroExpandedKey, intent.isExpanded)
                 _state.update { it.copy(isHeroExpanded = intent.isExpanded) }
             }
+            is OutgoingIntent.Refresh -> handleRefresh()
+            is OutgoingIntent.DismissError -> { _state.update { it.copy(error = null) } }
+
         }
     }
 
@@ -129,6 +133,22 @@ internal class OutgoingPresenterImpl(
     private fun handleUpdateIncome(intent: OutgoingIntent.UpdateIncome) {
         viewModelScope.safeLaunch(onError = onCoroutineError) {
             updateIncome(intent.amountInCents)
+        }
+    }
+
+    private fun handleRefresh() {
+        viewModelScope.safeLaunch(onError = onCoroutineError) {
+            _state.update { it.copy(isLoading = true, isCloudSyncActive = true) }
+
+            val result = syncManager.syncAll()
+
+            _state.update {
+                it.copy(
+                    isLoading = false,
+                    isCloudSyncActive = false,
+                    error = (result as? Result.Error)?.error
+                )
+            }
         }
     }
 }
