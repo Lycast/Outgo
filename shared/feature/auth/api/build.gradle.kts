@@ -14,6 +14,7 @@ kotlin {
         commonMain.dependencies {
             implementation(projects.shared.core.api)
             implementation(libs.kotlinx.coroutines.core)
+            implementation(libs.androidx.lifecycle.viewmodel)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

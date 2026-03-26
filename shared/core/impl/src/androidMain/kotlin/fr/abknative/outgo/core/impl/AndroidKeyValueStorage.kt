@@ -23,4 +23,17 @@ class AndroidKeyValueStorage(context: Context) : KeyValueStorage {
     override fun putLong(key: String, value: Long) {
         prefs.edit { putLong(key, value) }
     }
+
+    override fun getString(key: String): String? {
+        return prefs.getString(key, null)
+    }
+
+    override fun putString(key: String, value: String) {
+        prefs.edit { putString(key, value) }
+    }
+
+    override fun remove(key: String) {
+        prefs.edit { remove(key) }
+
+    }
 }

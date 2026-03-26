@@ -12,12 +12,14 @@ kotlin {
     
     sourceSets {
         commonMain.dependencies {
-            implementation(projects.shared.feature.outgoing.api)
+            implementation(projects.shared.feature.auth.api)
             implementation(projects.shared.core.api)
 
             implementation(libs.kotlinx.coroutines.core)
+            implementation(libs.androidx.lifecycle.viewmodel)
 
             implementation(libs.koin.core)
+            implementation(libs.koin.core.viewmodel)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

@@ -1,6 +1,7 @@
 package fr.abknative.outgo.app.di
 
 import fr.abknative.outgo.app.nav.AppCoordinator
+import fr.abknative.outgo.auth.impl.di.authModule
 import fr.abknative.outgo.core.impl.di.coreModule
 import fr.abknative.outgo.database.di.databaseModule
 import fr.abknative.outgo.outgoing.impl.di.outgoingModule
@@ -23,6 +24,7 @@ fun initKoin(appDeclaration: KoinAppDeclaration = {}) = startKoin {
     modules(
         navigationModule,
         coreModule,
+        authModule,
         databaseModule(),
         outgoingModule(),
         syncModule()

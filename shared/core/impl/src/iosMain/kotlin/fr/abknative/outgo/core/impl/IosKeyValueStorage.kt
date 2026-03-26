@@ -29,4 +29,16 @@ class IosKeyValueStorage : KeyValueStorage {
     override fun putLong(key: String, value: Long) {
         defaults.setObject(value.toString(), forKey = key)
     }
+
+    override fun getString(key: String): String? {
+        return defaults.stringForKey(key)
+    }
+
+    override fun putString(key: String, value: String) {
+        defaults.setObject(value, forKey = key)
+    }
+
+    override fun remove(key: String) {
+        defaults.removeObjectForKey(key)
+    }
 }

@@ -1,5 +1,6 @@
 package fr.abknative.outgo.core.impl.di
 
+import fr.abknative.outgo.auth.api.repository.AuthRepository
 import fr.abknative.outgo.core.api.AppDispatchers
 import fr.abknative.outgo.core.api.TimeProvider
 import fr.abknative.outgo.core.impl.RealTimeProvider
@@ -7,6 +8,8 @@ import fr.abknative.outgo.core.impl.StandardDispatchers
 import io.ktor.client.*
 import io.ktor.client.engine.*
 import io.ktor.client.plugins.*
+import io.ktor.client.plugins.auth.*
+import io.ktor.client.plugins.auth.providers.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
 import io.ktor.http.*
@@ -16,6 +19,7 @@ import org.koin.core.module.Module
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
+import org.koin.mp.KoinPlatformTools
 
 fun commonCoreModule() = module {
     singleOf(::RealTimeProvider) { bind<TimeProvider>() }
@@ -40,6 +44,24 @@ fun commonCoreModule() = module {
                     ignoreUnknownKeys = true
                     prettyPrint = true
                 })
+            }
+
+            install(Auth) {
+                bearer {
+                    loadTokens {
+                        val authRepository = KoinPlatformTools.defaultContext().get().get<AuthRepository>()
+                        val session = authRepository.getSession()
+
+                        if (session != null) {
+                            BearerTokens(
+                                accessToken = session.token,
+                                refreshToken = ""
+                            )
+                        } else {
+                            null
+                        }
+                    }
+                }
             }
 
             defaultRequest {
