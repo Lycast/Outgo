@@ -20,11 +20,12 @@ import fr.abknative.outgo.android.ui.CommonLabels
 import fr.abknative.outgo.android.ui.theme.AppTheme
 import fr.abknative.outgo.android.ui.theme.OutgoTheme
 import fr.abknative.outgo.android.ui.theme.toColor
+import fr.abknative.outgo.outgoing.api.presenter.SyncUiState
 
 @Composable
 fun Header(
     modifier: Modifier = Modifier,
-    isConnected: Boolean,
+    syncState: SyncUiState,
     isSettingsScreen: Boolean = false,
     onSyncIconClick: () -> Unit,
     onSyncNavigationClick: () -> Unit,
@@ -53,7 +54,7 @@ fun Header(
 
             // Icône Cloud
             SyncIconLogic(
-                isConnected = isConnected,
+                syncState = syncState,
                 onClick = onSyncIconClick
             )
 
@@ -78,7 +79,7 @@ fun HeaderPreview() {
     OutgoTheme {
         Surface(color = AppTheme.colors.background.toColor()) {
             Header(
-                isConnected = true,
+                syncState = SyncUiState.IN_PROGRESS,
                 isSettingsScreen = false,
                 onSyncIconClick = {},
                 onSyncNavigationClick = {},

@@ -15,6 +15,7 @@ kotlin {
             implementation(projects.shared.core.api)
             implementation(projects.shared.database)
             implementation(projects.shared.feature.sync.api)
+            implementation(projects.shared.feature.auth.api)
             implementation(projects.shared.feature.outgoing.api)
             implementation(projects.shared.feature.outgoing.network)
 

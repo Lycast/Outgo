@@ -16,7 +16,7 @@ import fr.abknative.outgo.outgoing.api.model.Outgoing
  * @property totalOutgoingsInCents The smoothed sum of all expenses (e.g., accounting for yearly recurrences).
  * @property disposableIncomeInCents The remaining budget after subtracting [totalOutgoingsInCents] from income.
  * @property remainingToPayInCents The exact sum of expenses still due in the [selectedMonth] based on the [currentDay].
- * @property isCloudSyncActive Indicates if the app is actively synchronizing data with the remote server.
+ * @property syncState Indicates if the app is actively synchronizing data with the remote server.
  * @property error The current error state to be handled by the UI, or null if successful.
  * @property isHeroExpanded Persisted user preference indicating if the top summary section is expanded.
  */
@@ -36,7 +36,7 @@ data class OutgoingState(
     val remainingToPayInCents: Long = 0L,
 
     // --- Global State ---
-    val isCloudSyncActive: Boolean = false,
+    val syncState: SyncUiState = SyncUiState.UNAUTHENTICATED,
     val error: AppException? = null,
 
     // --- KeyValueStorage ---

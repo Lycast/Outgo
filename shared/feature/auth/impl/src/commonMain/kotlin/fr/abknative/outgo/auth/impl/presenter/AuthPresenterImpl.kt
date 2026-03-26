@@ -9,6 +9,7 @@ import fr.abknative.outgo.auth.api.usecase.LogoutUseCase
 import fr.abknative.outgo.auth.api.usecase.ObserveUserSessionUseCase
 import fr.abknative.outgo.core.api.extensions.safeLaunch
 import fr.abknative.outgo.core.api.logs.AppException
+import fr.abknative.outgo.core.api.logs.Result
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -37,15 +38,27 @@ internal class AuthPresenterImpl(
 
     override fun onIntent(intent: AuthIntent) {
         when (intent) {
-            AuthIntent.Login -> handleLogin()
+            is AuthIntent.SubmitLogin -> handleLogin(intent.email, intent.password)
+            is AuthIntent.LoginWithGoogle, AuthIntent.LoginWithApple -> { /* Rien pour l'instant */ }
             AuthIntent.Logout -> handleLogout()
+            AuthIntent.DismissError -> _state.update { it.copy(error = null) }
         }
     }
 
-    private fun handleLogin() {
+    private fun handleLogin(email: String, password: String) {
         viewModelScope.safeLaunch(onError = onCoroutineError) {
-            _state.update { it.copy(isLoading = true) }
-            loginUseCase()
+            _state.update { it.copy(isLoading = true, error = null) }
+
+            val result = loginUseCase(email, password)
+
+            when (result) {
+                is Result.Success -> {
+                    _state.update { it.copy(isLoading = false, error = null) }
+                }
+                is Result.Error -> {
+                    _state.update { it.copy(isLoading = false, error = result.error) }
+                }
+            }
         }
     }
 

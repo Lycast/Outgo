@@ -16,20 +16,34 @@ internal class SyncNetworkApiImpl(
     private val httpClient: HttpClient
 ) : SyncNetworkApi {
 
+    //todo extrait les exceptions
     override suspend fun pushData(request: SyncPushRequest): Result<Unit, AppException> = asResult(
         onError = { CommonError.NetworkError(it) }
     ) {
-        httpClient.post("/sync/push") {
+        val response = httpClient.post("/sync/push") {
+            header(HttpHeaders.Authorization, "Bearer debug")
             contentType(ContentType.Application.Json)
             setBody(request)
+        }
+
+        if (!response.status.isSuccess()) {
+            throw Exception("Serveur injoignable ou erreur HTTP ${response.status.value}")
         }
     }
 
     override suspend fun pullData(since: Long): Result<SyncPullResponse, AppException> = asResult(
         onError = { CommonError.NetworkError(it) }
     ) {
-        httpClient.get("/sync/pull") {
+        val response = httpClient.get("/sync/pull") {
             parameter("since", since)
-        }.body()
+        }
+
+        if (!response.status.isSuccess()) {
+            // L'exception sera capturée par `asResult` et castée en CommonError.NetworkError
+            throw Exception("Serveur injoignable ou erreur HTTP ${response.status.value}")
+        }
+
+        // On ne tente de parser le body que si le serveur a répondu avec un code de succès
+        response.body()
     }
 }

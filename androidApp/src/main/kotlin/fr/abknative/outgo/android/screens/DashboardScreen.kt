@@ -23,6 +23,7 @@ import fr.abknative.outgo.outgoing.api.presenter.OutgoingPresenter
 fun DashboardScreen(
     presenter: OutgoingPresenter,
     onNavigateToSettings: () -> Unit,
+    onNavigateToLogin: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val state by presenter.state.collectAsState()
@@ -95,11 +96,14 @@ fun DashboardScreen(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             Header(
-                isConnected = state.isCloudSyncActive,
+                syncState = state.syncState,
                 isSettingsScreen = false,
                 onSyncIconClick = {
-                    // showSyncModal = true todo modifier pour le dev il faudra mettre en place une vrai logique de connection puis de refresh si connecté.
-                    presenter.onIntent(OutgoingIntent.Refresh)
+                    if (state.syncState.isUnauthenticated) {
+                        showSyncModal = true
+                    } else if (state.syncState.isUpToDate || state.syncState.isError) {
+                        presenter.onIntent(OutgoingIntent.Refresh)
+                    }
                 },
                 onSyncNavigationClick = { onNavigateToSettings() }
             )
@@ -168,7 +172,10 @@ fun DashboardScreen(
     if (showSyncModal) {
         SyncPromotionModal(
             onDismiss = { showSyncModal = false },
-            onNavigateToLogin = { showSyncModal = false }
+            onNavigateToLogin = {
+                showSyncModal = false
+                onNavigateToLogin()
+            }
         )
     }
 

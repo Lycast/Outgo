@@ -21,10 +21,12 @@ import fr.abknative.outgo.android.ui.SettingsLabels
 import fr.abknative.outgo.android.ui.theme.AppTheme
 import fr.abknative.outgo.android.ui.theme.OutgoTheme
 import fr.abknative.outgo.android.ui.theme.toColor
+import fr.abknative.outgo.outgoing.api.presenter.SyncUiState
 
 @Composable
 fun SettingsScreen(
     onNavigateBack: () -> Unit,
+    onNavigateToLogin: () -> Unit,
     isDarkMode: Boolean,
     onToggleDarkMode: (Boolean) -> Unit,
     onCoffeeClick: () -> Unit,
@@ -41,7 +43,7 @@ fun SettingsScreen(
         containerColor = Color.Transparent,
         topBar = {
             Header(
-                isConnected = false, // todo À lier à ton AuthState plus tard
+                syncState = SyncUiState.UNAUTHENTICATED, // todo À lier à ton AuthState plus tard
                 isSettingsScreen = true,
                 onSyncIconClick = { showSyncModal = true },
                 onSyncNavigationClick = onNavigateBack,
@@ -119,7 +121,7 @@ fun SettingsScreen(
             onDismiss = { showSyncModal = false },
             onNavigateToLogin = {
                 showSyncModal = false
-                // TODO: Navigation vers l'Auth (Semaine 5)
+                onNavigateToLogin()
             }
         )
     }
@@ -133,6 +135,7 @@ fun PreviewSettingsScreen() {
     OutgoTheme(darkTheme = darkMode) {
         SettingsScreen(
             onNavigateBack = { /* Navigation retour */ },
+            onNavigateToLogin = { },
             isDarkMode = darkMode,
             onToggleDarkMode = { darkMode = it },
             onCoffeeClick = { /* Action café */ },
@@ -148,6 +151,7 @@ fun PreviewSettingsScreenDark() {
     OutgoTheme(darkTheme = true) {
         SettingsScreen(
             onNavigateBack = { },
+            onNavigateToLogin = { },
             isDarkMode = true,
             onToggleDarkMode = { },
             onCoffeeClick = { },

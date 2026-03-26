@@ -1,6 +1,7 @@
 package fr.abknative.outgo.outgoing.impl.presenter
 
 import androidx.lifecycle.viewModelScope
+import fr.abknative.outgo.auth.api.usecase.ObserveUserSessionUseCase
 import fr.abknative.outgo.core.api.KeyValueStorage
 import fr.abknative.outgo.core.api.TimeProvider
 import fr.abknative.outgo.core.api.extensions.safeLaunch
@@ -9,6 +10,7 @@ import fr.abknative.outgo.core.api.logs.Result
 import fr.abknative.outgo.outgoing.api.presenter.OutgoingIntent
 import fr.abknative.outgo.outgoing.api.presenter.OutgoingPresenter
 import fr.abknative.outgo.outgoing.api.presenter.OutgoingState
+import fr.abknative.outgo.outgoing.api.presenter.SyncUiState
 import fr.abknative.outgo.outgoing.api.repository.BudgetRepository
 import fr.abknative.outgo.outgoing.api.usecase.*
 import fr.abknative.outgo.sync.api.SyncManager
@@ -22,6 +24,7 @@ internal class OutgoingPresenterImpl(
     private val calculateTotalOutgoings: CalculateTotalOutgoingsUseCase,
     private val calculateRemainingToPay: CalculateRemainingToPayUseCase,
     private val calculateDisposableIncome: CalculateDisposableIncomeUseCase,
+    private val observeUserSession: ObserveUserSessionUseCase,
     private val updateIncome: UpdateIncomeUseCase,
     private val budgetRepository: BudgetRepository,
     private val timeProvider: TimeProvider,
@@ -44,11 +47,33 @@ internal class OutgoingPresenterImpl(
     private val selectedMonthFlow = MutableStateFlow(timeProvider.monthValue())
 
     private val onCoroutineError: (AppException) -> Unit = { error ->
-        _state.update { it.copy(isLoading = false, error = error) }
+        _state.update {
+            it.copy(
+                isLoading = false,
+                error = error,
+                syncState = if (it.syncState.isUnauthenticated) SyncUiState.UNAUTHENTICATED else SyncUiState.ERROR
+            )
+        }
     }
 
     init {
+        startObservingSession()
         startObservingData()
+    }
+
+    private fun startObservingSession() {
+        viewModelScope.safeLaunch(onError = onCoroutineError) {
+            observeUserSession().collect { session ->
+                _state.update { currentState ->
+                    if (session == null) {
+                        currentState.copy(syncState = SyncUiState.UNAUTHENTICATED)
+                    } else {
+                        val nextState = if (currentState.syncState.isUnauthenticated) SyncUiState.UP_TO_DATE else currentState.syncState
+                        currentState.copy(syncState = nextState)
+                    }
+                }
+            }
+        }
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -137,15 +162,15 @@ internal class OutgoingPresenterImpl(
     }
 
     private fun handleRefresh() {
+        if (_state.value.syncState.isUnauthenticated || _state.value.syncState.isInProgress) return
         viewModelScope.safeLaunch(onError = onCoroutineError) {
-            _state.update { it.copy(isLoading = true, isCloudSyncActive = true) }
+            _state.update { it.copy(syncState = SyncUiState.IN_PROGRESS) }
 
             val result = syncManager.syncAll()
 
             _state.update {
                 it.copy(
-                    isLoading = false,
-                    isCloudSyncActive = false,
+                    syncState = if (result is Result.Error) SyncUiState.ERROR else SyncUiState.UP_TO_DATE,
                     error = (result as? Result.Error)?.error
                 )
             }

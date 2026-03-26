@@ -12,6 +12,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
 import fr.abknative.outgo.android.screens.DashboardScreen
+import fr.abknative.outgo.android.screens.LoginScreen
 import fr.abknative.outgo.android.screens.SettingsScreen
 import fr.abknative.outgo.android.ui.SettingsLabels
 import fr.abknative.outgo.android.ui.theme.AppTheme
@@ -19,6 +20,7 @@ import fr.abknative.outgo.android.ui.theme.OutgoTheme
 import fr.abknative.outgo.android.ui.theme.toColor
 import fr.abknative.outgo.app.nav.AppCoordinator
 import fr.abknative.outgo.app.nav.AppStep
+import fr.abknative.outgo.auth.api.presenter.AuthPresenter
 import fr.abknative.outgo.core.api.KeyValueStorage
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
@@ -59,6 +61,9 @@ fun App() {
                             presenter = koinViewModel(),
                             onNavigateToSettings = {
                                 coordinator.navigateTo(AppStep.Settings)
+                            },
+                            onNavigateToLogin = {
+                                coordinator.navigateTo(AppStep.Login)
                             }
                         )
                     }
@@ -66,6 +71,9 @@ fun App() {
                     AppStep.Settings -> {
                         SettingsScreen(
                             onNavigateBack = { coordinator.handleBack() },
+                            onNavigateToLogin = {
+                                coordinator.navigateTo(AppStep.Login)
+                            },
                             isDarkMode = isDarkMode,
                             onToggleDarkMode = { newThemeValue ->
                                 isDarkMode = newThemeValue
@@ -74,6 +82,16 @@ fun App() {
                             onCoffeeClick = { uriHandler.openUri(SettingsLabels.URL_COFFEE) },
                             onTipsClick = { uriHandler.openUri(SettingsLabels.URL_SITE) },
                             onContactClick = { uriHandler.openUri(SettingsLabels.URL_CONTACT) }
+                        )
+                    }
+
+                    AppStep.Login -> {
+                        LoginScreen(
+                            presenter = koinViewModel<AuthPresenter>(),
+                            onNavigateBack = { coordinator.handleBack() },
+                            onLoginSuccess = {
+                                coordinator.handleBack()
+                            }
                         )
                     }
                 }

@@ -18,10 +18,18 @@ internal class AuthRepositoryImpl(
         return _session.value
     }
 
-    override suspend fun login() {
-        val mockSession = UserSession(userId = "user_debug_123", token = "debug", email = "test@outgo.app")
-        saveSession(mockSession)
-        _session.value = mockSession
+    override suspend fun login(email: String, password: String) {
+        // Simulation d'un appel réseau (delay de Kotlinx Coroutines)
+        kotlinx.coroutines.delay(1000)
+
+        if (email == "debug@mail.fr" && password == "debug") {
+            val mockSession = UserSession(userId = "user_debug_123", token = "debug", email = email)
+            saveSession(mockSession)
+            _session.value = mockSession
+        } else {
+            // TODO: Remonter une vraie AppException (ex: AuthError.InvalidCredentials)
+            throw IllegalArgumentException("Identifiants incorrects. Utilisez debug@mail.fr / debug")
+        }
     }
 
     override suspend fun logout() {
