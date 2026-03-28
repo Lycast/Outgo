@@ -22,7 +22,7 @@ fun SyncIconLogic(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    // 1. Définition de l'animation (Tourne en boucle seulement si l'état est IN_PROGRESS)
+
     val infiniteTransition = rememberInfiniteTransition(label = "SyncAnimation")
     val rotation by infiniteTransition.animateFloat(
         initialValue = 0f,
@@ -34,7 +34,6 @@ fun SyncIconLogic(
         label = "SyncRotation"
     )
 
-    // 2. Sélection de l'icône, de la couleur et du label d'accessibilité selon l'état
     val (iconRes, iconTint, contentDescription) = when (syncState) {
         SyncUiState.UNAUTHENTICATED -> Triple(
             R.drawable.cloud_slash,
@@ -54,14 +53,13 @@ fun SyncIconLogic(
         SyncUiState.ERROR -> Triple(
             R.drawable.cloud_warning,
             AppTheme.colors.error.toColor().copy(alpha = 0.7f),
-            "Erreur de synchronisation" // TODO: Ajouter dans AccessibilityLabels
+            AccessibilityLabels.SYNC_ERROR
         )
     }
 
-    // 3. Rendu visuel
     IconButton(
         onClick = onClick,
-        enabled = !syncState.isInProgress, // On bloque le clic pendant le chargement
+        enabled = !syncState.isInProgress,
         modifier = modifier
     ) {
         Box(contentAlignment = Alignment.Center) {

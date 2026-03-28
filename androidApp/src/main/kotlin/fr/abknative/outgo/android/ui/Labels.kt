@@ -105,6 +105,7 @@ object AccessibilityLabels {
     val INFO_EMPTY_STATE @Composable get() = stringResource(Res.string.a11y_info_empty_state)
     val DAY_SELECTOR @Composable get() = stringResource(Res.string.a11y_day_selector)
     val MONTH_SELECTOR @Composable get() = stringResource(Res.string.a11y_month_selector)
+    val SYNC_ERROR @Composable get() = stringResource(Res.string.a11y_sync_error)
 }
 
 object SettingsLabels {
@@ -112,6 +113,8 @@ object SettingsLabels {
     val SECTION_APPEARANCE @Composable get() = stringResource(Res.string.settings_section_appearance)
     val SECTION_SUPPORT @Composable get() = stringResource(Res.string.settings_section_support)
     val SECTION_DATA @Composable get() = stringResource(Res.string.settings_section_data)
+    val SECTION_ACCOUNT @Composable get() = stringResource(Res.string.settings_section_account)
+
 
     val DARK_MODE_TITLE @Composable get() = stringResource(Res.string.settings_dark_mode_title)
     val DARK_MODE_SUBTITLE @Composable get() = stringResource(Res.string.settings_dark_mode_subtitle)
@@ -125,10 +128,24 @@ object SettingsLabels {
 
     val SYNC_TITLE @Composable get() = stringResource(Res.string.settings_sync_title)
     val SYNC_SUBTITLE @Composable get() = stringResource(Res.string.settings_sync_subtitle)
+    val LOGOUT_TITLE @Composable get() = stringResource(Res.string.settings_logout_title)
+    val LOGOUT_SUBTITLE @Composable get() = stringResource(Res.string.settings_logout_subtitle)
+    val DELETE_ACCOUNT_TITLE @Composable get() = stringResource(Res.string.settings_delete_account)
+    val DELETE_ACCOUNT_SUBTITLE @Composable get() = stringResource(Res.string.settings_delete_account_subtitle)
 
     const val URL_COFFEE = "https://buymeacoffee.com/lycast"
     const val URL_SITE = "https://abknative.fr"
     const val URL_CONTACT = "https://abknative.fr/contact"
 
     val APP_VERSION_PREFIX @Composable get() = stringResource(Res.string.settings_app_version_prefix)
+}
+
+object LoginLabels {
+
+    val TITLE @Composable get() = stringResource(Res.string.login_title)
+    val EMAIL_LABEL @Composable get() = stringResource(Res.string.login_email_label)
+    val PASSWORD_LABEL @Composable get() = stringResource(Res.string.login_password_label)
+    val SUBMIT_BUTTON @Composable get() = stringResource(Res.string.login_submit_button)
+    val BACK_TITLE @Composable get() = stringResource(Res.string.login_back_title)
+    val ERROR_MESSAGE @Composable get() = stringResource(Res.string.login_error_message)
 }

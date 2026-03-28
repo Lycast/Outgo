@@ -1,11 +1,19 @@
 <resources>
     <string name="app_name">Outgo</string>
+
     <string name="error_outgoing_empty_name">L'intitulé de la dépense ne peut pas être vide.</string>
     <string name="error_outgoing_invalid_amount">Le montant doit être supérieur à 0 pour être enregistré.</string>
     <string name="error_outgoing_not_found">La dépense avec l'identifiant %s n'a pas été trouvée.</string>
     <string name="error_outgoing_invalid_date">La date de dépense est invalide.</string>
     <string name="error_outgoing_unknow_cycle">Le cycle de facturation choisi n'est pas supporté.</string>
+
+    <string name="error_auth_invalid_credentials">L'email ou le mot de passe est incorrect.</string>
+    <string name="error_auth_user_not_found">Aucun compte n'est associé à cet email.</string>
+    <string name="error_auth_session_expired">Votre session a expiré. Veuillez vous reconnecter.</string>
+
     <string name="error_global_network">Impossible de se connecter. Vérifiez votre connexion internet et réessayez.</string>
+    <string name="error_global_server">Le serveur est actuellement indisponible. Veuillez réessayer plus tard.</string>
+    <string name="error_global_unauthorized">Accès refusé. Veuillez vérifier vos identifiants.</string>
     <string name="error_global_database">Un problème technique empêche l'enregistrement de vos données. Si le problème persiste, redémarrez l'application.</string>
     <string name="error_global_unknown">Oups ! Quelque chose s'est mal passé. Nous faisons de notre mieux pour corriger ça.</string>
 
@@ -71,6 +79,7 @@
     <string name="settings_section_appearance">Apparence</string>
     <string name="settings_section_support">Soutenir le projet</string>
     <string name="settings_section_data">Données</string>
+    <string name="settings_section_account">Compte</string>
     <string name="settings_dark_mode_title">Mode sombre</string>
     <string name="settings_dark_mode_subtitle">Réduire la fatigue visuelle</string>
     <string name="settings_coffee_title">Offrir un café ☕</string>
@@ -81,9 +90,21 @@
     <string name="settings_contact_subtitle">Une question, une idée ou un bug ?</string>
     <string name="settings_sync_title">Synchronisation cloud</string>
     <string name="settings_sync_subtitle">Sauvegardez vos données en toute sécurité</string>
+    <string name="settings_logout_title">Se déconnecter</string>
+    <string name="settings_logout_subtitle">Se déconnecter de votre compte</string>
+    <string name="settings_delete_account">Supprimer mon compte</string>
+    <string name="settings_delete_account_subtitle">Cette action est irréversible</string>
     <string name="settings_app_version_prefix">Outgo v1.0.0</string>
 
+    <string name="login_title">Bienvenue sur Outgo</string>
+    <string name="login_email_label">Email (debug@mail.fr)"</string>
+    <string name="login_password_label">Mot de passe (debug)</string>
+    <string name="login_submit_button">Se connecter</string>
+    <string name="login_back_title">Retour</string>
+    <string name="login_error_message">Erreur de connexion</string>
+
     <string name="a11y_loading">Chargement en cours</string>
+    <string name="a11y_sync_error">Synchronisation échouée</string>
     <string name="a11y_synced">Synchronisé avec le serveur</string>
     <string name="a11y_not_synced">Non synchronisé, appuyez pour configurer</string>
     <string name="a11y_delete_expense">Supprimer cette dépense</string>

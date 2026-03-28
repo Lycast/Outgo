@@ -6,5 +6,5 @@ import fr.abknative.outgo.core.api.logs.AppException
 data class AuthState(
     val session: UserSession? = null,
     val isLoading: Boolean = false,
-    val error: AppException? = null,
+    val error: AppException? = null
 )

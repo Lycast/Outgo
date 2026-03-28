@@ -20,6 +20,7 @@ import fr.abknative.outgo.android.ui.theme.OutgoTheme
 import fr.abknative.outgo.android.ui.theme.toColor
 import fr.abknative.outgo.app.nav.AppCoordinator
 import fr.abknative.outgo.app.nav.AppStep
+import fr.abknative.outgo.auth.api.presenter.AuthIntent
 import fr.abknative.outgo.auth.api.presenter.AuthPresenter
 import fr.abknative.outgo.core.api.KeyValueStorage
 import org.koin.androidx.compose.koinViewModel
@@ -69,11 +70,16 @@ fun App() {
                     }
 
                     AppStep.Settings -> {
+
+                        val authPresenter = koinViewModel<AuthPresenter>()
+                        val authState by authPresenter.state.collectAsState()
+
                         SettingsScreen(
+                            session = authState.session,
+                            onLogout = { authPresenter.onIntent(AuthIntent.Logout) },
+                            onDeleteAccount = { /* On gèrera ça après */ },
                             onNavigateBack = { coordinator.handleBack() },
-                            onNavigateToLogin = {
-                                coordinator.navigateTo(AppStep.Login)
-                            },
+                            onNavigateToLogin = { coordinator.navigateTo(AppStep.Login) },
                             isDarkMode = isDarkMode,
                             onToggleDarkMode = { newThemeValue ->
                                 isDarkMode = newThemeValue

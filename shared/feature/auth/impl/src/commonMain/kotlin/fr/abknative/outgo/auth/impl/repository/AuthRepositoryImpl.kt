@@ -1,16 +1,19 @@
 package fr.abknative.outgo.auth.impl.repository
 
+import fr.abknative.outgo.auth.api.AuthError
 import fr.abknative.outgo.auth.api.model.UserSession
 import fr.abknative.outgo.auth.api.repository.AuthRepository
 import fr.abknative.outgo.core.api.KeyValueStorage
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlin.time.Duration.Companion.milliseconds
 
 internal class AuthRepositoryImpl(
     private val storage: KeyValueStorage
 ) : AuthRepository {
-    private val _session = MutableStateFlow<UserSession?>(loadSession())
+    private val _session = MutableStateFlow(loadSession())
 
     override fun observeSession(): Flow<UserSession?> = _session.asStateFlow()
 
@@ -19,16 +22,14 @@ internal class AuthRepositoryImpl(
     }
 
     override suspend fun login(email: String, password: String) {
-        // Simulation d'un appel réseau (delay de Kotlinx Coroutines)
-        kotlinx.coroutines.delay(1000)
+        delay(1000.milliseconds)
 
         if (email == "debug@mail.fr" && password == "debug") {
             val mockSession = UserSession(userId = "user_debug_123", token = "debug", email = email)
             saveSession(mockSession)
             _session.value = mockSession
         } else {
-            // TODO: Remonter une vraie AppException (ex: AuthError.InvalidCredentials)
-            throw IllegalArgumentException("Identifiants incorrects. Utilisez debug@mail.fr / debug")
+            throw AuthError.InvalidCredentials()
         }
     }
 

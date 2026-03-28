@@ -1,5 +1,7 @@
 package fr.abknative.outgo.outgoing.impl.mock
 
+import fr.abknative.outgo.auth.api.model.UserSession
+import fr.abknative.outgo.auth.api.repository.AuthRepository
 import fr.abknative.outgo.core.api.EpochMillis
 import fr.abknative.outgo.core.api.KeyValueStorage
 import fr.abknative.outgo.core.api.SyncStatus
@@ -132,20 +134,36 @@ class FakeBudgetRepository : BudgetRepository {
     }
 }
 
+class FakeAuthRepository : AuthRepository {
+    private val _sessionFlow = MutableStateFlow<UserSession?>(null)
+
+    // Permet de simuler une connexion/déconnexion dans les tests
+    fun emit(session: UserSession?) {
+        _sessionFlow.value = session
+    }
+
+    override fun observeSession(): Flow<UserSession?> = _sessionFlow
+
+    override suspend fun getSession(): UserSession? = _sessionFlow.value
+
+    override suspend fun login(email: String, password: String) {}
+
+    override suspend fun logout() {
+        _sessionFlow.value = null
+    }
+}
+
 class FakeSyncManager : SyncManager {
+    var syncAllCalled = false
 
     override suspend fun syncAll(): Result<Unit, AppException> {
-        TODO("Not yet implemented")
+        syncAllCalled = true
+        return Result.Success(Unit)
     }
 
-    override suspend fun syncOut(): Result<Unit, AppException> {
-        TODO("Not yet implemented")
-    }
+    override suspend fun syncOut(): Result<Unit, AppException> = Result.Success(Unit)
 
-    override suspend fun syncIn(): Result<Unit, AppException> {
-        TODO("Not yet implemented")
-    }
-
+    override suspend fun syncIn(): Result<Unit, AppException> = Result.Success(Unit)
 }
 
 class FakeKeyValueStorage : KeyValueStorage {
@@ -165,5 +183,17 @@ class FakeKeyValueStorage : KeyValueStorage {
 
     override fun putLong(key: String, value: Long) {
         storage[key] = value
+    }
+
+    override fun getString(key: String): String? {
+        TODO("Not yet implemented")
+    }
+
+    override fun putString(key: String, value: String) {
+        TODO("Not yet implemented")
+    }
+
+    override fun remove(key: String) {
+        TODO("Not yet implemented")
     }
 }

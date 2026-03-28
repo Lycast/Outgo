@@ -16,9 +16,33 @@ internal class SyncNetworkApiImpl(
     private val httpClient: HttpClient
 ) : SyncNetworkApi {
 
-    //todo extrait les exceptions
+    /**
+     * Identifie la nature de l'erreur pour la relayer correctement à l'UI.
+     */
+    private fun mapToAppError(exception: Exception): AppException {
+        return when (exception) {
+            is AppException -> exception
+            else -> CommonError.NetworkError(exception)
+        }
+    }
+
+    /**
+     * Valide le code HTTP et lève l'exception métier correspondante si nécessaire.
+     */
+    private fun validateResponse(status: HttpStatusCode) {
+        when {
+            status.isSuccess() -> return
+            status == HttpStatusCode.Unauthorized || status == HttpStatusCode.Forbidden -> {
+                throw CommonError.Unauthorized()
+            }
+            else -> {
+                throw CommonError.ServerError()
+            }
+        }
+    }
+
     override suspend fun pushData(request: SyncPushRequest): Result<Unit, AppException> = asResult(
-        onError = { CommonError.NetworkError(it) }
+        onError = ::mapToAppError
     ) {
         val response = httpClient.post("/sync/push") {
             header(HttpHeaders.Authorization, "Bearer debug")
@@ -26,24 +50,17 @@ internal class SyncNetworkApiImpl(
             setBody(request)
         }
 
-        if (!response.status.isSuccess()) {
-            throw Exception("Serveur injoignable ou erreur HTTP ${response.status.value}")
-        }
+        validateResponse(response.status)
     }
 
     override suspend fun pullData(since: Long): Result<SyncPullResponse, AppException> = asResult(
-        onError = { CommonError.NetworkError(it) }
+        onError = ::mapToAppError
     ) {
         val response = httpClient.get("/sync/pull") {
             parameter("since", since)
         }
 
-        if (!response.status.isSuccess()) {
-            // L'exception sera capturée par `asResult` et castée en CommonError.NetworkError
-            throw Exception("Serveur injoignable ou erreur HTTP ${response.status.value}")
-        }
-
-        // On ne tente de parser le body que si le serveur a répondu avec un code de succès
+        validateResponse(response.status)
         response.body()
     }
 }

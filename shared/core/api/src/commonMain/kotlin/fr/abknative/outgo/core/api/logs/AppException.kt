@@ -7,13 +7,15 @@ package fr.abknative.outgo.core.api.logs
  */
 abstract class AppException(
     override val cause: Throwable? = null
-) : Throwable(null, cause)
+) : Exception(null, cause)
 
 /**
  * Common technical errors shared across the entire application.
  */
 sealed class CommonError(cause: Throwable? = null) : AppException(cause) {
     class NetworkError(cause: Throwable? = null) : CommonError(cause)
+    class ServerError(cause: Throwable? = null) : CommonError(cause)
+    class Unauthorized(cause: Throwable? = null) : CommonError(cause)
     class DatabaseError(cause: Throwable? = null) : CommonError(cause)
     class UnknownError(cause: Throwable? = null) : CommonError(cause)
 }

@@ -21,22 +21,27 @@ import fr.abknative.outgo.android.ui.SettingsLabels
 import fr.abknative.outgo.android.ui.theme.AppTheme
 import fr.abknative.outgo.android.ui.theme.OutgoTheme
 import fr.abknative.outgo.android.ui.theme.toColor
+import fr.abknative.outgo.auth.api.model.UserSession
 import fr.abknative.outgo.outgoing.api.presenter.SyncUiState
 
 @Composable
 fun SettingsScreen(
+    session: UserSession?,
+    onLogout: () -> Unit,
+    onDeleteAccount: () -> Unit,
     onNavigateBack: () -> Unit,
     onNavigateToLogin: () -> Unit,
-    isDarkMode: Boolean,
-    onToggleDarkMode: (Boolean) -> Unit,
     onCoffeeClick: () -> Unit,
     onTipsClick: () -> Unit,
     onContactClick: () -> Unit,
+    isDarkMode: Boolean,
+    onToggleDarkMode: (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
 
     val scrollState = rememberScrollState()
     var showSyncModal by remember { mutableStateOf(false) }
+    var showDeleteAccountConfirmation by remember { mutableStateOf(false) }
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -94,15 +99,36 @@ fun SettingsScreen(
                 )
             }
 
+
             // --- SECTION 3 : Compte & Données ---
-            SettingsSection(title = SettingsLabels.SECTION_DATA) {
-                SettingsRowClickable(
-                    icon = R.drawable.arrows_clockwise_duotone,
-                    title = SettingsLabels.SYNC_TITLE,
-                    subtitle = SettingsLabels.SYNC_SUBTITLE,
-                    onClick = { showSyncModal = true }
-                )
+            if (session == null) {
+                SettingsSection(title = SettingsLabels.SECTION_DATA) {
+                    SettingsRowClickable(
+                        icon = R.drawable.arrows_clockwise_duotone,
+                        title = SettingsLabels.SYNC_TITLE,
+                        subtitle = SettingsLabels.SYNC_SUBTITLE,
+                        onClick = { showSyncModal = true }
+                    )
+                }
+            } else {
+                SettingsSection(title = SettingsLabels.SECTION_ACCOUNT) {
+                    SettingsRowClickable(
+                        icon = R.drawable.sign_out_duotone,
+                        title = SettingsLabels.LOGOUT_TITLE,
+                        subtitle = SettingsLabels.LOGOUT_SUBTITLE,
+                        onClick = onLogout
+                    )
+                    HorizontalDivider(color = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.1f))
+                    SettingsRowClickable(
+                        icon = R.drawable.trash_duotone,
+                        title = SettingsLabels.DELETE_ACCOUNT_TITLE,
+                        subtitle = SettingsLabels.DELETE_ACCOUNT_SUBTITLE,
+                        onClick = { showDeleteAccountConfirmation = true }
+                    )
+                }
+
             }
+
 
             // Version de l'app (Footer)
             Text(
@@ -134,13 +160,16 @@ fun PreviewSettingsScreen() {
 
     OutgoTheme(darkTheme = darkMode) {
         SettingsScreen(
+            session = null,
             onNavigateBack = { /* Navigation retour */ },
             onNavigateToLogin = { },
             isDarkMode = darkMode,
             onToggleDarkMode = { darkMode = it },
             onCoffeeClick = { /* Action café */ },
             onTipsClick = { /* Action astuces */ },
-            onContactClick = { /* Action contact */ }
+            onContactClick = { /* Action contact */ },
+            onLogout = { },
+            onDeleteAccount = { }
         )
     }
 }
@@ -150,13 +179,16 @@ fun PreviewSettingsScreen() {
 fun PreviewSettingsScreenDark() {
     OutgoTheme(darkTheme = true) {
         SettingsScreen(
+            session = null,
             onNavigateBack = { },
             onNavigateToLogin = { },
             isDarkMode = true,
             onToggleDarkMode = { },
             onCoffeeClick = { },
             onTipsClick = { },
-            onContactClick = { }
+            onContactClick = { },
+            onLogout = { },
+            onDeleteAccount = { }
         )
     }
 }

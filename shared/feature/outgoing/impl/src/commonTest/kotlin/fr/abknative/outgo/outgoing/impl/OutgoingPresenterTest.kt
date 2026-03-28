@@ -1,5 +1,6 @@
 package fr.abknative.outgo.outgoing.impl
 
+import fr.abknative.outgo.auth.api.usecase.ObserveUserSessionUseCase
 import fr.abknative.outgo.outgoing.api.model.Budget
 import fr.abknative.outgo.outgoing.api.presenter.OutgoingIntent
 import fr.abknative.outgo.outgoing.impl.mock.*
@@ -24,6 +25,7 @@ class OutgoingPresenterTest {
     // Fakes
     private val outgoRepository = FakeOutgoingRepository()
     private val budgetRepository = FakeBudgetRepository()
+    private val authRepository = FakeAuthRepository()
     private val timeProvider = FakeTimeProvider()
     private val syncManager = FakeSyncManager()
     private val storage = FakeKeyValueStorage()
@@ -34,8 +36,13 @@ class OutgoingPresenterTest {
     fun setup() {
         Dispatchers.setMain(testDispatcher)
 
+        val fakeObserveUserSession = object : ObserveUserSessionUseCase {
+            override fun invoke() = authRepository.observeSession()
+        }
+
         presenter = OutgoingPresenterImpl(
             observeActiveOutgoings = ObserveActiveOutgoingsUseCaseImpl(outgoRepository),
+            observeUserSession = fakeObserveUserSession,
             saveOutgoing = SaveOutgoingUseCaseImpl(outgoRepository, timeProvider),
             deleteOutgoing = DeleteOutgoingUseCaseImpl(outgoRepository),
             calculateTotalOutgoings = CalculateTotalOutgoingsUseCaseImpl(),

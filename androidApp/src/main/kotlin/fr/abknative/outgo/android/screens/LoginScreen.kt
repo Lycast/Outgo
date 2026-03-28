@@ -8,14 +8,18 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import fr.abknative.outgo.android.R
+import fr.abknative.outgo.android.ui.LoginLabels
 import fr.abknative.outgo.android.ui.states.rememberLoginFormState
 import fr.abknative.outgo.android.ui.theme.AppTheme
 import fr.abknative.outgo.android.ui.theme.toColor
 import fr.abknative.outgo.auth.api.presenter.AuthIntent
 import fr.abknative.outgo.auth.api.presenter.AuthPresenter
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(
     presenter: AuthPresenter,
@@ -29,7 +33,22 @@ fun LoginScreen(
         if (state.session != null) onLoginSuccess()
     }
 
-    Scaffold(containerColor = AppTheme.colors.background.toColor()) { paddingValues ->
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text(LoginLabels.BACK_TITLE) },
+                navigationIcon = {
+                    IconButton(onClick = onNavigateBack) {
+                        Icon(
+                            painter = painterResource(R.drawable.caret_left),
+                            contentDescription = LoginLabels.BACK_TITLE
+                        )
+                    }
+                },
+            )
+        },
+        containerColor = AppTheme.colors.background.toColor()
+    ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -39,7 +58,7 @@ fun LoginScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "Bienvenue sur Outgo",
+                text = LoginLabels.TITLE,
                 style = AppTheme.typo.title,
                 color = AppTheme.colors.primary.toColor()
             )
@@ -49,7 +68,7 @@ fun LoginScreen(
             OutlinedTextField(
                 value = formState.email,
                 onValueChange = { formState.email = it },
-                label = { Text("Email (debug@mail.fr)") },
+                label = { Text(LoginLabels.EMAIL_LABEL) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true
             )
@@ -59,7 +78,7 @@ fun LoginScreen(
             OutlinedTextField(
                 value = formState.password,
                 onValueChange = { formState.password = it },
-                label = { Text("Mot de passe (debug)") },
+                label = { Text(LoginLabels.PASSWORD_LABEL) },
                 modifier = Modifier.fillMaxWidth(),
                 visualTransformation = PasswordVisualTransformation(),
                 singleLine = true
@@ -77,13 +96,13 @@ fun LoginScreen(
                 if (state.isLoading) {
                     CircularProgressIndicator(modifier = Modifier.size(24.dp), color = AppTheme.colors.surface100.toColor())
                 } else {
-                    Text("Se connecter")
+                    Text(LoginLabels.SUBMIT_BUTTON)
                 }
             }
 
             if (state.error != null) {
                 Spacer(modifier = Modifier.height(AppTheme.spacing.small))
-                Text(text = "Erreur de connexion", color = AppTheme.colors.error.toColor())
+                Text(text = LoginLabels.ERROR_MESSAGE, color = AppTheme.colors.error.toColor())
             }
         }
     }
