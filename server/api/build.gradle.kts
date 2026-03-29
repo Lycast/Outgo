@@ -13,8 +13,8 @@ dependencies {
     implementation(project(":server:data"))
     implementation(project(":shared:core:api"))
     implementation(project(":shared:feature:auth:api"))
-    implementation(project(":shared:feature:outgoing:api"))
-    implementation(project(":shared:feature:outgoing:network"))
+    implementation(project(":shared:feature:wallet:api"))
+    implementation(project(":shared:feature:wallet:network"))
 
     implementation(libs.ktor.server.auth)
 

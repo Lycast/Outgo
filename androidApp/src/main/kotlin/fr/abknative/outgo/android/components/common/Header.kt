@@ -20,7 +20,7 @@ import fr.abknative.outgo.android.ui.CommonLabels
 import fr.abknative.outgo.android.ui.theme.AppTheme
 import fr.abknative.outgo.android.ui.theme.OutgoTheme
 import fr.abknative.outgo.android.ui.theme.toColor
-import fr.abknative.outgo.outgoing.api.presenter.SyncUiState
+import fr.abknative.outgo.dashboard.api.SyncUiState
 
 @Composable
 fun Header(

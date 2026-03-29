@@ -4,8 +4,8 @@ import androidx.compose.runtime.Composable
 import fr.abknative.outgo.auth.api.AuthError
 import fr.abknative.outgo.core.api.logs.AppException
 import fr.abknative.outgo.core.api.logs.CommonError
-import fr.abknative.outgo.outgoing.api.OutgoingError
 import fr.abknative.outgo.shared.core.ui.resources.*
+import fr.abknative.outgo.wallet.api.OutgoingError
 import org.jetbrains.compose.resources.stringResource
 
 @Composable

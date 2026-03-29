@@ -1,10 +1,10 @@
 package fr.abknative.outgo.server.data.repository
 
-import fr.abknative.outgo.outgoing.network.dto.OutgoingNetworkDto
 import fr.abknative.outgo.server.core.repository.OutgoingRepository
 import fr.abknative.outgo.server.data.mapper.toEpochMillis
 import fr.abknative.outgo.server.data.mapper.toSqlOffsetDateTime
 import fr.abknative.outgo.server.data.tables.OutgoingsTable
+import fr.abknative.outgo.wallet.network.dto.OutgoingNetworkDto
 import org.jetbrains.exposed.v1.core.and
 import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.core.greater

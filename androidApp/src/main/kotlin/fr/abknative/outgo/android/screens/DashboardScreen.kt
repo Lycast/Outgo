@@ -13,15 +13,15 @@ import fr.abknative.outgo.android.ui.states.OutgoingFilter
 import fr.abknative.outgo.android.ui.states.rememberOutgoingFormState
 import fr.abknative.outgo.android.ui.theme.AppTheme
 import fr.abknative.outgo.android.ui.toUIString
-import fr.abknative.outgo.outgoing.api.Recurrence
-import fr.abknative.outgo.outgoing.api.model.Outgoing
-import fr.abknative.outgo.outgoing.api.presenter.OutgoingIntent
-import fr.abknative.outgo.outgoing.api.presenter.OutgoingPresenter
+import fr.abknative.outgo.dashboard.api.DashboardIntent
+import fr.abknative.outgo.dashboard.api.DashboardPresenter
+import fr.abknative.outgo.wallet.api.Recurrence
+import fr.abknative.outgo.wallet.api.model.Outgoing
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DashboardScreen(
-    presenter: OutgoingPresenter,
+    presenter: DashboardPresenter,
     onNavigateToSettings: () -> Unit,
     onNavigateToLogin: () -> Unit,
     modifier: Modifier = Modifier
@@ -79,7 +79,7 @@ fun DashboardScreen(
     LaunchedEffect(currentError) {
         if (currentError != null && errorMessage != null) {
             snackbarHostState.showSnackbar(message = errorMessage, withDismissAction = true)
-            presenter.onIntent(OutgoingIntent.DismissError)
+            presenter.onIntent(DashboardIntent.DismissError)
         }
     }
 
@@ -102,7 +102,7 @@ fun DashboardScreen(
                     if (state.syncState.isUnauthenticated) {
                         showSyncModal = true
                     } else if (state.syncState.isUpToDate || state.syncState.isError) {
-                        presenter.onIntent(OutgoingIntent.Refresh)
+                        presenter.onIntent(DashboardIntent.Refresh)
                     }
                 },
                 onSyncNavigationClick = { onNavigateToSettings() }
@@ -117,7 +117,7 @@ fun DashboardScreen(
         ) {
             HeroSection(
                 isExpanded = state.isHeroExpanded,
-                onToggleExpand = { presenter.onIntent(OutgoingIntent.ToggleHeroSection(!state.isHeroExpanded)) },
+                onToggleExpand = { presenter.onIntent(DashboardIntent.ToggleHeroSection(!state.isHeroExpanded)) },
                 formattedMonthDate = formattedSelectedMonth,
                 monthlyIncomeInCents = state.monthlyIncomeInCents,
                 totalOutgoingsInCents = state.totalOutgoingsInCents,
@@ -125,11 +125,11 @@ fun DashboardScreen(
                 remainingToPayInCents = state.remainingToPayInCents,
                 onPreviousMonthClick = {
                     val newMonth = if (state.selectedMonth == 1) 12 else state.selectedMonth - 1
-                    presenter.onIntent(OutgoingIntent.SelectMonth(newMonth))
+                    presenter.onIntent(DashboardIntent.SelectMonth(newMonth))
                 },
                 onNextMonthClick = {
                     val newMonth = if (state.selectedMonth == 12) 1 else state.selectedMonth + 1
-                    presenter.onIntent(OutgoingIntent.SelectMonth(newMonth))
+                    presenter.onIntent(DashboardIntent.SelectMonth(newMonth))
                 },
                 onEditBudgetClick = { showBudgetDialog = true }
             )
@@ -148,7 +148,7 @@ fun DashboardScreen(
                 isLoading = state.isLoading,
                 filteredList = filteredList,
                 currentFilter = currentFilter,
-                onDelete = { id -> presenter.onIntent(OutgoingIntent.Delete(id)) },
+                onDelete = { id -> presenter.onIntent(DashboardIntent.Delete(id)) },
                 onEdit = { outgoing ->
                     selectedOutgoing = outgoing
                     showFormSheet = true
@@ -163,7 +163,7 @@ fun DashboardScreen(
             currentIncomeInCents = state.monthlyIncomeInCents,
             onDismiss = { showBudgetDialog = false },
             onConfirm = { newIncomeInCents ->
-                presenter.onIntent(OutgoingIntent.UpdateIncome(newIncomeInCents))
+                presenter.onIntent(DashboardIntent.UpdateIncome(newIncomeInCents))
                 showBudgetDialog = false
             }
         )

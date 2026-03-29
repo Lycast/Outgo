@@ -16,13 +16,13 @@ import fr.abknative.outgo.android.ui.LoginLabels
 import fr.abknative.outgo.android.ui.states.rememberLoginFormState
 import fr.abknative.outgo.android.ui.theme.AppTheme
 import fr.abknative.outgo.android.ui.theme.toColor
-import fr.abknative.outgo.auth.api.presenter.AuthIntent
-import fr.abknative.outgo.auth.api.presenter.AuthPresenter
+import fr.abknative.outgo.login.api.LoginIntent
+import fr.abknative.outgo.login.api.LoginPresenter
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(
-    presenter: AuthPresenter,
+    presenter: LoginPresenter,
     onNavigateBack: () -> Unit,
     onLoginSuccess: () -> Unit
 ) {
@@ -88,7 +88,7 @@ fun LoginScreen(
 
             Button(
                 onClick = {
-                    presenter.onIntent(AuthIntent.SubmitLogin(formState.email, formState.password))
+                    presenter.onIntent(LoginIntent.SubmitLogin(formState.email, formState.password))
                 },
                 enabled = formState.isValid && !state.isLoading,
                 modifier = Modifier.fillMaxWidth()

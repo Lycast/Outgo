@@ -1,7 +1,7 @@
 package fr.abknative.outgo.android.ui.states
 
 import androidx.compose.runtime.*
-import fr.abknative.outgo.outgoing.api.Recurrence
+import fr.abknative.outgo.wallet.api.Recurrence
 
 // --- ÉVÉNEMENTS UI ---
 sealed interface OutgoingFormEvent {

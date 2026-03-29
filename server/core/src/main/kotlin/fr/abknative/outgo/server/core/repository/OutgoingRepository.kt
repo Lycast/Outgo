@@ -1,6 +1,6 @@
 package fr.abknative.outgo.server.core.repository
 
-import fr.abknative.outgo.outgoing.network.dto.OutgoingNetworkDto
+import fr.abknative.outgo.wallet.network.dto.OutgoingNetworkDto
 
 interface OutgoingRepository {
     fun upsertFromDto(userId: String, dto: OutgoingNetworkDto)

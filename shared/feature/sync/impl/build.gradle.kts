@@ -13,9 +13,9 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(projects.shared.core.api)
-            implementation(projects.shared.feature.outgoing.api)
             implementation(projects.shared.feature.sync.api)
-            implementation(projects.shared.feature.outgoing.network)
+            implementation(projects.shared.feature.wallet.api)
+            implementation(projects.shared.feature.wallet.network)
 
             // Coroutines & Koin
             implementation(libs.kotlinx.coroutines.core)

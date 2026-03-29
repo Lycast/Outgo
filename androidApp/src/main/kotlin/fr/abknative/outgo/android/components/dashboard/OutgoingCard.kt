@@ -28,8 +28,8 @@ import fr.abknative.outgo.android.ui.theme.AppTheme
 import fr.abknative.outgo.android.ui.theme.OutgoTheme
 import fr.abknative.outgo.android.ui.theme.toColor
 import fr.abknative.outgo.core.api.SyncStatus
-import fr.abknative.outgo.outgoing.api.Recurrence
-import fr.abknative.outgo.outgoing.api.model.Outgoing
+import fr.abknative.outgo.wallet.api.Recurrence
+import fr.abknative.outgo.wallet.api.model.Outgoing
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -41,7 +41,6 @@ fun OutgoingCard(
     modifier: Modifier = Modifier
 ) {
 
-    val isSyncIndicatorVisible = outgoing.syncStatus != SyncStatus.SYNCED
     var isExpanded by remember { mutableStateOf(false) }
     val stateDesc = if (isExpanded) AccessibilityLabels.COLLAPSE_DESC else AccessibilityLabels.EXPAND_DESC
 

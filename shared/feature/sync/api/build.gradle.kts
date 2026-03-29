@@ -12,7 +12,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(projects.shared.core.api)
-            implementation(projects.shared.feature.outgoing.network)
+            implementation(projects.shared.feature.wallet.network)
             implementation(libs.kotlinx.coroutines.core)
         }
         commonTest.dependencies {

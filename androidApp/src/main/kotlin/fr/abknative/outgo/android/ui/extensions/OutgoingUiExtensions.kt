@@ -6,8 +6,8 @@ import fr.abknative.outgo.android.ui.CommonLabels
 import fr.abknative.outgo.android.ui.DashboardLabels
 import fr.abknative.outgo.android.ui.FormLabels
 import fr.abknative.outgo.core.ui.ColorPalette
-import fr.abknative.outgo.outgoing.api.Recurrence
-import fr.abknative.outgo.outgoing.api.model.Outgoing
+import fr.abknative.outgo.wallet.api.Recurrence
+import fr.abknative.outgo.wallet.api.model.Outgoing
 import kotlin.math.absoluteValue
 
 // --- Formatage de la Monnaie ---

@@ -20,9 +20,9 @@ import fr.abknative.outgo.android.ui.theme.OutgoTheme
 import fr.abknative.outgo.android.ui.theme.toColor
 import fr.abknative.outgo.app.nav.AppCoordinator
 import fr.abknative.outgo.app.nav.AppStep
-import fr.abknative.outgo.auth.api.presenter.AuthIntent
-import fr.abknative.outgo.auth.api.presenter.AuthPresenter
 import fr.abknative.outgo.core.api.KeyValueStorage
+import fr.abknative.outgo.login.api.LoginIntent
+import fr.abknative.outgo.login.api.LoginPresenter
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 
@@ -71,12 +71,12 @@ fun App() {
 
                     AppStep.Settings -> {
 
-                        val authPresenter = koinViewModel<AuthPresenter>()
-                        val authState by authPresenter.state.collectAsState()
+                        val loginPresenter = koinViewModel<LoginPresenter>()
+                        val loginState by loginPresenter.state.collectAsState()
 
                         SettingsScreen(
-                            session = authState.session,
-                            onLogout = { authPresenter.onIntent(AuthIntent.Logout) },
+                            session = loginState.session,
+                            onLogout = { loginPresenter.onIntent(LoginIntent.Logout) },
                             onDeleteAccount = { /* On gèrera ça après */ },
                             onNavigateBack = { coordinator.handleBack() },
                             onNavigateToLogin = { coordinator.navigateTo(AppStep.Login) },
@@ -93,7 +93,7 @@ fun App() {
 
                     AppStep.Login -> {
                         LoginScreen(
-                            presenter = koinViewModel<AuthPresenter>(),
+                            presenter = koinViewModel<LoginPresenter>(),
                             onNavigateBack = { coordinator.handleBack() },
                             onLoginSuccess = {
                                 coordinator.handleBack()

@@ -1,7 +1,7 @@
 package fr.abknative.outgo.server.api.plugins
 
-import fr.abknative.outgo.outgoing.network.dto.BudgetNetworkDto
-import fr.abknative.outgo.outgoing.network.dto.OutgoingNetworkDto
+import fr.abknative.outgo.wallet.network.dto.BudgetNetworkDto
+import fr.abknative.outgo.wallet.network.dto.OutgoingNetworkDto
 import io.ktor.server.application.*
 import io.ktor.server.plugins.requestvalidation.*
 

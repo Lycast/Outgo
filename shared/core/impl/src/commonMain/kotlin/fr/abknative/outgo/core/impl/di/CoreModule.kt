@@ -11,7 +11,6 @@ import io.ktor.client.plugins.*
 import io.ktor.client.plugins.auth.*
 import io.ktor.client.plugins.auth.providers.*
 import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
@@ -19,13 +18,15 @@ import org.koin.core.module.Module
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
-import org.koin.mp.KoinPlatformTools
 
 fun commonCoreModule() = module {
     singleOf(::RealTimeProvider) { bind<TimeProvider>() }
     singleOf(::StandardDispatchers) { bind<AppDispatchers>() }
 
     single {
+
+        val authRepository = get<AuthRepository>()
+
         HttpClient(get<HttpClientEngine>()) {
 
             install(HttpTimeout) {
@@ -49,7 +50,7 @@ fun commonCoreModule() = module {
             install(Auth) {
                 bearer {
                     loadTokens {
-                        val authRepository = KoinPlatformTools.defaultContext().get().get<AuthRepository>()
+
                         val session = authRepository.getSession()
 
                         if (session != null) {
@@ -66,7 +67,6 @@ fun commonCoreModule() = module {
 
             defaultRequest {
                 url(SecretConfig.BASE_URL) // todo url pour les tests locaux
-                header(HttpHeaders.Authorization, "Bearer ${SecretConfig.DEBUG_TOKEN}")
             }
         }
     }

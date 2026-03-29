@@ -9,7 +9,7 @@ import fr.abknative.outgo.android.ui.states.OutgoingFormEvent
 import fr.abknative.outgo.android.ui.states.OutgoingFormState
 import fr.abknative.outgo.android.ui.theme.AppTheme
 import fr.abknative.outgo.android.ui.theme.toColor
-import fr.abknative.outgo.outgoing.api.presenter.OutgoingIntent
+import fr.abknative.outgo.dashboard.api.DashboardIntent
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -19,7 +19,7 @@ fun OutgoingFormSheet(
     sheetState: SheetState,
     onEvent: (OutgoingFormEvent) -> Unit,
     onDismiss: () -> Unit,
-    onSave: (OutgoingIntent.Save) -> Unit
+    onSave: (DashboardIntent.Save) -> Unit
 ) {
     val scope = rememberCoroutineScope()
 
@@ -40,7 +40,7 @@ fun OutgoingFormSheet(
             onCancel = { closeSheet() },
             onSave = {
                 val monthValue = formState.dueMonthBuffer.toIntOrNull() ?: 0
-                val intent = OutgoingIntent.Save(
+                val intent = DashboardIntent.Save(
                     id = formState.outgoingId,
                     name = formState.nameBuffer,
                     amountInCents = formState.amountInCents,

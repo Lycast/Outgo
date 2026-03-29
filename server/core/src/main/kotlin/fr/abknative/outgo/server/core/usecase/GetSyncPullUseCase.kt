@@ -1,9 +1,9 @@
 package fr.abknative.outgo.server.core.usecase
 
-import fr.abknative.outgo.outgoing.network.SyncPullResponse
 import fr.abknative.outgo.server.core.repository.BudgetRepository
 import fr.abknative.outgo.server.core.repository.OutgoingRepository
 import fr.abknative.outgo.server.core.repository.TransactionRunner
+import fr.abknative.outgo.wallet.network.SyncPullResponse
 
 class GetSyncPullUseCase(
     private val budgetRepository: BudgetRepository,

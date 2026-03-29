@@ -1,10 +1,10 @@
 package fr.abknative.outgo.server.core.usecase
 
-import fr.abknative.outgo.outgoing.network.SyncPushRequest
 import fr.abknative.outgo.server.core.repository.BudgetRepository
 import fr.abknative.outgo.server.core.repository.OutgoingRepository
 import fr.abknative.outgo.server.core.repository.TransactionRunner
 import fr.abknative.outgo.server.core.repository.UserRepository
+import fr.abknative.outgo.wallet.network.SyncPushRequest
 
 class ProcessSyncPushUseCase(
     private val userRepository: UserRepository,

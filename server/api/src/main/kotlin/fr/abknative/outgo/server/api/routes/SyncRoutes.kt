@@ -1,9 +1,9 @@
 package fr.abknative.outgo.server.api.routes
 
-import fr.abknative.outgo.outgoing.network.SyncPushRequest
 import fr.abknative.outgo.server.api.extensions.userId
 import fr.abknative.outgo.server.core.usecase.GetSyncPullUseCase
 import fr.abknative.outgo.server.core.usecase.ProcessSyncPushUseCase
+import fr.abknative.outgo.wallet.network.SyncPushRequest
 import io.ktor.http.*
 import io.ktor.server.auth.*
 import io.ktor.server.request.*

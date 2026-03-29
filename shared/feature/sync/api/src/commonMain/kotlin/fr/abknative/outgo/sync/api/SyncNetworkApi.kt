@@ -2,8 +2,8 @@ package fr.abknative.outgo.sync.api
 
 import fr.abknative.outgo.core.api.logs.AppException
 import fr.abknative.outgo.core.api.logs.Result
-import fr.abknative.outgo.outgoing.network.SyncPullResponse
-import fr.abknative.outgo.outgoing.network.SyncPushRequest
+import fr.abknative.outgo.wallet.network.SyncPullResponse
+import fr.abknative.outgo.wallet.network.SyncPushRequest
 
 interface SyncNetworkApi {
     /**

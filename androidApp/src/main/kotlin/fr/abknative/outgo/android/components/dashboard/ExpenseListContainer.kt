@@ -14,7 +14,7 @@ import fr.abknative.outgo.android.ui.components.LoaderItem
 import fr.abknative.outgo.android.ui.states.OutgoingFilter
 import fr.abknative.outgo.android.ui.theme.AppTheme
 import fr.abknative.outgo.android.ui.theme.toColor
-import fr.abknative.outgo.outgoing.api.model.Outgoing
+import fr.abknative.outgo.wallet.api.model.Outgoing
 
 @Composable
 fun ExpenseListContainer(

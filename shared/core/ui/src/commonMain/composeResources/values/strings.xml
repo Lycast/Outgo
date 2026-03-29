@@ -66,13 +66,13 @@
     <string name="form_cycle_monthly">Mensuel</string>
     <string name="form_cycle_yearly">Annuel</string>
 
-    <string name="header_sync_promo_title">Sauvegardez vos données</string>
-    <string name="header_sync_promo_desc">Créez un compte gratuit pour synchroniser vos abonnements et ne jamais perdre vos données, même si vous changez de téléphone.</string>
-    <string name="header_sync_promo_action_login">Créer un compte</string>
+    <string name="header_sync_promo_title">Persistance de vos données</string>
+    <string name="header_sync_promo_desc">Vous pouvez synchroniser gratuitement vos données sur le serveur pour ne jamais les perdre et les rendre accessibles depuis n'importe quel téléphone.</string>
+    <string name="header_sync_promo_action_login">Synchronisation</string>
     <string name="header_sync_promo_action_later">Plus tard</string>
 
     <string name="budget_dialog_title">Mon budget mensuel</string>
-    <string name="budget_dialog_desc">Saisissez votre budget total par mois.</string>
+    <string name="budget_dialog_desc">Entrez votre budget total par mois.</string>
     <string name="budget_dialog_info">Le montant de votre budget permettra ensuite de calculer ce qu'il vous restera en fonction de vos dépenses.</string>
     <string name="budget_dialog_field">Montant du budget</string>
 

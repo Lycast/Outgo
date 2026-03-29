@@ -4,13 +4,13 @@ import fr.abknative.outgo.core.api.KeyValueStorage
 import fr.abknative.outgo.core.api.SyncStatus
 import fr.abknative.outgo.core.api.logs.AppException
 import fr.abknative.outgo.core.api.logs.Result
-import fr.abknative.outgo.outgoing.api.repository.BudgetRepository
-import fr.abknative.outgo.outgoing.api.repository.OutgoingRepository
-import fr.abknative.outgo.outgoing.network.SyncPushRequest
-import fr.abknative.outgo.outgoing.network.mapper.toDomain
-import fr.abknative.outgo.outgoing.network.mapper.toNetworkDto
 import fr.abknative.outgo.sync.api.SyncManager
 import fr.abknative.outgo.sync.api.SyncNetworkApi
+import fr.abknative.outgo.wallet.api.repository.BudgetRepository
+import fr.abknative.outgo.wallet.api.repository.OutgoingRepository
+import fr.abknative.outgo.wallet.network.SyncPushRequest
+import fr.abknative.outgo.wallet.network.mapper.toDomain
+import fr.abknative.outgo.wallet.network.mapper.toNetworkDto
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
