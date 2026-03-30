@@ -56,6 +56,24 @@ class RealTimeProvider : TimeProvider {
             .toInstant(timeZone)
             .toEpochMilliseconds()
     }
+    override fun startOfMonth(month: Int, year: Int): EpochMillis {
+        return LocalDate(year, month, 1)
+            .atStartOfDayIn(timeZone)
+            .toEpochMilliseconds()
+    }
+
+    override fun endOfMonth(month: Int, year: Int): EpochMillis {
+        val startOfNextMonth = if (month == 12) {
+            LocalDate(year + 1, 1, 1)
+        } else {
+            LocalDate(year, month + 1, 1)
+        }
+        val lastDayDate = startOfNextMonth.minus(1, DateTimeUnit.DAY)
+
+        return LocalDateTime(year, month, lastDayDate.day, 23, 59, 59)
+            .toInstant(timeZone)
+            .toEpochMilliseconds()
+    }
 
     // --- Helpers UI ---
     override fun isSameDay(ts1: EpochMillis, ts2: EpochMillis): Boolean {

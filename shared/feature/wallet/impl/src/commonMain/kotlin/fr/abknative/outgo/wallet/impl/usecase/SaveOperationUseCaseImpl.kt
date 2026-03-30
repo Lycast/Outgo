@@ -1,83 +1,56 @@
 package fr.abknative.outgo.wallet.impl.usecase
 
+import fr.abknative.outgo.core.api.EpochMillis
 import fr.abknative.outgo.core.api.SyncStatus
-import fr.abknative.outgo.core.api.TimeProvider
 import fr.abknative.outgo.core.api.logs.AppException
 import fr.abknative.outgo.core.api.logs.Result
-import fr.abknative.outgo.wallet.api.OutgoingError
+import fr.abknative.outgo.wallet.api.OperationError
 import fr.abknative.outgo.wallet.api.model.Operation
+import fr.abknative.outgo.wallet.api.model.OperationType
 import fr.abknative.outgo.wallet.api.model.Recurrence
-import fr.abknative.outgo.wallet.api.repository.OutgoingRepository
+import fr.abknative.outgo.wallet.api.repository.OperationRepository
 import fr.abknative.outgo.wallet.api.usecase.SaveOperationUseCase
-import kotlin.uuid.ExperimentalUuidApi
-import kotlin.uuid.Uuid
 
 internal class SaveOperationUseCaseImpl(
-    private val repository: OutgoingRepository,
-    private val timeProvider: TimeProvider
+    private val repository: OperationRepository
 ) : SaveOperationUseCase {
 
-    /**
-     * Implementation details:
-     * 1. Validates input bounds and enforces recurrence rules (e.g., stripping dueMonth for monthly items).
-     * 2. Resolves offline-first metadata (createdAt, updatedAt).
-     * 3. Determines the correct [SyncStatus] state transition:
-     * - A record that has never been synced remotely remains in [SyncStatus.PENDING_CREATE] even if updated locally.
-     * - Already synced records transition to [SyncStatus.PENDING_UPDATE].
-     */
-    @OptIn(ExperimentalUuidApi::class)
     override suspend fun invoke(
         id: String?,
+        walletId: String,
         name: String,
         amountInCents: Long,
+        type: OperationType,
         recurrence: Recurrence,
-        dueDay: Int,
-        dueMonth: Int?
+        startDate: EpochMillis,
+        endDate: EpochMillis?
     ): Result<Unit, AppException> {
 
-        if (name.isBlank()) return Result.Error(OutgoingError.EmptyName())
-        if (amountInCents <= 0) return Result.Error(OutgoingError.InvalidAmount())
-        if (dueDay !in 1..31) return Result.Error(OutgoingError.InvalidDate())
+        val cleanName = name.trim()
 
-        val finalBillingMonth = when (recurrence) {
-            Recurrence.MONTHLY -> null
-            Recurrence.YEARLY -> {
-                if (dueMonth == null || dueMonth !in 1..12) return Result.Error(OutgoingError.InvalidDate())
-                dueMonth
-            }
-
-            Recurrence.UNKNOWN -> return Result.Error(OutgoingError.UnknownCycle())
+        when {
+            cleanName.isBlank() -> return Result.Error(OperationError.EmptyName())
+            amountInCents <= 0 -> return Result.Error(OperationError.InvalidAmount())
+            walletId.isBlank() -> return Result.Error(OperationError.WalletNotFound(walletId))
+            recurrence == Recurrence.UNKNOWN -> return Result.Error(OperationError.UnknownCycle())
+            endDate != null && endDate < startDate -> return Result.Error(OperationError.InvalidDateOrder())
         }
 
-        val isNew = id.isNullOrBlank()
-        val finalId = if (isNew) Uuid.random().toString() else id
-        val existingOutgoing = if (!isNew) repository.getOutgoingById(finalId) else null
-
-        val currentTime = timeProvider.now()
-
-        val finalSyncStatus = when {
-            existingOutgoing == null -> SyncStatus.PENDING_CREATE
-            existingOutgoing.syncStatus == SyncStatus.PENDING_CREATE -> SyncStatus.PENDING_CREATE
-            else -> SyncStatus.PENDING_UPDATE
-        }
-
-        val operation = Operation(
-            id = finalId,
-            name = name.trim(),
+        val operationPayload = Operation(
+            id = id ?: "",
+            walletId = walletId,
+            name = cleanName,
             amountInCents = amountInCents,
+            type = type,
             recurrence = recurrence,
-            dueDay = dueDay,
-            dueMonth = finalBillingMonth,
-            createdAt = existingOutgoing?.createdAt ?: currentTime,
-            updatedAt = currentTime,
-            isDeleted = false,
-            syncStatus = finalSyncStatus
+            startDate = startDate,
+            endDate = endDate,
+            createdAt = 0L,
+            updatedAt = 0L,
+            deletedAt = null,
+            syncStatus = SyncStatus.PENDING_CREATE
         )
 
-        return if (existingOutgoing == null) {
-            repository.insert(operation)
-        } else {
-            repository.update(operation)
-        }
+        return repository.save(operationPayload)
     }
 }

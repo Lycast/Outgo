@@ -38,6 +38,12 @@ interface TimeProvider {
     /** Returns the timestamp corresponding to the very end of the month (23:59:59). */
     fun endOfMonth(ts: EpochMillis = now()): EpochMillis
 
+    /** Returns the timestamp corresponding to the very beginning of a specific month and year (00:00:00). */
+    fun startOfMonth(month: Int, year: Int): EpochMillis
+
+    /** Returns the timestamp corresponding to the very end of a specific month and year (23:59:59). */
+    fun endOfMonth(month: Int, year: Int): EpochMillis
+
     // --- Comparison & UI Helpers ---
     fun isSameDay(ts1: EpochMillis, ts2: EpochMillis): Boolean
     fun isToday(ts: EpochMillis): Boolean = isSameDay(ts, now())

@@ -6,8 +6,8 @@ import fr.abknative.outgo.core.api.logs.AppException
 import fr.abknative.outgo.core.api.logs.Result
 import fr.abknative.outgo.sync.api.SyncManager
 import fr.abknative.outgo.sync.api.SyncNetworkApi
-import fr.abknative.outgo.wallet.api.repository.BudgetRepository
-import fr.abknative.outgo.wallet.api.repository.OutgoingRepository
+import fr.abknative.outgo.wallet.api.repository.OperationRepository
+import fr.abknative.outgo.wallet.api.repository.WalletRepository
 import fr.abknative.outgo.wallet.network.SyncPushRequest
 import fr.abknative.outgo.wallet.network.mapper.toDomain
 import fr.abknative.outgo.wallet.network.mapper.toNetworkDto
@@ -15,8 +15,8 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
 internal class SyncManagerImpl(
-    private val budgetRepository: BudgetRepository,
-    private val outgoingRepository: OutgoingRepository,
+    private val walletRepository: WalletRepository,
+    private val operationRepository: OperationRepository,
     private val networkApi: SyncNetworkApi,
     private val storage: KeyValueStorage
 ) : SyncManager {
@@ -37,8 +37,8 @@ internal class SyncManagerImpl(
     }
 
     override suspend fun syncOut(): Result<Unit, AppException> {
-        val pendingBudgets = budgetRepository.getPendingBudgets()
-        val pendingOutgoings = outgoingRepository.getPendingOutgoings()
+        val pendingBudgets = walletRepository.getPendingBudgets()
+        val pendingOutgoings = operationRepository.getPendingOutgoings()
 
         if (pendingBudgets is Result.Error) return pendingBudgets
         if (pendingOutgoings is Result.Error) return pendingOutgoings
@@ -58,8 +58,8 @@ internal class SyncManagerImpl(
         val pushResult = networkApi.pushData(request)
         if (pushResult is Result.Error) return pushResult
 
-        budgets.forEach { budgetRepository.updateSyncStatus(it.id, SyncStatus.SYNCED) }
-        outgoings.forEach { outgoingRepository.updateSyncStatus(it.id, SyncStatus.SYNCED) }
+        budgets.forEach { walletRepository.updateSyncStatus(it.id, SyncStatus.SYNCED) }
+        outgoings.forEach { operationRepository.updateSyncStatus(it.id, SyncStatus.SYNCED) }
 
         return Result.Success(Unit)
     }
@@ -74,13 +74,13 @@ internal class SyncManagerImpl(
 
         if (response.budgets.isNotEmpty()) {
             val domainBudgets = response.budgets.map { it.toDomain() }
-            val budgetSyncResult = budgetRepository.syncFromServer(domainBudgets)
+            val budgetSyncResult = walletRepository.syncFromServer(domainBudgets)
             if (budgetSyncResult is Result.Error) return budgetSyncResult
         }
 
         if (response.outgoings.isNotEmpty()) {
             val domainOutgoings = response.outgoings.map { it.toDomain() }
-            val outgoingSyncResult = outgoingRepository.syncFromServer(domainOutgoings)
+            val outgoingSyncResult = operationRepository.syncFromServer(domainOutgoings)
             if (outgoingSyncResult is Result.Error) return outgoingSyncResult
         }
 

@@ -1,12 +1,10 @@
 package fr.abknative.outgo.wallet.impl
 
-import fr.abknative.outgo.core.api.SyncStatus
 import fr.abknative.outgo.core.api.logs.Result
-import fr.abknative.outgo.wallet.api.OutgoingError
+import fr.abknative.outgo.wallet.api.OperationError
+import fr.abknative.outgo.wallet.api.model.OperationType
 import fr.abknative.outgo.wallet.api.model.Recurrence
-import fr.abknative.outgo.wallet.impl.mock.FakeOutgoingRepository
-import fr.abknative.outgo.wallet.impl.mock.FakeTimeProvider
-import fr.abknative.outgo.wallet.impl.mock.createOutgoing
+import fr.abknative.outgo.wallet.impl.mock.FakeOperationRepository
 import fr.abknative.outgo.wallet.impl.usecase.SaveOperationUseCaseImpl
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
@@ -14,42 +12,35 @@ import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 
 class SaveOperationUseCaseTest {
-    private val repository = FakeOutgoingRepository()
-    private val timeProvider = FakeTimeProvider()
-    private val useCase = SaveOperationUseCaseImpl(repository, timeProvider)
+    private val repository = FakeOperationRepository()
+    private val useCase = SaveOperationUseCaseImpl(repository)
 
     @Test
     fun `should return Error when name is blank`() = runTest {
-        val result = useCase(id = null, name = "  ", amountInCents = 100, recurrence = Recurrence.MONTHLY, dueDay = 1)
+        val result = useCase(
+            walletId = "123",
+            name = "  ",
+            amountInCents = 100,
+            type = OperationType.EXPENSE,
+            recurrence = Recurrence.UNIQUE,
+            startDate = 1000L
+        )
 
-        result.shouldBeInstanceOf<Result.Error<OutgoingError.EmptyName>>()
+        result.shouldBeInstanceOf<Result.Error<OperationError.EmptyName>>()
     }
 
     @Test
-    fun `should set PENDING_CREATE when inserting a new outgoing`() = runTest {
-        val now = 123456789L
-        timeProvider.mockedNow = now
-        repository.operationToReturn = null // On simule que la dépense n'existe pas
+    fun `should call repository save with correct data`() = runTest {
+        useCase(
+            walletId = "wallet_01",
+            name = "Netflix",
+            amountInCents = 1500,
+            type = OperationType.EXPENSE,
+            recurrence = Recurrence.MONTHLY,
+            startDate = 1000L
+        )
 
-        useCase(id = null, name = "Netflix", amountInCents = 1000, recurrence = Recurrence.MONTHLY, dueDay = 5)
-
-        // Au lieu de coVerify, on vérifie l'état de notre Fake
-        val saved = repository.lastSavedOperation
-        saved?.name shouldBe "Netflix"
-        saved?.syncStatus shouldBe SyncStatus.PENDING_CREATE
-        saved?.createdAt shouldBe now
-    }
-
-    @Test
-    fun `should set PENDING_UPDATE when updating an already synced outgoing`() = runTest {
-        val existing = createOutgoing(id = "123", syncStatus = SyncStatus.SYNCED)
-        repository.operationToReturn = existing // On simule que la dépense existe déjà
-        timeProvider.mockedNow = 999L
-
-        useCase(id = "123", name = "Netflix Ultra", amountInCents = 2000, recurrence = Recurrence.MONTHLY, dueDay = 5)
-
-        val saved = repository.lastSavedOperation
-        saved?.syncStatus shouldBe SyncStatus.PENDING_UPDATE
-        saved?.updatedAt shouldBe 999L
+        repository.lastSavedOperation?.name shouldBe "Netflix"
+        repository.lastSavedOperation?.walletId shouldBe "wallet_01"
     }
 }

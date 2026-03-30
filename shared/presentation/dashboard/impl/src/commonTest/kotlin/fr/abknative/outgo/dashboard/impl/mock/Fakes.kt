@@ -11,7 +11,7 @@ import fr.abknative.outgo.core.api.logs.CommonError
 import fr.abknative.outgo.core.api.logs.Result
 import fr.abknative.outgo.sync.api.SyncManager
 import fr.abknative.outgo.wallet.api.model.Wallet
-import fr.abknative.outgo.wallet.api.repository.BudgetRepository
+import fr.abknative.outgo.wallet.api.repository.WalletRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -38,7 +38,7 @@ class FakeTimeProvider : TimeProvider {
     override fun combineDateAndTime(dateEpochMillis: EpochMillis, hour: Int, minute: Int): EpochMillis = 0L
 }
 
-class FakeBudgetRepository : BudgetRepository {
+class FakeWalletRepository : WalletRepository {
     private val _walletFlow = MutableStateFlow<Wallet?>(null)
     private val budgets = mutableMapOf<String, Wallet>()
 

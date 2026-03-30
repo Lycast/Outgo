@@ -5,18 +5,24 @@ import fr.abknative.outgo.auth.api.AuthError
 import fr.abknative.outgo.core.api.logs.AppException
 import fr.abknative.outgo.core.api.logs.CommonError
 import fr.abknative.outgo.shared.core.ui.resources.*
-import fr.abknative.outgo.wallet.api.OutgoingError
+import fr.abknative.outgo.wallet.api.OperationError
+import fr.abknative.outgo.wallet.api.WalletError
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun AppException.toUIString(): String {
     return when (this) {
-        // Domaine : Dépenses
-        is OutgoingError.EmptyName -> stringResource(Res.string.error_outgoing_empty_name)
-        is OutgoingError.InvalidAmount -> stringResource(Res.string.error_outgoing_invalid_amount)
-        is OutgoingError.InvalidDate -> stringResource(Res.string.error_outgoing_invalid_date)
-        is OutgoingError.NotFound -> stringResource(Res.string.error_outgoing_not_found, id)
-        is OutgoingError.UnknownCycle -> stringResource(Res.string.error_outgoing_unknow_cycle)
+        // Domaine : Portefeuille (Wallet)
+        is WalletError.EmptyName -> stringResource(Res.string.error_wallet_empty_name)
+        is WalletError.NotFound -> stringResource(Res.string.error_wallet_not_found, id)
+
+        // Domaine : Opération (Operation)
+        is OperationError.EmptyName -> stringResource(Res.string.error_operation_empty_name)
+        is OperationError.InvalidAmount -> stringResource(Res.string.error_operation_invalid_amount)
+        is OperationError.NotFound -> stringResource(Res.string.error_operation_not_found, id)
+        is OperationError.InvalidDateOrder -> stringResource(Res.string.error_operation_invalid_date_order)
+        is OperationError.WalletNotFound -> stringResource(Res.string.error_operation_wallet_not_found, walletId)
+        is OperationError.UnknownCycle -> stringResource(Res.string.error_operation_unknow_cycle)
 
         // Domaine : Authentification
         is AuthError.InvalidCredentials -> stringResource(Res.string.error_auth_invalid_credentials)

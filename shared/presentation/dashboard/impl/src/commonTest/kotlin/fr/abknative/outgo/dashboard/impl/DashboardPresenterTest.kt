@@ -22,7 +22,7 @@ class DashboardPresenterTest {
     private val timeProvider = FakeTimeProvider()
     private val syncManager = FakeSyncManager()
     private val storage = FakeKeyValueStorage()
-    private val budgetRepository = FakeBudgetRepository()
+    private val budgetRepository = FakeWalletRepository()
     private val authRepository = FakeAuthRepository()
     private val observeActiveOutgoings = FakeObserveActiveOperationsUseCase()
     private val saveOutgoing = FakeSaveOperationUseCase()
@@ -51,7 +51,7 @@ class DashboardPresenterTest {
             calculateRemainingToPay = calculateRemainingToPay,
             calculateDisposableIncome = calculateDisposableIncome,
             updateIncome = updateIncome,
-            budgetRepository = budgetRepository,
+            walletRepository = budgetRepository,
             timeProvider = timeProvider,
             syncManager = syncManager,
             storage = storage

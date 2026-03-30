@@ -12,7 +12,7 @@ import fr.abknative.outgo.dashboard.api.DashboardPresenter
 import fr.abknative.outgo.dashboard.api.DashboardState
 import fr.abknative.outgo.dashboard.api.SyncUiState
 import fr.abknative.outgo.sync.api.SyncManager
-import fr.abknative.outgo.wallet.api.repository.BudgetRepository
+import fr.abknative.outgo.wallet.api.repository.WalletRepository
 import fr.abknative.outgo.wallet.api.usecase.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
@@ -26,7 +26,7 @@ internal class DashboardPresenterImpl(
     private val calculateDisposableIncome: CalculateDisposableIncomeUseCase,
     private val observeUserSession: ObserveUserSessionUseCase,
     private val updateIncome: UpdateIncomeUseCase,
-    private val budgetRepository: BudgetRepository,
+    private val walletRepository: WalletRepository,
     private val timeProvider: TimeProvider,
     private val syncManager: SyncManager,
     private val storage: KeyValueStorage
@@ -84,7 +84,7 @@ internal class DashboardPresenterImpl(
                 selectedMonthFlow.flatMapLatest { month ->
                     observeActiveOutgoings(month).map { list -> Pair(month, list) }
                 },
-                budgetRepository.observeBudget()
+                walletRepository.observeBudget()
             ) { (selectedMonth, outgoings), budget ->
                 val income = budget?.monthlyIncomeInCents ?: 0L
                 val total = calculateTotalOutgoings(outgoings)

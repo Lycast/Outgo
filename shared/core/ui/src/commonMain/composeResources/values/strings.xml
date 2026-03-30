@@ -1,11 +1,15 @@
 <resources>
     <string name="app_name">Outgo</string>
 
-    <string name="error_outgoing_empty_name">L'intitulé de la dépense ne peut pas être vide.</string>
-    <string name="error_outgoing_invalid_amount">Le montant doit être supérieur à 0 pour être enregistré.</string>
-    <string name="error_outgoing_not_found">La dépense avec l'identifiant %s n'a pas été trouvée.</string>
-    <string name="error_outgoing_invalid_date">La date de dépense est invalide.</string>
-    <string name="error_outgoing_unknow_cycle">Le cycle de facturation choisi n'est pas supporté.</string>
+    <string name="error_wallet_empty_name">Le nom du compte ne peut pas être vide.</string>
+    <string name="error_wallet_not_found">Le compte avec l'identifiant %s n'a pas été trouvé.</string>
+
+    <string name="error_operation_empty_name">L'intitulé de l'opération ne peut pas être vide.</string>
+    <string name="error_operation_invalid_amount">Le montant doit être strictement supérieur à 0.</string>
+    <string name="error_operation_not_found">L'opération avec l'identifiant %s n'a pas été trouvée.</string>
+    <string name="error_operation_invalid_date_order">La date de fin ne peut pas être antérieure à la date de début.</string>
+    <string name="error_operation_wallet_not_found">Le compte associé à cette opération est introuvable.</string>
+    <string name="error_operation_unknow_cycle">Le cycle de récurrence choisi n'est pas supporté.</string>
 
     <string name="error_auth_invalid_credentials">L'email ou le mot de passe est incorrect.</string>
     <string name="error_auth_user_not_found">Aucun compte n'est associé à cet email.</string>
