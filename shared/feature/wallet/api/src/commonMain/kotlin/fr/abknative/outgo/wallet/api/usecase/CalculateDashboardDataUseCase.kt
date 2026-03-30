@@ -1,16 +1,7 @@
 package fr.abknative.outgo.wallet.api.usecase
 
 import fr.abknative.outgo.wallet.api.model.Operation
-
-/**
- * Aggregates the calculated financial metrics required to render the dashboard UI.
- */
-data class DashboardData(
-    val currentBalanceInCents: Long,
-    val totalExpensesInCents: Long,
-    val remainingToPayInCents: Long,
-    val disposableIncomeInCents: Long
-)
+import fr.abknative.outgo.wallet.api.model.dashboard.DashboardData
 
 /**
  * Encapsulates the core financial algorithms.

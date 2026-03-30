@@ -3,7 +3,7 @@ package fr.abknative.outgo.dashboard.impl.mock
 import fr.abknative.outgo.core.api.logs.AppException
 import fr.abknative.outgo.core.api.logs.Result
 import fr.abknative.outgo.wallet.api.model.Operation
-import fr.abknative.outgo.wallet.api.model.Recurrence
+import fr.abknative.outgo.wallet.api.model.operation.Recurrence
 import fr.abknative.outgo.wallet.api.usecase.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow

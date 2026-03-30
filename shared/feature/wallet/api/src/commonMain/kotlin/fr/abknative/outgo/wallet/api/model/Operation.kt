@@ -2,6 +2,8 @@ package fr.abknative.outgo.wallet.api.model
 
 import fr.abknative.outgo.core.api.EpochMillis
 import fr.abknative.outgo.core.api.SyncStatus
+import fr.abknative.outgo.wallet.api.model.operation.OperationType
+import fr.abknative.outgo.wallet.api.model.operation.Recurrence
 
 /**
  * Represents a single cash flow transaction, unifying both incomes and expenses.
@@ -10,7 +12,7 @@ import fr.abknative.outgo.core.api.SyncStatus
  * @property walletId The identifier of the [Wallet] this operation belongs to.
  * @property name The display name of the operation (e.g., "Salary", "Netflix").
  * @property amountInCents The monetary value, stored in cents to prevent floating-point precision loss.
- * @property type Indicates the direction of the cash flow ([OperationType.INCOME] or [OperationType.EXPENSE]).
+ * @property type Indicates the direction of the cash flow ([fr.abknative.outgo.wallet.api.model.operation.OperationType.INCOME] or [fr.abknative.outgo.wallet.api.model.operation.OperationType.EXPENSE]).
  * @property recurrence Defines how frequently this operation repeats.
  * @property startDate The absolute temporal anchor (EpochMillis) marking when this operation begins or occurs.
  * @property endDate The absolute temporal anchor (EpochMillis) marking when a recurring operation ends. Null if indefinite or unique.

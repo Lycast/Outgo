@@ -5,8 +5,8 @@ import fr.abknative.outgo.auth.api.AuthError
 import fr.abknative.outgo.core.api.logs.AppException
 import fr.abknative.outgo.core.api.logs.CommonError
 import fr.abknative.outgo.shared.core.ui.resources.*
-import fr.abknative.outgo.wallet.api.OperationError
-import fr.abknative.outgo.wallet.api.WalletError
+import fr.abknative.outgo.wallet.api.logs.OperationError
+import fr.abknative.outgo.wallet.api.logs.WalletError
 import org.jetbrains.compose.resources.stringResource
 
 @Composable

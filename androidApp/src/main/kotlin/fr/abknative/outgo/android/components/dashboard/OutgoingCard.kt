@@ -29,7 +29,7 @@ import fr.abknative.outgo.android.ui.theme.OutgoTheme
 import fr.abknative.outgo.android.ui.theme.toColor
 import fr.abknative.outgo.core.api.SyncStatus
 import fr.abknative.outgo.wallet.api.model.Operation
-import fr.abknative.outgo.wallet.api.model.Recurrence
+import fr.abknative.outgo.wallet.api.model.operation.Recurrence
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable

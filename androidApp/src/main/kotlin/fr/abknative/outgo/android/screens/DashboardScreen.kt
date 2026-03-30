@@ -16,7 +16,7 @@ import fr.abknative.outgo.android.ui.toUIString
 import fr.abknative.outgo.dashboard.api.DashboardIntent
 import fr.abknative.outgo.dashboard.api.DashboardPresenter
 import fr.abknative.outgo.wallet.api.model.Operation
-import fr.abknative.outgo.wallet.api.model.Recurrence
+import fr.abknative.outgo.wallet.api.model.operation.Recurrence
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

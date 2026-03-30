@@ -2,8 +2,8 @@ package fr.abknative.outgo.wallet.impl.mock
 
 import fr.abknative.outgo.core.api.SyncStatus
 import fr.abknative.outgo.wallet.api.model.Operation
-import fr.abknative.outgo.wallet.api.model.OperationType
-import fr.abknative.outgo.wallet.api.model.Recurrence
+import fr.abknative.outgo.wallet.api.model.operation.OperationType
+import fr.abknative.outgo.wallet.api.model.operation.Recurrence
 
 fun createOp(name: String = "Test", amount: Long, day: Int): Operation {
     return Operation(

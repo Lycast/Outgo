@@ -2,9 +2,9 @@ package fr.abknative.outgo.wallet.impl.usecase
 
 import fr.abknative.outgo.core.api.TimeProvider
 import fr.abknative.outgo.wallet.api.model.Operation
-import fr.abknative.outgo.wallet.api.model.OperationType
+import fr.abknative.outgo.wallet.api.model.dashboard.DashboardData
+import fr.abknative.outgo.wallet.api.model.operation.OperationType
 import fr.abknative.outgo.wallet.api.usecase.CalculateDashboardDataUseCase
-import fr.abknative.outgo.wallet.api.usecase.DashboardData
 
 internal class CalculateDashboardDataUseCaseImpl(
     private val timeProvider: TimeProvider

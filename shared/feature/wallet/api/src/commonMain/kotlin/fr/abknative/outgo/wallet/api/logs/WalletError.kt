@@ -1,4 +1,4 @@
-package fr.abknative.outgo.wallet.api
+package fr.abknative.outgo.wallet.api.logs
 
 import fr.abknative.outgo.core.api.logs.AppException
 

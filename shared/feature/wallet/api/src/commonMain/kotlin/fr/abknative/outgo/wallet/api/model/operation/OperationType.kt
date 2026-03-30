@@ -1,7 +1,7 @@
-package fr.abknative.outgo.wallet.api.model
+package fr.abknative.outgo.wallet.api.model.operation
 
 /**
- * Defines the financial direction of an [Operation].
+ * Defines the financial direction of an [fr.abknative.outgo.wallet.api.model.Operation].
  */
 enum class OperationType {
     INCOME,  // Revenu (+)

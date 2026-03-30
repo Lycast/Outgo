@@ -1,7 +1,7 @@
-package fr.abknative.outgo.wallet.api.model
+package fr.abknative.outgo.wallet.api.model.operation
 
 /**
- * Defines the frequency cycle of an [Operation].
+ * Defines the frequency cycle of an [fr.abknative.outgo.wallet.api.model.Operation].
  */
 enum class Recurrence {
     UNIQUE,

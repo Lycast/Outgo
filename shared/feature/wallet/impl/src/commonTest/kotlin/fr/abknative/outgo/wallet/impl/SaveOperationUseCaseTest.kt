@@ -1,9 +1,9 @@
 package fr.abknative.outgo.wallet.impl
 
 import fr.abknative.outgo.core.api.logs.Result
-import fr.abknative.outgo.wallet.api.OperationError
-import fr.abknative.outgo.wallet.api.model.OperationType
-import fr.abknative.outgo.wallet.api.model.Recurrence
+import fr.abknative.outgo.wallet.api.logs.OperationError
+import fr.abknative.outgo.wallet.api.model.operation.OperationType
+import fr.abknative.outgo.wallet.api.model.operation.Recurrence
 import fr.abknative.outgo.wallet.impl.mock.FakeOperationRepository
 import fr.abknative.outgo.wallet.impl.usecase.SaveOperationUseCaseImpl
 import io.kotest.matchers.shouldBe
