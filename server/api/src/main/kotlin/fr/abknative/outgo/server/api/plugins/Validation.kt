@@ -1,29 +1,27 @@
 package fr.abknative.outgo.server.api.plugins
 
-import fr.abknative.outgo.wallet.network.dto.BudgetNetworkDto
-import fr.abknative.outgo.wallet.network.dto.OutgoingNetworkDto
+import fr.abknative.outgo.wallet.network.dto.OperationNetworkDto
+import fr.abknative.outgo.wallet.network.dto.WalletNetworkDto
 import io.ktor.server.application.*
 import io.ktor.server.plugins.requestvalidation.*
 
 fun Application.configureValidation() {
     install(RequestValidation) {
-        validate<BudgetNetworkDto> { budget ->
+        validate<WalletNetworkDto> { wallet ->
             when {
-                budget.id.isBlank() -> ValidationResult.Invalid("Budget ID cannot be empty")
-                budget.monthlyIncomeInCents < 0 -> ValidationResult.Invalid("Income cannot be negative")
+                wallet.id.isBlank() -> ValidationResult.Invalid("Wallet ID cannot be empty")
+                wallet.name.isBlank() -> ValidationResult.Invalid("Wallet name cannot be empty")
                 else -> ValidationResult.Valid
             }
         }
 
-        validate<OutgoingNetworkDto> { outgoing ->
+        validate<OperationNetworkDto> { operation ->
             when {
-                outgoing.id.isBlank() -> ValidationResult.Invalid("Outgoing ID cannot be empty")
-                outgoing.name.isBlank() -> ValidationResult.Invalid("Name cannot be blank")
-                outgoing.name.length > 255 -> ValidationResult.Invalid("Name is too long (max 255)")
-                outgoing.amountInCents < 0 -> ValidationResult.Invalid("Amount cannot be negative")
-                outgoing.dueDay !in 1..31 -> ValidationResult.Invalid("dueDay must be between 1 and 31")
-                outgoing.dueMonth != null && outgoing.dueMonth !in 1..12 ->
-                    ValidationResult.Invalid("dueMonth must be between 1 and 12")
+                operation.id.isBlank() -> ValidationResult.Invalid("Operation ID cannot be empty")
+                operation.name.isBlank() -> ValidationResult.Invalid("Name cannot be blank")
+                operation.name.length > 255 -> ValidationResult.Invalid("Name is too long (max 255)")
+                operation.amountInCents < 0 -> ValidationResult.Invalid("Amount cannot be negative")
+                operation.type != "INCOME" && operation.type != "EXPENSE" -> ValidationResult.Invalid("Invalid operation type")
                 else -> ValidationResult.Valid
             }
         }

@@ -5,19 +5,11 @@ services:
     ports:
       - "5432:5432"
     environment:
-      - POSTGRES_USER=outgo_user
-      - POSTGRES_PASSWORD=outgo_pass
-      - POSTGRES_DB=outgo_db
+      POSTGRES_USER: outgo_user
+      POSTGRES_PASSWORD: outgo_pass
+      POSTGRES_DB: outgo_db
     volumes:
       - postgres_data:/var/lib/postgresql/data
-  api:
-    build: .
-    container_name: outgo-api
-    ports:
-      - "8080:8080"
-    env_file: .env
-    depends_on:
-      - db
 
 volumes:
   postgres_data:

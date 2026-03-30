@@ -2,25 +2,27 @@ package fr.abknative.outgo.wallet.network.mapper
 
 import fr.abknative.outgo.core.api.SyncStatus
 import fr.abknative.outgo.wallet.api.model.Wallet
-import fr.abknative.outgo.wallet.network.dto.BudgetNetworkDto
+import fr.abknative.outgo.wallet.network.dto.WalletNetworkDto
 
 // Réseau -> Domaine (PULL)
-fun BudgetNetworkDto.toDomain(): Wallet {
+fun WalletNetworkDto.toDomain(): Wallet {
     return Wallet(
         id = this.id,
-        monthlyIncomeInCents = this.monthlyIncomeInCents,
+        name = name,
         createdAt = this.createdAt,
         updatedAt = this.updatedAt,
+        deletedAt = deletedAt,
         syncStatus = SyncStatus.SYNCED
     )
 }
 
 // Domaine -> Réseau (PUSH)
-fun Wallet.toNetworkDto(): BudgetNetworkDto {
-    return BudgetNetworkDto(
+fun Wallet.toNetworkDto(): WalletNetworkDto {
+    return WalletNetworkDto(
         id = this.id,
-        monthlyIncomeInCents = this.monthlyIncomeInCents,
+        name = name,
         createdAt = this.createdAt,
-        updatedAt = this.updatedAt
+        updatedAt = this.updatedAt,
+        deletedAt = deletedAt
     )
 }

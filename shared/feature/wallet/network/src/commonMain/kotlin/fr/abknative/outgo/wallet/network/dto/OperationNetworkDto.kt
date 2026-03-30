@@ -4,15 +4,16 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class OutgoingNetworkDto(
+data class OperationNetworkDto(
     @SerialName("id") val id: String,
-    @SerialName("budget_id") val budgetId: String,
+    @SerialName("wallet_id") val walletId: String,
     @SerialName("name") val name: String,
-    @SerialName("amount_cents") val amountInCents: Long,
+    @SerialName("amount_in_cents") val amountInCents: Long,
+    @SerialName("type") val type: String,
     @SerialName("recurrence") val recurrence: String,
-    @SerialName("due_day") val dueDay: Int,
-    @SerialName("due_month") val dueMonth: Int? = null,
+    @SerialName("start_date") val startDate: Long,
+    @SerialName("end_date") val endDate: Long?,
     @SerialName("created_at") val createdAt: Long,
     @SerialName("updated_at") val updatedAt: Long,
-    @SerialName("is_deleted") val isDeleted: Boolean = false
+    @SerialName("deleted_at") val deletedAt: Long?
 )

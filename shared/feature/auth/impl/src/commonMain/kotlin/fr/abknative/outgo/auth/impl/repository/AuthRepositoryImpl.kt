@@ -4,6 +4,7 @@ import fr.abknative.outgo.auth.api.AuthError
 import fr.abknative.outgo.auth.api.model.UserSession
 import fr.abknative.outgo.auth.api.repository.AuthRepository
 import fr.abknative.outgo.core.api.KeyValueStorage
+import fr.abknative.outgo.core.api.logs.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,40 +14,68 @@ import kotlin.time.Duration.Companion.milliseconds
 internal class AuthRepositoryImpl(
     private val storage: KeyValueStorage
 ) : AuthRepository {
-    private val _session = MutableStateFlow(loadSession())
 
-    override fun observeSession(): Flow<UserSession?> = _session.asStateFlow()
-
-    override suspend fun getSession(): UserSession? {
-        return _session.value
+    companion object {
+        private const val KEY_USER_ID = "auth_user_id"
+        private const val KEY_TOKEN = "auth_token"
+        private const val KEY_EMAIL = "auth_email"
+        private const val TAG = "AuthLocalRepo"
     }
 
-    override suspend fun login(email: String, password: String) {
+    private val sessionState = MutableStateFlow(loadSessionFromStorage())
+
+    override fun observeSession(): Flow<UserSession?> = sessionState.asStateFlow()
+
+    override suspend fun getSession(): UserSession? = sessionState.value
+
+    override suspend fun login(email: String, password: String): Result<Unit, AppException> = asResult(
+        onError = {
+            AppLogger.get()?.e(TAG, "Login failed for email: $email", it)
+            it as? AppException ?: CommonError.UnknownError(it)
+        }
+    ) {
         delay(1000.milliseconds)
 
-        if (email == "debug@mail.fr" && password == "debug") {
-            val mockSession = UserSession(userId = "user_debug_123", token = "debug", email = email)
-            saveSession(mockSession)
-            _session.value = mockSession
-        } else {
+        if (email.isBlank() || password.isBlank()) {
             throw AuthError.InvalidCredentials()
         }
+
+        val mockSession = UserSession(
+            userId = "user_debug_123",
+            email = email,
+            token = "debug"
+        )
+
+        saveSessionToStorage(mockSession)
+        sessionState.value = mockSession
     }
 
-    override suspend fun logout() {
-        storage.remove("auth_user_id")
-        storage.remove("auth_token")
-        _session.value = null
+    override suspend fun logout(): Result<Unit, AppException> = asResult(
+        onError = {
+            AppLogger.get()?.e(TAG, "Logout failed", it)
+            it as? AppException ?: CommonError.UnknownError(it)
+        }
+    ) {
+        storage.remove(KEY_USER_ID)
+        storage.remove(KEY_TOKEN)
+        storage.remove(KEY_EMAIL)
+
+        sessionState.value = null
     }
 
-    private fun loadSession(): UserSession? {
-        val userId = storage.getString("auth_user_id") ?: return null
-        val token = storage.getString("auth_token") ?: return null
-        return UserSession(userId, token, "test@outgo.app")
+    // --- Méthodes privées ---
+
+    private fun loadSessionFromStorage(): UserSession? {
+        val userId = storage.getString(KEY_USER_ID) ?: return null
+        val token = storage.getString(KEY_TOKEN) ?: return null
+        val email = storage.getString(KEY_EMAIL) ?: return null
+
+        return UserSession(userId = userId, email = email, token = token)
     }
 
-    private fun saveSession(session: UserSession) {
-        storage.putString("auth_user_id", session.userId)
-        storage.putString("auth_token", session.token)
+    private fun saveSessionToStorage(session: UserSession) {
+        storage.putString(KEY_USER_ID, session.userId)
+        storage.putString(KEY_TOKEN, session.token)
+        storage.putString(KEY_EMAIL, session.email)
     }
 }

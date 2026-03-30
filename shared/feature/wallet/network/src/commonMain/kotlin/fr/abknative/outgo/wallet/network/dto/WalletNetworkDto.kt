@@ -4,9 +4,10 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class BudgetNetworkDto(
+data class WalletNetworkDto(
     @SerialName("id") val id: String,
-    @SerialName("monthly_income_cents") val monthlyIncomeInCents: Long,
+    @SerialName("name") val name: String,
     @SerialName("created_at") val createdAt: Long,
-    @SerialName("updated_at") val updatedAt: Long
+    @SerialName("updated_at") val updatedAt: Long,
+    @SerialName("deleted_at") val deletedAt: Long?
 )
