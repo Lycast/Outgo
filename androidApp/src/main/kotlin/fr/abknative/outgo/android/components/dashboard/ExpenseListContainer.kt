@@ -14,15 +14,15 @@ import fr.abknative.outgo.android.ui.components.LoaderItem
 import fr.abknative.outgo.android.ui.states.OutgoingFilter
 import fr.abknative.outgo.android.ui.theme.AppTheme
 import fr.abknative.outgo.android.ui.theme.toColor
-import fr.abknative.outgo.wallet.api.model.Outgoing
+import fr.abknative.outgo.wallet.api.model.Operation
 
 @Composable
 fun ExpenseListContainer(
     isLoading: Boolean,
-    filteredList: List<Outgoing>,
+    filteredList: List<Operation>,
     currentFilter: OutgoingFilter,
     onDelete: (String) -> Unit,
-    onEdit: (Outgoing) -> Unit,
+    onEdit: (Operation) -> Unit,
     modifier: Modifier = Modifier
 ) {
 
@@ -43,7 +43,7 @@ fun ExpenseListContainer(
                         border = BorderStroke(1.dp, AppTheme.colors.textSecondary.toColor().copy(alpha = 0.1f))
                     ) {
                         OutgoingCard(
-                            outgoing = outgoing,
+                            operation = outgoing,
                             onEdit = { onEdit(outgoing) },
                             onDelete = { onDelete(outgoing.id) },
                             onDuplicate = {

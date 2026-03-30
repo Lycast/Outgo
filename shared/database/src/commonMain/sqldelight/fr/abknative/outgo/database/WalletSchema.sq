@@ -1,0 +1,8 @@
+CREATE TABLE WalletEntity (
+    id TEXT NOT NULL PRIMARY KEY,
+    name TEXT NOT NULL,
+    createdAt INTEGER NOT NULL,
+    updatedAt INTEGER NOT NULL,
+    deletedAt INTEGER,
+    syncStatus TEXT NOT NULL
+);

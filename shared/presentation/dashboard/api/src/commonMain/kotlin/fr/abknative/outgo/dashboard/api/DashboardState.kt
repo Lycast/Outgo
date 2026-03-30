@@ -1,14 +1,14 @@
 package fr.abknative.outgo.dashboard.api
 
 import fr.abknative.outgo.core.api.logs.AppException
-import fr.abknative.outgo.wallet.api.model.Outgoing
+import fr.abknative.outgo.wallet.api.model.Operation
 
 /**
  * Represents the complete UI state for the Outgoing screen.
  * Acts as the single source of truth for the view.
  *
  * @property isLoading Indicates if a background operation (fetch, sync) is in progress.
- * @property outgoings The list of expenses to display for the currently selected period.
+ * @property operations The list of expenses to display for the currently selected period.
  * @property currentDay The current physical day of the month.
  * @property currentMonth The current physical month.
  * @property selectedMonth The month currently being viewed or navigated to by the user.
@@ -24,7 +24,7 @@ data class DashboardState(
     val isLoading: Boolean = false,
 
     // --- List Data ---
-    val outgoings: List<Outgoing> = emptyList(),
+    val operations: List<Operation> = emptyList(),
     val currentDay: Int? = 0,
     val currentMonth: Int = 0,
     val selectedMonth: Int,

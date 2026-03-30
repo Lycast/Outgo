@@ -6,8 +6,8 @@ import fr.abknative.outgo.core.api.TimeProvider
 import fr.abknative.outgo.core.api.logs.AppException
 import fr.abknative.outgo.core.api.logs.CommonError
 import fr.abknative.outgo.core.api.logs.Result
-import fr.abknative.outgo.wallet.api.model.Budget
-import fr.abknative.outgo.wallet.api.model.Outgoing
+import fr.abknative.outgo.wallet.api.model.Operation
+import fr.abknative.outgo.wallet.api.model.Wallet
 import fr.abknative.outgo.wallet.api.repository.BudgetRepository
 import fr.abknative.outgo.wallet.api.repository.OutgoingRepository
 import kotlinx.coroutines.flow.Flow
@@ -39,34 +39,34 @@ class FakeTimeProvider : TimeProvider {
 
 class FakeOutgoingRepository : OutgoingRepository {
     // Simule la table OutgoingEntity
-    private val outgoingsMap = mutableMapOf<String, Outgoing>()
+    private val outgoingsMap = mutableMapOf<String, Operation>()
 
-    var outgoingToReturn: Outgoing? = null
-    var lastSavedOutgoing: Outgoing? = null
+    var operationToReturn: Operation? = null
+    var lastSavedOperation: Operation? = null
 
-    override suspend fun getOutgoingById(id: String): Outgoing? = outgoingsMap[id] ?: outgoingToReturn
+    override suspend fun getOutgoingById(id: String): Operation? = outgoingsMap[id] ?: operationToReturn
 
-    override suspend fun insert(outgoing: Outgoing): Result<Unit, AppException> {
-        outgoingsMap[outgoing.id] = outgoing
-        lastSavedOutgoing = outgoing
+    override suspend fun insert(operation: Operation): Result<Unit, AppException> {
+        outgoingsMap[operation.id] = operation
+        lastSavedOperation = operation
         return Result.Success(Unit)
     }
 
-    override suspend fun update(outgoing: Outgoing): Result<Unit, AppException> {
-        outgoingsMap[outgoing.id] = outgoing
-        lastSavedOutgoing = outgoing
+    override suspend fun update(operation: Operation): Result<Unit, AppException> {
+        outgoingsMap[operation.id] = operation
+        lastSavedOperation = operation
         return Result.Success(Unit)
     }
 
-    override fun observeOutgoingsByMonth(month: Int): Flow<List<Outgoing>> = flowOf(outgoingsMap.values.toList())
+    override fun observeOutgoingsByMonth(month: Int): Flow<List<Operation>> = flowOf(outgoingsMap.values.toList())
 
     override suspend fun markAsDeleted(id: String): Result<Unit, AppException> {
         outgoingsMap[id]?.let { outgoingsMap[id] = it.copy(isDeleted = true, syncStatus = SyncStatus.PENDING_DELETE) }
         return Result.Success(Unit)
     }
 
-    override suspend fun syncFromServer(outgoings: List<Outgoing>): Result<Unit, AppException> {
-        outgoings.forEach {
+    override suspend fun syncFromServer(operations: List<Operation>): Result<Unit, AppException> {
+        operations.forEach {
             outgoingsMap[it.id] = it.copy(syncStatus = SyncStatus.SYNCED)
         }
         return Result.Success(Unit)
@@ -78,44 +78,44 @@ class FakeOutgoingRepository : OutgoingRepository {
         return Result.Success(Unit)
     }
 
-    override suspend fun getPendingOutgoings(): Result<List<Outgoing>, AppException> {
+    override suspend fun getPendingOutgoings(): Result<List<Operation>, AppException> {
         return Result.Success(outgoingsMap.values.filter { it.syncStatus != SyncStatus.SYNCED })
     }
 }
 
 class FakeBudgetRepository : BudgetRepository {
-    private val _budgetFlow = MutableStateFlow<Budget?>(null)
-    private val budgets = mutableMapOf<String, Budget>()
+    private val _walletFlow = MutableStateFlow<Wallet?>(null)
+    private val budgets = mutableMapOf<String, Wallet>()
 
-    var lastInsertedBudget: Budget? = null
-    var lastUpdatedBudget: Budget? = null
+    var lastInsertedWallet: Wallet? = null
+    var lastUpdatedWallet: Wallet? = null
     var shouldReturnError = false
 
-    fun emit(budget: Budget?) {
-        budget?.let { budgets[it.id] = it }
-        _budgetFlow.value = budget
+    fun emit(wallet: Wallet?) {
+        wallet?.let { budgets[it.id] = it }
+        _walletFlow.value = wallet
     }
 
-    override fun observeBudget(id: String): Flow<Budget?> = _budgetFlow
+    override fun observeBudget(id: String): Flow<Wallet?> = _walletFlow
 
-    override suspend fun getBudget(id: String): Result<Budget?, AppException> {
+    override suspend fun getBudget(id: String): Result<Wallet?, AppException> {
         if (shouldReturnError) return Result.Error(CommonError.DatabaseError())
-        return Result.Success(budgets[id] ?: _budgetFlow.value)
+        return Result.Success(budgets[id] ?: _walletFlow.value)
     }
 
-    override suspend fun insert(budget: Budget): Result<Unit, AppException> {
-        lastInsertedBudget = budget
-        emit(budget)
+    override suspend fun insert(wallet: Wallet): Result<Unit, AppException> {
+        lastInsertedWallet = wallet
+        emit(wallet)
         return Result.Success(Unit)
     }
 
-    override suspend fun update(budget: Budget): Result<Unit, AppException> {
-        lastUpdatedBudget = budget
-        emit(budget)
+    override suspend fun update(wallet: Wallet): Result<Unit, AppException> {
+        lastUpdatedWallet = wallet
+        emit(wallet)
         return Result.Success(Unit)
     }
 
-    override suspend fun getPendingBudgets(): Result<List<Budget>, AppException> {
+    override suspend fun getPendingBudgets(): Result<List<Wallet>, AppException> {
         return Result.Success(budgets.values.filter { it.syncStatus != SyncStatus.SYNCED })
     }
 
@@ -124,8 +124,8 @@ class FakeBudgetRepository : BudgetRepository {
         return Result.Success(Unit)
     }
 
-    override suspend fun syncFromServer(budgets: List<Budget>): Result<Unit, AppException> {
-        budgets.forEach { emit(it.copy(syncStatus = SyncStatus.SYNCED)) }
+    override suspend fun syncFromServer(wallets: List<Wallet>): Result<Unit, AppException> {
+        wallets.forEach { emit(it.copy(syncStatus = SyncStatus.SYNCED)) }
         return Result.Success(Unit)
     }
 }

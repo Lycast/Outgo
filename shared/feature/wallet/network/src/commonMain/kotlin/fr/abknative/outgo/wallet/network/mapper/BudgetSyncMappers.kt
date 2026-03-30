@@ -1,12 +1,12 @@
 package fr.abknative.outgo.wallet.network.mapper
 
 import fr.abknative.outgo.core.api.SyncStatus
-import fr.abknative.outgo.wallet.api.model.Budget
+import fr.abknative.outgo.wallet.api.model.Wallet
 import fr.abknative.outgo.wallet.network.dto.BudgetNetworkDto
 
 // Réseau -> Domaine (PULL)
-fun BudgetNetworkDto.toDomain(): Budget {
-    return Budget(
+fun BudgetNetworkDto.toDomain(): Wallet {
+    return Wallet(
         id = this.id,
         monthlyIncomeInCents = this.monthlyIncomeInCents,
         createdAt = this.createdAt,
@@ -16,7 +16,7 @@ fun BudgetNetworkDto.toDomain(): Budget {
 }
 
 // Domaine -> Réseau (PUSH)
-fun Budget.toNetworkDto(): BudgetNetworkDto {
+fun Wallet.toNetworkDto(): BudgetNetworkDto {
     return BudgetNetworkDto(
         id = this.id,
         monthlyIncomeInCents = this.monthlyIncomeInCents,

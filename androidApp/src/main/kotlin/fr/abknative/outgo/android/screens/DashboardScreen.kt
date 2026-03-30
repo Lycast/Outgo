@@ -15,8 +15,8 @@ import fr.abknative.outgo.android.ui.theme.AppTheme
 import fr.abknative.outgo.android.ui.toUIString
 import fr.abknative.outgo.dashboard.api.DashboardIntent
 import fr.abknative.outgo.dashboard.api.DashboardPresenter
-import fr.abknative.outgo.wallet.api.Recurrence
-import fr.abknative.outgo.wallet.api.model.Outgoing
+import fr.abknative.outgo.wallet.api.model.Operation
+import fr.abknative.outgo.wallet.api.model.Recurrence
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -33,18 +33,18 @@ fun DashboardScreen(
     var showFormSheet by remember { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
 
-    var selectedOutgoing by remember { mutableStateOf<Outgoing?>(null) }
+    var selectedOperation by remember { mutableStateOf<Operation?>(null) }
     var currentFilter by remember { mutableStateOf(OutgoingFilter.ALL) }
 
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     val formState = rememberOutgoingFormState(
-        outgoingId = selectedOutgoing?.id,
-        initialName = selectedOutgoing?.name ?: "",
-        initialAmount = selectedOutgoing?.amountInCents?.toBigDecimal()?.movePointLeft(2)?.toPlainString() ?: "",
-        initialRecurrence = selectedOutgoing?.recurrence ?: Recurrence.MONTHLY,
-        initialDueDay = selectedOutgoing?.dueDay?.toString() ?: "",
-        initialDueMonth = selectedOutgoing?.dueMonth?.toString() ?: ""
+        outgoingId = selectedOperation?.id,
+        initialName = selectedOperation?.name ?: "",
+        initialAmount = selectedOperation?.amountInCents?.toBigDecimal()?.movePointLeft(2)?.toPlainString() ?: "",
+        initialRecurrence = selectedOperation?.recurrence ?: Recurrence.MONTHLY,
+        initialDueDay = selectedOperation?.dueDay?.toString() ?: "",
+        initialDueMonth = selectedOperation?.dueMonth?.toString() ?: ""
     )
 
     val formattedSelectedMonth = getMonthName(state.selectedMonth)
@@ -52,22 +52,22 @@ fun DashboardScreen(
     val currentDay = state.currentDay ?: 0
     val currentMonth = state.currentMonth
     val selectedMonth = state.selectedMonth
-    val filteredList = remember(state.outgoings, currentFilter, currentDay, currentMonth, selectedMonth) {
+    val filteredList = remember(state.operations, currentFilter, currentDay, currentMonth, selectedMonth) {
         when (currentFilter) {
-            OutgoingFilter.ALL -> state.outgoings
+            OutgoingFilter.ALL -> state.operations
             OutgoingFilter.PAID -> {
                 when {
-                    selectedMonth < currentMonth -> state.outgoings
+                    selectedMonth < currentMonth -> state.operations
                     selectedMonth > currentMonth -> emptyList()
-                    else -> state.outgoings.filter { it.dueDay < currentDay }
+                    else -> state.operations.filter { it.dueDay < currentDay }
                 }
             }
 
             OutgoingFilter.REMAINING -> {
                 when {
                     selectedMonth < currentMonth -> emptyList()
-                    selectedMonth > currentMonth -> state.outgoings
-                    else -> state.outgoings.filter { it.dueDay >= currentDay }
+                    selectedMonth > currentMonth -> state.operations
+                    else -> state.operations.filter { it.dueDay >= currentDay }
                 }
             }
         }
@@ -108,7 +108,7 @@ fun DashboardScreen(
                 onSyncNavigationClick = { onNavigateToSettings() }
             )
         },
-        floatingActionButton = { AddActionTrigger(onClick = { selectedOutgoing = null; showFormSheet = true }) }
+        floatingActionButton = { AddActionTrigger(onClick = { selectedOperation = null; showFormSheet = true }) }
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -150,7 +150,7 @@ fun DashboardScreen(
                 currentFilter = currentFilter,
                 onDelete = { id -> presenter.onIntent(DashboardIntent.Delete(id)) },
                 onEdit = { outgoing ->
-                    selectedOutgoing = outgoing
+                    selectedOperation = outgoing
                     showFormSheet = true
                 },
                 modifier = Modifier.weight(1f)

@@ -1,0 +1,77 @@
+-- ==========================================
+-- ✍️ WRITE (Insert & Update)
+-- ==========================================
+
+insertOperation:
+INSERT INTO OperationEntity(
+    id, walletId, name, amountInCents, type, recurrence, startDate, endDate,
+    createdAt, updatedAt, deletedAt, syncStatus
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+updateOperation:
+UPDATE OperationEntity
+SET
+    walletId = ?,
+    name = ?,
+    amountInCents = ?,
+    type = ?,
+    recurrence = ?,
+    startDate = ?,
+    endDate = ?,
+    updatedAt = ?,
+    deletedAt = ?,
+    syncStatus = ?
+WHERE id = ?;
+
+-- ==========================================
+-- 📖 READ (Queries)
+-- ==========================================
+
+-- Le moteur temporel : Filtre sur la période active
+getOperationsByPeriod:
+SELECT * FROM OperationEntity
+WHERE deletedAt IS NULL
+  AND startDate <= :to
+  AND (endDate IS NULL OR endDate >= :from)
+ORDER BY startDate ASC;
+
+getOperationById:
+SELECT * FROM OperationEntity
+WHERE id = ?;
+
+-- ==========================================
+-- 🗑️ DELETE (Soft & Hard)
+-- ==========================================
+
+markAsDeleted:
+UPDATE OperationEntity
+SET deletedAt = ?, syncStatus = 'PENDING_DELETE', updatedAt = ?
+WHERE id = ?;
+
+-- INDISPENSABLE : Pour la suppression en cascade lors de la suppression d'un Wallet
+softDeleteByWalletId:
+UPDATE OperationEntity
+SET deletedAt = ?, syncStatus = 'PENDING_DELETE', updatedAt = ?
+WHERE walletId = ? AND deletedAt IS NULL;
+
+-- Sécurité : Supprime physiquement UNIQUEMENT si jamais envoyé au serveur
+hardDeletePendingCreate:
+DELETE FROM OperationEntity
+WHERE id = ? AND syncStatus = 'PENDING_CREATE';
+
+-- Purge totale (Bouton Danger Zone)
+deleteAll:
+DELETE FROM OperationEntity;
+
+-- ==========================================
+-- 🔄 SYNC (Engine)
+-- ==========================================
+
+getPendingOperations:
+SELECT * FROM OperationEntity
+WHERE syncStatus != 'SYNCED';
+
+updateSyncStatus:
+UPDATE OperationEntity
+SET syncStatus = ?
+WHERE id = ?;

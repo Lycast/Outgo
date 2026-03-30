@@ -1,0 +1,62 @@
+-- ==========================================
+-- ✍️ WRITE (Insert & Update)
+-- ==========================================
+
+insertWallet:
+INSERT INTO WalletEntity(id, name, createdAt, updatedAt, deletedAt, syncStatus)
+VALUES (?, ?, ?, ?, ?, ?);
+
+updateWallet:
+UPDATE WalletEntity
+SET name = ?,
+    updatedAt = ?,
+    deletedAt = ?,
+    syncStatus = ?
+WHERE id = ?;
+
+-- ==========================================
+-- 📖 READ (Queries)
+-- ==========================================
+
+getActiveWallets:
+SELECT * FROM WalletEntity
+WHERE deletedAt IS NULL;
+
+getActiveWalletById:
+SELECT * FROM WalletEntity
+WHERE id = ? AND deletedAt IS NULL;
+
+getWalletById:
+SELECT * FROM WalletEntity
+WHERE id = ?;
+
+-- ==========================================
+-- 🗑️ DELETE (Soft & Hard)
+-- ==========================================
+
+markAsDeleted:
+UPDATE WalletEntity
+SET deletedAt = ?, syncStatus = 'PENDING_DELETE', updatedAt = ?
+WHERE id = ?;
+
+-- Sécurité : Supprime physiquement UNIQUEMENT si jamais envoyé au serveur
+hardDeletePendingCreate:
+DELETE FROM WalletEntity
+WHERE id = ? AND syncStatus = 'PENDING_CREATE';
+
+-- Purge totale (Bouton Danger Zone)
+deleteAll:
+DELETE FROM WalletEntity;
+
+-- ==========================================
+-- 🔄 SYNC (Engine)
+-- ==========================================
+
+getPendingWallets:
+SELECT * FROM WalletEntity
+WHERE syncStatus != 'SYNCED';
+
+updateSyncStatus:
+UPDATE WalletEntity
+SET syncStatus = ?
+WHERE id = ?;

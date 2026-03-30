@@ -2,7 +2,7 @@ package fr.abknative.outgo.wallet.impl
 
 import fr.abknative.outgo.core.api.SyncStatus
 import fr.abknative.outgo.core.api.logs.Result
-import fr.abknative.outgo.wallet.api.model.Budget
+import fr.abknative.outgo.wallet.api.model.Wallet
 import fr.abknative.outgo.wallet.impl.mock.FakeBudgetRepository
 import fr.abknative.outgo.wallet.impl.mock.FakeTimeProvider
 import fr.abknative.outgo.wallet.impl.usecase.UpdateIncomeUseCaseImpl
@@ -25,7 +25,7 @@ class UpdateIncomeUseCaseTest {
         val result = useCase(amountInCents = 1500_00, budgetId = "default")
 
         result.shouldBeInstanceOf<Result.Success<Unit>>()
-        val inserted = repository.lastInsertedBudget
+        val inserted = repository.lastInsertedWallet
         inserted?.monthlyIncomeInCents shouldBe 1500_00
         inserted?.syncStatus shouldBe SyncStatus.PENDING_CREATE
         inserted?.updatedAt shouldBe 12345L
@@ -34,12 +34,12 @@ class UpdateIncomeUseCaseTest {
     @Test
     fun `should update existing budget when it already exists`() = runTest {
         // État initial : un budget existe déjà
-        repository.emit(Budget(id = "default", monthlyIncomeInCents = 1000_00, createdAt = 0, updatedAt = 0))
+        repository.emit(Wallet(id = "default", monthlyIncomeInCents = 1000_00, createdAt = 0, updatedAt = 0))
 
         val result = useCase(amountInCents = 2000_00, budgetId = "default")
 
         result.shouldBeInstanceOf<Result.Success<Unit>>()
-        repository.lastUpdatedBudget?.monthlyIncomeInCents shouldBe 2000_00
+        repository.lastUpdatedWallet?.monthlyIncomeInCents shouldBe 2000_00
     }
 
     @Test

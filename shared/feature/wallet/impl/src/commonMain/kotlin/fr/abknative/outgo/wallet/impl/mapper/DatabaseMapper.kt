@@ -1,34 +1,34 @@
 package fr.abknative.outgo.wallet.impl.mapper
 
+
 import fr.abknative.outgo.core.api.SyncStatus
-import fr.abknative.outgo.database.BudgetEntity
-import fr.abknative.outgo.database.OutgoingEntity
-import fr.abknative.outgo.wallet.api.mapToRecurrence
-import fr.abknative.outgo.wallet.api.model.Budget
-import fr.abknative.outgo.wallet.api.model.Outgoing
+import fr.abknative.outgo.database.OperationEntity
+import fr.abknative.outgo.database.WalletEntity
+import fr.abknative.outgo.wallet.api.model.Operation
+import fr.abknative.outgo.wallet.api.model.OperationType
+import fr.abknative.outgo.wallet.api.model.Recurrence
+import fr.abknative.outgo.wallet.api.model.Wallet
 
-internal fun OutgoingEntity.toDomain(): Outgoing {
-    return Outgoing(
-        id = this.id,
-        budgetId = this.budgetId,
-        name = this.name,
-        amountInCents = this.amountInCents,
-        recurrence = mapToRecurrence(this.recurrence),
-        dueDay = this.dueDay.toInt(),
-        dueMonth = this.dueMonth?.toInt(),
-        createdAt = this.createdAt,
-        updatedAt = this.updatedAt,
-        isDeleted = this.isDeleted == 1L,
-        syncStatus = SyncStatus.entries.find { it.name == this.syncStatus } ?: SyncStatus.UNKNOWN
-    )
-}
+internal fun OperationEntity.toDomain(): Operation = Operation(
+    id = id,
+    walletId = walletId,
+    name = name,
+    amountInCents = amountInCents,
+    type = OperationType.fromString(type),
+    recurrence = Recurrence.fromString(recurrence),
+    startDate = startDate,
+    endDate = endDate,
+    createdAt = createdAt,
+    updatedAt = updatedAt,
+    deletedAt = deletedAt,
+    syncStatus = SyncStatus.fromString(syncStatus)
+)
 
-internal fun BudgetEntity.toDomain(): Budget {
-    return Budget(
-        id = this.id,
-        monthlyIncomeInCents = this.monthlyIncomeInCents,
-        createdAt = this.createdAt,
-        updatedAt = this.updatedAt,
-        syncStatus = SyncStatus.entries.find { it.name == this.syncStatus } ?: SyncStatus.UNKNOWN
-    )
-}
+internal fun WalletEntity.toDomain(): Wallet = Wallet(
+    id = id,
+    name = name,
+    createdAt = createdAt,
+    updatedAt = updatedAt,
+    deletedAt = deletedAt,
+    syncStatus = SyncStatus.fromString(syncStatus)
+)

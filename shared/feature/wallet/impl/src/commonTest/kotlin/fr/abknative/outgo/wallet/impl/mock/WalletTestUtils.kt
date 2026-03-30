@@ -1,8 +1,8 @@
 package fr.abknative.outgo.wallet.impl.mock
 
 import fr.abknative.outgo.core.api.SyncStatus
-import fr.abknative.outgo.wallet.api.Recurrence
-import fr.abknative.outgo.wallet.api.model.Outgoing
+import fr.abknative.outgo.wallet.api.model.Operation
+import fr.abknative.outgo.wallet.api.model.Recurrence
 
 fun createOutgoing(
     id: String = "id-test",
@@ -10,7 +10,7 @@ fun createOutgoing(
     amount: Long = 1000,
     dueDay: Int = 10,
     syncStatus: SyncStatus = SyncStatus.PENDING_CREATE
-) = Outgoing(
+) = Operation(
     id = id,
     budgetId = "default",
     name = name,

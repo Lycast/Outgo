@@ -2,7 +2,9 @@ package fr.abknative.outgo.core.impl.di
 
 import fr.abknative.outgo.auth.api.repository.AuthRepository
 import fr.abknative.outgo.core.api.AppDispatchers
+import fr.abknative.outgo.core.api.IdProvider
 import fr.abknative.outgo.core.api.TimeProvider
+import fr.abknative.outgo.core.impl.RealIdProvider
 import fr.abknative.outgo.core.impl.RealTimeProvider
 import fr.abknative.outgo.core.impl.StandardDispatchers
 import io.ktor.client.*
@@ -22,6 +24,7 @@ import org.koin.dsl.module
 fun commonCoreModule() = module {
     singleOf(::RealTimeProvider) { bind<TimeProvider>() }
     singleOf(::StandardDispatchers) { bind<AppDispatchers>() }
+    singleOf(::RealIdProvider) { bind<IdProvider>() }
 
     single {
 

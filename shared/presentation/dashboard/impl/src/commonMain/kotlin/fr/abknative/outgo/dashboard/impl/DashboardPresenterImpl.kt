@@ -18,10 +18,10 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 
 internal class DashboardPresenterImpl(
-    private val observeActiveOutgoings: ObserveActiveOutgoingsUseCase,
-    private val saveOutgoing: SaveOutgoingUseCase,
-    private val deleteOutgoing: DeleteOutgoingUseCase,
-    private val calculateTotalOutgoings: CalculateTotalOutgoingsUseCase,
+    private val observeActiveOutgoings: ObserveActiveOperationsUseCase,
+    private val saveOutgoing: SaveOperationUseCase,
+    private val deleteOutgoing: DeleteOperationUseCase,
+    private val calculateTotalOutgoings: CalculateTotalExpensesUseCase,
     private val calculateRemainingToPay: CalculateRemainingToPayUseCase,
     private val calculateDisposableIncome: CalculateDisposableIncomeUseCase,
     private val observeUserSession: ObserveUserSessionUseCase,
@@ -93,7 +93,7 @@ internal class DashboardPresenterImpl(
 
                 _state.update {
                     it.copy(
-                        outgoings = outgoings,
+                        operations = outgoings,
                         totalOutgoingsInCents = total,
                         remainingToPayInCents = remaining,
                         disposableIncomeInCents = disposable,

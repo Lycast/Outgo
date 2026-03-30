@@ -18,10 +18,10 @@ val walletModule = module {
     singleOf(::BudgetRepositoryImpl) { bind<BudgetRepository>() }
 
     // --- UseCases (Factories) ---
-    factoryOf(::SaveOutgoingUseCaseImpl) { bind<SaveOutgoingUseCase>() }
-    factoryOf(::DeleteOutgoingUseCaseImpl) { bind<DeleteOutgoingUseCase>() }
-    factoryOf(::ObserveActiveOutgoingsUseCaseImpl) { bind<ObserveActiveOutgoingsUseCase>() }
-    factoryOf(::CalculateTotalOutgoingsUseCaseImpl) { bind<CalculateTotalOutgoingsUseCase>() }
+    factoryOf(::SaveOperationUseCaseImpl) { bind<SaveOperationUseCase>() }
+    factoryOf(::DeleteOperationUseCaseImpl) { bind<DeleteOperationUseCase>() }
+    factoryOf(::ObserveActiveOperationsUseCaseImpl) { bind<ObserveActiveOperationsUseCase>() }
+    factoryOf(::CalculateTotalExpensesUseCaseImpl) { bind<CalculateTotalExpensesUseCase>() }
     factoryOf(::CalculateRemainingToPayUseCaseImpl) { bind<CalculateRemainingToPayUseCase>() }
     factoryOf(::CalculateDisposableIncomeUseCaseImpl) { bind<CalculateDisposableIncomeUseCase>() }
     factoryOf(::UpdateIncomeUseCaseImpl) { bind<UpdateIncomeUseCase>() }

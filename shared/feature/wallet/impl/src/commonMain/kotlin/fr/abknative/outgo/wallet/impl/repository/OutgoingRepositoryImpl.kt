@@ -7,7 +7,7 @@ import fr.abknative.outgo.core.api.SyncStatus
 import fr.abknative.outgo.core.api.TimeProvider
 import fr.abknative.outgo.core.api.logs.*
 import fr.abknative.outgo.database.OutgoDatabase
-import fr.abknative.outgo.wallet.api.model.Outgoing
+import fr.abknative.outgo.wallet.api.model.Operation
 import fr.abknative.outgo.wallet.api.repository.OutgoingRepository
 import fr.abknative.outgo.wallet.impl.mapper.toDomain
 import kotlinx.coroutines.flow.Flow
@@ -29,7 +29,7 @@ internal class OutgoingRepositoryImpl(
     private val queries = database.outgoingQueries
     private val tag = "OutgoingLocalRepo"
 
-    override fun observeOutgoingsByMonth(month: Int): Flow<List<Outgoing>> {
+    override fun observeOutgoingsByMonth(month: Int): Flow<List<Operation>> {
         return queries.getOutgoingsByMonth(currentMonth = month.toLong())
             .asFlow()
             .mapToList(dispatchers.io)
@@ -37,46 +37,46 @@ internal class OutgoingRepositoryImpl(
             .distinctUntilChanged()
     }
 
-    override suspend fun insert(outgoing: Outgoing): Result<Unit, AppException> = asResult(
+    override suspend fun insert(operation: Operation): Result<Unit, AppException> = asResult(
         onError = {
-            AppLogger.get()?.e(tag, "Failed to insert outgoing: ${outgoing.id}", it)
+            AppLogger.get()?.e(tag, "Failed to insert outgoing: ${operation.id}", it)
             CommonError.DatabaseError(it)
         }
     ) {
         queries.transaction {
             queries.insertOutgoing(
-                id = outgoing.id,
-                budgetId = outgoing.budgetId,
-                name = outgoing.name,
-                amountInCents = outgoing.amountInCents,
-                recurrence = outgoing.recurrence.name,
-                dueDay = outgoing.dueDay.toLong(),
-                dueMonth = outgoing.dueMonth?.toLong(),
-                createdAt = outgoing.createdAt,
-                updatedAt = outgoing.updatedAt,
-                isDeleted = if (outgoing.isDeleted) 1L else 0L,
-                syncStatus = outgoing.syncStatus.name
+                id = operation.id,
+                budgetId = operation.budgetId,
+                name = operation.name,
+                amountInCents = operation.amountInCents,
+                recurrence = operation.recurrence.name,
+                dueDay = operation.dueDay.toLong(),
+                dueMonth = operation.dueMonth?.toLong(),
+                createdAt = operation.createdAt,
+                updatedAt = operation.updatedAt,
+                isDeleted = if (operation.isDeleted) 1L else 0L,
+                syncStatus = operation.syncStatus.name
             )
         }
     }
 
-    override suspend fun update(outgoing: Outgoing): Result<Unit, AppException> = asResult(
+    override suspend fun update(operation: Operation): Result<Unit, AppException> = asResult(
         onError = {
-            AppLogger.get()?.e(tag, "Failed to update outgoing: ${outgoing.id}", it)
+            AppLogger.get()?.e(tag, "Failed to update outgoing: ${operation.id}", it)
             CommonError.DatabaseError(it)
         }
     ) {
         queries.transaction {
             queries.updateOutgoing(
-                name = outgoing.name,
-                amountInCents = outgoing.amountInCents,
-                recurrence = outgoing.recurrence.name,
-                dueDay = outgoing.dueDay.toLong(),
-                dueMonth = outgoing.dueMonth?.toLong(),
-                updatedAt = outgoing.updatedAt,
-                isDeleted = if (outgoing.isDeleted) 1L else 0L,
-                syncStatus = outgoing.syncStatus.name,
-                id = outgoing.id
+                name = operation.name,
+                amountInCents = operation.amountInCents,
+                recurrence = operation.recurrence.name,
+                dueDay = operation.dueDay.toLong(),
+                dueMonth = operation.dueMonth?.toLong(),
+                updatedAt = operation.updatedAt,
+                isDeleted = if (operation.isDeleted) 1L else 0L,
+                syncStatus = operation.syncStatus.name,
+                id = operation.id
             )
         }
     }
@@ -101,7 +101,7 @@ internal class OutgoingRepositoryImpl(
         }
     }
 
-    override suspend fun getPendingOutgoings(): Result<List<Outgoing>, AppException> = asResult(
+    override suspend fun getPendingOutgoings(): Result<List<Operation>, AppException> = asResult(
         onError = {
             AppLogger.get()?.e(tag, "Failed to fetch pending outgoings", it)
             CommonError.DatabaseError(it)
@@ -122,14 +122,14 @@ internal class OutgoingRepositoryImpl(
         queries.updateSyncStatus(syncStatus = status.name, id = id)
     }
 
-    override suspend fun syncFromServer(outgoings: List<Outgoing>): Result<Unit, AppException> = asResult(
+    override suspend fun syncFromServer(operations: List<Operation>): Result<Unit, AppException> = asResult(
         onError = {
-            AppLogger.get()?.e(tag, "Failed to sync ${outgoings.size} outgoings from server", it)
+            AppLogger.get()?.e(tag, "Failed to sync ${operations.size} outgoings from server", it)
             CommonError.DatabaseError(it)
         }
     ) {
         queries.transaction {
-            outgoings.forEach { remote ->
+            operations.forEach { remote ->
                 val exists = queries.getById(remote.id).executeAsOneOrNull() != null
 
                 if (exists) {
@@ -163,7 +163,7 @@ internal class OutgoingRepositoryImpl(
         }
     }
 
-    override suspend fun getOutgoingById(id: String): Outgoing? {
+    override suspend fun getOutgoingById(id: String): Operation? {
         return queries.getById(id).executeAsOneOrNull()?.toDomain()
     }
 }

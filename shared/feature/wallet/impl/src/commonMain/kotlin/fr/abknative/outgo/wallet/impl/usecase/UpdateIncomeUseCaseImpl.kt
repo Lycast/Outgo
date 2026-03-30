@@ -4,9 +4,8 @@ import fr.abknative.outgo.core.api.SyncStatus
 import fr.abknative.outgo.core.api.TimeProvider
 import fr.abknative.outgo.core.api.logs.AppException
 import fr.abknative.outgo.core.api.logs.Result
-import fr.abknative.outgo.wallet.api.model.Budget
+import fr.abknative.outgo.wallet.api.model.Wallet
 import fr.abknative.outgo.wallet.api.repository.BudgetRepository
-import fr.abknative.outgo.wallet.api.usecase.UpdateIncomeUseCase
 
 
 internal class UpdateIncomeUseCaseImpl(
@@ -21,14 +20,14 @@ internal class UpdateIncomeUseCaseImpl(
                 val currentTime = timeProvider.now()
 
                 if (existing == null) {
-                    val newBudget = Budget(
+                    val newWallet = Wallet(
                         id = budgetId,
                         monthlyIncomeInCents = amountInCents,
                         createdAt = currentTime,
                         updatedAt = currentTime,
                         syncStatus = SyncStatus.PENDING_CREATE
                     )
-                    repository.insert(newBudget)
+                    repository.insert(newWallet)
                 } else {
                     val newStatus = if (existing.syncStatus == SyncStatus.SYNCED) {
                         SyncStatus.PENDING_UPDATE

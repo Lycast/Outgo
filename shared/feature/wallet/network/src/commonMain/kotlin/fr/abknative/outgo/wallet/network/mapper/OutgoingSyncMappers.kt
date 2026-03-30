@@ -1,13 +1,13 @@
 package fr.abknative.outgo.wallet.network.mapper
 
 import fr.abknative.outgo.core.api.SyncStatus
-import fr.abknative.outgo.wallet.api.mapToRecurrence
-import fr.abknative.outgo.wallet.api.model.Outgoing
+import fr.abknative.outgo.wallet.api.model.Operation
+import fr.abknative.outgo.wallet.api.model.mapToRecurrence
 import fr.abknative.outgo.wallet.network.dto.OutgoingNetworkDto
 
 // Réseau -> Domaine (PULL)
-fun OutgoingNetworkDto.toDomain(): Outgoing {
-    return Outgoing(
+fun OutgoingNetworkDto.toDomain(): Operation {
+    return Operation(
         id = this.id,
         budgetId = this.budgetId,
         name = this.name,
@@ -23,7 +23,7 @@ fun OutgoingNetworkDto.toDomain(): Outgoing {
 }
 
 // Domaine -> Réseau (PUSH)
-fun Outgoing.toNetworkDto(): OutgoingNetworkDto {
+fun Operation.toNetworkDto(): OutgoingNetworkDto {
     return OutgoingNetworkDto(
         id = this.id,
         budgetId = this.budgetId,

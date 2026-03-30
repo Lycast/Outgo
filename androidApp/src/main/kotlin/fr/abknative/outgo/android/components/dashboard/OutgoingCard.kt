@@ -28,13 +28,13 @@ import fr.abknative.outgo.android.ui.theme.AppTheme
 import fr.abknative.outgo.android.ui.theme.OutgoTheme
 import fr.abknative.outgo.android.ui.theme.toColor
 import fr.abknative.outgo.core.api.SyncStatus
-import fr.abknative.outgo.wallet.api.Recurrence
-import fr.abknative.outgo.wallet.api.model.Outgoing
+import fr.abknative.outgo.wallet.api.model.Operation
+import fr.abknative.outgo.wallet.api.model.Recurrence
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun OutgoingCard(
-    outgoing: Outgoing,
+    operation: Operation,
     onEdit: () -> Unit,
     onDelete: () -> Unit,
     onDuplicate: () -> Unit,
@@ -85,7 +85,7 @@ fun OutgoingCard(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = outgoing.uiTitle,
+                        text = operation.uiTitle,
                         style = AppTheme.typo.body,
                         color = AppTheme.colors.textPrimary.toColor(),
                         maxLines = 1,
@@ -103,14 +103,14 @@ fun OutgoingCard(
                     // Date et récurrence
                     Row(horizontalArrangement = Arrangement.End,) {
                         Text(
-                            text = "${outgoing.uiDueDayLabel} • ",
+                            text = "${operation.uiDueDayLabel} • ",
                             style = AppTheme.typo.caption,
                             color = AppTheme.colors.textSecondary.toColor()
                         )
                         Text(
-                            text = outgoing.uiFrequencySummary,
+                            text = operation.uiFrequencySummary,
                             style = AppTheme.typo.caption,
-                            color = outgoing.recurrence.uiRecurrenceColor.copy(0.7f)
+                            color = operation.recurrence.uiRecurrenceColor.copy(0.7f)
                         )
                     }
 
@@ -118,7 +118,7 @@ fun OutgoingCard(
 
                     // Montant de la dépense
                     Text(
-                        text = outgoing.amountInCents.uiAmount,
+                        text = operation.amountInCents.uiAmount,
                         style = AppTheme.typo.body,
                         color = AppTheme.colors.secondary.toColor(),
                         maxLines = 1,
@@ -213,7 +213,7 @@ fun OutgoingCard(
 @Preview(showBackground = true)
 @Composable
 fun PreviewOutgoingCard_LargeAmount() {
-    val mockOutgoing = Outgoing(
+    val mockOperation = Operation(
         id = "1",
         name = "Achat d'une île privée au soleil",
         amountInCents = 1250000000000L, // 12,5 Milliard
@@ -228,7 +228,7 @@ fun PreviewOutgoingCard_LargeAmount() {
     OutgoTheme {
         Column(Modifier.padding(16.dp)) {
             OutgoingCard(
-                outgoing = mockOutgoing,
+                operation = mockOperation,
                 onEdit = {},
                 onDelete = {},
                 onDuplicate = {}
@@ -240,7 +240,7 @@ fun PreviewOutgoingCard_LargeAmount() {
 @Preview(showBackground = true)
 @Composable
 fun PreviewOutgoingCard_Expanded() {
-    val mockOutgoing = Outgoing(
+    val mockOperation = Operation(
         id = "2",
         name = "Netflix",
         amountInCents = 1999L,
@@ -254,7 +254,7 @@ fun PreviewOutgoingCard_Expanded() {
     OutgoTheme {
         // On peut tester l'état déplié en cliquant dessus dans l'onglet "Interactive" d'Android Studio
         OutgoingCard(
-            outgoing = mockOutgoing,
+            operation = mockOperation,
             onEdit = {},
             onDelete = {},
             onDuplicate = {}

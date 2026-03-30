@@ -6,8 +6,8 @@ import fr.abknative.outgo.android.ui.CommonLabels
 import fr.abknative.outgo.android.ui.DashboardLabels
 import fr.abknative.outgo.android.ui.FormLabels
 import fr.abknative.outgo.core.ui.ColorPalette
-import fr.abknative.outgo.wallet.api.Recurrence
-import fr.abknative.outgo.wallet.api.model.Outgoing
+import fr.abknative.outgo.wallet.api.model.Operation
+import fr.abknative.outgo.wallet.api.model.Recurrence
 import kotlin.math.absoluteValue
 
 // --- Formatage de la Monnaie ---
@@ -40,10 +40,10 @@ val Recurrence.uiRecurrenceColor: Color
     }
 
 // --- 3. L'Entité Outgoing ---
-val Outgoing.uiTitle: String
+val Operation.uiTitle: String
     @Composable get() = this.name.ifBlank { DashboardLabels.DEFAULT_NAME }
 
-val Outgoing.uiDueDayLabel: String
+val Operation.uiDueDayLabel: String
     @Composable get() = if (this.recurrence == Recurrence.YEARLY && this.dueMonth != null) {
         val monthLabel = getMonthName(this.dueMonth!!)
         "${DashboardLabels.DUE_PREFIX} $dueDay $monthLabel"
@@ -51,7 +51,7 @@ val Outgoing.uiDueDayLabel: String
         "${DashboardLabels.DUE_PREFIX} $dueDay"
     }
 
-val Outgoing.uiFrequencySummary: String
+val Operation.uiFrequencySummary: String
     @Composable get() = when (this.recurrence) {
         Recurrence.MONTHLY -> FormLabels.CYCLE_MONTHLY
         Recurrence.YEARLY -> FormLabels.CYCLE_YEARLY

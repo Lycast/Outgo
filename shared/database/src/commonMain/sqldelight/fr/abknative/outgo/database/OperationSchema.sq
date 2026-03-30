@@ -1,0 +1,20 @@
+CREATE TABLE OperationEntity (
+    id TEXT NOT NULL PRIMARY KEY,
+    walletId TEXT NOT NULL,
+    name TEXT NOT NULL,
+    amountInCents INTEGER NOT NULL,
+    type TEXT NOT NULL,
+    recurrence TEXT NOT NULL,
+
+    -- Moteur temporel
+    startDate INTEGER NOT NULL,
+    endDate INTEGER,
+
+    -- Métadonnées
+    createdAt INTEGER NOT NULL,
+    updatedAt INTEGER NOT NULL,
+    deletedAt INTEGER,
+    syncStatus TEXT NOT NULL,
+
+    FOREIGN KEY (walletId) REFERENCES WalletEntity(id) ON DELETE CASCADE
+);

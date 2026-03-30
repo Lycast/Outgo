@@ -3,7 +3,7 @@ package fr.abknative.outgo.dashboard.impl
 import fr.abknative.outgo.auth.api.usecase.ObserveUserSessionUseCase
 import fr.abknative.outgo.dashboard.api.DashboardIntent
 import fr.abknative.outgo.dashboard.impl.mock.*
-import fr.abknative.outgo.wallet.api.model.Budget
+import fr.abknative.outgo.wallet.api.model.Wallet
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -24,10 +24,10 @@ class DashboardPresenterTest {
     private val storage = FakeKeyValueStorage()
     private val budgetRepository = FakeBudgetRepository()
     private val authRepository = FakeAuthRepository()
-    private val observeActiveOutgoings = FakeObserveActiveOutgoingsUseCase()
-    private val saveOutgoing = FakeSaveOutgoingUseCase()
-    private val deleteOutgoing = FakeDeleteOutgoingUseCase()
-    private val calculateTotalOutgoings = FakeCalculateTotalOutgoingsUseCase()
+    private val observeActiveOutgoings = FakeObserveActiveOperationsUseCase()
+    private val saveOutgoing = FakeSaveOperationUseCase()
+    private val deleteOutgoing = FakeDeleteOperationUseCase()
+    private val calculateTotalOutgoings = FakeCalculateTotalExpensesUseCase()
     private val calculateRemainingToPay = FakeCalculateRemainingToPayUseCase()
     private val calculateDisposableIncome = FakeCalculateDisposableIncomeUseCase()
     private val updateIncome = FakeUpdateIncomeUseCase()
@@ -65,7 +65,7 @@ class DashboardPresenterTest {
 
     @Test
     fun `should map calculated usecases data to state`() = runTest {
-        budgetRepository.emit(Budget(id = "default", monthlyIncomeInCents = 3000_00, createdAt = 0, updatedAt = 0))
+        budgetRepository.emit(Wallet(id = "default", monthlyIncomeInCents = 3000_00, createdAt = 0, updatedAt = 0))
         calculateTotalOutgoings.totalToReturn = 1000_00
         calculateRemainingToPay.remainingToReturn = 500_00
         calculateDisposableIncome.disposableToReturn = 2000_00

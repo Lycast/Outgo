@@ -1,6 +1,6 @@
 package fr.abknative.outgo.dashboard.api
 
-import fr.abknative.outgo.wallet.api.Recurrence
+import fr.abknative.outgo.wallet.api.model.Recurrence
 
 /**
  * Represents all possible user actions (intents) triggered from the Outgoing UI.

@@ -5,17 +5,17 @@ import fr.abknative.outgo.core.api.TimeProvider
 import fr.abknative.outgo.core.api.logs.AppException
 import fr.abknative.outgo.core.api.logs.Result
 import fr.abknative.outgo.wallet.api.OutgoingError
-import fr.abknative.outgo.wallet.api.Recurrence
-import fr.abknative.outgo.wallet.api.model.Outgoing
+import fr.abknative.outgo.wallet.api.model.Operation
+import fr.abknative.outgo.wallet.api.model.Recurrence
 import fr.abknative.outgo.wallet.api.repository.OutgoingRepository
-import fr.abknative.outgo.wallet.api.usecase.SaveOutgoingUseCase
+import fr.abknative.outgo.wallet.api.usecase.SaveOperationUseCase
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
-internal class SaveOutgoingUseCaseImpl(
+internal class SaveOperationUseCaseImpl(
     private val repository: OutgoingRepository,
     private val timeProvider: TimeProvider
-) : SaveOutgoingUseCase {
+) : SaveOperationUseCase {
 
     /**
      * Implementation details:
@@ -61,7 +61,7 @@ internal class SaveOutgoingUseCaseImpl(
             else -> SyncStatus.PENDING_UPDATE
         }
 
-        val outgoing = Outgoing(
+        val operation = Operation(
             id = finalId,
             name = name.trim(),
             amountInCents = amountInCents,
@@ -75,9 +75,9 @@ internal class SaveOutgoingUseCaseImpl(
         )
 
         return if (existingOutgoing == null) {
-            repository.insert(outgoing)
+            repository.insert(operation)
         } else {
-            repository.update(outgoing)
+            repository.update(operation)
         }
     }
 }

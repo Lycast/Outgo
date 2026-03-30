@@ -3,7 +3,7 @@ package fr.abknative.outgo.wallet.api.repository
 import fr.abknative.outgo.core.api.SyncStatus
 import fr.abknative.outgo.core.api.logs.AppException
 import fr.abknative.outgo.core.api.logs.Result
-import fr.abknative.outgo.wallet.api.model.Outgoing
+import fr.abknative.outgo.wallet.api.model.Operation
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -20,33 +20,33 @@ interface OutgoingRepository {
      * excluding records marked as deleted.
      *
      * @param month The target month (e.g., 1 for January, 12 for December).
-     * @return A [Flow] emitting the list of active [Outgoing] expenses.
+     * @return A [Flow] emitting the list of active [Operation] expenses.
      */
-    fun observeOutgoingsByMonth(month: Int): Flow<List<Outgoing>>
+    fun observeOutgoingsByMonth(month: Int): Flow<List<Operation>>
 
     /**
      * Retrieves a specific outgoing expense by its unique identifier.
      *
      * @param id The unique identifier of the expense.
-     * @return The [Outgoing] if found, or null otherwise.
+     * @return The [Operation] if found, or null otherwise.
      */
-    suspend fun getOutgoingById(id: String): Outgoing?
+    suspend fun getOutgoingById(id: String): Operation?
 
     /**
      * Inserts a new outgoing expense. Fails if the ID already exists.
      *
-     * @param outgoing The [Outgoing] to insert.
+     * @param operation The [Operation] to insert.
      * @return A [Result] indicating success or an [AppException] on failure.
      */
-    suspend fun insert(outgoing: Outgoing): Result<Unit, AppException>
+    suspend fun insert(operation: Operation): Result<Unit, AppException>
 
     /**
      * Updates an existing outgoing expense.
      *
-     * @param outgoing The [Outgoing] containing updated values.
+     * @param operation The [Operation] containing updated values.
      * @return A [Result] indicating success or an [AppException] on failure.
      */
-    suspend fun update(outgoing: Outgoing): Result<Unit, AppException>
+    suspend fun update(operation: Operation): Result<Unit, AppException>
 
     /**
      * Performs a logical (soft) deletion of an outgoing expense.
@@ -63,7 +63,7 @@ interface OutgoingRepository {
      * This includes items marked as PENDING_CREATE, PENDING_UPDATE, or PENDING_DELETE.
      * Used by the sync engine to collect data for the 'Push' operation.
      */
-    suspend fun getPendingOutgoings(): Result<List<Outgoing>, AppException>
+    suspend fun getPendingOutgoings(): Result<List<Operation>, AppException>
 
     /**
      * Updates the synchronization status of a specific outgoing expense identified by its [id].
@@ -77,5 +77,5 @@ interface OutgoingRepository {
      * Handles conflict resolution and ensures the local state matches the server's
      * source of truth during the 'Pull' operation.
      */
-    suspend fun syncFromServer(outgoings: List<Outgoing>): Result<Unit, AppException>
+    suspend fun syncFromServer(operations: List<Operation>): Result<Unit, AppException>
 }
