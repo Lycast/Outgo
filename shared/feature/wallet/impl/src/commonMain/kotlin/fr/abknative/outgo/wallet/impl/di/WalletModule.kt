@@ -6,6 +6,8 @@ import fr.abknative.outgo.wallet.api.usecase.*
 import fr.abknative.outgo.wallet.impl.repository.OperationRepositoryImpl
 import fr.abknative.outgo.wallet.impl.repository.WalletRepositoryImpl
 import fr.abknative.outgo.wallet.impl.usecase.*
+import fr.abknative.outgo.wallet.impl.usecase.engine.SimpleSumEngine
+import fr.abknative.outgo.wallet.impl.usecase.engine.TimelineEngine
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
@@ -17,6 +19,10 @@ val walletModule = module {
     singleOf(::OperationRepositoryImpl) { bind<OperationRepository>() }
     singleOf(::WalletRepositoryImpl) { bind<WalletRepository>() }
 
+    // --- Engines (Stratégies) ---
+    factoryOf(::SimpleSumEngine)
+    factoryOf(::TimelineEngine)
+
     // --- UseCases Wallet ---
     factoryOf(::SaveWalletUseCaseImpl) { bind<SaveWalletUseCase>() }
     factoryOf(::DeleteWalletUseCaseImpl) { bind<DeleteWalletUseCase>() }
@@ -27,6 +33,6 @@ val walletModule = module {
     factoryOf(::DeleteOperationUseCaseImpl) { bind<DeleteOperationUseCase>() }
     factoryOf(::ObserveActiveOperationsUseCaseImpl) { bind<ObserveActiveOperationsUseCase>() }
 
-    // --- Dashboard Data ---
+    // --- Dashboard Engine Rooter ---
     factoryOf(::CalculateDashboardDataUseCaseImpl) { bind<CalculateDashboardDataUseCase>() }
 }
