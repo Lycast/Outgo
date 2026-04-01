@@ -41,4 +41,22 @@ class IosKeyValueStorage : KeyValueStorage {
     override fun remove(key: String) {
         defaults.removeObjectForKey(key)
     }
+
+    /**
+     * Clears all key-value pairs stored in the application's default domain.
+     * Removes the persistent domain associated with the main bundle identifier.
+     */
+    override fun clearAll() {
+        val bundleIdentifier = platform.Foundation.NSBundle.mainBundle.bundleIdentifier
+        if (bundleIdentifier != null) {
+            defaults.removePersistentDomainForName(bundleIdentifier)
+        } else {
+            val dictionary = defaults.dictionaryRepresentation()
+            dictionary.keys.forEach { key: Any? ->
+                if (key is String) {
+                    defaults.removeObjectForKey(key)
+                }
+            }
+        }
+    }
 }

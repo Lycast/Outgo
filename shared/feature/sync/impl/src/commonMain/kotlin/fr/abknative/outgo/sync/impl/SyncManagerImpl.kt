@@ -2,10 +2,10 @@ package fr.abknative.outgo.sync.impl
 
 import fr.abknative.outgo.core.api.KeyValueStorage
 import fr.abknative.outgo.core.api.NetworkMonitor
-import fr.abknative.outgo.core.api.SyncStatus
 import fr.abknative.outgo.core.api.logs.AppException
 import fr.abknative.outgo.core.api.logs.AppLogger
 import fr.abknative.outgo.core.api.logs.Result
+import fr.abknative.outgo.core.api.model.SyncStatus
 import fr.abknative.outgo.sync.api.SyncManager
 import fr.abknative.outgo.sync.api.SyncNetworkApi
 import fr.abknative.outgo.wallet.api.repository.OperationRepository

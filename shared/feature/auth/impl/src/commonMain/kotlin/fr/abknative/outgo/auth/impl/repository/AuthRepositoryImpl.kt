@@ -78,4 +78,19 @@ internal class AuthRepositoryImpl(
         storage.putString(KEY_TOKEN, session.token)
         storage.putString(KEY_EMAIL, session.email)
     }
+
+    override suspend fun deleteAccount(): Result<Unit, AppException> = asResult(
+        onError = {
+            AppLogger.get()?.e(TAG, "Account deletion failed", it)
+            it as? AppException ?: CommonError.UnknownError(it)
+        }
+    ) {
+        delay(1000.milliseconds)
+
+        storage.remove(KEY_USER_ID)
+        storage.remove(KEY_TOKEN)
+        storage.remove(KEY_EMAIL)
+
+        sessionState.value = null
+    }
 }

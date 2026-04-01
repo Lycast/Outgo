@@ -36,4 +36,12 @@ class AndroidKeyValueStorage(context: Context) : KeyValueStorage {
         prefs.edit { remove(key) }
 
     }
+
+    /**
+     * Clears all key-value pairs from the underlying SharedPreferences.
+     * This is a destructive operation used for app resets.
+     */
+    override fun clearAll() {
+        prefs.edit { clear() }
+    }
 }
