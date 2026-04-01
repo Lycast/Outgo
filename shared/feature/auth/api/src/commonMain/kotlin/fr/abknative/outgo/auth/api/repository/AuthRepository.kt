@@ -11,4 +11,5 @@ interface AuthRepository {
 
     suspend fun login(email: String, password: String): Result<Unit, AppException>
     suspend fun logout(): Result<Unit, AppException>
+    suspend fun deleteAccount(): Result<Unit, AppException>
 }

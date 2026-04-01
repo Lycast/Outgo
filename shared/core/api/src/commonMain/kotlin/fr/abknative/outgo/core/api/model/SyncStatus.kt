@@ -1,4 +1,4 @@
-package fr.abknative.outgo.core.api
+package fr.abknative.outgo.core.api.model
 
 enum class SyncStatus {
     SYNCED,

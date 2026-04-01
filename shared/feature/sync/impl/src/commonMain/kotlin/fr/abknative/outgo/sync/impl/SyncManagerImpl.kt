@@ -1,8 +1,10 @@
 package fr.abknative.outgo.sync.impl
 
 import fr.abknative.outgo.core.api.KeyValueStorage
+import fr.abknative.outgo.core.api.NetworkMonitor
 import fr.abknative.outgo.core.api.SyncStatus
 import fr.abknative.outgo.core.api.logs.AppException
+import fr.abknative.outgo.core.api.logs.AppLogger
 import fr.abknative.outgo.core.api.logs.Result
 import fr.abknative.outgo.sync.api.SyncManager
 import fr.abknative.outgo.sync.api.SyncNetworkApi
@@ -18,16 +20,23 @@ internal class SyncManagerImpl(
     private val walletRepository: WalletRepository,
     private val operationRepository: OperationRepository,
     private val networkApi: SyncNetworkApi,
+    private val networkMonitor: NetworkMonitor,
     private val storage: KeyValueStorage
 ) : SyncManager {
 
     private val syncMutex = Mutex()
+    private val tag = "SyncManager"
 
     companion object {
         private const val LAST_SYNC_KEY = "last_sync_timestamp"
     }
 
     override suspend fun syncAll(): Result<Unit, AppException> {
+        if (!networkMonitor.isConnected.value) {
+            AppLogger.get()?.d(tag, "Offline: syncAll aborted silently.")
+            return Result.Success(Unit)
+        }
+
         return syncMutex.withLock {
             val pushResult = syncOut()
             if (pushResult is Result.Error) return pushResult
@@ -37,34 +46,38 @@ internal class SyncManagerImpl(
     }
 
     override suspend fun syncOut(): Result<Unit, AppException> {
-        val pendingBudgets = walletRepository.getPendingBudgets()
-        val pendingOutgoings = operationRepository.getPendingOutgoings()
+        if (!networkMonitor.isConnected.value) return Result.Success(Unit)
 
-        if (pendingBudgets is Result.Error) return pendingBudgets
-        if (pendingOutgoings is Result.Error) return pendingOutgoings
+        val pendingWalletsResult = walletRepository.getPendingWallets()
+        val pendingOperationsResult = operationRepository.getPendingOperations()
 
-        val budgets = (pendingBudgets as Result.Success).data
-        val outgoings = (pendingOutgoings as Result.Success).data
+        if (pendingWalletsResult is Result.Error) return pendingWalletsResult
+        if (pendingOperationsResult is Result.Error) return pendingOperationsResult
 
-        if (budgets.isEmpty() && outgoings.isEmpty()) {
+        val wallets = (pendingWalletsResult as Result.Success).data
+        val operations = (pendingOperationsResult as Result.Success).data
+
+        if (wallets.isEmpty() && operations.isEmpty()) {
             return Result.Success(Unit)
         }
 
         val request = SyncPushRequest(
-            budgets = budgets.map { it.toNetworkDto() },
-            outgoings = outgoings.map { it.toNetworkDto() }
+            wallets = wallets.map { it.toNetworkDto() },
+            operations = operations.map { it.toNetworkDto() }
         )
 
         val pushResult = networkApi.pushData(request)
         if (pushResult is Result.Error) return pushResult
 
-        budgets.forEach { walletRepository.updateSyncStatus(it.id, SyncStatus.SYNCED) }
-        outgoings.forEach { operationRepository.updateSyncStatus(it.id, SyncStatus.SYNCED) }
+        wallets.forEach { walletRepository.updateSyncStatus(it.id, SyncStatus.SYNCED) }
+        operations.forEach { operationRepository.updateSyncStatus(it.id, SyncStatus.SYNCED) }
 
         return Result.Success(Unit)
     }
 
     override suspend fun syncIn(): Result<Unit, AppException> {
+        if (!networkMonitor.isConnected.value) return Result.Success(Unit)
+
         val lastSync = storage.getLong(LAST_SYNC_KEY, 0L)
 
         val pullResult = networkApi.pullData(since = lastSync)
@@ -72,20 +85,24 @@ internal class SyncManagerImpl(
 
         val response = (pullResult as Result.Success).data
 
-        if (response.budgets.isNotEmpty()) {
-            val domainBudgets = response.budgets.map { it.toDomain() }
-            val budgetSyncResult = walletRepository.syncFromServer(domainBudgets)
-            if (budgetSyncResult is Result.Error) return budgetSyncResult
+        if (response.wallets.isNotEmpty()) {
+            val domainWallets = response.wallets.map { it.toDomain() }
+            val walletSyncResult = walletRepository.syncFromServer(domainWallets)
+            if (walletSyncResult is Result.Error) return walletSyncResult
         }
 
-        if (response.outgoings.isNotEmpty()) {
-            val domainOutgoings = response.outgoings.map { it.toDomain() }
-            val outgoingSyncResult = operationRepository.syncFromServer(domainOutgoings)
-            if (outgoingSyncResult is Result.Error) return outgoingSyncResult
+        if (response.operations.isNotEmpty()) {
+            val domainOperations = response.operations.map { it.toDomain() }
+            val operationSyncResult = operationRepository.syncFromServer(domainOperations)
+            if (operationSyncResult is Result.Error) return operationSyncResult
         }
 
         storage.putLong(LAST_SYNC_KEY, response.serverTimestamp)
 
         return Result.Success(Unit)
+    }
+
+    override fun clearSyncState() {
+        storage.remove(LAST_SYNC_KEY)
     }
 }

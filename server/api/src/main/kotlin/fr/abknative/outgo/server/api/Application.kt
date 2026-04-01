@@ -2,6 +2,7 @@ package fr.abknative.outgo.server.api
 
 import fr.abknative.outgo.server.api.plugins.*
 import fr.abknative.outgo.server.api.routes.syncRoutes
+import fr.abknative.outgo.server.api.routes.userRoutes
 import fr.abknative.outgo.server.data.DatabaseFactory
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
@@ -23,8 +24,10 @@ fun Application.module() {
     configureStatusPages()
     configureLogging()
     configureValidation()
+    configureGarbageCollector()
 
     routing {
         syncRoutes()
+        userRoutes()
     }
 }

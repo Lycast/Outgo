@@ -1,8 +1,8 @@
 package fr.abknative.outgo.wallet.api.repository
 
-import fr.abknative.outgo.core.api.SyncStatus
 import fr.abknative.outgo.core.api.logs.AppException
 import fr.abknative.outgo.core.api.logs.Result
+import fr.abknative.outgo.core.api.model.SyncStatus
 import fr.abknative.outgo.wallet.api.model.Wallet
 import kotlinx.coroutines.flow.Flow
 
@@ -70,4 +70,10 @@ interface WalletRepository {
      * matches the server's source of truth during the 'Pull' operation.
      */
     suspend fun syncFromServer(wallets: List<Wallet>): Result<Unit, AppException>
+
+    /**
+     * Hard deletes all wallets from the local database.
+     * WARNING: This is destructive and should only be used for app resets.
+     */
+    suspend fun deleteAll(): Result<Unit, AppException>
 }

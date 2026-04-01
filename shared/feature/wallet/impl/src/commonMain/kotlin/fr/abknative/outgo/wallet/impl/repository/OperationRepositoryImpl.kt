@@ -4,6 +4,7 @@ import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import fr.abknative.outgo.core.api.*
 import fr.abknative.outgo.core.api.logs.*
+import fr.abknative.outgo.core.api.model.SyncStatus
 import fr.abknative.outgo.database.OutgoDatabase
 import fr.abknative.outgo.wallet.api.model.Operation
 import fr.abknative.outgo.wallet.api.repository.OperationRepository
@@ -169,5 +170,14 @@ internal class OperationRepositoryImpl(
                 }
             }
         }
+    }
+
+    override suspend fun deleteAll(): Result<Unit, AppException> = asResult(
+        onError = {
+            AppLogger.get()?.e(tag, "Failed to delete all operations", it)
+            CommonError.DatabaseError(it)
+        }
+    ) {
+        queries.deleteAll()
     }
 }

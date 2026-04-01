@@ -24,4 +24,6 @@ interface SyncManager {
      * Fetches updates from the server only (Pull).
      */
     suspend fun syncIn(): Result<Unit, AppException>
+
+    fun clearSyncState()
 }

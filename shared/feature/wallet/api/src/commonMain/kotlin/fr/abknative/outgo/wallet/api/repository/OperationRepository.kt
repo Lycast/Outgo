@@ -1,9 +1,9 @@
 package fr.abknative.outgo.wallet.api.repository
 
 import fr.abknative.outgo.core.api.EpochMillis
-import fr.abknative.outgo.core.api.SyncStatus
 import fr.abknative.outgo.core.api.logs.AppException
 import fr.abknative.outgo.core.api.logs.Result
+import fr.abknative.outgo.core.api.model.SyncStatus
 import fr.abknative.outgo.wallet.api.model.Operation
 import kotlinx.coroutines.flow.Flow
 
@@ -72,4 +72,10 @@ interface OperationRepository {
      * Ensures the local state matches the server's source of truth during the 'Pull' operation.
      */
     suspend fun syncFromServer(operations: List<Operation>): Result<Unit, AppException>
+
+    /**
+     * Hard deletes all operations from the local database.
+     * WARNING: This is destructive and should only be used for app resets.
+     */
+    suspend fun deleteAll(): Result<Unit, AppException>
 }
