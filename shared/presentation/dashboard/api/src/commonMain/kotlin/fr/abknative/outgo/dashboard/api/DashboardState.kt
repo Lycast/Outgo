@@ -22,6 +22,7 @@ import fr.abknative.outgo.wallet.api.model.Operation
  */
 data class DashboardState(
     val isLoading: Boolean = false,
+    val activeWalletId: String? = null,
 
     // --- List Data ---
     val operations: List<Operation> = emptyList(),

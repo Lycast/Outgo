@@ -11,7 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import fr.abknative.outgo.android.ui.components.LoaderItem
-import fr.abknative.outgo.android.ui.states.OutgoingFilter
+import fr.abknative.outgo.android.ui.states.OperationFilter
 import fr.abknative.outgo.android.ui.theme.AppTheme
 import fr.abknative.outgo.android.ui.theme.toColor
 import fr.abknative.outgo.wallet.api.model.Operation
@@ -20,7 +20,7 @@ import fr.abknative.outgo.wallet.api.model.Operation
 fun ExpenseListContainer(
     isLoading: Boolean,
     filteredList: List<Operation>,
-    currentFilter: OutgoingFilter,
+    currentFilter: OperationFilter,
     onDelete: (String) -> Unit,
     onEdit: (Operation) -> Unit,
     modifier: Modifier = Modifier
@@ -38,7 +38,7 @@ fun ExpenseListContainer(
 
                     Card(
                         modifier = modifier.fillMaxWidth().padding(horizontal = AppTheme.spacing.medium),
-                        colors = CardDefaults.cardColors(containerColor = AppTheme.colors.surface50.toColor()),
+                        colors = CardDefaults.cardColors(containerColor = AppTheme.colors.surface100.toColor()),
                         shape = RoundedCornerShape(12.dp),
                         border = BorderStroke(1.dp, AppTheme.colors.textSecondary.toColor().copy(alpha = 0.1f))
                     ) {

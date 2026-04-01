@@ -10,7 +10,11 @@ import fr.abknative.outgo.wallet.api.model.Operation
 import fr.abknative.outgo.wallet.api.model.operation.Recurrence
 import kotlin.math.absoluteValue
 
-// --- Formatage de la Monnaie ---
+// --- Currency Formatting ---
+
+/**
+ * Formats a Long value representing cents into a readable currency string.
+ */
 val Long.uiAmount: String
     get() {
         val isNegative = this < 0
@@ -32,32 +36,41 @@ val Long.uiAmount: String
         return "$prefix$eurosString,$formattedCents ${CommonLabels.CURRENCY_SYMBOL}"
     }
 
+/**
+ * Maps a [Recurrence] to its corresponding UI Color.
+ */
 val Recurrence.uiRecurrenceColor: Color
     get() = when (this) {
         Recurrence.YEARLY -> Color(ColorPalette.SECONDARY)
         Recurrence.MONTHLY -> Color(ColorPalette.TERTIARY)
+        Recurrence.WEEKLY -> Color(ColorPalette.PRIMARY)
+        Recurrence.UNIQUE -> Color.DarkGray
         Recurrence.UNKNOWN -> Color.Gray
     }
 
-// --- 3. L'Entité Outgoing ---
+// --- Operation Entity Extensions ---
+
+/**
+ * Returns the display title for the operation, falling back to a default name if blank.
+ */
 val Operation.uiTitle: String
     @Composable get() = this.name.ifBlank { DashboardLabels.DEFAULT_NAME }
 
-val Operation.uiDueDayLabel: String
-    @Composable get() = if (this.recurrence == Recurrence.YEARLY && this.dueMonth != null) {
-        val monthLabel = getMonthName(this.dueMonth!!)
-        "${DashboardLabels.DUE_PREFIX} $dueDay $monthLabel"
-    } else {
-        "${DashboardLabels.DUE_PREFIX} $dueDay"
-    }
-
+/**
+ * Returns a summarized string representation of the operation's frequency.
+ */
 val Operation.uiFrequencySummary: String
     @Composable get() = when (this.recurrence) {
         Recurrence.MONTHLY -> FormLabels.CYCLE_MONTHLY
         Recurrence.YEARLY -> FormLabels.CYCLE_YEARLY
+        Recurrence.WEEKLY -> "" // TODO: Add string resource in FormLabels if needed
+        Recurrence.UNIQUE -> "" // TODO: Add string resource in FormLabels if needed
         Recurrence.UNKNOWN -> ""
     }
 
+/**
+ * Maps an integer to its corresponding localized month name.
+ */
 @Composable
 fun getMonthName(month: Int): String = when (month) {
     1 -> DashboardLabels.MONTH_1 ; 2 -> DashboardLabels.MONTH_2 ; 3 -> DashboardLabels.MONTH_3

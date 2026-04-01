@@ -1,7 +1,7 @@
 package fr.abknative.outgo.wallet.api.model
 
 import fr.abknative.outgo.core.api.EpochMillis
-import fr.abknative.outgo.core.api.SyncStatus
+import fr.abknative.outgo.core.api.model.SyncStatus
 
 /**
  * Represents a financial container, such as a bank account or a physical cash envelope.

@@ -21,34 +21,39 @@ import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import fr.abknative.outgo.android.ui.AccessibilityLabels
-import fr.abknative.outgo.android.ui.DashboardLabels
+import fr.abknative.outgo.android.ui.FormLabels
 import fr.abknative.outgo.android.ui.theme.AppTheme
 import fr.abknative.outgo.android.ui.theme.toColor
+import fr.abknative.outgo.wallet.api.model.operation.Recurrence
 
 @Composable
-fun OutgoingDateSelector(
+fun OperationDateSelector(
     selectedDay: String,
-    selectedMonth: String,
+    selectedRecurrence: Recurrence,
     onDayChanged: (String) -> Unit,
-    onMonthChanged: (String) -> Unit,
+    onRecurrenceChanged: (Recurrence) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val days = (1..31).map { it.toString() }
-    val months = listOf(
-        "0" to DashboardLabels.MONTH_ALL,
-        "1" to DashboardLabels.MONTH_1,
-        "2" to DashboardLabels.MONTH_2,
-        "3" to DashboardLabels.MONTH_3,
-        "4" to DashboardLabels.MONTH_4,
-        "5" to DashboardLabels.MONTH_5,
-        "6" to DashboardLabels.MONTH_6,
-        "7" to DashboardLabels.MONTH_7,
-        "8" to DashboardLabels.MONTH_8,
-        "9" to DashboardLabels.MONTH_9,
-        "10" to DashboardLabels.MONTH_10,
-        "11" to DashboardLabels.MONTH_11,
-        "12" to DashboardLabels.MONTH_12
+
+    // On mappe nos récurrences pour la deuxième roue
+    val recurrences = listOf(
+        Recurrence.UNIQUE,
+        Recurrence.WEEKLY,
+        Recurrence.MONTHLY,
+        Recurrence.YEARLY
     )
+
+    // On associe les labels UI (Tu pourras ajouter UNIQUE et WEEKLY dans FormLabels plus tard)
+    val recurrenceLabels = recurrences.map { recurrence ->
+        when (recurrence) {
+            Recurrence.MONTHLY -> FormLabels.CYCLE_MONTHLY
+            Recurrence.YEARLY -> FormLabels.CYCLE_YEARLY
+            Recurrence.WEEKLY -> "Hebdomadaire"
+            Recurrence.UNIQUE -> "Une fois"
+            Recurrence.UNKNOWN -> ""
+        }
+    }
 
     val itemHeight = 40.dp
     val visibleItems = 3
@@ -66,10 +71,11 @@ fun OutgoingDateSelector(
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically
     ) {
+        // Roue 1 : Le Jour
         WheelPicker(
             items = days,
             itemLabels = days,
-            selectedValue = selectedDay,
+            selectedValue = selectedDay.ifEmpty { "1" }, // Sécurité si vide
             onSelectionChanged = onDayChanged,
             itemHeight = itemHeight,
             contentDescription = AccessibilityLabels.DAY_SELECTOR,
@@ -77,19 +83,23 @@ fun OutgoingDateSelector(
             modifier = Modifier.weight(1f)
         )
 
+        // Roue 2 : La Récurrence (Remplace l'ancienne roue des mois)
         WheelPicker(
-            items = months.map { it.first },
-            itemLabels = months.map { it.second },
-            selectedValue = selectedMonth,
-            onSelectionChanged = onMonthChanged,
+            items = recurrences.map { it.name },
+            itemLabels = recurrenceLabels,
+            selectedValue = selectedRecurrence.name,
+            onSelectionChanged = { selectedName ->
+                onRecurrenceChanged(Recurrence.fromString(selectedName))
+            },
             itemHeight = itemHeight,
-            contentDescription = AccessibilityLabels.MONTH_SELECTOR,
+            contentDescription = "Sélecteur de cycle",
             dividerWidth = 0.7f,
             modifier = Modifier.weight(1.5f)
         )
     }
 }
 
+// TON CODE INTACT : Aucune modification en dessous de cette ligne !
 @Composable
 private fun WheelPicker(
     modifier: Modifier = Modifier,

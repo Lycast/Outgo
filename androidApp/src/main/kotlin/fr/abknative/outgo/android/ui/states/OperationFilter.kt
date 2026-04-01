@@ -1,5 +1,5 @@
 package fr.abknative.outgo.android.ui.states
 
-enum class OutgoingFilter {
+enum class OperationFilter {
     ALL, PAID, REMAINING
 }

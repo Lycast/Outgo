@@ -12,21 +12,18 @@ import fr.abknative.outgo.dashboard.api.DashboardPresenter
 import fr.abknative.outgo.dashboard.api.DashboardState
 import fr.abknative.outgo.dashboard.api.SyncUiState
 import fr.abknative.outgo.sync.api.SyncManager
-import fr.abknative.outgo.wallet.api.repository.WalletRepository
 import fr.abknative.outgo.wallet.api.usecase.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 
 internal class DashboardPresenterImpl(
-    private val observeActiveOutgoings: ObserveActiveOperationsUseCase,
-    private val saveOutgoing: SaveOperationUseCase,
-    private val deleteOutgoing: DeleteOperationUseCase,
-    private val calculateTotalOutgoings: CalculateTotalExpensesUseCase,
-    private val calculateRemainingToPay: CalculateRemainingToPayUseCase,
-    private val calculateDisposableIncome: CalculateDisposableIncomeUseCase,
+    private val observeActiveOperations: ObserveActiveOperationsUseCase,
+    private val observeWallets: ObserveWalletsUseCase,
+    private val saveOperation: SaveOperationUseCase,
+    private val deleteOperation: DeleteOperationUseCase,
+    private val calculateDashboardData: CalculateDashboardDataUseCase,
     private val observeUserSession: ObserveUserSessionUseCase,
-    private val updateIncome: UpdateIncomeUseCase,
-    private val walletRepository: WalletRepository,
+    private val saveWallet: SaveWalletUseCase,
     private val timeProvider: TimeProvider,
     private val syncManager: SyncManager,
     private val storage: KeyValueStorage
@@ -44,7 +41,8 @@ internal class DashboardPresenterImpl(
     )
     override val state: StateFlow<DashboardState> = _state.asStateFlow()
 
-    private val selectedMonthFlow = MutableStateFlow(timeProvider.monthValue())
+    private val selectedMonthFlow = MutableStateFlow(timeProvider.monthValue(timeProvider.now()))
+    private val selectedYearFlow = MutableStateFlow(timeProvider.yearValue(timeProvider.now()))
 
     private val onCoroutineError: (AppException) -> Unit = { error ->
         _state.update {
@@ -58,7 +56,17 @@ internal class DashboardPresenterImpl(
 
     init {
         startObservingSession()
+        ensureDefaultWalletExists()
         startObservingData()
+    }
+
+    private fun ensureDefaultWalletExists() {
+        viewModelScope.safeLaunch(onError = onCoroutineError) {
+            val wallets = observeWallets().first()
+            if (wallets.isEmpty()) {
+                saveWallet(id = "DEFAULT_WALLET_ID", name = "Mon Compte Principal")
+            }
+        }
     }
 
     private fun startObservingSession() {
@@ -79,46 +87,53 @@ internal class DashboardPresenterImpl(
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun startObservingData() {
         viewModelScope.safeLaunch(onError = onCoroutineError) {
-
             combine(
-                selectedMonthFlow.flatMapLatest { month ->
-                    observeActiveOutgoings(month).map { list -> Pair(month, list) }
-                },
-                walletRepository.observeBudget()
-            ) { (selectedMonth, outgoings), budget ->
-                val income = budget?.monthlyIncomeInCents ?: 0L
-                val total = calculateTotalOutgoings(outgoings)
-                val remaining = calculateRemainingToPay(outgoings, selectedMonth)
-                val disposable = calculateDisposableIncome(income, total)
+                observeWallets(),
+                selectedMonthFlow,
+                selectedYearFlow
+            ) { wallets, month, year ->
+                Triple(wallets.firstOrNull(), month, year)
+            }.flatMapLatest { (wallet, month, year) ->
+                if (wallet == null) {
+                    flowOf(emptyList())
+                } else {
+                    _state.update { it.copy(activeWalletId = wallet.id) }
+                    observeActiveOperations(wallet.id, month, year)
+                }
+            }.collect { operations ->
+                val month = selectedMonthFlow.value
+                val year = selectedYearFlow.value
+                val dashboardData = calculateDashboardData(operations, month, year)
 
                 _state.update {
                     it.copy(
-                        operations = outgoings,
-                        totalOutgoingsInCents = total,
-                        remainingToPayInCents = remaining,
-                        disposableIncomeInCents = disposable,
-                        monthlyIncomeInCents = income,
-                        selectedMonth = selectedMonth,
+                        operations = operations,
+                        monthlyIncomeInCents = operations.filter { op -> op.type.name == "INCOME" }.sumOf { op -> op.amountInCents }, // Optionnel, si tu veux toujours l'afficher
+                        totalOutgoingsInCents = dashboardData.totalExpensesInCents,
+                        remainingToPayInCents = dashboardData.remainingToPayInCents,
+                        disposableIncomeInCents = dashboardData.disposableIncomeInCents,
+                        selectedMonth = month,
                         isLoading = false
                     )
                 }
-            }.collect()
+            }
         }
     }
 
     override fun onIntent(intent: DashboardIntent) {
         when (intent) {
             is DashboardIntent.Save -> handleAdd(intent)
-            is DashboardIntent.SelectMonth -> selectedMonthFlow.value = intent.month
+            is DashboardIntent.SelectMonth -> {
+                selectedMonthFlow.value = intent.month
+                selectedYearFlow.value = intent.year
+            }
             is DashboardIntent.Delete -> handleDelete(intent)
-            is DashboardIntent.UpdateIncome -> handleUpdateIncome(intent)
             is DashboardIntent.ToggleHeroSection -> {
                 storage.putBoolean(heroExpandedKey, intent.isExpanded)
                 _state.update { it.copy(isHeroExpanded = intent.isExpanded) }
             }
             is DashboardIntent.Refresh -> handleRefresh()
             is DashboardIntent.DismissError -> { _state.update { it.copy(error = null) } }
-
         }
     }
 
@@ -126,38 +141,34 @@ internal class DashboardPresenterImpl(
         viewModelScope.safeLaunch(onError = onCoroutineError) {
             _state.update { it.copy(isLoading = true) }
 
-            val result = saveOutgoing(
+            val result = saveOperation(
                 id = intent.id,
+                walletId = intent.walletId,
                 name = intent.name,
                 amountInCents = intent.amountInCents,
+                type = intent.type,
                 recurrence = intent.recurrence,
-                dueDay = intent.dueDay,
-                dueMonth = intent.dueMonth
+                startDate = intent.startDate,
+                endDate = intent.endDate
             )
 
-            when (result) {
-                is Result.Success -> {
-                    _state.update { it.copy(isLoading = false, error = null) }
-                }
-                is Result.Error -> {
-                    _state.update { it.copy(isLoading = false, error = result.error) }
-                }
+            if (result is Result.Success) {
+                _state.update { it.copy(isLoading = false, error = null) }
+                syncManager.syncAll()
+            } else if (result is Result.Error) {
+                _state.update { it.copy(isLoading = false, error = result.error) }
             }
         }
     }
 
     private fun handleDelete(intent: DashboardIntent.Delete) {
         viewModelScope.safeLaunch(onError = onCoroutineError) {
-            val result = deleteOutgoing(intent.id)
-            if (result is Result.Error) {
+            val result = deleteOperation(intent.id)
+            if (result is Result.Success) {
+                syncManager.syncAll()
+            } else if (result is Result.Error) {
                 _state.update { it.copy(error = result.error) }
             }
-        }
-    }
-
-    private fun handleUpdateIncome(intent: DashboardIntent.UpdateIncome) {
-        viewModelScope.safeLaunch(onError = onCoroutineError) {
-            updateIncome(intent.amountInCents)
         }
     }
 
@@ -165,9 +176,7 @@ internal class DashboardPresenterImpl(
         if (_state.value.syncState.isUnauthenticated || _state.value.syncState.isInProgress) return
         viewModelScope.safeLaunch(onError = onCoroutineError) {
             _state.update { it.copy(syncState = SyncUiState.IN_PROGRESS) }
-
             val result = syncManager.syncAll()
-
             _state.update {
                 it.copy(
                     syncState = if (result is Result.Error) SyncUiState.ERROR else SyncUiState.UP_TO_DATE,

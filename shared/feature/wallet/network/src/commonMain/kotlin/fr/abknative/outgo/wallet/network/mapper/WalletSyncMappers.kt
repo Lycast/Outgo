@@ -1,6 +1,6 @@
 package fr.abknative.outgo.wallet.network.mapper
 
-import fr.abknative.outgo.core.api.SyncStatus
+import fr.abknative.outgo.core.api.model.SyncStatus
 import fr.abknative.outgo.wallet.api.model.Wallet
 import fr.abknative.outgo.wallet.network.dto.WalletNetworkDto
 

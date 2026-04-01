@@ -9,14 +9,17 @@ import fr.abknative.outgo.android.components.common.Header
 import fr.abknative.outgo.android.components.common.SyncPromotionModal
 import fr.abknative.outgo.android.components.dashboard.*
 import fr.abknative.outgo.android.ui.extensions.getMonthName
-import fr.abknative.outgo.android.ui.states.OutgoingFilter
-import fr.abknative.outgo.android.ui.states.rememberOutgoingFormState
+import fr.abknative.outgo.android.ui.states.OperationFilter
+import fr.abknative.outgo.android.ui.states.rememberOperationFormState
 import fr.abknative.outgo.android.ui.theme.AppTheme
 import fr.abknative.outgo.android.ui.toUIString
+import fr.abknative.outgo.core.api.TimeProvider
 import fr.abknative.outgo.dashboard.api.DashboardIntent
 import fr.abknative.outgo.dashboard.api.DashboardPresenter
 import fr.abknative.outgo.wallet.api.model.Operation
+import fr.abknative.outgo.wallet.api.model.operation.OperationType
 import fr.abknative.outgo.wallet.api.model.operation.Recurrence
+import org.koin.compose.koinInject
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -27,6 +30,7 @@ fun DashboardScreen(
     modifier: Modifier = Modifier
 ) {
     val state by presenter.state.collectAsState()
+    val timeProvider = koinInject<TimeProvider>()
 
     var showBudgetDialog by remember { mutableStateOf(false) }
     var showSyncModal by remember { mutableStateOf(false) }
@@ -34,17 +38,19 @@ fun DashboardScreen(
     val snackbarHostState = remember { SnackbarHostState() }
 
     var selectedOperation by remember { mutableStateOf<Operation?>(null) }
-    var currentFilter by remember { mutableStateOf(OutgoingFilter.ALL) }
+    var currentFilter by remember { mutableStateOf(OperationFilter.ALL) }
 
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
-    val formState = rememberOutgoingFormState(
-        outgoingId = selectedOperation?.id,
+    val formState = rememberOperationFormState(
+        operationId = selectedOperation?.id,
+        walletId = state.activeWalletId ?: "",
+        timeProvider = timeProvider,
         initialName = selectedOperation?.name ?: "",
         initialAmount = selectedOperation?.amountInCents?.toBigDecimal()?.movePointLeft(2)?.toPlainString() ?: "",
+        initialType = selectedOperation?.type ?: OperationType.EXPENSE,
         initialRecurrence = selectedOperation?.recurrence ?: Recurrence.MONTHLY,
-        initialDueDay = selectedOperation?.dueDay?.toString() ?: "",
-        initialDueMonth = selectedOperation?.dueMonth?.toString() ?: ""
+        initialDay = selectedOperation?.startDate?.let { timeProvider.dayOfMonth(it).toString() } ?: ""
     )
 
     val formattedSelectedMonth = getMonthName(state.selectedMonth)
@@ -54,20 +60,20 @@ fun DashboardScreen(
     val selectedMonth = state.selectedMonth
     val filteredList = remember(state.operations, currentFilter, currentDay, currentMonth, selectedMonth) {
         when (currentFilter) {
-            OutgoingFilter.ALL -> state.operations
-            OutgoingFilter.PAID -> {
+            OperationFilter.ALL -> state.operations
+            OperationFilter.PAID -> {
                 when {
                     selectedMonth < currentMonth -> state.operations
                     selectedMonth > currentMonth -> emptyList()
-                    else -> state.operations.filter { it.dueDay < currentDay }
+                    else -> state.operations.filter { timeProvider.dayOfMonth(it.startDate) < currentDay }
                 }
             }
 
-            OutgoingFilter.REMAINING -> {
+            OperationFilter.REMAINING -> {
                 when {
                     selectedMonth < currentMonth -> emptyList()
                     selectedMonth > currentMonth -> state.operations
-                    else -> state.operations.filter { it.dueDay >= currentDay }
+                    else -> state.operations.filter { timeProvider.dayOfMonth(it.startDate) >= currentDay }
                 }
             }
         }
@@ -108,7 +114,11 @@ fun DashboardScreen(
                 onSyncNavigationClick = { onNavigateToSettings() }
             )
         },
-        floatingActionButton = { AddActionTrigger(onClick = { selectedOperation = null; showFormSheet = true }) }
+        floatingActionButton = {
+            if (state.activeWalletId != null) {
+                AddActionTrigger(onClick = { selectedOperation = null; showFormSheet = true })
+            }
+        }
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -125,11 +135,13 @@ fun DashboardScreen(
                 remainingToPayInCents = state.remainingToPayInCents,
                 onPreviousMonthClick = {
                     val newMonth = if (state.selectedMonth == 1) 12 else state.selectedMonth - 1
-                    presenter.onIntent(DashboardIntent.SelectMonth(newMonth))
+                    val currentYear = timeProvider.yearValue(timeProvider.now())
+                    presenter.onIntent(DashboardIntent.SelectMonth(newMonth, currentYear))
                 },
                 onNextMonthClick = {
                     val newMonth = if (state.selectedMonth == 12) 1 else state.selectedMonth + 1
-                    presenter.onIntent(DashboardIntent.SelectMonth(newMonth))
+                    val currentYear = timeProvider.yearValue(timeProvider.now())
+                    presenter.onIntent(DashboardIntent.SelectMonth(newMonth, currentYear))
                 },
                 onEditBudgetClick = { showBudgetDialog = true }
             )
@@ -163,7 +175,19 @@ fun DashboardScreen(
             currentIncomeInCents = state.monthlyIncomeInCents,
             onDismiss = { showBudgetDialog = false },
             onConfirm = { newIncomeInCents ->
-                presenter.onIntent(DashboardIntent.UpdateIncome(newIncomeInCents))
+                val currentYear = timeProvider.yearValue(timeProvider.now())
+                val startOfSelectedMonth = timeProvider.startOfMonth(state.selectedMonth, currentYear)
+
+                presenter.onIntent(
+                    DashboardIntent.Save(
+                        walletId = state.activeWalletId ?: "",
+                        name = "Revenu Principal",
+                        amountInCents = newIncomeInCents,
+                        type = OperationType.INCOME,
+                        recurrence = Recurrence.MONTHLY,
+                        startDate = startOfSelectedMonth
+                    )
+                )
                 showBudgetDialog = false
             }
         )

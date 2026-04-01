@@ -23,13 +23,20 @@ import fr.abknative.outgo.android.R
 import fr.abknative.outgo.android.components.common.CircleIcon
 import fr.abknative.outgo.android.ui.AccessibilityLabels
 import fr.abknative.outgo.android.ui.CommonLabels
-import fr.abknative.outgo.android.ui.extensions.*
+import fr.abknative.outgo.android.ui.DashboardLabels
+import fr.abknative.outgo.android.ui.extensions.uiAmount
+import fr.abknative.outgo.android.ui.extensions.uiFrequencySummary
+import fr.abknative.outgo.android.ui.extensions.uiRecurrenceColor
+import fr.abknative.outgo.android.ui.extensions.uiTitle
 import fr.abknative.outgo.android.ui.theme.AppTheme
 import fr.abknative.outgo.android.ui.theme.OutgoTheme
 import fr.abknative.outgo.android.ui.theme.toColor
-import fr.abknative.outgo.core.api.SyncStatus
+import fr.abknative.outgo.core.api.model.SyncStatus
 import fr.abknative.outgo.wallet.api.model.Operation
+import fr.abknative.outgo.wallet.api.model.operation.OperationType
 import fr.abknative.outgo.wallet.api.model.operation.Recurrence
+import java.text.SimpleDateFormat
+import java.util.*
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -43,6 +50,10 @@ fun OutgoingCard(
 
     var isExpanded by remember { mutableStateOf(false) }
     val stateDesc = if (isExpanded) AccessibilityLabels.COLLAPSE_DESC else AccessibilityLabels.EXPAND_DESC
+
+    // Formatage dynamique de la date absolue
+    val dateFormatter = remember { SimpleDateFormat("dd MMM", Locale.getDefault()) }
+    val formattedDate = remember(operation.startDate) { dateFormatter.format(Date(operation.startDate)) }
 
     Column(
         modifier = modifier
@@ -74,8 +85,11 @@ fun OutgoingCard(
             verticalAlignment = Alignment.CenterVertically
         ) {
 
-            // Icon a gauche
-            CircleIcon(R.drawable.credit_card_duotone, AppTheme.colors.primary.toColor(), AppTheme.colors.surface100.toColor())
+            // Icon a gauche (On pourrait adapter la couleur selon INCOME ou EXPENSE plus tard)
+            val iconColor = if (operation.type == OperationType.INCOME) AppTheme.colors.primary.toColor() else AppTheme.colors.secondary.toColor()
+            val bgColor = if (operation.type == OperationType.INCOME) AppTheme.colors.surface100.toColor() else AppTheme.colors.surface200.toColor()
+
+            CircleIcon(R.drawable.credit_card_duotone, iconColor, bgColor)
             Spacer(modifier = Modifier.width(AppTheme.spacing.large))
 
             Column(verticalArrangement = Arrangement.Center) {
@@ -101,9 +115,9 @@ fun OutgoingCard(
                 ) {
 
                     // Date et récurrence
-                    Row(horizontalArrangement = Arrangement.End,) {
+                    Row(horizontalArrangement = Arrangement.End) {
                         Text(
-                            text = "${operation.uiDueDayLabel} • ",
+                            text = "${DashboardLabels.DUE_PREFIX} $formattedDate • ", // Remplacement de uiDueDayLabel
                             style = AppTheme.typo.caption,
                             color = AppTheme.colors.textSecondary.toColor()
                         )
@@ -118,9 +132,9 @@ fun OutgoingCard(
 
                     // Montant de la dépense
                     Text(
-                        text = operation.amountInCents.uiAmount,
+                        text = if(operation.type == OperationType.INCOME) "+ ${operation.amountInCents.uiAmount}" else operation.amountInCents.uiAmount,
                         style = AppTheme.typo.body,
-                        color = AppTheme.colors.secondary.toColor(),
+                        color = if(operation.type == OperationType.INCOME) AppTheme.colors.primary.toColor() else AppTheme.colors.secondary.toColor(),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         textAlign = TextAlign.End,
@@ -215,11 +229,13 @@ fun OutgoingCard(
 fun PreviewOutgoingCard_LargeAmount() {
     val mockOperation = Operation(
         id = "1",
+        walletId = "w1",
         name = "Achat d'une île privée au soleil",
         amountInCents = 1250000000000L, // 12,5 Milliard
+        type = OperationType.EXPENSE,
         recurrence = Recurrence.YEARLY,
-        dueDay = 15,
-        dueMonth = 6,
+        startDate = 1718409600000L, // 15 Juin 2024
+        endDate = null,
         syncStatus = SyncStatus.PENDING_CREATE,
         createdAt = 0L,
         updatedAt = 0L
@@ -242,10 +258,13 @@ fun PreviewOutgoingCard_LargeAmount() {
 fun PreviewOutgoingCard_Expanded() {
     val mockOperation = Operation(
         id = "2",
+        walletId = "w1",
         name = "Netflix",
         amountInCents = 1999L,
+        type = OperationType.EXPENSE,
         recurrence = Recurrence.MONTHLY,
-        dueDay = 5,
+        startDate = 1717545600000L, // 5 Juin 2024
+        endDate = null,
         syncStatus = SyncStatus.PENDING_UPDATE,
         createdAt = 0L,
         updatedAt = 0L

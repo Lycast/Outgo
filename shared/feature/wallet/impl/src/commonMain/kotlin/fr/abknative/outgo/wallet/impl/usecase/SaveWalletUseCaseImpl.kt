@@ -1,8 +1,8 @@
 package fr.abknative.outgo.wallet.impl.usecase
 
-import fr.abknative.outgo.core.api.SyncStatus
 import fr.abknative.outgo.core.api.logs.AppException
 import fr.abknative.outgo.core.api.logs.Result
+import fr.abknative.outgo.core.api.model.SyncStatus
 import fr.abknative.outgo.wallet.api.logs.WalletError
 import fr.abknative.outgo.wallet.api.model.Wallet
 import fr.abknative.outgo.wallet.api.repository.WalletRepository

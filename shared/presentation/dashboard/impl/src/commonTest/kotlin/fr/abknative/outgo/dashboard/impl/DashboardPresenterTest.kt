@@ -4,6 +4,7 @@ import fr.abknative.outgo.auth.api.usecase.ObserveUserSessionUseCase
 import fr.abknative.outgo.dashboard.api.DashboardIntent
 import fr.abknative.outgo.dashboard.impl.mock.*
 import fr.abknative.outgo.wallet.api.model.Wallet
+import fr.abknative.outgo.wallet.api.model.dashboard.DashboardData
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -22,15 +23,16 @@ class DashboardPresenterTest {
     private val timeProvider = FakeTimeProvider()
     private val syncManager = FakeSyncManager()
     private val storage = FakeKeyValueStorage()
-    private val budgetRepository = FakeWalletRepository()
     private val authRepository = FakeAuthRepository()
-    private val observeActiveOutgoings = FakeObserveActiveOperationsUseCase()
-    private val saveOutgoing = FakeSaveOperationUseCase()
-    private val deleteOutgoing = FakeDeleteOperationUseCase()
-    private val calculateTotalOutgoings = FakeCalculateTotalExpensesUseCase()
-    private val calculateRemainingToPay = FakeCalculateRemainingToPayUseCase()
-    private val calculateDisposableIncome = FakeCalculateDisposableIncomeUseCase()
-    private val updateIncome = FakeUpdateIncomeUseCase()
+
+    // Nouveaux Fakes
+    private val observeWallets = FakeObserveWalletsUseCase()
+    private val observeActiveOperations = FakeObserveActiveOperationsUseCase()
+    private val saveOperation = FakeSaveOperationUseCase()
+    private val deleteOperation = FakeDeleteOperationUseCase()
+    private val calculateDashboardData = FakeCalculateDashboardDataUseCase()
+
+    private val saveWalletUseCase = FakeSaveWalletUseCase()
 
     private lateinit var presenter: DashboardPresenterImpl
 
@@ -43,15 +45,13 @@ class DashboardPresenterTest {
         }
 
         presenter = DashboardPresenterImpl(
-            observeActiveOutgoings = observeActiveOutgoings,
+            observeActiveOperations = observeActiveOperations,
+            observeWallets = observeWallets,
+            saveOperation = saveOperation,
+            deleteOperation = deleteOperation,
+            calculateDashboardData = calculateDashboardData,
             observeUserSession = fakeObserveUserSession,
-            saveOutgoing = saveOutgoing,
-            deleteOutgoing = deleteOutgoing,
-            calculateTotalOutgoings = calculateTotalOutgoings,
-            calculateRemainingToPay = calculateRemainingToPay,
-            calculateDisposableIncome = calculateDisposableIncome,
-            updateIncome = updateIncome,
-            walletRepository = budgetRepository,
+            saveWallet = saveWalletUseCase,
             timeProvider = timeProvider,
             syncManager = syncManager,
             storage = storage
@@ -64,15 +64,18 @@ class DashboardPresenterTest {
     }
 
     @Test
-    fun `should map calculated usecases data to state`() = runTest {
-        budgetRepository.emit(Wallet(id = "default", monthlyIncomeInCents = 3000_00, createdAt = 0, updatedAt = 0))
-        calculateTotalOutgoings.totalToReturn = 1000_00
-        calculateRemainingToPay.remainingToReturn = 500_00
-        calculateDisposableIncome.disposableToReturn = 2000_00
+    fun `should map router calculated data to state`() = runTest {
+        observeWallets.emit(listOf(Wallet(id = "w1", name = "Test", createdAt = 0, updatedAt = 0)))
 
-        presenter.onIntent(DashboardIntent.SelectMonth(8))
+        calculateDashboardData.dataToReturn = DashboardData(
+            currentBalanceInCents = 2000_00,
+            totalExpensesInCents = 1000_00,
+            remainingToPayInCents = 500_00,
+            disposableIncomeInCents = 2000_00
+        )
 
-        presenter.state.value.monthlyIncomeInCents shouldBe 3000_00
+        presenter.onIntent(DashboardIntent.SelectMonth(8, 2026))
+
         presenter.state.value.totalOutgoingsInCents shouldBe 1000_00
         presenter.state.value.remainingToPayInCents shouldBe 500_00
         presenter.state.value.disposableIncomeInCents shouldBe 2000_00

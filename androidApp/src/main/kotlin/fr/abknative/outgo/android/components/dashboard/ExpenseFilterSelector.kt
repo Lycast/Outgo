@@ -20,14 +20,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import fr.abknative.outgo.android.ui.DashboardLabels
-import fr.abknative.outgo.android.ui.states.OutgoingFilter
+import fr.abknative.outgo.android.ui.states.OperationFilter
 import fr.abknative.outgo.android.ui.theme.AppTheme
 import fr.abknative.outgo.android.ui.theme.toColor
 
 @Composable
 fun ExpenseFilterSelector(
-    selectedFilter: OutgoingFilter,
-    onFilterSelected: (OutgoingFilter) -> Unit,
+    selectedFilter: OperationFilter,
+    onFilterSelected: (OperationFilter) -> Unit,
     modifier: Modifier = Modifier
 ) {
 
@@ -45,8 +45,8 @@ fun ExpenseFilterSelector(
         FilterTabItem(
             modifier = Modifier.weight(1f),
             label = DashboardLabels.TAB_ALL,
-            isSelected = selectedFilter == OutgoingFilter.ALL,
-            onClick = { onFilterSelected(OutgoingFilter.ALL) }
+            isSelected = selectedFilter == OperationFilter.ALL,
+            onClick = { onFilterSelected(OperationFilter.ALL) }
         )
 
         Spacer(modifier = Modifier.width(AppTheme.spacing.large))
@@ -54,8 +54,8 @@ fun ExpenseFilterSelector(
         FilterTabItem(
             modifier = Modifier.weight(1f),
             label = DashboardLabels.TAB_PAID,
-            isSelected = selectedFilter == OutgoingFilter.PAID,
-            onClick = { onFilterSelected(OutgoingFilter.PAID) }
+            isSelected = selectedFilter == OperationFilter.PAID,
+            onClick = { onFilterSelected(OperationFilter.PAID) }
         )
 
         Spacer(modifier = Modifier.width(AppTheme.spacing.large))
@@ -63,8 +63,8 @@ fun ExpenseFilterSelector(
         FilterTabItem(
             modifier = Modifier.weight(1f),
             label = DashboardLabels.TAB_REMAINING,
-            isSelected = selectedFilter == OutgoingFilter.REMAINING,
-            onClick = { onFilterSelected(OutgoingFilter.REMAINING) }
+            isSelected = selectedFilter == OperationFilter.REMAINING,
+            onClick = { onFilterSelected(OperationFilter.REMAINING) }
         )
     }
 }
@@ -111,7 +111,7 @@ private fun FilterTabItem(
 @Preview(showBackground = true)
 @Composable
 fun PreviewExpenseFilterSelector() {
-    var currentFilter by remember { mutableStateOf(OutgoingFilter.ALL) }
+    var currentFilter by remember { mutableStateOf(OperationFilter.ALL) }
 
     Column(modifier = Modifier.background(Color.White).padding(16.dp)) {
         ExpenseFilterSelector(

@@ -12,20 +12,20 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import fr.abknative.outgo.android.ui.AccessibilityLabels
 import fr.abknative.outgo.android.ui.DashboardLabels
-import fr.abknative.outgo.android.ui.states.OutgoingFilter
+import fr.abknative.outgo.android.ui.states.OperationFilter
 import fr.abknative.outgo.android.ui.theme.AppTheme
 import fr.abknative.outgo.android.ui.theme.toColor
 
 @Composable
 fun EmptyStateView(
-    filter: OutgoingFilter,
+    filter: OperationFilter,
     modifier: Modifier = Modifier
 ) {
 
     val message = when (filter) {
-        OutgoingFilter.ALL -> DashboardLabels.EMPTY_ALL
-        OutgoingFilter.PAID -> DashboardLabels.EMPTY_PAID
-        OutgoingFilter.REMAINING -> DashboardLabels.EMPTY_REMAINING
+        OperationFilter.ALL -> DashboardLabels.EMPTY_ALL
+        OperationFilter.PAID -> DashboardLabels.EMPTY_PAID
+        OperationFilter.REMAINING -> DashboardLabels.EMPTY_REMAINING
     }
 
     Column(
@@ -55,7 +55,7 @@ fun EmptyStateView(
 
         Spacer(modifier = Modifier.height(AppTheme.spacing.medium))
 
-        if (filter == OutgoingFilter.ALL) {
+        if (filter == OperationFilter.ALL) {
             Text(
                 text = DashboardLabels.EMPTY_STATE_DESC,
                 style = AppTheme.typo.body,
