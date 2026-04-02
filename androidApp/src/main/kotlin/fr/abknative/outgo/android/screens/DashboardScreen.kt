@@ -59,8 +59,7 @@ fun DashboardScreen(
 
     val formattedSelectedMonth = "${getMonthName(state.selectedMonth)} ${state.selectedYear}"
 
-    // TODO: À l'avenir, ce booléen viendra de ton DashboardState (ex: state.isPremium)
-    val isPremium = false
+    val isPremium = state.isPremium
 
     val currentDay = state.currentDay ?: 0
     val currentMonth = state.currentMonth
@@ -172,7 +171,7 @@ fun DashboardScreen(
 
             Spacer(modifier = Modifier.height(AppTheme.spacing.extraLarge))
 
-            ExpenseFilterSelector(
+            OperationFilterSelector(
                 selectedFilter = currentFilter,
                 onFilterSelected = { currentFilter = it }
             )
@@ -180,7 +179,7 @@ fun DashboardScreen(
             Spacer(modifier = Modifier.height(AppTheme.spacing.small))
 
             // --- COMPOSANT LISTE ---
-            ExpenseListContainer(
+            OperationListContainer(
                 isLoading = state.isLoading,
                 filteredList = filteredList,
                 currentFilter = currentFilter,
@@ -232,6 +231,7 @@ fun DashboardScreen(
             formState = formState,
             sheetState = sheetState,
             currentYear = currentYearNow,
+            isPremium = isPremium,
             onEvent = { event -> formState.onEvent(event) },
             onDismiss = { showFormSheet = false },
             onSave = { intent -> presenter.onIntent(intent) }

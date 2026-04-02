@@ -43,6 +43,7 @@ data class DashboardState(
     val remainingToPayInCents: Long = 0L,
 
     // --- Global State ---
+    val isPremium: Boolean = false,
     val syncState: SyncUiState = SyncUiState.UNAUTHENTICATED,
     val error: AppException? = null,
 

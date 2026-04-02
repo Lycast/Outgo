@@ -17,7 +17,7 @@ import fr.abknative.outgo.android.ui.theme.toColor
 import fr.abknative.outgo.wallet.api.model.dashboard.ProjectedOperation
 
 @Composable
-fun ExpenseListContainer(
+fun OperationListContainer(
     isLoading: Boolean,
     filteredList: List<ProjectedOperation>,
     currentFilter: OperationFilter,

@@ -5,7 +5,8 @@ import androidx.compose.ui.graphics.Color
 import fr.abknative.outgo.android.ui.CommonLabels
 import fr.abknative.outgo.android.ui.DashboardLabels
 import fr.abknative.outgo.android.ui.FormLabels
-import fr.abknative.outgo.core.ui.ColorPalette
+import fr.abknative.outgo.android.ui.theme.AppTheme
+import fr.abknative.outgo.android.ui.theme.toColor
 import fr.abknative.outgo.wallet.api.model.Operation
 import fr.abknative.outgo.wallet.api.model.operation.Recurrence
 import kotlin.math.absoluteValue
@@ -37,16 +38,18 @@ val Long.uiAmount: String
     }
 
 /**
- * Maps a [Recurrence] to its corresponding UI Color.
+ * Maps a [Recurrence] to its corresponding UI Color using the AppTheme.
  */
-val Recurrence.uiRecurrenceColor: Color
-    get() = when (this) {
-        Recurrence.YEARLY -> Color(ColorPalette.SECONDARY)
-        Recurrence.MONTHLY -> Color(ColorPalette.TERTIARY)
-        Recurrence.WEEKLY -> Color(ColorPalette.PRIMARY)
-        Recurrence.UNIQUE -> Color.DarkGray
-        Recurrence.UNKNOWN -> Color.Gray
+@Composable
+fun Recurrence.getUiColor(): Color {
+    return when (this) {
+        Recurrence.YEARLY -> AppTheme.colors.textSecondary.toColor().copy(alpha = 0.5f)
+        Recurrence.MONTHLY -> AppTheme.colors.primary.toColor().copy(alpha = 0.5f)
+        Recurrence.WEEKLY -> AppTheme.colors.secondary.toColor().copy(alpha = 0.5f)
+        Recurrence.UNIQUE -> AppTheme.colors.tertiary.toColor().copy(alpha = 0.5f)
+        else -> AppTheme.colors.surface200.toColor()
     }
+}
 
 // --- Operation Entity Extensions ---
 

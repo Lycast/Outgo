@@ -24,9 +24,9 @@ import fr.abknative.outgo.android.components.common.CircleIcon
 import fr.abknative.outgo.android.ui.AccessibilityLabels
 import fr.abknative.outgo.android.ui.CommonLabels
 import fr.abknative.outgo.android.ui.DashboardLabels
+import fr.abknative.outgo.android.ui.extensions.getUiColor
 import fr.abknative.outgo.android.ui.extensions.uiAmount
 import fr.abknative.outgo.android.ui.extensions.uiFrequencySummary
-import fr.abknative.outgo.android.ui.extensions.uiRecurrenceColor
 import fr.abknative.outgo.android.ui.extensions.uiTitle
 import fr.abknative.outgo.android.ui.theme.AppTheme
 import fr.abknative.outgo.android.ui.theme.OutgoTheme
@@ -117,14 +117,14 @@ fun OperationCard(
                     // Date et récurrence
                     Row(horizontalArrangement = Arrangement.End) {
                         Text(
-                            text = "${DashboardLabels.DUE_PREFIX} $formattedDate • ", // Remplacement de uiDueDayLabel
+                            text = "${DashboardLabels.DUE_PREFIX} $formattedDate • ",
                             style = AppTheme.typo.caption,
                             color = AppTheme.colors.textSecondary.toColor()
                         )
                         Text(
                             text = operation.uiFrequencySummary,
                             style = AppTheme.typo.caption,
-                            color = operation.recurrence.uiRecurrenceColor.copy(0.7f)
+                            color = operation.recurrence.getUiColor()
                         )
                     }
 

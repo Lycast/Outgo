@@ -18,6 +18,7 @@ kotlin {
             // Dépendances vers les couches inférieures
             implementation(projects.shared.core.api)
             implementation(projects.shared.feature.sync.api)
+            implementation(projects.shared.feature.subscription.api)
             implementation(projects.shared.feature.auth.api)
             implementation(projects.shared.feature.wallet.api)
 

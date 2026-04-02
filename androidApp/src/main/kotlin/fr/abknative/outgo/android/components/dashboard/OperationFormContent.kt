@@ -30,6 +30,7 @@ fun OperationFormContent(
     modifier: Modifier = Modifier,
     state: OperationFormState,
     currentYear: Int,
+    isPremium: Boolean,
     onEvent: (OperationFormEvent) -> Unit,
     onCancel: () -> Unit,
     onSave: () -> Unit
@@ -72,10 +73,13 @@ fun OperationFormContent(
         Spacer(modifier = Modifier.height(AppTheme.spacing.small))
 
         // --- Sélecteur : Type d'opération (Revenu / Dépense) ---
-        OperationTypeSelector(
-            selectedType = state.typeSelection,
-            onTypeChanged = { onEvent(OperationFormEvent.UpdateType(it)) }
-        )
+        if (isPremium) {
+            OperationTypeSelector(
+                selectedType = state.typeSelection,
+                onTypeChanged = { onEvent(OperationFormEvent.UpdateType(it)) }
+            )
+            Spacer(modifier = Modifier.height(AppTheme.spacing.medium))
+        }
 
         // --- Champ : Nom de la dépense/revenu ---
         OutlinedTextField(

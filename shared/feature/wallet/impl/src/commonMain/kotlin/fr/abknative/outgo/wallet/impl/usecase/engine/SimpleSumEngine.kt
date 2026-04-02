@@ -1,15 +1,19 @@
 package fr.abknative.outgo.wallet.impl.usecase.engine
 
 import fr.abknative.outgo.core.api.TimeProvider
-import fr.abknative.outgo.wallet.api.model.Operation
 import fr.abknative.outgo.wallet.api.model.dashboard.DashboardData
+import fr.abknative.outgo.wallet.api.model.dashboard.ProjectedOperation
 import fr.abknative.outgo.wallet.api.model.operation.OperationType
 
 internal class SimpleSumEngine(
     private val timeProvider: TimeProvider
 ) : DashboardCalculationEngine {
 
-    override fun calculate(operations: List<Operation>, currentMonth: Int, currentYear: Int): DashboardData {
+    override fun calculate(
+        operations: List<ProjectedOperation>,
+        currentMonth: Int,
+        currentYear: Int
+    ): DashboardData {
         val realCurrentMonth = timeProvider.monthValue()
         val realCurrentYear = timeProvider.yearValue()
 
@@ -18,32 +22,31 @@ internal class SimpleSumEngine(
 
         val today = timeProvider.dayOfMonth()
 
-        val viewStartTimestamp = timeProvider.startOfMonth(currentMonth, currentYear)
-        val lastDayOfViewedMonth = timeProvider.lastDayOfMonth(viewStartTimestamp)
-
         var totalIncome = 0L
         var totalExpenses = 0L
         var remainingToPay = 0L
 
-        operations.forEach { operation ->
-            when (operation.type) {
+        operations.forEach { projected ->
+            val op = projected.operation
+            val amount = op.amountInCents
+
+            when (op.type) {
                 OperationType.INCOME -> {
-                    totalIncome += operation.amountInCents
+                    totalIncome += amount
                 }
                 OperationType.EXPENSE -> {
-                    totalExpenses += operation.amountInCents
+                    totalExpenses += amount
 
                     when {
-                        isViewingPast -> { }
+                        isViewingPast -> { /* Tout est payé */ }
                         isViewingFuture -> {
-                            remainingToPay += operation.amountInCents
+                            remainingToPay += amount
                         }
                         else -> {
-                            val anchorDay = timeProvider.dayOfMonth(operation.startDate)
-                            val effectiveBillingDay = anchorDay.coerceAtMost(lastDayOfViewedMonth)
+                            val projectedDay = timeProvider.dayOfMonth(projected.projectedDate)
 
-                            if (effectiveBillingDay >= today) {
-                                remainingToPay += operation.amountInCents
+                            if (projectedDay >= today) {
+                                remainingToPay += amount
                             }
                         }
                     }

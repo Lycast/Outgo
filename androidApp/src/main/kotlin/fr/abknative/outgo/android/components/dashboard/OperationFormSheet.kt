@@ -18,6 +18,7 @@ fun OperationFormSheet(
     formState: OperationFormState,
     sheetState: SheetState,
     currentYear: Int,
+    isPremium: Boolean,
     onEvent: (OperationFormEvent) -> Unit,
     onDismiss: () -> Unit,
     onSave: (DashboardIntent.SaveOperation) -> Unit
@@ -39,6 +40,7 @@ fun OperationFormSheet(
             state = formState,
             onEvent = onEvent,
             currentYear = currentYear,
+            isPremium = isPremium,
             onCancel = { closeSheet() },
             onSave = {
                 val intent = DashboardIntent.SaveOperation(

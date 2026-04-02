@@ -11,6 +11,7 @@ import fr.abknative.outgo.dashboard.api.DashboardIntent
 import fr.abknative.outgo.dashboard.api.DashboardPresenter
 import fr.abknative.outgo.dashboard.api.DashboardState
 import fr.abknative.outgo.dashboard.api.SyncUiState
+import fr.abknative.outgo.subscription.api.FeatureManager
 import fr.abknative.outgo.sync.api.SyncManager
 import fr.abknative.outgo.wallet.api.model.operation.OperationType
 import fr.abknative.outgo.wallet.api.model.operation.Recurrence
@@ -28,7 +29,8 @@ internal class DashboardPresenterImpl(
     private val saveWallet: SaveWalletUseCase,
     private val timeProvider: TimeProvider,
     private val syncManager: SyncManager,
-    private val storage: KeyValueStorage
+    private val storage: KeyValueStorage,
+    private val featureManager: FeatureManager
 ) : DashboardPresenter() {
 
     private val heroExpandedKey = "hero_section_expanded"
@@ -59,6 +61,7 @@ internal class DashboardPresenterImpl(
 
     init {
         startObservingSession()
+        startObservingPremiumStatus()
         ensureDefaultWalletExists()
         startObservingData()
     }
@@ -83,6 +86,14 @@ internal class DashboardPresenterImpl(
                         currentState.copy(syncState = nextState)
                     }
                 }
+            }
+        }
+    }
+
+    private fun startObservingPremiumStatus() {
+        viewModelScope.safeLaunch(onError = onCoroutineError) {
+            featureManager.isPremiumFlow.collect { isPremium ->
+                _state.update { it.copy(isPremium = isPremium) }
             }
         }
     }
@@ -116,13 +127,14 @@ internal class DashboardPresenterImpl(
             }.collect { projectedOperations ->
                 val month = selectedMonthFlow.value
                 val year = selectedYearFlow.value
-                val rawOperations = projectedOperations.map { it.operation }
-                val dashboardData = calculateDashboardData(rawOperations, month, year)
+                val dashboardData = calculateDashboardData(projectedOperations, month, year)
 
                 _state.update {
                     it.copy(
                         operations = projectedOperations,
-                        monthlyIncomeInCents = rawOperations.filter { op -> op.type.name == OperationType.INCOME.name }.sumOf { op -> op.amountInCents },
+                        monthlyIncomeInCents = projectedOperations
+                            .filter { it.operation.type == OperationType.INCOME }
+                            .sumOf { it.operation.amountInCents },
                         totalOutgoingsInCents = dashboardData.totalExpensesInCents,
                         remainingToPayInCents = dashboardData.remainingToPayInCents,
                         disposableIncomeInCents = dashboardData.disposableIncomeInCents,

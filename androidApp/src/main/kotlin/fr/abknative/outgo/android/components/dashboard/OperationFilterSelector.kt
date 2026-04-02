@@ -25,7 +25,7 @@ import fr.abknative.outgo.android.ui.theme.AppTheme
 import fr.abknative.outgo.android.ui.theme.toColor
 
 @Composable
-fun ExpenseFilterSelector(
+fun OperationFilterSelector(
     selectedFilter: OperationFilter,
     onFilterSelected: (OperationFilter) -> Unit,
     modifier: Modifier = Modifier
@@ -114,7 +114,7 @@ fun PreviewExpenseFilterSelector() {
     var currentFilter by remember { mutableStateOf(OperationFilter.ALL) }
 
     Column(modifier = Modifier.background(Color.White).padding(16.dp)) {
-        ExpenseFilterSelector(
+        OperationFilterSelector(
             selectedFilter = currentFilter,
             onFilterSelected = { currentFilter = it }
         )
