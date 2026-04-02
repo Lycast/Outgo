@@ -10,6 +10,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import fr.abknative.outgo.android.ui.BudgetEditDialogLabels
@@ -20,13 +21,16 @@ import fr.abknative.outgo.android.ui.theme.OutgoTheme
 import fr.abknative.outgo.android.ui.theme.toColor
 
 @Composable
-fun BudgetEditDialog(
+fun WalletEditDialog(
+    initialWalletName: String,
     currentIncomeInCents: Long,
     onDismiss: () -> Unit,
-    onConfirm: (Long) -> Unit
+    onConfirm: (newName: String, newIncomeInCents: Long) -> Unit
 ) {
 
-    var textValue by remember {
+    var nameValue by remember { mutableStateOf(initialWalletName) }
+
+    var amountValue by remember {
         mutableStateOf(
             if (currentIncomeInCents > 0) {
                 currentIncomeInCents.toBigDecimal()
@@ -36,17 +40,30 @@ fun BudgetEditDialog(
         )
     }
 
-    val parsedAmount = remember(textValue) {
-        textValue.toBigDecimalOrNull()?.movePointRight(2)?.toLong()
+    val parsedAmount = remember(amountValue) {
+        amountValue.toBigDecimalOrNull()?.movePointRight(2)?.toLong()
     }
-    val isValidInput = parsedAmount != null && textValue.isNotBlank()
+
+    val isValidInput = parsedAmount != null && amountValue.isNotBlank() && nameValue.isNotBlank()
+
+    val textFieldColors = OutlinedTextFieldDefaults.colors(
+        focusedBorderColor = AppTheme.colors.primary.toColor(),
+        unfocusedBorderColor = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.3f),
+        focusedLabelColor = AppTheme.colors.primary.toColor(),
+        unfocusedLabelColor = AppTheme.colors.textSecondary.toColor(),
+        cursorColor = AppTheme.colors.primary.toColor(),
+        focusedTextColor = AppTheme.colors.textPrimary.toColor(),
+        unfocusedTextColor = AppTheme.colors.textPrimary.toColor(),
+        focusedPlaceholderColor = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.5f),
+        unfocusedPlaceholderColor = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.5f),
+    )
 
     AlertDialog(
         onDismissRequest = onDismiss,
         containerColor = AppTheme.colors.surface200.toColor(),
         title = {
             Text(
-                text = BudgetEditDialogLabels.DIALOG_BUDGET_TITLE,
+                text = BudgetEditDialogLabels.DIALOG_BUDGET_TITLE, // Tu pourras renommer ce label plus tard
                 style = AppTheme.typo.subtitle,
                 color = AppTheme.colors.textPrimary.toColor()
             )
@@ -61,8 +78,34 @@ fun BudgetEditDialog(
 
                 Spacer(modifier = Modifier.height(AppTheme.spacing.large))
 
+                // --- Champ : Nom du compte ---
                 OutlinedTextField(
-                    value = textValue,
+                    value = nameValue,
+                    onValueChange = { nameValue = it },
+                    label = {
+                        Text(
+                            text = FormLabels.FIELD_NAME, // "Nom"
+                            style = AppTheme.typo.caption
+                        )
+                    },
+                    placeholder = {
+                        Text("Mon Compte Principal", style = AppTheme.typo.body)
+                    },
+                    textStyle = AppTheme.typo.body.copy(color = AppTheme.colors.textPrimary.toColor()),
+                    keyboardOptions = KeyboardOptions(
+                        capitalization = KeyboardCapitalization.Sentences,
+                        imeAction = ImeAction.Next
+                    ),
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = textFieldColors
+                )
+
+                Spacer(modifier = Modifier.height(AppTheme.spacing.medium))
+
+                // --- Champ : Montant du budget ---
+                OutlinedTextField(
+                    value = amountValue,
                     onValueChange = { newValue ->
                         if (newValue.length <= 15) {
                             val sanitizedValue = newValue.replace(',', '.')
@@ -70,7 +113,7 @@ fun BudgetEditDialog(
                                 || sanitizedValue.count { it == '.' } <= 1
                                 && sanitizedValue.all { it.isDigit() || it == '.' }
                             ) {
-                                textValue = sanitizedValue
+                                amountValue = sanitizedValue
                             }
                         }
                     },
@@ -93,22 +136,12 @@ fun BudgetEditDialog(
                     ),
                     keyboardActions = KeyboardActions(
                         onDone = {
-                            if (isValidInput) onConfirm(parsedAmount)
+                            if (isValidInput) onConfirm(nameValue, parsedAmount)
                         }
                     ),
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = AppTheme.colors.primary.toColor(),
-                        unfocusedBorderColor = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.3f),
-                        focusedLabelColor = AppTheme.colors.primary.toColor(),
-                        unfocusedLabelColor = AppTheme.colors.textSecondary.toColor(),
-                        cursorColor = AppTheme.colors.primary.toColor(),
-                        focusedTextColor = AppTheme.colors.textPrimary.toColor(),
-                        unfocusedTextColor = AppTheme.colors.textPrimary.toColor(),
-                        focusedPlaceholderColor = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.5f),
-                        unfocusedPlaceholderColor = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.5f),
-                    )
+                    colors = textFieldColors
                 )
 
                 Spacer(modifier = Modifier.height(AppTheme.spacing.large))
@@ -122,7 +155,7 @@ fun BudgetEditDialog(
         },
         confirmButton = {
             Button(
-                onClick = { if (isValidInput) onConfirm(parsedAmount) },
+                onClick = { if (isValidInput) onConfirm(nameValue, parsedAmount!!) },
                 enabled = isValidInput,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = AppTheme.colors.primary.toColor(),
@@ -153,15 +186,15 @@ fun BudgetEditDialog(
     )
 }
 
-
 @Preview(showBackground = true)
 @Composable
 fun PreviewBudgetEditDialog_LargeAmount() {
     OutgoTheme {
-        BudgetEditDialog(
+        WalletEditDialog(
+            initialWalletName = "Compte Courant",
             currentIncomeInCents = 3549000000000L, // 35 000 000 000 d'euros
             onDismiss = {},
-            onConfirm = {}
+            onConfirm = { _, _ -> }
         )
     }
 }

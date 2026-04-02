@@ -10,7 +10,7 @@ import fr.abknative.outgo.wallet.api.model.operation.Recurrence
  */
 sealed interface DashboardIntent {
 
-    data class Save(
+    data class SaveOperation(
         val id: String? = null,
         val walletId: String,
         val name: String,
@@ -19,6 +19,16 @@ sealed interface DashboardIntent {
         val recurrence: Recurrence,
         val startDate: EpochMillis,
         val endDate: EpochMillis? = null
+    ) : DashboardIntent
+
+    /** * Intent to simultaneously update the main wallet's name and its primary monthly income.
+     * Primarily used in the Free tier experience.
+     */
+    data class SaveWalletAndIncome(
+        val walletId: String,
+        val walletName: String,
+        val incomeAmountInCents: Long,
+        val startDate: EpochMillis
     ) : DashboardIntent
 
     /** Intent to change the currently displayed month. */

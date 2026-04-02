@@ -12,6 +12,8 @@ import fr.abknative.outgo.dashboard.api.DashboardPresenter
 import fr.abknative.outgo.dashboard.api.DashboardState
 import fr.abknative.outgo.dashboard.api.SyncUiState
 import fr.abknative.outgo.sync.api.SyncManager
+import fr.abknative.outgo.wallet.api.model.operation.OperationType
+import fr.abknative.outgo.wallet.api.model.operation.Recurrence
 import fr.abknative.outgo.wallet.api.usecase.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
@@ -36,7 +38,8 @@ internal class DashboardPresenterImpl(
             isHeroExpanded = storage.getBoolean(heroExpandedKey, true),
             currentDay = timeProvider.dayOfMonth(),
             currentMonth = timeProvider.monthValue(),
-            selectedMonth = timeProvider.monthValue()
+            selectedMonth = timeProvider.monthValue(),
+            selectedYear = timeProvider.yearValue()
         )
     )
     override val state: StateFlow<DashboardState> = _state.asStateFlow()
@@ -64,7 +67,7 @@ internal class DashboardPresenterImpl(
         viewModelScope.safeLaunch(onError = onCoroutineError) {
             val wallets = observeWallets().first()
             if (wallets.isEmpty()) {
-                saveWallet(id = "DEFAULT_WALLET_ID", name = "Mon Compte Principal")
+                saveWallet(name = "Mon Compte")
             }
         }
     }
@@ -97,7 +100,17 @@ internal class DashboardPresenterImpl(
                 if (wallet == null) {
                     flowOf(emptyList())
                 } else {
-                    _state.update { it.copy(activeWalletId = wallet.id) }
+                    val creationMonth = timeProvider.monthValue(wallet.createdAt)
+                    val creationYear = timeProvider.yearValue(wallet.createdAt)
+
+                    _state.update {
+                        it.copy(
+                            activeWalletId = wallet.id,
+                            activeWalletName = wallet.name,
+                            walletCreationMonth = creationMonth,
+                            walletCreationYear = creationYear
+                        )
+                    }
                     observeActiveOperations(wallet.id, month, year)
                 }
             }.collect { operations ->
@@ -108,11 +121,12 @@ internal class DashboardPresenterImpl(
                 _state.update {
                     it.copy(
                         operations = operations,
-                        monthlyIncomeInCents = operations.filter { op -> op.type.name == "INCOME" }.sumOf { op -> op.amountInCents }, // Optionnel, si tu veux toujours l'afficher
+                        monthlyIncomeInCents = operations.filter { op -> op.type.name == OperationType.INCOME.name }.sumOf { op -> op.amountInCents },
                         totalOutgoingsInCents = dashboardData.totalExpensesInCents,
                         remainingToPayInCents = dashboardData.remainingToPayInCents,
                         disposableIncomeInCents = dashboardData.disposableIncomeInCents,
                         selectedMonth = month,
+                        selectedYear = year,
                         isLoading = false
                     )
                 }
@@ -122,7 +136,8 @@ internal class DashboardPresenterImpl(
 
     override fun onIntent(intent: DashboardIntent) {
         when (intent) {
-            is DashboardIntent.Save -> handleAdd(intent)
+            is DashboardIntent.SaveOperation -> handleSaveOperation(intent)
+            is DashboardIntent.SaveWalletAndIncome -> handleSaveWalletAndIncome(intent)
             is DashboardIntent.SelectMonth -> {
                 selectedMonthFlow.value = intent.month
                 selectedYearFlow.value = intent.year
@@ -137,7 +152,7 @@ internal class DashboardPresenterImpl(
         }
     }
 
-    private fun handleAdd(intent: DashboardIntent.Save) {
+    private fun handleSaveOperation(intent: DashboardIntent.SaveOperation) {
         viewModelScope.safeLaunch(onError = onCoroutineError) {
             _state.update { it.copy(isLoading = true) }
 
@@ -157,6 +172,39 @@ internal class DashboardPresenterImpl(
                 syncManager.syncAll()
             } else if (result is Result.Error) {
                 _state.update { it.copy(isLoading = false, error = result.error) }
+            }
+        }
+    }
+
+    private fun handleSaveWalletAndIncome(intent: DashboardIntent.SaveWalletAndIncome) {
+        viewModelScope.safeLaunch(onError = onCoroutineError) {
+            _state.update { it.copy(isLoading = true) }
+
+            val walletResult = saveWallet(id = intent.walletId, name = intent.walletName)
+            if (walletResult is Result.Error) {
+                _state.update { it.copy(isLoading = false, error = walletResult.error) }
+                return@safeLaunch
+            }
+
+            val existingIncome = _state.value.operations.firstOrNull { it.type == OperationType.INCOME }
+
+            val operationResult = saveOperation(
+                id = existingIncome?.id,
+                walletId = intent.walletId,
+                name = "Revenu Principal",
+                amountInCents = intent.incomeAmountInCents,
+                type = OperationType.INCOME,
+                recurrence = Recurrence.MONTHLY,
+                startDate = existingIncome?.startDate ?: intent.startDate,
+                endDate = null
+            )
+
+            // 4. Synchronisation
+            if (operationResult is Result.Success) {
+                _state.update { it.copy(isLoading = false, error = null) }
+                syncManager.syncAll()
+            } else if (operationResult is Result.Error) {
+                _state.update { it.copy(isLoading = false, error = operationResult.error) }
             }
         }
     }

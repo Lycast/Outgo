@@ -14,12 +14,12 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun OutgoingFormSheet(
+fun OperationFormSheet(
     formState: OperationFormState,
     sheetState: SheetState,
     onEvent: (OperationFormEvent) -> Unit,
     onDismiss: () -> Unit,
-    onSave: (DashboardIntent.Save) -> Unit
+    onSave: (DashboardIntent.SaveOperation) -> Unit
 ) {
     val scope = rememberCoroutineScope()
 
@@ -34,12 +34,12 @@ fun OutgoingFormSheet(
         sheetState = sheetState,
         containerColor = AppTheme.colors.surface200.toColor()
     ) {
-        OutgoingFormContent(
+        OperationFormContent(
             state = formState,
             onEvent = onEvent,
             onCancel = { closeSheet() },
             onSave = {
-                val intent = DashboardIntent.Save(
+                val intent = DashboardIntent.SaveOperation(
                     id = formState.operationId,
                     walletId = formState.walletId,
                     name = formState.nameBuffer,

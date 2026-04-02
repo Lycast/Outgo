@@ -33,7 +33,9 @@ import fr.abknative.outgo.android.ui.theme.toColor
 @Composable
 fun HeroSection(
     isExpanded: Boolean,
+    canGoToPreviousMonth: Boolean,
     formattedMonthDate: String,
+    activeWalletName: String,
     monthlyIncomeInCents: Long,
     totalOutgoingsInCents: Long,
     disposableIncomeInCents: Long,
@@ -69,6 +71,7 @@ fun HeroSection(
         ) {
             MonthBudgetSelector(
                 formattedMonthDate = formattedMonthDate,
+                canGoToPreviousMonth = canGoToPreviousMonth,
                 onPreviousMonthClick = onPreviousMonthClick,
                 onNextMonthClick = onNextMonthClick
             )
@@ -94,6 +97,7 @@ fun HeroSection(
                     val content = @Composable {
                         BudgetItem(
                             amount = monthlyIncomeInCents.uiAmount,
+                            activeWalletName = activeWalletName,
                             onClick = onEditBudgetClick
                         )
                         Spacer(modifier = Modifier.width(AppTheme.spacing.large))
@@ -171,6 +175,7 @@ fun HeroSection(
 
 @Composable
 private fun BudgetItem(
+    activeWalletName: String,
     amount: String,
     onClick: () -> Unit
 ) {
@@ -193,7 +198,7 @@ private fun BudgetItem(
             horizontalAlignment = Alignment.Start
         ) {
             Text(
-                text = DashboardLabels.HERO_TOTAL_INCOME_LABEL,
+                text = activeWalletName,
                 style = AppTheme.typo.caption,
                 color = AppTheme.colors.textSecondary.toColor(),
                 fontWeight = FontWeight.Medium
@@ -256,6 +261,7 @@ fun PreviewHeroSectionNominal() {
     OutgoTheme {
         HeroSection(
             formattedMonthDate = "Mars",
+            activeWalletName = "Mon compte",
             monthlyIncomeInCents = 65000L, // 650.00€
             totalOutgoingsInCents = 12000L, // 120.00€
             disposableIncomeInCents = 30000L, // 300.00€
@@ -264,7 +270,8 @@ fun PreviewHeroSectionNominal() {
             onPreviousMonthClick = { /* Action de test */ },
             onNextMonthClick = { /* Action de test */ },
             onEditBudgetClick = { /* Action de test */ },
-            isExpanded = true
+            isExpanded = true,
+            canGoToPreviousMonth = true
         )
     }
 }
@@ -279,6 +286,7 @@ fun PreviewHeroSectionNegative() {
     OutgoTheme {
         HeroSection(
             formattedMonthDate = "Mars",
+            activeWalletName = "Mon compte",
             monthlyIncomeInCents = 15005490000L,  // 150 054 900.00€
             totalOutgoingsInCents = 18059000000L,  // 180 590 000.00€
             disposableIncomeInCents = -390000000L, // -3 900 000.00€ (Alerte rouge)
@@ -287,7 +295,8 @@ fun PreviewHeroSectionNegative() {
             onPreviousMonthClick = { /* Action de test */ },
             onNextMonthClick = { /* Action de test */ },
             onEditBudgetClick = { /* Action de test */ },
-            isExpanded = true
+            isExpanded = true,
+            canGoToPreviousMonth = true
         )
     }
 }

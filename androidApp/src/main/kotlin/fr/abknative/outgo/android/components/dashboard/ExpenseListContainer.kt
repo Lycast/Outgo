@@ -42,7 +42,7 @@ fun ExpenseListContainer(
                         shape = RoundedCornerShape(12.dp),
                         border = BorderStroke(1.dp, AppTheme.colors.textSecondary.toColor().copy(alpha = 0.1f))
                     ) {
-                        OutgoingCard(
+                        OperationCard(
                             operation = outgoing,
                             onEdit = { onEdit(outgoing) },
                             onDelete = { onDelete(outgoing.id) },

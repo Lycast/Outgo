@@ -23,12 +23,18 @@ import fr.abknative.outgo.wallet.api.model.Operation
 data class DashboardState(
     val isLoading: Boolean = false,
     val activeWalletId: String? = null,
+    val activeWalletName: String = "",
 
     // --- List Data ---
     val operations: List<Operation> = emptyList(),
     val currentDay: Int? = 0,
     val currentMonth: Int = 0,
     val selectedMonth: Int,
+    val selectedYear: Int,
+
+    // --- Temporel ---
+    val walletCreationMonth: Int? = null,
+    val walletCreationYear: Int? = null,
 
     // --- Calculations & Budget ---
     val monthlyIncomeInCents: Long = 0L,

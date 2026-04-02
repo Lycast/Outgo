@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
@@ -23,6 +24,7 @@ import fr.abknative.outgo.android.ui.theme.toColor
 @Composable
 fun MonthBudgetSelector(
     formattedMonthDate: String,
+    canGoToPreviousMonth: Boolean,
     onPreviousMonthClick: () -> Unit,
     onNextMonthClick: () -> Unit
 ){
@@ -40,6 +42,8 @@ fun MonthBudgetSelector(
     ){
         IconButton(
             onClick = onPreviousMonthClick,
+            enabled = canGoToPreviousMonth,
+            modifier = Modifier.alpha(if (canGoToPreviousMonth) 1f else 0.3f)
         ) {
             Icon(
                 painter = painterResource(R.drawable.caret_left),

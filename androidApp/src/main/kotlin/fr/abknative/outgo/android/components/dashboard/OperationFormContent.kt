@@ -27,7 +27,7 @@ import fr.abknative.outgo.wallet.api.model.operation.OperationType
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun OutgoingFormContent(
+fun OperationFormContent(
     modifier: Modifier = Modifier,
     state: OperationFormState,
     onEvent: (OperationFormEvent) -> Unit,

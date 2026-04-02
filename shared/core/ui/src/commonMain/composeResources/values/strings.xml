@@ -38,11 +38,11 @@
     <string name="dashboard_hero_total_charges">Total des dépenses</string>
     <string name="dashboard_hero_remaining_to_pay">Dépenses restantes à payer</string>
     <string name="dashboard_tab_all">TOUTES</string>
-    <string name="dashboard_tab_paid">PAYÉES</string>
-    <string name="dashboard_tab_remaining">RESTANTES</string>
+    <string name="dashboard_tab_paid">PASSÉES</string>
+    <string name="dashboard_tab_remaining">À VENIR</string>
     <string name="dashboard_empty_all">Aucune dépense.</string>
-    <string name="dashboard_empty_paid">Vous n'avez pas encore réglé de dépenses.</string>
-    <string name="dashboard_empty_remaining">Félicitations, tout est payé !</string>
+    <string name="dashboard_empty_paid">Aucune opération n'a été passée ce mois-ci.</string>
+    <string name="dashboard_empty_remaining">Il n'y a pas d'autre opération de prévu ce mois-ci !</string>
     <string name="dashboard_empty_state_desc">Appuyez sur + pour ajouter votre premier abonnement ou dépense récurrente.</string>
     <string name="dashboard_default_name">Sans nom</string>
     <string name="dashboard_due_prefix">Le</string>

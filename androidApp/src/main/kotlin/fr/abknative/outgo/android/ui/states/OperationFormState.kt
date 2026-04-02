@@ -55,16 +55,23 @@ class OperationFormState(
 
     val startDate: EpochMillis
         get() {
-            val day = dayBuffer.toIntOrNull() ?: 1
             val now = timeProvider.now()
             val currentMonth = timeProvider.monthValue(now)
             val currentYear = timeProvider.yearValue(now)
 
+            val startOfMonth = timeProvider.startOfMonth(currentMonth, currentYear)
+
+            val maxDaysInMonth = timeProvider.lastDayOfMonth(startOfMonth)
+            val rawDay = dayBuffer.toIntOrNull() ?: 1
+            val safeDay = rawDay.coerceIn(1, maxDaysInMonth)
+
+            val targetDate = timeProvider.plusDays(startOfMonth, safeDay - 1)
+
             return timeProvider.combineDateAndTime(
-                dateEpochMillis = timeProvider.startOfMonth(currentMonth, currentYear),
+                dateEpochMillis = targetDate,
                 hour = 0,
                 minute = 0
-            ) // TODO Utiliser une vraie fonction combine() robuste dans TimeProvider pour créer un instant précis à partir d'un jour.
+            )
         }
 
     fun onEvent(event: OperationFormEvent) {

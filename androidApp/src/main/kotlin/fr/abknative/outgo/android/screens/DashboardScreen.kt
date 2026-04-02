@@ -53,30 +53,41 @@ fun DashboardScreen(
         initialDay = selectedOperation?.startDate?.let { timeProvider.dayOfMonth(it).toString() } ?: ""
     )
 
-    val formattedSelectedMonth = getMonthName(state.selectedMonth)
+    val formattedSelectedMonth = "${getMonthName(state.selectedMonth)} ${state.selectedYear}"
+
+    // TODO: À l'avenir, ce booléen viendra de ton DashboardState (ex: state.isPremium)
+    // Pour l'instant, on le force à false pour finaliser l'expérience Gratuite.
+    val isPremium = false
 
     val currentDay = state.currentDay ?: 0
     val currentMonth = state.currentMonth
     val selectedMonth = state.selectedMonth
     val filteredList = remember(state.operations, currentFilter, currentDay, currentMonth, selectedMonth) {
+        val baseList = if (isPremium) { state.operations } else { state.operations.filter { it.type == OperationType.EXPENSE } }
         when (currentFilter) {
-            OperationFilter.ALL -> state.operations
+            OperationFilter.ALL -> baseList
             OperationFilter.PAID -> {
                 when {
-                    selectedMonth < currentMonth -> state.operations
+                    selectedMonth < currentMonth -> baseList
                     selectedMonth > currentMonth -> emptyList()
-                    else -> state.operations.filter { timeProvider.dayOfMonth(it.startDate) < currentDay }
+                    else -> baseList.filter { timeProvider.dayOfMonth(it.startDate) < currentDay }
                 }
             }
 
             OperationFilter.REMAINING -> {
                 when {
                     selectedMonth < currentMonth -> emptyList()
-                    selectedMonth > currentMonth -> state.operations
-                    else -> state.operations.filter { timeProvider.dayOfMonth(it.startDate) >= currentDay }
+                    selectedMonth > currentMonth -> baseList
+                    else -> baseList.filter { timeProvider.dayOfMonth(it.startDate) >= currentDay }
                 }
             }
         }
+    }
+
+    val canGoToPreviousMonth = remember(state.selectedMonth, state.selectedYear, state.walletCreationMonth, state.walletCreationYear) {
+        val currentAbsoluteMonth = state.selectedYear * 12 + state.selectedMonth
+        val creationAbsoluteMonth = (state.walletCreationYear ?: state.selectedYear) * 12 + (state.walletCreationMonth ?: state.selectedMonth)
+        currentAbsoluteMonth > creationAbsoluteMonth
     }
 
     val currentError = state.error
@@ -127,21 +138,29 @@ fun DashboardScreen(
         ) {
             HeroSection(
                 isExpanded = state.isHeroExpanded,
+                canGoToPreviousMonth = canGoToPreviousMonth,
                 onToggleExpand = { presenter.onIntent(DashboardIntent.ToggleHeroSection(!state.isHeroExpanded)) },
                 formattedMonthDate = formattedSelectedMonth,
+                activeWalletName = state.activeWalletName,
                 monthlyIncomeInCents = state.monthlyIncomeInCents,
                 totalOutgoingsInCents = state.totalOutgoingsInCents,
                 disposableIncomeInCents = state.disposableIncomeInCents,
                 remainingToPayInCents = state.remainingToPayInCents,
                 onPreviousMonthClick = {
-                    val newMonth = if (state.selectedMonth == 1) 12 else state.selectedMonth - 1
-                    val currentYear = timeProvider.yearValue(timeProvider.now())
-                    presenter.onIntent(DashboardIntent.SelectMonth(newMonth, currentYear))
+                    if (canGoToPreviousMonth) {
+                        val currentMonth = state.selectedMonth
+                        val currentYear = state.selectedYear
+                        val (newMonth, newYear) = if (currentMonth == 1) { 12 to (currentYear - 1)
+                        } else { (currentMonth - 1) to currentYear }
+                        presenter.onIntent(DashboardIntent.SelectMonth(newMonth, newYear))
+                    }
                 },
                 onNextMonthClick = {
-                    val newMonth = if (state.selectedMonth == 12) 1 else state.selectedMonth + 1
-                    val currentYear = timeProvider.yearValue(timeProvider.now())
-                    presenter.onIntent(DashboardIntent.SelectMonth(newMonth, currentYear))
+                    val currentMonth = state.selectedMonth
+                    val currentYear = state.selectedYear
+                    val (newMonth, newYear) = if (currentMonth == 12) { 1 to (currentYear + 1)
+                    } else { (currentMonth + 1) to currentYear }
+                    presenter.onIntent(DashboardIntent.SelectMonth(newMonth, newYear))
                 },
                 onEditBudgetClick = { showBudgetDialog = true }
             )
@@ -171,20 +190,19 @@ fun DashboardScreen(
     }
 
     if (showBudgetDialog) {
-        BudgetEditDialog(
+        WalletEditDialog(
+            initialWalletName = state.activeWalletName,
             currentIncomeInCents = state.monthlyIncomeInCents,
             onDismiss = { showBudgetDialog = false },
-            onConfirm = { newIncomeInCents ->
+            onConfirm = { newName, newIncomeInCents ->
                 val currentYear = timeProvider.yearValue(timeProvider.now())
                 val startOfSelectedMonth = timeProvider.startOfMonth(state.selectedMonth, currentYear)
 
                 presenter.onIntent(
-                    DashboardIntent.Save(
+                    DashboardIntent.SaveWalletAndIncome(
                         walletId = state.activeWalletId ?: "",
-                        name = "Revenu Principal",
-                        amountInCents = newIncomeInCents,
-                        type = OperationType.INCOME,
-                        recurrence = Recurrence.MONTHLY,
+                        walletName = newName,
+                        incomeAmountInCents = newIncomeInCents,
                         startDate = startOfSelectedMonth
                     )
                 )
@@ -205,7 +223,7 @@ fun DashboardScreen(
 
     // --- COMPOSANT MODALE ---
     if (showFormSheet) {
-        OutgoingFormSheet(
+        OperationFormSheet(
             formState = formState,
             sheetState = sheetState,
             onEvent = { event -> formState.onEvent(event) },

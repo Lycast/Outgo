@@ -40,7 +40,7 @@ import java.util.*
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun OutgoingCard(
+fun OperationCard(
     operation: Operation,
     onEdit: () -> Unit,
     onDelete: () -> Unit,
@@ -243,7 +243,7 @@ fun PreviewOutgoingCard_LargeAmount() {
 
     OutgoTheme {
         Column(Modifier.padding(16.dp)) {
-            OutgoingCard(
+            OperationCard(
                 operation = mockOperation,
                 onEdit = {},
                 onDelete = {},
@@ -272,7 +272,7 @@ fun PreviewOutgoingCard_Expanded() {
 
     OutgoTheme {
         // On peut tester l'état déplié en cliquant dessus dans l'onglet "Interactive" d'Android Studio
-        OutgoingCard(
+        OperationCard(
             operation = mockOperation,
             onEdit = {},
             onDelete = {},
