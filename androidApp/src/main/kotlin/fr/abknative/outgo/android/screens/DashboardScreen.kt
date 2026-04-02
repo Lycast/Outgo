@@ -16,7 +16,7 @@ import fr.abknative.outgo.android.ui.toUIString
 import fr.abknative.outgo.core.api.TimeProvider
 import fr.abknative.outgo.dashboard.api.DashboardIntent
 import fr.abknative.outgo.dashboard.api.DashboardPresenter
-import fr.abknative.outgo.wallet.api.model.Operation
+import fr.abknative.outgo.wallet.api.model.dashboard.ProjectedOperation
 import fr.abknative.outgo.wallet.api.model.operation.OperationType
 import fr.abknative.outgo.wallet.api.model.operation.Recurrence
 import org.koin.compose.koinInject
@@ -37,40 +37,45 @@ fun DashboardScreen(
     var showFormSheet by remember { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
 
-    var selectedOperation by remember { mutableStateOf<Operation?>(null) }
+    var selectedOperation by remember { mutableStateOf<ProjectedOperation?>(null) }
     var currentFilter by remember { mutableStateOf(OperationFilter.ALL) }
 
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
+    val currentYearNow = timeProvider.yearValue(timeProvider.now())
+
     val formState = rememberOperationFormState(
-        operationId = selectedOperation?.id,
+        operationId = selectedOperation?.operation?.id,
         walletId = state.activeWalletId ?: "",
         timeProvider = timeProvider,
-        initialName = selectedOperation?.name ?: "",
-        initialAmount = selectedOperation?.amountInCents?.toBigDecimal()?.movePointLeft(2)?.toPlainString() ?: "",
-        initialType = selectedOperation?.type ?: OperationType.EXPENSE,
-        initialRecurrence = selectedOperation?.recurrence ?: Recurrence.MONTHLY,
-        initialDay = selectedOperation?.startDate?.let { timeProvider.dayOfMonth(it).toString() } ?: ""
+        initialName = selectedOperation?.operation?.name ?: "",
+        initialAmount = selectedOperation?.operation?.amountInCents?.toBigDecimal()?.movePointLeft(2)?.toPlainString() ?: "",
+        initialType = selectedOperation?.operation?.type ?: OperationType.EXPENSE,
+        initialRecurrence = selectedOperation?.operation?.recurrence ?: Recurrence.MONTHLY,
+        initialDay = selectedOperation?.operation?.startDate?.let { timeProvider.dayOfMonth(it).toString() } ?: "1",
+        initialMonth = selectedOperation?.operation?.startDate?.let { timeProvider.monthValue(it).toString() } ?: state.selectedMonth.toString(),
+        initialYear = selectedOperation?.operation?.startDate?.let { timeProvider.yearValue(it).toString() } ?: state.selectedYear.toString()
     )
 
     val formattedSelectedMonth = "${getMonthName(state.selectedMonth)} ${state.selectedYear}"
 
     // TODO: À l'avenir, ce booléen viendra de ton DashboardState (ex: state.isPremium)
-    // Pour l'instant, on le force à false pour finaliser l'expérience Gratuite.
     val isPremium = false
 
     val currentDay = state.currentDay ?: 0
     val currentMonth = state.currentMonth
     val selectedMonth = state.selectedMonth
-    val filteredList = remember(state.operations, currentFilter, currentDay, currentMonth, selectedMonth) {
-        val baseList = if (isPremium) { state.operations } else { state.operations.filter { it.type == OperationType.EXPENSE } }
+    val filteredList = remember(state.operations, currentFilter, currentDay, currentMonth, selectedMonth, isPremium) {
+        val baseList = if (isPremium) { state.operations
+        } else { state.operations.filter { it.operation.type == OperationType.EXPENSE } }
+
         when (currentFilter) {
             OperationFilter.ALL -> baseList
             OperationFilter.PAID -> {
                 when {
                     selectedMonth < currentMonth -> baseList
                     selectedMonth > currentMonth -> emptyList()
-                    else -> baseList.filter { timeProvider.dayOfMonth(it.startDate) < currentDay }
+                    else -> baseList.filter { timeProvider.dayOfMonth(it.projectedDate) < currentDay }
                 }
             }
 
@@ -78,7 +83,7 @@ fun DashboardScreen(
                 when {
                     selectedMonth < currentMonth -> emptyList()
                     selectedMonth > currentMonth -> baseList
-                    else -> baseList.filter { timeProvider.dayOfMonth(it.startDate) >= currentDay }
+                    else -> baseList.filter { timeProvider.dayOfMonth(it.projectedDate) >= currentDay }
                 }
             }
         }
@@ -226,6 +231,7 @@ fun DashboardScreen(
         OperationFormSheet(
             formState = formState,
             sheetState = sheetState,
+            currentYear = currentYearNow,
             onEvent = { event -> formState.onEvent(event) },
             onDismiss = { showFormSheet = false },
             onSave = { intent -> presenter.onIntent(intent) }

@@ -66,6 +66,8 @@ object FormLabels {
     val FIELD_AMOUNT @Composable get() = stringResource(Res.string.form_field_amount)
     val FIELD_PLACE_HOLDER_AMOUNT @Composable get() = stringResource(Res.string.form_field_place_holder_amount)
     val FIELD_DATE_DESC @Composable get() = stringResource(Res.string.form_field_date_desc)
+    val CYCLE_UNIQUE @Composable get() = stringResource(Res.string.form_cycle_unique)
+    val CYCLE_WEEKLY @Composable get() = stringResource(Res.string.form_cycle_weekly)
     val CYCLE_MONTHLY @Composable get() = stringResource(Res.string.form_cycle_monthly)
     val CYCLE_YEARLY @Composable get() = stringResource(Res.string.form_cycle_yearly)
 }

@@ -61,10 +61,10 @@ val Operation.uiTitle: String
  */
 val Operation.uiFrequencySummary: String
     @Composable get() = when (this.recurrence) {
+        Recurrence.UNIQUE -> FormLabels.CYCLE_UNIQUE
+        Recurrence.WEEKLY -> FormLabels.CYCLE_WEEKLY
         Recurrence.MONTHLY -> FormLabels.CYCLE_MONTHLY
         Recurrence.YEARLY -> FormLabels.CYCLE_YEARLY
-        Recurrence.WEEKLY -> "" // TODO: Add string resource in FormLabels if needed
-        Recurrence.UNIQUE -> "" // TODO: Add string resource in FormLabels if needed
         Recurrence.UNKNOWN -> ""
     }
 

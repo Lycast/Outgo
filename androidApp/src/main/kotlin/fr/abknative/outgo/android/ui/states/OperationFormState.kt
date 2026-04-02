@@ -15,6 +15,8 @@ sealed interface OperationFormEvent {
     data class UpdateType(val type: OperationType) : OperationFormEvent
     data class UpdateRecurrence(val recurrence: Recurrence) : OperationFormEvent
     data class UpdateDay(val day: String) : OperationFormEvent
+    data class UpdateMonth(val month: String) : OperationFormEvent // 👈 Nouveau
+    data class UpdateYear(val year: String) : OperationFormEvent   // 👈 Nouveau
 }
 
 // --- ÉTAT UI LOCAL (Transient State) ---
@@ -26,13 +28,18 @@ class OperationFormState(
     initialAmount: String = "",
     initialType: OperationType = OperationType.EXPENSE,
     initialRecurrence: Recurrence = Recurrence.MONTHLY,
-    initialDay: String = ""
+    initialDay: String = "",
+    initialMonth: String = "",
+    initialYear: String = ""
 ) {
     var nameBuffer by mutableStateOf(initialName)
     var amountBuffer by mutableStateOf(initialAmount)
     var typeSelection by mutableStateOf(initialType)
     var recurrenceSelection by mutableStateOf(initialRecurrence)
+
     var dayBuffer by mutableStateOf(initialDay)
+    var monthBuffer by mutableStateOf(initialMonth)
+    var yearBuffer by mutableStateOf(initialYear)
 
     val isValid: Boolean
         get() {
@@ -43,7 +50,13 @@ class OperationFormState(
             val dayInt = dayBuffer.toIntOrNull()
             val isDayValid = dayInt != null && dayInt in 1..31
 
-            return isNameValid && isAmountValid && isDayValid
+            val monthInt = monthBuffer.toIntOrNull()
+            val isMonthValid = monthInt != null && monthInt in 1..12
+
+            val yearInt = yearBuffer.toIntOrNull()
+            val isYearValid = yearInt != null && yearInt > 2000 // Sécurité basique
+
+            return isNameValid && isAmountValid && isDayValid && isMonthValid && isYearValid
         }
 
     val amountInCents: Long
@@ -55,12 +68,13 @@ class OperationFormState(
 
     val startDate: EpochMillis
         get() {
-            val now = timeProvider.now()
-            val currentMonth = timeProvider.monthValue(now)
-            val currentYear = timeProvider.yearValue(now)
+            // On utilise les valeurs sélectionnées par l'utilisateur (ou celles en cours par défaut)
+            val month = monthBuffer.toIntOrNull() ?: timeProvider.monthValue(timeProvider.now())
+            val year = yearBuffer.toIntOrNull() ?: timeProvider.yearValue(timeProvider.now())
 
-            val startOfMonth = timeProvider.startOfMonth(currentMonth, currentYear)
+            val startOfMonth = timeProvider.startOfMonth(month, year)
 
+            // Robustesse : On empêche les dates impossibles (ex: 31 Février)
             val maxDaysInMonth = timeProvider.lastDayOfMonth(startOfMonth)
             val rawDay = dayBuffer.toIntOrNull() ?: 1
             val safeDay = rawDay.coerceIn(1, maxDaysInMonth)
@@ -85,23 +99,12 @@ class OperationFormState(
             is OperationFormEvent.UpdateType -> typeSelection = event.type
             is OperationFormEvent.UpdateRecurrence -> recurrenceSelection = event.recurrence
             is OperationFormEvent.UpdateDay -> dayBuffer = event.day
+            is OperationFormEvent.UpdateMonth -> monthBuffer = event.month // 👈 Nouveau
+            is OperationFormEvent.UpdateYear -> yearBuffer = event.year    // 👈 Nouveau
         }
     }
 }
 
-/**
- * Remembers and creates an instance of [OperationFormState].
- * Ensures the UI state survives recompositions while tracking the user's input.
- *
- * @param operationId The unique identifier of the operation if editing, or null for a new creation.
- * @param walletId The identifier of the parent wallet.
- * @param timeProvider The temporal engine dependency required to build exact timestamps.
- * @param initialName The initial text for the name field.
- * @param initialAmount The initial text for the amount field.
- * @param initialType The initial direction of the cash flow (Income or Expense).
- * @param initialRecurrence The initial cycle of the operation.
- * @param initialDay The initial selected day of the month (e.g., "15").
- */
 @Composable
 fun rememberOperationFormState(
     operationId: String? = null,
@@ -111,7 +114,9 @@ fun rememberOperationFormState(
     initialAmount: String = "",
     initialType: OperationType = OperationType.EXPENSE,
     initialRecurrence: Recurrence = Recurrence.MONTHLY,
-    initialDay: String = ""
+    initialDay: String = "",
+    initialMonth: String = "", // 👈 Nouveau
+    initialYear: String = ""   // 👈 Nouveau
 ): OperationFormState {
 
     return remember(
@@ -121,7 +126,9 @@ fun rememberOperationFormState(
         initialAmount,
         initialType,
         initialRecurrence,
-        initialDay
+        initialDay,
+        initialMonth,
+        initialYear
     ) {
         OperationFormState(
             operationId = operationId,
@@ -131,7 +138,9 @@ fun rememberOperationFormState(
             initialAmount = initialAmount,
             initialType = initialType,
             initialRecurrence = initialRecurrence,
-            initialDay = initialDay
+            initialDay = initialDay,
+            initialMonth = initialMonth,
+            initialYear = initialYear
         )
     }
 }

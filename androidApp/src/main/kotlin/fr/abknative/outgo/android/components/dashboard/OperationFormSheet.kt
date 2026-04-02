@@ -17,6 +17,7 @@ import kotlinx.coroutines.launch
 fun OperationFormSheet(
     formState: OperationFormState,
     sheetState: SheetState,
+    currentYear: Int,
     onEvent: (OperationFormEvent) -> Unit,
     onDismiss: () -> Unit,
     onSave: (DashboardIntent.SaveOperation) -> Unit
@@ -37,6 +38,7 @@ fun OperationFormSheet(
         OperationFormContent(
             state = formState,
             onEvent = onEvent,
+            currentYear = currentYear,
             onCancel = { closeSheet() },
             onSave = {
                 val intent = DashboardIntent.SaveOperation(

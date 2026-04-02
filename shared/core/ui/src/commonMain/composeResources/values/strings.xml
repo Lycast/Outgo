@@ -60,13 +60,15 @@
     <string name="dashboard_month_11">Novembre</string>
     <string name="dashboard_month_12">Décembre</string>
 
-    <string name="form_sheet_title_add">Nouvelle dépense</string>
-    <string name="form_sheet_title_edit">Modifier la dépense</string>
+    <string name="form_sheet_title_add">Nouvelle opération</string>
+    <string name="form_sheet_title_edit">Modifier l'opération'</string>
     <string name="form_field_name">Entrez l'intitulé</string>
     <string name="form_field_place_holder_name">Ex: Loyer, Netflix...</string>
     <string name="form_field_amount">Entrez le montant</string>
     <string name="form_field_place_holder_amount">0.00</string>
     <string name="form_field_date_desc">Sélectionnez la récurrence et entrez la date de votre dépense.</string>
+    <string name="form_cycle_unique">Unique</string>
+    <string name="form_cycle_weekly">Hebdo</string>
     <string name="form_cycle_monthly">Mensuel</string>
     <string name="form_cycle_yearly">Annuel</string>
 

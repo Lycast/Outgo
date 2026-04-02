@@ -23,7 +23,7 @@ interface OperationRepository {
      * @param to The end of the temporal bounding box (EpochMillis).
      * @return A [Flow] emitting the list of active [Operation]s falling within the timeframe.
      */
-    fun observeOperationsByPeriod(from: EpochMillis, to: EpochMillis): Flow<List<Operation>>
+    fun observeOperationsByPeriod(walletId: String, from: EpochMillis, to: EpochMillis): Flow<List<Operation>>
 
     /**
      * Retrieves a specific operation by its unique identifier.

@@ -31,6 +31,7 @@ WHERE id = ?;
 getOperationsByPeriod:
 SELECT * FROM OperationEntity
 WHERE deletedAt IS NULL
+  AND walletId = :walletId
   AND startDate <= :to
   AND (endDate IS NULL OR endDate >= :from)
 ORDER BY startDate ASC;

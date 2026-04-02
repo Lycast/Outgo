@@ -113,15 +113,16 @@ internal class DashboardPresenterImpl(
                     }
                     observeActiveOperations(wallet.id, month, year)
                 }
-            }.collect { operations ->
+            }.collect { projectedOperations ->
                 val month = selectedMonthFlow.value
                 val year = selectedYearFlow.value
-                val dashboardData = calculateDashboardData(operations, month, year)
+                val rawOperations = projectedOperations.map { it.operation }
+                val dashboardData = calculateDashboardData(rawOperations, month, year)
 
                 _state.update {
                     it.copy(
-                        operations = operations,
-                        monthlyIncomeInCents = operations.filter { op -> op.type.name == OperationType.INCOME.name }.sumOf { op -> op.amountInCents },
+                        operations = projectedOperations,
+                        monthlyIncomeInCents = rawOperations.filter { op -> op.type.name == OperationType.INCOME.name }.sumOf { op -> op.amountInCents },
                         totalOutgoingsInCents = dashboardData.totalExpensesInCents,
                         remainingToPayInCents = dashboardData.remainingToPayInCents,
                         disposableIncomeInCents = dashboardData.disposableIncomeInCents,
@@ -167,12 +168,7 @@ internal class DashboardPresenterImpl(
                 endDate = intent.endDate
             )
 
-            if (result is Result.Success) {
-                _state.update { it.copy(isLoading = false, error = null) }
-                syncManager.syncAll()
-            } else if (result is Result.Error) {
-                _state.update { it.copy(isLoading = false, error = result.error) }
-            }
+            handleOperationResult(result)
         }
     }
 
@@ -186,26 +182,20 @@ internal class DashboardPresenterImpl(
                 return@safeLaunch
             }
 
-            val existingIncome = _state.value.operations.firstOrNull { it.type == OperationType.INCOME }
+            val existingIncome = _state.value.operations.firstOrNull { it.operation.type == OperationType.INCOME }
 
             val operationResult = saveOperation(
-                id = existingIncome?.id,
+                id = existingIncome?.operation?.id,
                 walletId = intent.walletId,
                 name = "Revenu Principal",
                 amountInCents = intent.incomeAmountInCents,
                 type = OperationType.INCOME,
                 recurrence = Recurrence.MONTHLY,
-                startDate = existingIncome?.startDate ?: intent.startDate,
+                startDate = existingIncome?.operation?.startDate ?: intent.startDate,
                 endDate = null
             )
 
-            // 4. Synchronisation
-            if (operationResult is Result.Success) {
-                _state.update { it.copy(isLoading = false, error = null) }
-                syncManager.syncAll()
-            } else if (operationResult is Result.Error) {
-                _state.update { it.copy(isLoading = false, error = operationResult.error) }
-            }
+            handleOperationResult(operationResult)
         }
     }
 
@@ -231,6 +221,19 @@ internal class DashboardPresenterImpl(
                     error = (result as? Result.Error)?.error
                 )
             }
+        }
+    }
+
+    /**
+     * Handles the result of a local database operation, updates the loading state,
+     * and triggers a cloud sync on success.
+     */
+    private suspend fun handleOperationResult(result: Result<Unit, AppException>) {
+        if (result is Result.Success) {
+            _state.update { it.copy(isLoading = false, error = null) }
+            syncManager.syncAll()
+        } else if (result is Result.Error) {
+            _state.update { it.copy(isLoading = false, error = result.error) }
         }
     }
 }

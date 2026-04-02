@@ -1,6 +1,6 @@
 package fr.abknative.outgo.wallet.api.usecase
 
-import fr.abknative.outgo.wallet.api.model.Operation
+import fr.abknative.outgo.wallet.api.model.dashboard.ProjectedOperation
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -10,12 +10,8 @@ import kotlinx.coroutines.flow.Flow
 interface ObserveActiveOperationsUseCase {
 
     /**
-     * Observes the cash flow operations.
-     *
-     * @param walletId The target wallet identifier.
-     * @param month The target month (e.g., 1 for January, 12 for December).
-     * @param year The target year (e.g., 2026), required to filter by absolute start dates.
-     * @return A [Flow] emitting the updated list of [Operation]s whenever the underlying data changes.
+     * Observes all active operations for a specific wallet and projects them
+     * onto the given month/year timeframe.
      */
-    operator fun invoke(walletId: String, month: Int, year: Int): Flow<List<Operation>>
+    operator fun invoke(walletId: String, month: Int, year: Int): Flow<List<ProjectedOperation>>
 }

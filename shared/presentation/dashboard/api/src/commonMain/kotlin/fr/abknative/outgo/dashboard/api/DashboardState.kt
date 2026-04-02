@@ -1,7 +1,7 @@
 package fr.abknative.outgo.dashboard.api
 
 import fr.abknative.outgo.core.api.logs.AppException
-import fr.abknative.outgo.wallet.api.model.Operation
+import fr.abknative.outgo.wallet.api.model.dashboard.ProjectedOperation
 
 /**
  * Represents the complete UI state for the Outgoing screen.
@@ -26,7 +26,7 @@ data class DashboardState(
     val activeWalletName: String = "",
 
     // --- List Data ---
-    val operations: List<Operation> = emptyList(),
+    val operations: List<ProjectedOperation> = emptyList(),
     val currentDay: Int? = 0,
     val currentMonth: Int = 0,
     val selectedMonth: Int,

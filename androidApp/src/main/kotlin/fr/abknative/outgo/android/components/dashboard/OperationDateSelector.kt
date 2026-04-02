@@ -21,39 +21,39 @@ import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import fr.abknative.outgo.android.ui.AccessibilityLabels
-import fr.abknative.outgo.android.ui.FormLabels
+import fr.abknative.outgo.android.ui.DashboardLabels
 import fr.abknative.outgo.android.ui.theme.AppTheme
 import fr.abknative.outgo.android.ui.theme.toColor
-import fr.abknative.outgo.wallet.api.model.operation.Recurrence
 
 @Composable
 fun OperationDateSelector(
     selectedDay: String,
-    selectedRecurrence: Recurrence,
+    selectedMonth: String,
+    selectedYear: String,
+    currentYear: Int,
     onDayChanged: (String) -> Unit,
-    onRecurrenceChanged: (Recurrence) -> Unit,
+    onMonthChanged: (String) -> Unit,
+    onYearChanged: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val days = (1..31).map { it.toString() }
-
-    // On mappe nos récurrences pour la deuxième roue
-    val recurrences = listOf(
-        Recurrence.UNIQUE,
-        Recurrence.WEEKLY,
-        Recurrence.MONTHLY,
-        Recurrence.YEARLY
+    val months = listOf(
+        "1" to DashboardLabels.MONTH_1,
+        "2" to DashboardLabels.MONTH_2,
+        "3" to DashboardLabels.MONTH_3,
+        "4" to DashboardLabels.MONTH_4,
+        "5" to DashboardLabels.MONTH_5,
+        "6" to DashboardLabels.MONTH_6,
+        "7" to DashboardLabels.MONTH_7,
+        "8" to DashboardLabels.MONTH_8,
+        "9" to DashboardLabels.MONTH_9,
+        "10" to DashboardLabels.MONTH_10,
+        "11" to DashboardLabels.MONTH_11,
+        "12" to DashboardLabels.MONTH_12
     )
-
-    // On associe les labels UI (Tu pourras ajouter UNIQUE et WEEKLY dans FormLabels plus tard)
-    val recurrenceLabels = recurrences.map { recurrence ->
-        when (recurrence) {
-            Recurrence.MONTHLY -> FormLabels.CYCLE_MONTHLY
-            Recurrence.YEARLY -> FormLabels.CYCLE_YEARLY
-            Recurrence.WEEKLY -> "Hebdomadaire"
-            Recurrence.UNIQUE -> "Une fois"
-            Recurrence.UNKNOWN -> ""
-        }
-    }
+    val monthValues = months.map { it.first }
+    val monthLabelsUI = months.map { it.second }
+    val years = ((currentYear - 1)..(currentYear + 5)).map { it.toString() }
 
     val itemHeight = 40.dp
     val visibleItems = 3
@@ -75,31 +75,40 @@ fun OperationDateSelector(
         WheelPicker(
             items = days,
             itemLabels = days,
-            selectedValue = selectedDay.ifEmpty { "1" }, // Sécurité si vide
+            selectedValue = selectedDay.ifEmpty { "1" },
             onSelectionChanged = onDayChanged,
             itemHeight = itemHeight,
-            contentDescription = AccessibilityLabels.DAY_SELECTOR,
-            dividerWidth = 0.4f,
+            contentDescription = AccessibilityLabels.DAY_SELECTOR, // Tu pourras ajuster les labels
+            dividerWidth = 0.6f,
             modifier = Modifier.weight(1f)
         )
 
-        // Roue 2 : La Récurrence (Remplace l'ancienne roue des mois)
+        // Roue 2 : Le Mois
         WheelPicker(
-            items = recurrences.map { it.name },
-            itemLabels = recurrenceLabels,
-            selectedValue = selectedRecurrence.name,
-            onSelectionChanged = { selectedName ->
-                onRecurrenceChanged(Recurrence.fromString(selectedName))
-            },
+            items = monthValues,
+            itemLabels = monthLabelsUI,
+            selectedValue = selectedMonth.ifEmpty { "1" },
+            onSelectionChanged = onMonthChanged,
             itemHeight = itemHeight,
-            contentDescription = "Sélecteur de cycle",
-            dividerWidth = 0.7f,
-            modifier = Modifier.weight(1.5f)
+            contentDescription = "Sélecteur de mois",
+            dividerWidth = 0.8f,
+            modifier = Modifier.weight(1.2f)
+        )
+
+        // Roue 3 : L'Année
+        WheelPicker(
+            items = years,
+            itemLabels = years,
+            selectedValue = selectedYear.ifEmpty { currentYear.toString() },
+            onSelectionChanged = onYearChanged,
+            itemHeight = itemHeight,
+            contentDescription = "Sélecteur d'année",
+            dividerWidth = 0.8f,
+            modifier = Modifier.weight(1.2f)
         )
     }
 }
 
-// TON CODE INTACT : Aucune modification en dessous de cette ligne !
 @Composable
 private fun WheelPicker(
     modifier: Modifier = Modifier,

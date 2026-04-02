@@ -14,15 +14,15 @@ import fr.abknative.outgo.android.ui.components.LoaderItem
 import fr.abknative.outgo.android.ui.states.OperationFilter
 import fr.abknative.outgo.android.ui.theme.AppTheme
 import fr.abknative.outgo.android.ui.theme.toColor
-import fr.abknative.outgo.wallet.api.model.Operation
+import fr.abknative.outgo.wallet.api.model.dashboard.ProjectedOperation
 
 @Composable
 fun ExpenseListContainer(
     isLoading: Boolean,
-    filteredList: List<Operation>,
+    filteredList: List<ProjectedOperation>,
     currentFilter: OperationFilter,
     onDelete: (String) -> Unit,
-    onEdit: (Operation) -> Unit,
+    onEdit: (ProjectedOperation) -> Unit,
     modifier: Modifier = Modifier
 ) {
 
@@ -34,7 +34,7 @@ fun ExpenseListContainer(
             isLoading -> item { LoaderItem() }
             filteredList.isEmpty() -> item(key = "empty_state") { EmptyStateView(filter = currentFilter) }
             else -> {
-                items(items = filteredList, key = { it.id }) { outgoing ->
+                items(items = filteredList, key = { "${it.operation.id}_${it.projectedDate}" }) { projectedOp ->
 
                     Card(
                         modifier = modifier.fillMaxWidth().padding(horizontal = AppTheme.spacing.medium),
@@ -42,12 +42,20 @@ fun ExpenseListContainer(
                         shape = RoundedCornerShape(12.dp),
                         border = BorderStroke(1.dp, AppTheme.colors.textSecondary.toColor().copy(alpha = 0.1f))
                     ) {
+
+                        val displayOperation = projectedOp.operation.copy(
+                            startDate = projectedOp.projectedDate
+                        )
+
                         OperationCard(
-                            operation = outgoing,
-                            onEdit = { onEdit(outgoing) },
-                            onDelete = { onDelete(outgoing.id) },
+                            operation = displayOperation,
+                            onEdit = { onEdit(projectedOp) },
+                            onDelete = { onDelete(projectedOp.operation.id) },
                             onDuplicate = {
-                                onEdit(outgoing.copy(id = ""))
+                                val duplicatedOp = projectedOp.copy(
+                                    operation = projectedOp.operation.copy(id = "")
+                                )
+                                onEdit(duplicatedOp)
                             }
                         )
                     }

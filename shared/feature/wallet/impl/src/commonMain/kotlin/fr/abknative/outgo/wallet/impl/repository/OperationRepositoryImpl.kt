@@ -2,7 +2,10 @@ package fr.abknative.outgo.wallet.impl.repository
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
-import fr.abknative.outgo.core.api.*
+import fr.abknative.outgo.core.api.AppDispatchers
+import fr.abknative.outgo.core.api.EpochMillis
+import fr.abknative.outgo.core.api.IdProvider
+import fr.abknative.outgo.core.api.TimeProvider
 import fr.abknative.outgo.core.api.logs.*
 import fr.abknative.outgo.core.api.model.SyncStatus
 import fr.abknative.outgo.database.OutgoDatabase
@@ -29,8 +32,8 @@ internal class OperationRepositoryImpl(
     private val queries = database.operationQueries
     private val tag = "OperationLocalRepo"
 
-    override fun observeOperationsByPeriod(from: EpochMillis, to: EpochMillis): Flow<List<Operation>> {
-        return queries.getOperationsByPeriod(from = from, to = to)
+    override fun observeOperationsByPeriod(walletId: String, from: EpochMillis, to: EpochMillis): Flow<List<Operation>> {
+        return queries.getOperationsByPeriod(walletId = walletId, from = from, to = to)
             .asFlow()
             .mapToList(dispatchers.io)
             .map { entities -> entities.map { it.toDomain() } }

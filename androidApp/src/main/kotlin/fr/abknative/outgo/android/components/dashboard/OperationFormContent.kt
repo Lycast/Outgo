@@ -23,13 +23,13 @@ import fr.abknative.outgo.android.ui.states.OperationFormEvent
 import fr.abknative.outgo.android.ui.states.OperationFormState
 import fr.abknative.outgo.android.ui.theme.AppTheme
 import fr.abknative.outgo.android.ui.theme.toColor
-import fr.abknative.outgo.wallet.api.model.operation.OperationType
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OperationFormContent(
     modifier: Modifier = Modifier,
     state: OperationFormState,
+    currentYear: Int,
     onEvent: (OperationFormEvent) -> Unit,
     onCancel: () -> Unit,
     onSave: () -> Unit
@@ -72,47 +72,10 @@ fun OperationFormContent(
         Spacer(modifier = Modifier.height(AppTheme.spacing.small))
 
         // --- Sélecteur : Type d'opération (Revenu / Dépense) ---
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.medium)
-        ) {
-            val isExpense = state.typeSelection == OperationType.EXPENSE
-            val isIncome = state.typeSelection == OperationType.INCOME
-
-            FilterChip(
-                selected = isExpense,
-                onClick = { onEvent(OperationFormEvent.UpdateType(OperationType.EXPENSE)) },
-                label = {
-                    Text(
-                        text = "Dépense", // TODO: À remplacer par FormLabels.TYPE_EXPENSE si tu l'ajoutes
-                        modifier = Modifier.fillMaxWidth(),
-                        textAlign = androidx.compose.ui.text.style.TextAlign.Center
-                    )
-                },
-                colors = FilterChipDefaults.filterChipColors(
-                    selectedContainerColor = AppTheme.colors.secondary.toColor().copy(alpha = 0.1f),
-                    selectedLabelColor = AppTheme.colors.secondary.toColor()
-                ),
-                modifier = Modifier.weight(1f)
-            )
-
-            FilterChip(
-                selected = isIncome,
-                onClick = { onEvent(OperationFormEvent.UpdateType(OperationType.INCOME)) },
-                label = {
-                    Text(
-                        text = "Revenu", // TODO: À remplacer par FormLabels.TYPE_INCOME
-                        modifier = Modifier.fillMaxWidth(),
-                        textAlign = androidx.compose.ui.text.style.TextAlign.Center
-                    )
-                },
-                colors = FilterChipDefaults.filterChipColors(
-                    selectedContainerColor = AppTheme.colors.primary.toColor().copy(alpha = 0.1f),
-                    selectedLabelColor = AppTheme.colors.primary.toColor()
-                ),
-                modifier = Modifier.weight(1f)
-            )
-        }
+        OperationTypeSelector(
+            selectedType = state.typeSelection,
+            onTypeChanged = { onEvent(OperationFormEvent.UpdateType(it)) }
+        )
 
         // --- Champ : Nom de la dépense/revenu ---
         OutlinedTextField(
@@ -151,6 +114,7 @@ fun OperationFormContent(
 
         Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.small)) {
 
+            // --- Sélecteur Temporel (Jour & Récurrence) ---
             Text(
                 text = FormLabels.FIELD_DATE_DESC,
                 style = AppTheme.typo.caption,
@@ -158,14 +122,31 @@ fun OperationFormContent(
                 modifier = Modifier.padding(horizontal = AppTheme.spacing.small)
             )
 
-            // --- Sélecteur Temporel (Jour & Récurrence) ---
             OperationDateSelector(
                 selectedDay = state.dayBuffer,
-                selectedRecurrence = state.recurrenceSelection,
+                selectedMonth = state.monthBuffer,
+                selectedYear = state.yearBuffer,
+                currentYear = currentYear,
                 onDayChanged = { onEvent(OperationFormEvent.UpdateDay(it)) },
-                onRecurrenceChanged = { onEvent(OperationFormEvent.UpdateRecurrence(it)) }
+                onMonthChanged = { onEvent(OperationFormEvent.UpdateMonth(it)) },
+                onYearChanged = { onEvent(OperationFormEvent.UpdateYear(it)) }
             )
         }
+
+        Spacer(modifier = Modifier.height(AppTheme.spacing.medium))
+
+        // --- NOUVEAU : Sélecteur de Récurrence ---
+        Text(
+            text = "Sélectionnez le type de récurrence",
+            style = AppTheme.typo.caption,
+            color = AppTheme.colors.textSecondary.toColor(),
+            modifier = Modifier.padding(horizontal = AppTheme.spacing.small)
+        )
+
+        RecurrenceSelector(
+            selectedRecurrence = state.recurrenceSelection,
+            onRecurrenceChanged = { onEvent(OperationFormEvent.UpdateRecurrence(it)) }
+        )
 
         Spacer(modifier = Modifier.height(AppTheme.spacing.medium))
 
