@@ -71,20 +71,34 @@ internal class OperationRepositoryImpl(
                     syncStatus = SyncStatus.PENDING_CREATE.name
                 )
             } else {
-                // MISE À JOUR
-                queries.updateOperation(
-                    walletId = operation.walletId,
-                    name = operation.name,
-                    amountInCents = operation.amountInCents,
-                    type = operation.type.name,
-                    recurrence = operation.recurrence.name,
-                    startDate = operation.startDate,
-                    endDate = operation.endDate,
-                    updatedAt = now,
-                    deletedAt = operation.deletedAt,
-                    syncStatus = SyncStatus.PENDING_UPDATE.name,
-                    id = operation.id
-                )
+                val currentStatus = SyncStatus.fromString(existing.syncStatus)
+                val nextStatus = if (currentStatus == SyncStatus.PENDING_CREATE) {
+                    SyncStatus.PENDING_CREATE
+                } else {
+                    SyncStatus.PENDING_UPDATE
+                }
+                val hasChanged = existing.name != operation.name ||
+                        existing.amountInCents != operation.amountInCents ||
+                        existing.startDate != operation.startDate ||
+                        existing.endDate != operation.endDate ||
+                        existing.type != operation.type.name ||
+                        existing.recurrence != operation.recurrence.name
+
+                if (hasChanged) {
+                    queries.updateOperation(
+                        walletId = operation.walletId,
+                        name = operation.name,
+                        amountInCents = operation.amountInCents,
+                        type = operation.type.name,
+                        recurrence = operation.recurrence.name,
+                        startDate = operation.startDate,
+                        endDate = operation.endDate,
+                        updatedAt = now,
+                        deletedAt = existing.deletedAt,
+                        syncStatus = nextStatus.name,
+                        id = operation.id
+                    )
+                }
             }
         }
     }

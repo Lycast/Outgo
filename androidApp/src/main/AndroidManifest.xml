@@ -4,7 +4,9 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-            android:name=".OutgoApplication" android:allowBackup="true"
+            android:name=".OutgoApplication"
+            android:allowBackup="false"
+            android:fullBackupContent="false"
             android:icon="@mipmap/ic_launcher"
             android:label="Outgo"
             android:roundIcon="@mipmap/ic_launcher_round"

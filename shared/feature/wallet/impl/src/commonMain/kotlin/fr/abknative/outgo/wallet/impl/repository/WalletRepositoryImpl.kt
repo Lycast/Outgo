@@ -68,13 +68,19 @@ internal class WalletRepositoryImpl(
                     syncStatus = SyncStatus.PENDING_CREATE.name
                 )
             } else {
-                queries.updateWallet(
-                    name = wallet.name,
-                    updatedAt = now,
-                    deletedAt = wallet.deletedAt,
-                    syncStatus = SyncStatus.PENDING_UPDATE.name,
-                    id = wallet.id
-                )
+                val currentStatus = SyncStatus.fromString(existing.syncStatus)
+                val nextStatus = if (currentStatus == SyncStatus.PENDING_CREATE) { SyncStatus.PENDING_CREATE
+                } else { SyncStatus.PENDING_UPDATE }
+
+                if (existing.name != wallet.name) {
+                    queries.updateWallet(
+                        name = wallet.name,
+                        updatedAt = now,
+                        deletedAt = existing.deletedAt,
+                        syncStatus = nextStatus.name,
+                        id = wallet.id
+                    )
+                }
             }
         }
     }

@@ -22,6 +22,7 @@ class DashboardPresenterTest {
     private val testDispatcher = UnconfinedTestDispatcher()
     private val timeProvider = FakeTimeProvider()
     private val syncManager = FakeSyncManager()
+    private val fakeFeatureManager = FakeFeatureManager()
     private val storage = FakeKeyValueStorage()
     private val authRepository = FakeAuthRepository()
 
@@ -54,6 +55,7 @@ class DashboardPresenterTest {
             saveWallet = saveWalletUseCase,
             timeProvider = timeProvider,
             syncManager = syncManager,
+            featureManager = fakeFeatureManager,
             storage = storage
         )
     }

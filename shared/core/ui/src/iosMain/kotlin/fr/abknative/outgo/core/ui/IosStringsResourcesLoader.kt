@@ -39,15 +39,30 @@ object IosStringsResourcesLoader {
     }
 
     private suspend fun loadError() = ErrorStrings(
-        OutgoingErrorEmptyName = getString(Res.string.error_outgoing_empty_name),
-        OutgoingErrorInvalidAmount = getString(Res.string.error_outgoing_invalid_amount),
-        OutgoingErrorInvalidDate = getString(Res.string.error_outgoing_invalid_date),
-        OutgoingErrorNotFound = getString(Res.string.error_outgoing_not_found),
-        OutgoingErrorUnknownCycle = getString(Res.string.error_outgoing_unknow_cycle),
-        CommonErrorNetwork = getString(Res.string.error_global_network),
-        CommonErrorDatabase = getString(Res.string.error_global_database),
-        CommonErrorUnknown = getString(Res.string.error_global_unknown)
-   )
+        // --- Wallet ---
+        walletErrorEmptyName = getString(Res.string.error_wallet_empty_name),
+        walletErrorNotFound = getString(Res.string.error_wallet_not_found),
+
+        // --- Operation ---
+        operationErrorEmptyName = getString(Res.string.error_operation_empty_name),
+        operationErrorInvalidAmount = getString(Res.string.error_operation_invalid_amount),
+        operationErrorNotFound = getString(Res.string.error_operation_not_found),
+        operationErrorInvalidDateOrder = getString(Res.string.error_operation_invalid_date_order),
+        operationErrorWalletNotFound = getString(Res.string.error_operation_wallet_not_found),
+        operationErrorUnknownCycle = getString(Res.string.error_operation_unknow_cycle),
+
+        // --- Auth ---
+        authErrorInvalidCredentials = getString(Res.string.error_auth_invalid_credentials),
+        authErrorUserNotFound = getString(Res.string.error_auth_user_not_found),
+        authErrorSessionExpired = getString(Res.string.error_auth_session_expired),
+
+        // --- Global ---
+        commonErrorNetwork = getString(Res.string.error_global_network),
+        commonErrorServer = getString(Res.string.error_global_server),
+        commonErrorUnauthorized = getString(Res.string.error_global_unauthorized),
+        commonErrorDatabase = getString(Res.string.error_global_database),
+        commonErrorUnknown = getString(Res.string.error_global_unknown)
+    )
 
     private suspend fun loadCommon() = CommonStrings(
         appName = getString(Res.string.app_name),

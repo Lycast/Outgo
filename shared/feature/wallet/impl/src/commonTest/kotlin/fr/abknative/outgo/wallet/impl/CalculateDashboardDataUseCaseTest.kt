@@ -1,6 +1,8 @@
 package fr.abknative.outgo.wallet.impl
 
 import fr.abknative.outgo.subscription.api.FeatureManager
+import fr.abknative.outgo.wallet.api.model.Operation
+import fr.abknative.outgo.wallet.api.model.dashboard.ProjectedOperation
 import fr.abknative.outgo.wallet.impl.mock.FakeTimeProvider
 import fr.abknative.outgo.wallet.impl.mock.createOp
 import fr.abknative.outgo.wallet.impl.usecase.CalculateDashboardDataUseCaseImpl
@@ -11,7 +13,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlin.test.Test
 
-// 1. Faux "Douanier" pour simuler le statut Premium dans nos tests
+// Helper pour transformer rapidement une Op de test en Projection
+fun Operation.asProjected() = ProjectedOperation(
+    operation = this,
+    projectedDate = this.startDate
+)
+
 class FakeFeatureManager(var isPremiumMock: Boolean = false) : FeatureManager {
     override val isPremiumFlow: StateFlow<Boolean> = MutableStateFlow(isPremiumMock)
     override fun isPremium(): Boolean = isPremiumMock
@@ -21,15 +28,10 @@ class FakeFeatureManager(var isPremiumMock: Boolean = false) : FeatureManager {
 class CalculateDashboardDataUseCaseTest {
 
     private val timeProvider = FakeTimeProvider()
-
-    // 2. Initialisation des Moteurs (Stratégies)
     private val simpleSumEngine = SimpleSumEngine(timeProvider)
     private val timelineEngine = TimelineEngine(timeProvider)
-
-    // 3. Initialisation du Fake (Simule un utilisateur gratuit par défaut)
     private val fakeFeatureManager = FakeFeatureManager(isPremiumMock = false)
 
-    // 4. Le UseCase (Routeur) avec ses nouvelles dépendances
     private val useCase = CalculateDashboardDataUseCaseImpl(
         featureManager = fakeFeatureManager,
         simpleSumEngine = simpleSumEngine,
@@ -42,12 +44,12 @@ class CalculateDashboardDataUseCaseTest {
         timeProvider.mockedMonth = 3
         timeProvider.mockedYear = 2026
 
+        // On crée les opérations et on les projette immédiatement
         val ops = listOf(
-            createOp(name = "Passé", amount = 100, day = 10),
-            createOp(name = "Futur", amount = 200, day = 20)
+            createOp(name = "Passé", amount = 100, day = 10).asProjected(),
+            createOp(name = "Futur", amount = 200, day = 20).asProjected()
         )
 
-        // Le useCase va router vers SimpleSumEngine car isPremiumMock == false
         val result = useCase(ops, currentMonth = 3, currentYear = 2026)
 
         result.remainingToPayInCents shouldBe 200L
@@ -56,10 +58,10 @@ class CalculateDashboardDataUseCaseTest {
 
     @Test
     fun `past month - remaining to pay should always be 0`() {
-        timeProvider.mockedMonth = 5 // On est en Mai
-        val ops = listOf(createOp(amount = 1000, day = 10))
+        timeProvider.mockedMonth = 5
+        val ops = listOf(createOp(amount = 1000, day = 10).asProjected())
 
-        val result = useCase(ops, currentMonth = 4, currentYear = 2026) // On regarde Avril
+        val result = useCase(ops, currentMonth = 4, currentYear = 2026)
 
         result.remainingToPayInCents shouldBe 0L
     }

@@ -15,14 +15,29 @@ data class IosStringsResources(
 )
 
 data class ErrorStrings(
-    val OutgoingErrorEmptyName: String,
-    val OutgoingErrorInvalidAmount: String,
-    val OutgoingErrorInvalidDate: String,
-    val OutgoingErrorNotFound: String,
-    val OutgoingErrorUnknownCycle: String,
-    val CommonErrorNetwork: String,
-    val CommonErrorDatabase: String,
-    val CommonErrorUnknown: String
+    // --- Wallet ---
+    val walletErrorEmptyName: String,
+    val walletErrorNotFound: String,
+
+    // --- Operation ---
+    val operationErrorEmptyName: String,
+    val operationErrorInvalidAmount: String,
+    val operationErrorNotFound: String,
+    val operationErrorInvalidDateOrder: String,
+    val operationErrorWalletNotFound: String,
+    val operationErrorUnknownCycle: String,
+
+    // --- Auth ---
+    val authErrorInvalidCredentials: String,
+    val authErrorUserNotFound: String,
+    val authErrorSessionExpired: String,
+
+    // --- Global (Common) ---
+    val commonErrorNetwork: String,
+    val commonErrorServer: String,
+    val commonErrorUnauthorized: String,
+    val commonErrorDatabase: String,
+    val commonErrorUnknown: String
 )
 
 data class CommonStrings(

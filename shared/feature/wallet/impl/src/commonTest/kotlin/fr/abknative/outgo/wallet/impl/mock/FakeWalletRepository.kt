@@ -1,9 +1,8 @@
 package fr.abknative.outgo.wallet.impl.mock
 
-
-import fr.abknative.outgo.core.api.SyncStatus
 import fr.abknative.outgo.core.api.logs.AppException
 import fr.abknative.outgo.core.api.logs.Result
+import fr.abknative.outgo.core.api.model.SyncStatus
 import fr.abknative.outgo.wallet.api.model.Wallet
 import fr.abknative.outgo.wallet.api.repository.WalletRepository
 import kotlinx.coroutines.flow.Flow
@@ -33,4 +32,5 @@ class FakeWalletRepository : WalletRepository {
     override suspend fun updateSyncStatus(id: String, status: SyncStatus): Result<Unit, AppException> = Result.Success(Unit)
 
     override suspend fun syncFromServer(wallets: List<Wallet>): Result<Unit, AppException> = Result.Success(Unit)
+    override suspend fun deleteAll(): Result<Unit, AppException> = Result.Success(Unit)
 }

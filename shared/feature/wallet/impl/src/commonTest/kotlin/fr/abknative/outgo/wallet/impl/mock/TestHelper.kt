@@ -1,6 +1,6 @@
 package fr.abknative.outgo.wallet.impl.mock
 
-import fr.abknative.outgo.core.api.SyncStatus
+import fr.abknative.outgo.core.api.model.SyncStatus
 import fr.abknative.outgo.wallet.api.model.Operation
 import fr.abknative.outgo.wallet.api.model.operation.OperationType
 import fr.abknative.outgo.wallet.api.model.operation.Recurrence

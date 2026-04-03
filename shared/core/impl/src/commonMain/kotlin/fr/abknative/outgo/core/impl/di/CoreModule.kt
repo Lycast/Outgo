@@ -50,7 +50,7 @@ fun commonCoreModule() = module {
                 }
             }
             defaultRequest {
-                url("http://0.0.0.0:8080")
+                url(SecretConfig.BASE_URL) // todo url de debug ngrok
                 header(HttpHeaders.ContentType, ContentType.Application.Json)
             }
         }
