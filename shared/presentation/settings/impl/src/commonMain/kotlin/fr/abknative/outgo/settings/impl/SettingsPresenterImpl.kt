@@ -49,12 +49,16 @@ internal class SettingsPresenterImpl(
     private fun startObservingSession() {
         viewModelScope.safeLaunch(onError = onCoroutineError) {
             observeUserSession().collect { session ->
-                _state.update { currentState ->
-                    if (session == null) {
-                        currentState.copy(session = null, syncState = SyncUiState.UNAUTHENTICATED)
+                val wasUnauthenticated = _state.value.syncState.isUnauthenticated
+
+                if (session == null) {
+                    _state.update { it.copy(session = null, syncState = SyncUiState.UNAUTHENTICATED) }
+                } else {
+                    if (wasUnauthenticated) {
+                        _state.update { it.copy(session = session, syncState = SyncUiState.PENDING) }
+                        handleRefreshSync()
                     } else {
-                        val nextState = if (currentState.syncState.isUnauthenticated) SyncUiState.UP_TO_DATE else currentState.syncState
-                        currentState.copy(session = session, syncState = nextState)
+                        _state.update { it.copy(session = session) }
                     }
                 }
             }

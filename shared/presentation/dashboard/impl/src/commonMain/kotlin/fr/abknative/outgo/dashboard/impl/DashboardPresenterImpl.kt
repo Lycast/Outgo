@@ -81,12 +81,14 @@ internal class DashboardPresenterImpl(
     private fun startObservingSession() {
         viewModelScope.safeLaunch(onError = onCoroutineError) {
             observeUserSession().collect { session ->
-                _state.update { currentState ->
-                    if (session == null) {
-                        currentState.copy(syncState = SyncUiState.UNAUTHENTICATED)
-                    } else {
-                        val nextState = if (currentState.syncState.isUnauthenticated) SyncUiState.UP_TO_DATE else currentState.syncState
-                        currentState.copy(syncState = nextState)
+                val wasUnauthenticated = _state.value.syncState.isUnauthenticated
+
+                if (session == null) {
+                    _state.update { it.copy(syncState = SyncUiState.UNAUTHENTICATED) }
+                } else {
+                    if (wasUnauthenticated) {
+                        _state.update { it.copy(syncState = SyncUiState.PENDING) }
+                        handleRefreshSync()
                     }
                 }
             }
@@ -163,7 +165,7 @@ internal class DashboardPresenterImpl(
                 storage.putBoolean(heroExpandedKey, intent.isExpanded)
                 _state.update { it.copy(isHeroExpanded = intent.isExpanded) }
             }
-            is DashboardIntent.Refresh -> handleRefresh()
+            is DashboardIntent.Refresh -> handleRefreshSync()
             is DashboardIntent.DismissError -> { _state.update { it.copy(error = null) } }
         }
     }
@@ -229,7 +231,7 @@ internal class DashboardPresenterImpl(
         }
     }
 
-    private fun handleRefresh() {
+    private fun handleRefreshSync() {
 
         val currentState = _state.value.syncState
 
