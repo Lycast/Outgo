@@ -13,9 +13,9 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
-import fr.abknative.outgo.android.ui.BudgetEditDialogLabels
 import fr.abknative.outgo.android.ui.CommonLabels
 import fr.abknative.outgo.android.ui.FormLabels
+import fr.abknative.outgo.android.ui.WalletEditDialogLabels
 import fr.abknative.outgo.android.ui.theme.AppTheme
 import fr.abknative.outgo.android.ui.theme.OutgoTheme
 import fr.abknative.outgo.android.ui.theme.toColor
@@ -63,7 +63,7 @@ fun WalletEditDialog(
         containerColor = AppTheme.colors.surface200.toColor(),
         title = {
             Text(
-                text = BudgetEditDialogLabels.DIALOG_BUDGET_TITLE, // Tu pourras renommer ce label plus tard
+                text = WalletEditDialogLabels.DIALOG_BUDGET_TITLE, // Tu pourras renommer ce label plus tard
                 style = AppTheme.typo.subtitle,
                 color = AppTheme.colors.textPrimary.toColor()
             )
@@ -71,7 +71,7 @@ fun WalletEditDialog(
         text = {
             Column {
                 Text(
-                    text = BudgetEditDialogLabels.DIALOG_BUDGET_DESC,
+                    text = WalletEditDialogLabels.DIALOG_BUDGET_DESC,
                     style = AppTheme.typo.body,
                     color = AppTheme.colors.textSecondary.toColor()
                 )
@@ -119,7 +119,7 @@ fun WalletEditDialog(
                     },
                     label = {
                         Text(
-                            text = BudgetEditDialogLabels.DIALOG_BUDGET_FIELD,
+                            text = WalletEditDialogLabels.DIALOG_BUDGET_FIELD,
                             style = AppTheme.typo.caption
                         )
                     },
@@ -147,7 +147,7 @@ fun WalletEditDialog(
                 Spacer(modifier = Modifier.height(AppTheme.spacing.large))
 
                 Text(
-                    text = BudgetEditDialogLabels.DIALOG_BUDGET_INFO,
+                    text = WalletEditDialogLabels.DIALOG_BUDGET_INFO,
                     style = AppTheme.typo.caption,
                     color = AppTheme.colors.textSecondary.toColor()
                 )

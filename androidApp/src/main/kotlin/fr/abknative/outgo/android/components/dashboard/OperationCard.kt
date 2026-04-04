@@ -7,7 +7,8 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -42,13 +43,14 @@ import java.util.*
 @Composable
 fun OperationCard(
     operation: Operation,
+    isExpanded: Boolean,
+    onToggleExpand: () -> Unit,
     onEdit: () -> Unit,
-    onDelete: () -> Unit,
+    onDeleteRequest: () -> Unit,
     onDuplicate: () -> Unit,
     modifier: Modifier = Modifier
 ) {
 
-    var isExpanded by remember { mutableStateOf(false) }
     val stateDesc = if (isExpanded) AccessibilityLabels.COLLAPSE_DESC else AccessibilityLabels.EXPAND_DESC
 
     // Formatage dynamique de la date absolue
@@ -63,11 +65,8 @@ fun OperationCard(
                 role = Role.Button
             }
             .combinedClickable(
-                onClick = { isExpanded = !isExpanded },
-                onLongClick = {
-                    isExpanded = false
-                    onEdit()
-                }
+                onClick = onToggleExpand,
+                onLongClick = onDeleteRequest
             )
             .animateContentSize(
                 animationSpec = spring(
@@ -161,10 +160,7 @@ fun OperationCard(
 
                 // Bouton Supprimer
                 TextButton(
-                    onClick = {
-                        isExpanded = false
-                        onDelete()
-                    },
+                    onClick = { onDeleteRequest() },
                     colors = ButtonDefaults.textButtonColors(contentColor = AppTheme.colors.error.toColor())
                 ) {
                     Icon(
@@ -182,10 +178,7 @@ fun OperationCard(
 
                 // Bouton Dupliquer
                 TextButton(
-                    onClick = {
-                        isExpanded = false
-                        onDuplicate()
-                    }
+                    onClick = { onDuplicate() }
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.copy),
@@ -202,10 +195,7 @@ fun OperationCard(
 
                 // Bouton Éditer
                 TextButton(
-                    onClick = {
-                        isExpanded = false
-                        onEdit()
-                    },
+                    onClick = { onEdit() }
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.pencil_simple),
@@ -245,8 +235,10 @@ fun PreviewOutgoingCard_LargeAmount() {
         Column(Modifier.padding(16.dp)) {
             OperationCard(
                 operation = mockOperation,
+                isExpanded = false,
+                onToggleExpand = {},
                 onEdit = {},
-                onDelete = {},
+                onDeleteRequest = {},
                 onDuplicate = {}
             )
         }
@@ -274,8 +266,10 @@ fun PreviewOutgoingCard_Expanded() {
         // On peut tester l'état déplié en cliquant dessus dans l'onglet "Interactive" d'Android Studio
         OperationCard(
             operation = mockOperation,
+            isExpanded = true,
+            onToggleExpand = {},
             onEdit = {},
-            onDelete = {},
+            onDeleteRequest = {},
             onDuplicate = {}
         )
     }

@@ -16,6 +16,27 @@ object CommonLabels {
     val ACTION_CLOSE @Composable get() = stringResource(Res.string.common_action_close)
 }
 
+object DialogLabels {
+    // --- Opération : Suppression ---
+    val DELETE_OPERATION_TITLE @Composable get() = stringResource(Res.string.dialog_delete_operation_title)
+    val DELETE_OPERATION_DESC @Composable get() = stringResource(Res.string.dialog_delete_operation_desc)
+
+    // --- Paramètres : Déconnexion ---
+    val LOGOUT_TITLE @Composable get() = stringResource(Res.string.dialog_logout_title)
+    val LOGOUT_DESC @Composable get() = stringResource(Res.string.dialog_logout_desc)
+    val LOGOUT_CONFIRM @Composable get() = stringResource(Res.string.dialog_logout_confirm)
+
+    // --- Paramètres : Purge Cache Local ---
+    val PURGE_TITLE @Composable get() = stringResource(Res.string.dialog_purge_title)
+    val PURGE_DESC @Composable get() = stringResource(Res.string.dialog_purge_desc)
+    val PURGE_CONFIRM @Composable get() = stringResource(Res.string.dialog_purge_confirm)
+
+    // --- Paramètres : Suppression Compte ---
+    val DELETE_ACCOUNT_TITLE @Composable get() = stringResource(Res.string.dialog_delete_account_title)
+    val DELETE_ACCOUNT_DESC @Composable get() = stringResource(Res.string.dialog_delete_account_desc)
+    val DELETE_ACCOUNT_CONFIRM @Composable get() = stringResource(Res.string.dialog_delete_account_confirm)
+}
+
 object DashboardLabels {
     // Hero Section
     val TOOLTIP_BALANCE_TITLE @Composable get()  = stringResource(Res.string.dashboard_tooltip_balance_title)
@@ -79,35 +100,11 @@ object HeaderLabels {
     val SYNC_PROMO_ACTION_LATER @Composable get() = stringResource(Res.string.header_sync_promo_action_later)
 }
 
-object BudgetEditDialogLabels {
+object WalletEditDialogLabels {
     val DIALOG_BUDGET_TITLE @Composable get() = stringResource(Res.string.budget_dialog_title)
     val DIALOG_BUDGET_DESC @Composable get() = stringResource(Res.string.budget_dialog_desc)
     val DIALOG_BUDGET_INFO @Composable get() = stringResource(Res.string.budget_dialog_info)
     val DIALOG_BUDGET_FIELD @Composable get() = stringResource(Res.string.budget_dialog_field)
-}
-
-object AccessibilityLabels {
-    val LOADING @Composable get() = stringResource(Res.string.a11y_loading)
-    val SYNCED @Composable get() = stringResource(Res.string.a11y_synced)
-    val NOT_SYNCED @Composable get() = stringResource(Res.string.a11y_not_synced)
-    val DELETE_EXPENSE @Composable get() = stringResource(Res.string.a11y_delete_expense)
-    val EDIT_EXPENSE @Composable get() = stringResource(Res.string.a11y_edit_expense)
-    val DUPLICATE_EXPENSE @Composable get() = stringResource(Res.string.a11y_duplicate_expense)
-    val EDIT_BUDGET @Composable get() = stringResource(Res.string.a11y_edit_budget)
-    val NAVIGATE_HOME @Composable get() = stringResource(Res.string.a11y_navigate_home)
-    val NAVIGATE_SETTINGS @Composable get() = stringResource(Res.string.a11y_navigate_settings)
-    val PREVIOUS_MONTH @Composable get() = stringResource(Res.string.a11y_previous_month)
-    val NEXT_MONTH @Composable get() = stringResource(Res.string.a11y_next_month)
-    val EXPAND_HERO @Composable get() = stringResource(Res.string.a11y_expand_hero)
-    val COLLAPSE_HERO @Composable get() = stringResource(Res.string.a11y_collapse_hero)
-    val EXPAND_DESC @Composable get() = stringResource(Res.string.a11y_expand_hero_desc)
-    val COLLAPSE_DESC @Composable get() = stringResource(Res.string.a11y_collapse_hero_desc)
-    val ADD_EXPENSE @Composable get() = stringResource(Res.string.a11y_add_expense)
-    val INFO_TOOLTIP @Composable get() = stringResource(Res.string.a11y_info_tooltip)
-    val INFO_EMPTY_STATE @Composable get() = stringResource(Res.string.a11y_info_empty_state)
-    val DAY_SELECTOR @Composable get() = stringResource(Res.string.a11y_day_selector)
-    val MONTH_SELECTOR @Composable get() = stringResource(Res.string.a11y_month_selector)
-    val SYNC_ERROR @Composable get() = stringResource(Res.string.a11y_sync_error)
 }
 
 object SettingsLabels {
@@ -150,4 +147,28 @@ object LoginLabels {
     val SUBMIT_BUTTON @Composable get() = stringResource(Res.string.login_submit_button)
     val BACK_TITLE @Composable get() = stringResource(Res.string.login_back_title)
     val ERROR_MESSAGE @Composable get() = stringResource(Res.string.login_error_message)
+}
+
+object AccessibilityLabels {
+    val LOADING @Composable get() = stringResource(Res.string.a11y_loading)
+    val SYNCED @Composable get() = stringResource(Res.string.a11y_synced)
+    val NOT_SYNCED @Composable get() = stringResource(Res.string.a11y_not_synced)
+    val DELETE_EXPENSE @Composable get() = stringResource(Res.string.a11y_delete_expense)
+    val EDIT_EXPENSE @Composable get() = stringResource(Res.string.a11y_edit_expense)
+    val DUPLICATE_EXPENSE @Composable get() = stringResource(Res.string.a11y_duplicate_expense)
+    val EDIT_BUDGET @Composable get() = stringResource(Res.string.a11y_edit_budget)
+    val NAVIGATE_HOME @Composable get() = stringResource(Res.string.a11y_navigate_home)
+    val NAVIGATE_SETTINGS @Composable get() = stringResource(Res.string.a11y_navigate_settings)
+    val PREVIOUS_MONTH @Composable get() = stringResource(Res.string.a11y_previous_month)
+    val NEXT_MONTH @Composable get() = stringResource(Res.string.a11y_next_month)
+    val EXPAND_HERO @Composable get() = stringResource(Res.string.a11y_expand_hero)
+    val COLLAPSE_HERO @Composable get() = stringResource(Res.string.a11y_collapse_hero)
+    val EXPAND_DESC @Composable get() = stringResource(Res.string.a11y_expand_hero_desc)
+    val COLLAPSE_DESC @Composable get() = stringResource(Res.string.a11y_collapse_hero_desc)
+    val ADD_EXPENSE @Composable get() = stringResource(Res.string.a11y_add_expense)
+    val INFO_TOOLTIP @Composable get() = stringResource(Res.string.a11y_info_tooltip)
+    val INFO_EMPTY_STATE @Composable get() = stringResource(Res.string.a11y_info_empty_state)
+    val DAY_SELECTOR @Composable get() = stringResource(Res.string.a11y_day_selector)
+    val MONTH_SELECTOR @Composable get() = stringResource(Res.string.a11y_month_selector)
+    val SYNC_ERROR @Composable get() = stringResource(Res.string.a11y_sync_error)
 }

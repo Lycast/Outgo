@@ -188,7 +188,7 @@ fun DashboardScreen(
                 isLoading = state.isLoading,
                 filteredList = filteredList,
                 currentFilter = currentFilter,
-                onDelete = { id -> presenter.onIntent(DashboardIntent.Delete(id)) },
+                onDeleteRequest = { id -> presenter.onIntent(DashboardIntent.Delete(id)) },
                 onEdit = { outgoing ->
                     selectedOperation = outgoing
                     showFormSheet = true

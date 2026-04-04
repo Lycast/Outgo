@@ -12,11 +12,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import fr.abknative.outgo.android.R
+import fr.abknative.outgo.android.components.common.ConfirmationDialog
 import fr.abknative.outgo.android.components.common.Header
 import fr.abknative.outgo.android.components.common.SyncPromotionModal
 import fr.abknative.outgo.android.components.settings.SettingsRowClickable
 import fr.abknative.outgo.android.components.settings.SettingsRowToggle
 import fr.abknative.outgo.android.components.settings.SettingsSection
+import fr.abknative.outgo.android.ui.CommonLabels
+import fr.abknative.outgo.android.ui.DialogLabels
 import fr.abknative.outgo.android.ui.SettingsLabels
 import fr.abknative.outgo.android.ui.theme.AppTheme
 import fr.abknative.outgo.android.ui.theme.OutgoTheme
@@ -29,9 +32,9 @@ fun SettingsScreen(
     session: UserSession?,
     onLogout: () -> Unit,
     onDeleteAccount: () -> Unit,
+    onPurgeLocalData: () -> Unit,
     onNavigateBack: () -> Unit,
     onNavigateToLogin: () -> Unit,
-    onCoffeeClick: () -> Unit,
     onTipsClick: () -> Unit,
     onContactClick: () -> Unit,
     isDarkMode: Boolean,
@@ -40,17 +43,21 @@ fun SettingsScreen(
 ) {
 
     val scrollState = rememberScrollState()
+
+    // --- États pour les Dialogues ---
+    var showLogoutConfirm by remember { mutableStateOf(false) }
+    var showDeleteAccountConfirm by remember { mutableStateOf(false) }
+    var showPurgeConfirm by remember { mutableStateOf(false) }
     var showSyncModal by remember { mutableStateOf(false) }
-    var showDeleteAccountConfirmation by remember { mutableStateOf(false) }
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
         containerColor = Color.Transparent,
         topBar = {
             Header(
-                syncState = SyncUiState.UNAUTHENTICATED, // todo À lier à ton AuthState plus tard
+                syncState = if (session == null) SyncUiState.UNAUTHENTICATED else SyncUiState.UP_TO_DATE,
                 isSettingsScreen = true,
-                onSyncIconClick = { showSyncModal = true },
+                onSyncIconClick = { if (session == null) showSyncModal = true },
                 onSyncNavigationClick = onNavigateBack,
             )
         }
@@ -90,19 +97,22 @@ fun SettingsScreen(
                     subtitle = SettingsLabels.CONTACT_SUBTITLE,
                     onClick = onContactClick
                 )
-                HorizontalDivider(color = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.1f))
-                SettingsRowClickable(
-                    icon = R.drawable.coffee_duotone,
-                    title = SettingsLabels.COFFEE_TITLE,
-                    subtitle = SettingsLabels.COFFEE_SUBTITLE,
-                    onClick = { /*onCoffeeClick*/ }
-                )
             }
 
 
-            // --- SECTION 3 : Compte & Données ---
+            // --- SECTION 3 : Données Locales ---
+            SettingsSection(title = SettingsLabels.SECTION_DATA) {
+                SettingsRowClickable(
+                    icon = R.drawable.trash_duotone,
+                    title = "Vider le cache local", // TODO: Labels
+                    subtitle = "Supprime les données de l'appareil sans toucher au serveur.",
+                    onClick = { showPurgeConfirm = true }
+                )
+            }
+
+            // --- SECTION 4 : Compte ---
             if (session == null) {
-                SettingsSection(title = SettingsLabels.SECTION_DATA) {
+                SettingsSection(title = SettingsLabels.SECTION_ACCOUNT) {
                     SettingsRowClickable(
                         icon = R.drawable.arrows_clockwise_duotone,
                         title = SettingsLabels.SYNC_TITLE,
@@ -116,17 +126,16 @@ fun SettingsScreen(
                         icon = R.drawable.sign_out_duotone,
                         title = SettingsLabels.LOGOUT_TITLE,
                         subtitle = SettingsLabels.LOGOUT_SUBTITLE,
-                        onClick = onLogout
+                        onClick = { showLogoutConfirm = true }
                     )
                     HorizontalDivider(color = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.1f))
                     SettingsRowClickable(
                         icon = R.drawable.trash_duotone,
                         title = SettingsLabels.DELETE_ACCOUNT_TITLE,
                         subtitle = SettingsLabels.DELETE_ACCOUNT_SUBTITLE,
-                        onClick = { showDeleteAccountConfirmation = true }
+                        onClick = { showDeleteAccountConfirm = true }
                     )
                 }
-
             }
 
 
@@ -142,6 +151,52 @@ fun SettingsScreen(
             )
         }
     }
+
+    if (showLogoutConfirm) {
+        ConfirmationDialog(
+            title = DialogLabels.LOGOUT_TITLE,
+            description = DialogLabels.LOGOUT_DESC,
+            confirmLabel = DialogLabels.LOGOUT_CONFIRM,
+            cancelLabel = CommonLabels.ACTION_CANCEL,
+            isDestructive = true,
+            onConfirm = {
+                onLogout()
+                showLogoutConfirm = false
+            },
+            onDismiss = { showLogoutConfirm = false }
+        )
+    }
+
+    if (showDeleteAccountConfirm) {
+        ConfirmationDialog(
+            title = DialogLabels.DELETE_ACCOUNT_TITLE,
+            description = DialogLabels.DELETE_ACCOUNT_DESC,
+            confirmLabel = DialogLabels.DELETE_ACCOUNT_CONFIRM,
+            cancelLabel = CommonLabels.ACTION_CANCEL,
+            isDestructive = true,
+            onConfirm = {
+                onDeleteAccount()
+                showDeleteAccountConfirm = false
+            },
+            onDismiss = { showDeleteAccountConfirm = false }
+        )
+    }
+
+    if (showPurgeConfirm) {
+        ConfirmationDialog(
+            title = DialogLabels.PURGE_TITLE,
+            description = DialogLabels.PURGE_DESC,
+            confirmLabel = DialogLabels.PURGE_CONFIRM,
+            cancelLabel = CommonLabels.ACTION_CANCEL,
+            isDestructive = true,
+            onConfirm = {
+                onPurgeLocalData()
+                showPurgeConfirm = false
+            },
+            onDismiss = { showPurgeConfirm = false }
+        )
+    }
+
     if (showSyncModal) {
         SyncPromotionModal(
             onDismiss = { showSyncModal = false },
@@ -156,20 +211,19 @@ fun SettingsScreen(
 @Preview(showBackground = true, name = "Settings - Mode Clair")
 @Composable
 fun PreviewSettingsScreen() {
-    var darkMode by remember { mutableStateOf(false) }
 
-    OutgoTheme(darkTheme = darkMode) {
+    OutgoTheme(darkTheme = false) {
         SettingsScreen(
             session = null,
+            onLogout = { },
+            onDeleteAccount = {},
+            onPurgeLocalData = {},
             onNavigateBack = { /* Navigation retour */ },
             onNavigateToLogin = { },
-            isDarkMode = darkMode,
-            onToggleDarkMode = { darkMode = it },
-            onCoffeeClick = { /* Action café */ },
             onTipsClick = { /* Action astuces */ },
             onContactClick = { /* Action contact */ },
-            onLogout = { },
-            onDeleteAccount = { }
+            isDarkMode = false,
+            onToggleDarkMode = { },
         )
     }
 }
@@ -180,15 +234,15 @@ fun PreviewSettingsScreenDark() {
     OutgoTheme(darkTheme = true) {
         SettingsScreen(
             session = null,
-            onNavigateBack = { },
-            onNavigateToLogin = { },
-            isDarkMode = true,
-            onToggleDarkMode = { },
-            onCoffeeClick = { },
-            onTipsClick = { },
-            onContactClick = { },
             onLogout = { },
-            onDeleteAccount = { }
+            onDeleteAccount = {},
+            onPurgeLocalData = {},
+            onNavigateBack = { /* Navigation retour */ },
+            onNavigateToLogin = { },
+            onTipsClick = { /* Action astuces */ },
+            onContactClick = { /* Action contact */ },
+            isDarkMode = true,
+            onToggleDarkMode = {},
         )
     }
 }
