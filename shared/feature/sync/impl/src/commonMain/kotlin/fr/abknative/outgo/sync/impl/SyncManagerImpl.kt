@@ -3,7 +3,7 @@ package fr.abknative.outgo.sync.impl
 import fr.abknative.outgo.core.api.KeyValueStorage
 import fr.abknative.outgo.core.api.NetworkMonitor
 import fr.abknative.outgo.core.api.logs.AppException
-import fr.abknative.outgo.core.api.logs.AppLogger
+import fr.abknative.outgo.core.api.logs.CommonError
 import fr.abknative.outgo.core.api.logs.Result
 import fr.abknative.outgo.core.api.model.SyncStatus
 import fr.abknative.outgo.sync.api.SyncManager
@@ -33,8 +33,7 @@ internal class SyncManagerImpl(
 
     override suspend fun syncAll(): Result<Unit, AppException> {
         if (!networkMonitor.isConnected.value) {
-            AppLogger.get()?.d(tag, "Offline: syncAll aborted silently.")
-            return Result.Success(Unit)
+            return Result.Error(CommonError.NetworkError())
         }
 
         return syncMutex.withLock {

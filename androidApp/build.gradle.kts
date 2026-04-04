@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.google.android.secrets)
+    alias(libs.plugins.google.services)
     id("outgo.android.application")
 }
 
