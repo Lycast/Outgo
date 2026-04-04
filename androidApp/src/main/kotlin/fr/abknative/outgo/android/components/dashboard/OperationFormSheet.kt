@@ -1,10 +1,14 @@
 package fr.abknative.outgo.android.components.dashboard
 
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.SheetState
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import fr.abknative.outgo.android.R
+import fr.abknative.outgo.android.ui.AccessibilityLabels
 import fr.abknative.outgo.android.ui.states.OperationFormEvent
 import fr.abknative.outgo.android.ui.states.OperationFormState
 import fr.abknative.outgo.android.ui.theme.AppTheme
@@ -21,7 +25,9 @@ fun OperationFormSheet(
     isPremium: Boolean,
     onEvent: (OperationFormEvent) -> Unit,
     onDismiss: () -> Unit,
-    onSave: (DashboardIntent.SaveOperation) -> Unit
+    onSave: (DashboardIntent.SaveOperation) -> Unit,
+    onDeleteRequest: () -> Unit,
+    onDuplicateRequest: () -> Unit
 ) {
     val scope = rememberCoroutineScope()
 
@@ -31,31 +37,62 @@ fun OperationFormSheet(
         }
     }
 
+    val sheetHeader = @Composable {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(AppTheme.spacing.medium),
+            horizontalArrangement = Arrangement.End,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            if (!formState.operationId.isNullOrBlank()) {
+                IconButton(onClick = onDeleteRequest) {
+                    Icon(
+                        painter = painterResource(R.drawable.trash),
+                        contentDescription = AccessibilityLabels.DELETE_EXPENSE,
+                        tint = AppTheme.colors.error.toColor()
+                    )
+                }
+
+                IconButton(onClick = onDuplicateRequest) {
+                    Icon(
+                        painter = painterResource(R.drawable.copy),
+                        contentDescription = AccessibilityLabels.DUPLICATE_EXPENSE,
+                        tint = AppTheme.colors.primary.toColor()
+                    )
+                }
+            }
+        }
+    }
+
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
-        containerColor = AppTheme.colors.surface200.toColor()
+        containerColor = AppTheme.colors.surface200.toColor(),
     ) {
-        OperationFormContent(
-            state = formState,
-            onEvent = onEvent,
-            currentYear = currentYear,
-            isPremium = isPremium,
-            onCancel = { closeSheet() },
-            onSave = {
-                val intent = DashboardIntent.SaveOperation(
-                    id = formState.operationId,
-                    walletId = formState.walletId,
-                    name = formState.nameBuffer,
-                    amountInCents = formState.amountInCents,
-                    type = formState.typeSelection,
-                    recurrence = formState.recurrenceSelection,
-                    startDate = formState.startDate,
-                    endDate = null
-                )
-                onSave(intent)
-                closeSheet()
-            }
-        )
+        Column {
+            sheetHeader()
+            OperationFormContent(
+                state = formState,
+                onEvent = onEvent,
+                currentYear = currentYear,
+                isPremium = isPremium,
+                onCancel = { closeSheet() },
+                onSave = {
+                    val intent = DashboardIntent.SaveOperation(
+                        id = formState.operationId,
+                        walletId = formState.walletId,
+                        name = formState.nameBuffer,
+                        amountInCents = formState.amountInCents,
+                        type = formState.typeSelection,
+                        recurrence = formState.recurrenceSelection,
+                        startDate = formState.startDate,
+                        endDate = null
+                    )
+                    onSave(intent)
+                    closeSheet()
+                }
+            )
+        }
     }
 }

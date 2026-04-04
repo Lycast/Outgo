@@ -1,16 +1,20 @@
 package fr.abknative.outgo.android.screens
 
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import fr.abknative.outgo.android.R
 import fr.abknative.outgo.android.components.common.ConfirmationDialog
 import fr.abknative.outgo.android.components.common.Header
@@ -50,105 +54,131 @@ fun SettingsScreen(
     var showPurgeConfirm by remember { mutableStateOf(false) }
     var showSyncModal by remember { mutableStateOf(false) }
 
+    val configuration = LocalConfiguration.current
+    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+
     Scaffold(
         modifier = modifier.fillMaxSize(),
         containerColor = Color.Transparent,
         topBar = {
-            Header(
-                syncState = if (session == null) SyncUiState.UNAUTHENTICATED else SyncUiState.UP_TO_DATE,
-                isSettingsScreen = true,
-                onSyncIconClick = { if (session == null) showSyncModal = true },
-                onSyncNavigationClick = onNavigateBack,
-            )
+            if (!isLandscape) {
+                Header(
+                    syncState = if (session == null) SyncUiState.UNAUTHENTICATED else SyncUiState.UP_TO_DATE,
+                    isVertical = false,
+                    isSettingsScreen = true,
+                    onSyncIconClick = { if (session == null) showSyncModal = true },
+                    onSyncNavigationClick = onNavigateBack,
+                )
+            }
         }
     ) { paddingValues ->
-        Column(
+
+        Row(
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(scrollState)
-                .padding(paddingValues)
-                .padding(AppTheme.spacing.medium),
-            verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.large)
+                .padding(if (isLandscape) PaddingValues(0.dp) else paddingValues)
         ) {
-
-            // --- SECTION 1 : Apparence ---
-            SettingsSection(title = SettingsLabels.SECTION_APPEARANCE) {
-                SettingsRowToggle(
-                    icon = R.drawable.moon_duotone,
-                    title = SettingsLabels.DARK_MODE_TITLE,
-                    subtitle = SettingsLabels.DARK_MODE_SUBTITLE,
-                    isChecked = isDarkMode,
-                    onCheckedChange = onToggleDarkMode
+            if (isLandscape) {
+                Header(
+                    syncState = if (session == null) SyncUiState.UNAUTHENTICATED else SyncUiState.UP_TO_DATE,
+                    isVertical = true,
+                    isSettingsScreen = true,
+                    onSyncIconClick = { if (session == null) showSyncModal = true },
+                    onSyncNavigationClick = onNavigateBack,
+                )
+                VerticalDivider(
+                    thickness = 1.dp,
+                    color = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.1f)
                 )
             }
 
-            // --- SECTION 2 : Soutien & Communauté ---
-            SettingsSection(title = SettingsLabels.SECTION_SUPPORT) {
-                SettingsRowClickable(
-                    icon = R.drawable.lightbulb_duotone,
-                    title = SettingsLabels.TIPS_TITLE,
-                    subtitle = SettingsLabels.TIPS_SUBTITLE,
-                    onClick = onTipsClick
-                )
-                HorizontalDivider(color = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.1f))
-                SettingsRowClickable(
-                    icon = R.drawable.envelope_duotone,
-                    title = SettingsLabels.CONTACT_TITLE,
-                    subtitle = SettingsLabels.CONTACT_SUBTITLE,
-                    onClick = onContactClick
-                )
-            }
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(scrollState)
+                    .padding(AppTheme.spacing.medium),
+                verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.large)
+            ) {
 
-
-            // --- SECTION 3 : Données Locales ---
-            SettingsSection(title = SettingsLabels.SECTION_DATA) {
-                SettingsRowClickable(
-                    icon = R.drawable.trash_duotone,
-                    title = "Vider le cache local", // TODO: Labels
-                    subtitle = "Supprime les données de l'appareil sans toucher au serveur.",
-                    onClick = { showPurgeConfirm = true }
-                )
-            }
-
-            // --- SECTION 4 : Compte ---
-            if (session == null) {
-                SettingsSection(title = SettingsLabels.SECTION_ACCOUNT) {
-                    SettingsRowClickable(
-                        icon = R.drawable.arrows_clockwise_duotone,
-                        title = SettingsLabels.SYNC_TITLE,
-                        subtitle = SettingsLabels.SYNC_SUBTITLE,
-                        onClick = { showSyncModal = true }
+                // --- SECTION 1 : Apparence ---
+                SettingsSection(title = SettingsLabels.SECTION_APPEARANCE) {
+                    SettingsRowToggle(
+                        icon = R.drawable.moon_duotone,
+                        title = SettingsLabels.DARK_MODE_TITLE,
+                        subtitle = SettingsLabels.DARK_MODE_SUBTITLE,
+                        isChecked = isDarkMode,
+                        onCheckedChange = onToggleDarkMode
                     )
                 }
-            } else {
-                SettingsSection(title = SettingsLabels.SECTION_ACCOUNT) {
+
+                // --- SECTION 2 : Soutien & Communauté ---
+                SettingsSection(title = SettingsLabels.SECTION_SUPPORT) {
                     SettingsRowClickable(
-                        icon = R.drawable.sign_out_duotone,
-                        title = SettingsLabels.LOGOUT_TITLE,
-                        subtitle = SettingsLabels.LOGOUT_SUBTITLE,
-                        onClick = { showLogoutConfirm = true }
+                        icon = R.drawable.lightbulb_duotone,
+                        title = SettingsLabels.TIPS_TITLE,
+                        subtitle = SettingsLabels.TIPS_SUBTITLE,
+                        onClick = onTipsClick
                     )
                     HorizontalDivider(color = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.1f))
                     SettingsRowClickable(
-                        icon = R.drawable.trash_duotone,
-                        title = SettingsLabels.DELETE_ACCOUNT_TITLE,
-                        subtitle = SettingsLabels.DELETE_ACCOUNT_SUBTITLE,
-                        onClick = { showDeleteAccountConfirm = true }
+                        icon = R.drawable.envelope_duotone,
+                        title = SettingsLabels.CONTACT_TITLE,
+                        subtitle = SettingsLabels.CONTACT_SUBTITLE,
+                        onClick = onContactClick
                     )
                 }
+
+
+                // --- SECTION 3 : Données Locales ---
+                SettingsSection(title = SettingsLabels.SECTION_DATA) {
+                    SettingsRowClickable(
+                        icon = R.drawable.trash_duotone,
+                        title = "Vider le cache local", // TODO: Labels
+                        subtitle = "Supprime les données de l'appareil sans toucher au serveur.",
+                        onClick = { showPurgeConfirm = true }
+                    )
+                }
+
+                // --- SECTION 4 : Compte ---
+                if (session == null) {
+                    SettingsSection(title = SettingsLabels.SECTION_ACCOUNT) {
+                        SettingsRowClickable(
+                            icon = R.drawable.arrows_clockwise_duotone,
+                            title = SettingsLabels.SYNC_TITLE,
+                            subtitle = SettingsLabels.SYNC_SUBTITLE,
+                            onClick = { showSyncModal = true }
+                        )
+                    }
+                } else {
+                    SettingsSection(title = SettingsLabels.SECTION_ACCOUNT) {
+                        SettingsRowClickable(
+                            icon = R.drawable.sign_out_duotone,
+                            title = SettingsLabels.LOGOUT_TITLE,
+                            subtitle = SettingsLabels.LOGOUT_SUBTITLE,
+                            onClick = { showLogoutConfirm = true }
+                        )
+                        HorizontalDivider(color = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.1f))
+                        SettingsRowClickable(
+                            icon = R.drawable.trash_duotone,
+                            title = SettingsLabels.DELETE_ACCOUNT_TITLE,
+                            subtitle = SettingsLabels.DELETE_ACCOUNT_SUBTITLE,
+                            onClick = { showDeleteAccountConfirm = true }
+                        )
+                    }
+                }
+
+
+                // Version de l'app (Footer)
+                Text(
+                    text = SettingsLabels.APP_VERSION_PREFIX,
+                    style = AppTheme.typo.caption,
+                    color = AppTheme.colors.textPrimary.toColor(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = AppTheme.spacing.large),
+                    textAlign = TextAlign.Center
+                )
             }
-
-
-            // Version de l'app (Footer)
-            Text(
-                text = SettingsLabels.APP_VERSION_PREFIX,
-                style = AppTheme.typo.caption,
-                color = AppTheme.colors.textPrimary.toColor(),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = AppTheme.spacing.large),
-                textAlign = TextAlign.Center
-            )
         }
     }
 

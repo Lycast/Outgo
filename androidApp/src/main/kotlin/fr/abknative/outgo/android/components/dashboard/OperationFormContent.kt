@@ -33,7 +33,7 @@ fun OperationFormContent(
     isPremium: Boolean,
     onEvent: (OperationFormEvent) -> Unit,
     onCancel: () -> Unit,
-    onSave: () -> Unit
+    onSave: () -> Unit,
 ) {
 
     val lockSheetConnection = remember {
@@ -141,7 +141,7 @@ fun OperationFormContent(
 
         // --- NOUVEAU : Sélecteur de Récurrence ---
         Text(
-            text = "Sélectionnez le type de récurrence",
+            text = "Sélectionnez le type de récurrence", // TODO: Extract to FormLabels
             style = AppTheme.typo.caption,
             color = AppTheme.colors.textSecondary.toColor(),
             modifier = Modifier.padding(horizontal = AppTheme.spacing.small)
@@ -164,10 +164,8 @@ fun OperationFormContent(
         ) {
             TextButton(
                 onClick = onCancel,
-                modifier = Modifier.padding(end = AppTheme.spacing.medium),
-                colors = ButtonDefaults.textButtonColors(
-                    contentColor = AppTheme.colors.textSecondary.toColor()
-                )
+                modifier = Modifier.padding(end = AppTheme.spacing.small),
+                colors = ButtonDefaults.textButtonColors(contentColor = AppTheme.colors.textSecondary.toColor())
             ) {
                 Text(text = CommonLabels.ACTION_CANCEL, style = AppTheme.typo.label)
             }

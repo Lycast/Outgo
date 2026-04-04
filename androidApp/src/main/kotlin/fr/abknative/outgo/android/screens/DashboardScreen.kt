@@ -1,17 +1,24 @@
 package fr.abknative.outgo.android.screens
 
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.unit.dp
+import fr.abknative.outgo.android.components.common.ConfirmationDialog
 import fr.abknative.outgo.android.components.common.Header
 import fr.abknative.outgo.android.components.common.SyncPromotionModal
 import fr.abknative.outgo.android.components.dashboard.*
+import fr.abknative.outgo.android.ui.CommonLabels
+import fr.abknative.outgo.android.ui.DialogLabels
 import fr.abknative.outgo.android.ui.extensions.getMonthName
 import fr.abknative.outgo.android.ui.states.OperationFilter
 import fr.abknative.outgo.android.ui.states.rememberOperationFormState
 import fr.abknative.outgo.android.ui.theme.AppTheme
+import fr.abknative.outgo.android.ui.theme.toColor
 import fr.abknative.outgo.android.ui.toUIString
 import fr.abknative.outgo.core.api.TimeProvider
 import fr.abknative.outgo.dashboard.api.DashboardIntent
@@ -32,6 +39,7 @@ fun DashboardScreen(
     val state by presenter.state.collectAsState()
     val timeProvider = koinInject<TimeProvider>()
 
+    var operationToDelete by remember { mutableStateOf<ProjectedOperation?>(null) }
     var showBudgetDialog by remember { mutableStateOf(false) }
     var showSyncModal by remember { mutableStateOf(false) }
     var showFormSheet by remember { mutableStateOf(false) }
@@ -41,7 +49,6 @@ fun DashboardScreen(
     var currentFilter by remember { mutableStateOf(OperationFilter.ALL) }
 
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-
     val currentYearNow = timeProvider.yearValue(timeProvider.now())
 
     val formState = rememberOperationFormState(
@@ -52,24 +59,21 @@ fun DashboardScreen(
         initialAmount = selectedOperation?.operation?.amountInCents?.toBigDecimal()?.movePointLeft(2)?.toPlainString() ?: "",
         initialType = selectedOperation?.operation?.type ?: OperationType.EXPENSE,
         initialRecurrence = selectedOperation?.operation?.recurrence ?: Recurrence.MONTHLY,
-        initialDay = selectedOperation?.operation?.startDate?.let { timeProvider.dayOfMonth(it).toString() } ?: "1",
+        initialDay = selectedOperation?.operation?.startDate?.let { timeProvider.dayOfMonth(it).toString() } ?: timeProvider.dayOfMonth(timeProvider.now()).toString(),
         initialMonth = selectedOperation?.operation?.startDate?.let { timeProvider.monthValue(it).toString() } ?: state.selectedMonth.toString(),
         initialYear = selectedOperation?.operation?.startDate?.let { timeProvider.yearValue(it).toString() } ?: state.selectedYear.toString()
     )
 
     val formattedSelectedMonth = "${getMonthName(state.selectedMonth)} ${state.selectedYear}"
-
     val isPremium = state.isPremium
-
     val currentDay = state.currentDay ?: 0
     val currentMonth = state.currentMonth
     val selectedMonth = state.selectedMonth
-    val filteredList = remember(state.operations, currentFilter, currentDay, currentMonth, selectedMonth, state.selectedYear, currentYearNow, isPremium) {
 
+    val filteredList = remember(state.operations, currentFilter, currentDay, currentMonth, selectedMonth, state.selectedYear, currentYearNow, isPremium) {
         val baseList = if (isPremium) { state.operations } else {
             state.operations.filter { it.operation.type == OperationType.EXPENSE }
         }
-
         val absoluteSelectedMonth = state.selectedYear * 12 + selectedMonth
         val absoluteCurrentMonth = currentYearNow * 12 + currentMonth
 
@@ -82,7 +86,6 @@ fun DashboardScreen(
                     else -> baseList.filter { timeProvider.dayOfMonth(it.projectedDate) < currentDay }
                 }
             }
-
             OperationFilter.REMAINING -> {
                 when {
                     absoluteSelectedMonth < absoluteCurrentMonth -> emptyList()
@@ -115,24 +118,30 @@ fun DashboardScreen(
         }
     }
 
+    val configuration = LocalConfiguration.current
+    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+
     // --- COMPOSANT PRINCIPAL ---
     Scaffold(
         modifier = modifier.fillMaxSize(),
         containerColor = Color.Transparent,
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
-            Header(
-                syncState = state.syncState,
-                isSettingsScreen = false,
-                onSyncIconClick = {
-                    if (state.syncState.isUnauthenticated) {
-                        showSyncModal = true
-                    } else if (state.syncState.isUpToDate || state.syncState.isError) {
-                        presenter.onIntent(DashboardIntent.Refresh)
-                    }
-                },
-                onSyncNavigationClick = { onNavigateToSettings() }
-            )
+            if (!isLandscape) {
+                Header(
+                    syncState = state.syncState,
+                    isVertical = false,
+                    isSettingsScreen = false,
+                    onSyncIconClick = {
+                        if (state.syncState.isUnauthenticated) {
+                            showSyncModal = true
+                        } else if (state.syncState.isUpToDate || state.syncState.isError) {
+                            presenter.onIntent(DashboardIntent.Refresh)
+                        }
+                    },
+                    onSyncNavigationClick = { onNavigateToSettings() }
+                )
+            }
         },
         floatingActionButton = {
             if (state.activeWalletId != null) {
@@ -140,64 +149,101 @@ fun DashboardScreen(
             }
         }
     ) { paddingValues ->
-        Column(
+
+        Row(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
+                .padding(if (isLandscape) PaddingValues(0.dp) else paddingValues)
         ) {
-            HeroSection(
-                isExpanded = state.isHeroExpanded,
-                canGoToPreviousMonth = canGoToPreviousMonth,
-                onToggleExpand = { presenter.onIntent(DashboardIntent.ToggleHeroSection(!state.isHeroExpanded)) },
-                formattedMonthDate = formattedSelectedMonth,
-                activeWalletName = state.activeWalletName,
-                monthlyIncomeInCents = state.monthlyIncomeInCents,
-                totalOutgoingsInCents = state.totalOutgoingsInCents,
-                disposableIncomeInCents = state.disposableIncomeInCents,
-                remainingToPayInCents = state.remainingToPayInCents,
-                onPreviousMonthClick = {
-                    if (canGoToPreviousMonth) {
+            if (isLandscape) {
+                // Header Vertical à gauche
+                Header(
+                    syncState = state.syncState,
+                    isVertical = true,
+                    isSettingsScreen = false,
+                    onSyncIconClick = {
+                        if (state.syncState.isUnauthenticated) {
+                            showSyncModal = true
+                        } else if (state.syncState.isUpToDate || state.syncState.isError) {
+                            presenter.onIntent(DashboardIntent.Refresh)
+                        }
+                    },
+                    onSyncNavigationClick = { onNavigateToSettings() }
+                )
+
+                VerticalDivider(
+                    thickness = 1.dp,
+                    color = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.1f)
+                )
+            }
+
+            // Colonne principale avec les données
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight()
+            ) {
+                // Ajustement du padding supérieur si on est en paysage
+                val topSpacerHeight = if (isLandscape) AppTheme.spacing.medium else 0.dp
+                if (isLandscape) {
+                    Spacer(modifier = Modifier.height(topSpacerHeight))
+                }
+
+                HeroSection(
+                    isExpanded = state.isHeroExpanded,
+                    canGoToPreviousMonth = canGoToPreviousMonth,
+                    onToggleExpand = { presenter.onIntent(DashboardIntent.ToggleHeroSection(!state.isHeroExpanded)) },
+                    formattedMonthDate = formattedSelectedMonth,
+                    activeWalletName = state.activeWalletName,
+                    monthlyIncomeInCents = state.monthlyIncomeInCents,
+                    totalOutgoingsInCents = state.totalOutgoingsInCents,
+                    disposableIncomeInCents = state.disposableIncomeInCents,
+                    remainingToPayInCents = state.remainingToPayInCents,
+                    onPreviousMonthClick = {
+                        if (canGoToPreviousMonth) {
+                            val currentMonth = state.selectedMonth
+                            val currentYear = state.selectedYear
+                            val (newMonth, newYear) = if (currentMonth == 1) { 12 to (currentYear - 1)
+                            } else { (currentMonth - 1) to currentYear }
+                            presenter.onIntent(DashboardIntent.SelectMonth(newMonth, newYear))
+                        }
+                    },
+                    onNextMonthClick = {
                         val currentMonth = state.selectedMonth
                         val currentYear = state.selectedYear
-                        val (newMonth, newYear) = if (currentMonth == 1) { 12 to (currentYear - 1)
-                        } else { (currentMonth - 1) to currentYear }
+                        val (newMonth, newYear) = if (currentMonth == 12) { 1 to (currentYear + 1)
+                        } else { (currentMonth + 1) to currentYear }
                         presenter.onIntent(DashboardIntent.SelectMonth(newMonth, newYear))
-                    }
-                },
-                onNextMonthClick = {
-                    val currentMonth = state.selectedMonth
-                    val currentYear = state.selectedYear
-                    val (newMonth, newYear) = if (currentMonth == 12) { 1 to (currentYear + 1)
-                    } else { (currentMonth + 1) to currentYear }
-                    presenter.onIntent(DashboardIntent.SelectMonth(newMonth, newYear))
-                },
-                onEditBudgetClick = { showBudgetDialog = true }
-            )
+                    },
+                    onEditBudgetClick = { showBudgetDialog = true }
+                )
 
-            Spacer(modifier = Modifier.height(AppTheme.spacing.extraLarge))
+                Spacer(modifier = Modifier.height(AppTheme.spacing.extraLarge))
 
-            OperationFilterSelector(
-                selectedFilter = currentFilter,
-                onFilterSelected = { currentFilter = it }
-            )
+                OperationFilterSelector(
+                    selectedFilter = currentFilter,
+                    onFilterSelected = { currentFilter = it }
+                )
 
-            Spacer(modifier = Modifier.height(AppTheme.spacing.small))
+                Spacer(modifier = Modifier.height(AppTheme.spacing.small))
 
-            // --- COMPOSANT LISTE ---
-            OperationListContainer(
-                isLoading = state.isLoading,
-                filteredList = filteredList,
-                currentFilter = currentFilter,
-                onDeleteRequest = { id -> presenter.onIntent(DashboardIntent.Delete(id)) },
-                onEdit = { outgoing ->
-                    selectedOperation = outgoing
-                    showFormSheet = true
-                },
-                modifier = Modifier.weight(1f)
-            )
+                // --- COMPOSANT LISTE ---
+                OperationListContainer(
+                    isLoading = state.isLoading,
+                    filteredList = filteredList,
+                    currentFilter = currentFilter,
+                    onDeleteRequest = { projectedOp -> operationToDelete = projectedOp },
+                    onEdit = { outgoing ->
+                        selectedOperation = outgoing
+                        showFormSheet = true
+                    },
+                    modifier = Modifier.weight(1f)
+                )
+            }
         }
     }
 
+    // --- MODALES ---
     if (showBudgetDialog) {
         WalletEditDialog(
             initialWalletName = state.activeWalletName,
@@ -230,7 +276,6 @@ fun DashboardScreen(
         )
     }
 
-    // --- COMPOSANT MODALE ---
     if (showFormSheet) {
         OperationFormSheet(
             formState = formState,
@@ -239,7 +284,35 @@ fun DashboardScreen(
             isPremium = isPremium,
             onEvent = { event -> formState.onEvent(event) },
             onDismiss = { showFormSheet = false },
-            onSave = { intent -> presenter.onIntent(intent) }
+            onSave = { intent -> presenter.onIntent(intent) },
+            onDeleteRequest = {
+                showFormSheet = false
+                selectedOperation?.let { operationToDelete = it }
+            },
+            onDuplicateRequest = {
+                val originalName = selectedOperation?.operation?.name ?: ""
+                selectedOperation = selectedOperation?.copy(
+                    operation = selectedOperation!!.operation.copy(
+                        id = "",
+                        name = "$originalName (Copie)"
+                    )
+                )
+            }
+        )
+    }
+
+    if (operationToDelete != null) {
+        ConfirmationDialog(
+            title = DialogLabels.DELETE_OPERATION_TITLE,
+            description = DialogLabels.DELETE_OPERATION_DESC,
+            confirmLabel = CommonLabels.ACTION_DELETE,
+            cancelLabel = CommonLabels.ACTION_CANCEL,
+            isDestructive = true,
+            onConfirm = {
+                operationToDelete?.let { presenter.onIntent(DashboardIntent.Delete(it.operation.id)) }
+                operationToDelete = null
+            },
+            onDismiss = { operationToDelete = null }
         )
     }
 }

@@ -6,24 +6,17 @@ import androidx.compose.animation.core.spring
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.role
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import fr.abknative.outgo.android.R
 import fr.abknative.outgo.android.components.common.CircleIcon
-import fr.abknative.outgo.android.ui.AccessibilityLabels
-import fr.abknative.outgo.android.ui.CommonLabels
 import fr.abknative.outgo.android.ui.DashboardLabels
 import fr.abknative.outgo.android.ui.extensions.getUiColor
 import fr.abknative.outgo.android.ui.extensions.uiAmount
@@ -43,15 +36,10 @@ import java.util.*
 @Composable
 fun OperationCard(
     operation: Operation,
-    isExpanded: Boolean,
-    onToggleExpand: () -> Unit,
     onEdit: () -> Unit,
     onDeleteRequest: () -> Unit,
-    onDuplicate: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-
-    val stateDesc = if (isExpanded) AccessibilityLabels.COLLAPSE_DESC else AccessibilityLabels.EXPAND_DESC
 
     // Formatage dynamique de la date absolue
     val dateFormatter = remember { SimpleDateFormat("dd MMM", Locale.getDefault()) }
@@ -60,12 +48,9 @@ fun OperationCard(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .semantics {
-                stateDescription = stateDesc
-                role = Role.Button
-            }
+
             .combinedClickable(
-                onClick = onToggleExpand,
+                onClick = onEdit,
                 onLongClick = onDeleteRequest
             )
             .animateContentSize(
@@ -142,75 +127,6 @@ fun OperationCard(
                 }
             }
         }
-
-        // --- PARTIE 2 : Les actions (visibles uniquement si déplié) ---
-        if (isExpanded) {
-            HorizontalDivider(
-                modifier = Modifier.padding(horizontal = AppTheme.spacing.large),
-                color = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.05f)
-            )
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = AppTheme.spacing.large, vertical = AppTheme.spacing.extraSmall),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-
-                // Bouton Supprimer
-                TextButton(
-                    onClick = { onDeleteRequest() },
-                    colors = ButtonDefaults.textButtonColors(contentColor = AppTheme.colors.error.toColor())
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.trash),
-                        contentDescription = AccessibilityLabels.DELETE_EXPENSE,
-                        modifier = Modifier.size(18.dp)
-                    )
-                    Spacer(modifier = Modifier.width(AppTheme.spacing.extraSmall))
-                    Text(
-                        text = CommonLabels.ACTION_DELETE,
-                        style = AppTheme.typo.caption,
-                        color = AppTheme.colors.error.toColor(),
-                    )
-                }
-
-                // Bouton Dupliquer
-                TextButton(
-                    onClick = { onDuplicate() }
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.copy),
-                        contentDescription = AccessibilityLabels.DUPLICATE_EXPENSE,
-                        modifier = Modifier.size(18.dp)
-                    )
-                    Spacer(modifier = Modifier.width(AppTheme.spacing.extraSmall))
-                    Text(
-                        text = CommonLabels.ACTION_DUPLICATE,
-                        style = AppTheme.typo.caption,
-                        color = AppTheme.colors.primary.toColor(),
-                    )
-                }
-
-                // Bouton Éditer
-                TextButton(
-                    onClick = { onEdit() }
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.pencil_simple),
-                        contentDescription = AccessibilityLabels.EDIT_EXPENSE,
-                        modifier = Modifier.size(18.dp)
-                    )
-                    Spacer(modifier = Modifier.width(AppTheme.spacing.extraSmall))
-                    Text(
-                        text = CommonLabels.ACTION_EDIT,
-                        style = AppTheme.typo.caption,
-                        color = AppTheme.colors.primary.toColor(),
-                    )
-                }
-            }
-        }
     }
 }
 
@@ -235,11 +151,8 @@ fun PreviewOutgoingCard_LargeAmount() {
         Column(Modifier.padding(16.dp)) {
             OperationCard(
                 operation = mockOperation,
-                isExpanded = false,
-                onToggleExpand = {},
                 onEdit = {},
-                onDeleteRequest = {},
-                onDuplicate = {}
+                onDeleteRequest = {}
             )
         }
     }
@@ -266,11 +179,8 @@ fun PreviewOutgoingCard_Expanded() {
         // On peut tester l'état déplié en cliquant dessus dans l'onglet "Interactive" d'Android Studio
         OperationCard(
             operation = mockOperation,
-            isExpanded = true,
-            onToggleExpand = {},
             onEdit = {},
-            onDeleteRequest = {},
-            onDuplicate = {}
+            onDeleteRequest = {}
         )
     }
 }

@@ -1,9 +1,6 @@
 package fr.abknative.outgo.android.components.common
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
@@ -12,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import fr.abknative.outgo.android.R
@@ -26,60 +24,109 @@ import fr.abknative.outgo.dashboard.api.SyncUiState
 fun Header(
     modifier: Modifier = Modifier,
     syncState: SyncUiState,
+    isVertical: Boolean = false, // 👈 Nouveau paramètre
     isSettingsScreen: Boolean = false,
     onSyncIconClick: () -> Unit,
     onSyncNavigationClick: () -> Unit,
 ) {
-    Row(
-        modifier = modifier
+    val containerModifier = if (isVertical) {
+        modifier
+            .fillMaxHeight()
+            .width(intrinsicSize = IntrinsicSize.Min)
+            .padding(vertical = AppTheme.spacing.large)
+    } else {
+        modifier
             .fillMaxWidth()
             .padding(top = AppTheme.spacing.big)
-            .padding(horizontal = AppTheme.spacing.large),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        // --- Titre (Gauche) ---
-        Text(
-            text = CommonLabels.APP_NAME,
-            style = AppTheme.typo.title,
-            fontSize = 24.sp,
-            color = AppTheme.colors.primary.toColor()
+            .padding(horizontal = AppTheme.spacing.large)
+    }
+
+    val actionsLayout = @Composable {
+        SyncIconLogic(
+            syncState = syncState,
+            onClick = onSyncIconClick
         )
 
-        // --- Actions (Droite) ---
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.small)
-        ) {
+        IconButton(onClick = onSyncNavigationClick) {
+            Icon(
+                painter = painterResource(id = if (isSettingsScreen) R.drawable.house_line else R.drawable.gear_six),
+                contentDescription = if (isSettingsScreen) AccessibilityLabels.NAVIGATE_HOME else AccessibilityLabels.NAVIGATE_SETTINGS,
+                tint = AppTheme.colors.primary.toColor()
+            )
+        }
+    }
 
-            // Icône Cloud
-            SyncIconLogic(
-                syncState = syncState,
-                onClick = onSyncIconClick
+    if (isVertical) {
+        // --- Disposition Paysage (Rail gauche) ---
+        Column(
+            modifier = containerModifier,
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = CommonLabels.APP_NAME,
+                style = AppTheme.typo.title,
+                fontSize = 24.sp,
+                color = AppTheme.colors.primary.toColor(),
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth().padding(horizontal = AppTheme.spacing.medium).padding(top = AppTheme.spacing.medium)
             )
 
-            // Icône Navigation (Settings <-> Home)
-            IconButton(
-                onClick = onSyncNavigationClick
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.medium)
             ) {
-                Icon(
-                    painter = painterResource( id = if (isSettingsScreen) R.drawable.house_line  else R.drawable.gear_six),
-                    contentDescription = if (isSettingsScreen) AccessibilityLabels.NAVIGATE_HOME else AccessibilityLabels.NAVIGATE_SETTINGS,
-                    tint = AppTheme.colors.primary.toColor()
-                )
+                actionsLayout()
+            }
+        }
+    } else {
+        // --- Disposition Portrait (Top Bar classique) ---
+        Row(
+            modifier = containerModifier,
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = CommonLabels.APP_NAME,
+                style = AppTheme.typo.title,
+                fontSize = 24.sp,
+                color = AppTheme.colors.primary.toColor()
+            )
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.small)
+            ) {
+                actionsLayout()
             }
         }
     }
 }
 
-@Preview(showBackground = true, name = "Light Mode")
-@Preview(showBackground = true, name = "Dark Mode", uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES)
+@Preview(showBackground = true, name = "Light Mode - Horizontal")
 @Composable
-fun HeaderPreview() {
+fun HeaderPreviewHorizontal() {
     OutgoTheme {
         Surface(color = AppTheme.colors.background.toColor()) {
             Header(
                 syncState = SyncUiState.IN_PROGRESS,
+                isVertical = false,
+                isSettingsScreen = false,
+                onSyncIconClick = {},
+                onSyncNavigationClick = {},
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true, name = "Light Mode - Vertical", widthDp = 100, heightDp = 400)
+@Composable
+fun HeaderPreviewVertical() {
+    OutgoTheme {
+        Surface(color = AppTheme.colors.background.toColor()) {
+            Header(
+                syncState = SyncUiState.IN_PROGRESS,
+                isVertical = true,
                 isSettingsScreen = false,
                 onSyncIconClick = {},
                 onSyncNavigationClick = {},

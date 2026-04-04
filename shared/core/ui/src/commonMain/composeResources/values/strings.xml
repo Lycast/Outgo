@@ -73,7 +73,7 @@
     <string name="dashboard_month_12">Décembre</string>
 
     <string name="form_sheet_title_add">Nouvelle opération</string>
-    <string name="form_sheet_title_edit">Modifier l'opération'</string>
+    <string name="form_sheet_title_edit">Modifier l'opération</string>
     <string name="form_field_name">Entrez l'intitulé</string>
     <string name="form_field_place_holder_name">Ex: Loyer, Netflix...</string>
     <string name="form_field_amount">Entrez le montant</string>
