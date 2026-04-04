@@ -1,12 +1,16 @@
 package fr.abknative.outgo.dashboard.api
 
 enum class SyncUiState {
-    UNAUTHENTICATED, // L'utilisateur est en mode visiteur (Remplace OFFLINE, car offline = pas de wifi normalement)
-    IN_PROGRESS,     // Le nuage tourne (Remplace SYNCING)
-    UP_TO_DATE,      // Tout est aligné avec le serveur (Remplace SYNCED)
-    ERROR;           // Le nuage est rouge/barré (Remplace NETWORK_ERROR)
+    UNAUTHENTICATED, // 1. Cloud barré
+    OFFLINE,         // 2. Pas de réseau (Cloud warning)
+    PENDING,         // 3. Données locales en attente (Arrows statiques)
+    IN_PROGRESS,     // 4. Synchronisation en cours (Arrows animées)
+    UP_TO_DATE,      // 5. Tout est synchronisé (Cloud check)
+    ERROR;           // Cas d'erreur serveur
 
     val isUnauthenticated: Boolean get() = this == UNAUTHENTICATED
+    val isOffline: Boolean get() = this == OFFLINE
+    val isPending: Boolean get() = this == PENDING
     val isInProgress: Boolean get() = this == IN_PROGRESS
     val isUpToDate: Boolean get() = this == UP_TO_DATE
     val isError: Boolean get() = this == ERROR

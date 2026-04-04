@@ -133,10 +133,11 @@ fun DashboardScreen(
                     isVertical = false,
                     isSettingsScreen = false,
                     onSyncIconClick = {
-                        if (state.syncState.isUnauthenticated) {
-                            showSyncModal = true
-                        } else if (state.syncState.isUpToDate || state.syncState.isError) {
-                            presenter.onIntent(DashboardIntent.Refresh)
+                        when {
+                            state.syncState.isUnauthenticated -> showSyncModal = true
+                            state.syncState.isPending || state.syncState.isError || state.syncState.isUpToDate -> {
+                                presenter.onIntent(DashboardIntent.Refresh)
+                            }
                         }
                     },
                     onSyncNavigationClick = { onNavigateToSettings() }
@@ -162,10 +163,11 @@ fun DashboardScreen(
                     isVertical = true,
                     isSettingsScreen = false,
                     onSyncIconClick = {
-                        if (state.syncState.isUnauthenticated) {
-                            showSyncModal = true
-                        } else if (state.syncState.isUpToDate || state.syncState.isError) {
-                            presenter.onIntent(DashboardIntent.Refresh)
+                        when {
+                            state.syncState.isUnauthenticated -> showSyncModal = true
+                            state.syncState.isPending || state.syncState.isError || state.syncState.isUpToDate -> {
+                                presenter.onIntent(DashboardIntent.Refresh)
+                            }
                         }
                     },
                     onSyncNavigationClick = { onNavigateToSettings() }
