@@ -78,6 +78,7 @@ fun App() {
                             session = loginState.session,
                             onLogout = { loginPresenter.onIntent(LoginIntent.Logout) },
                             onDeleteAccount = { /* On gèrera ça après */ },
+                            onPurgeLocalData = { /* On gèrera ça après */ },
                             onNavigateBack = { coordinator.handleBack() },
                             onNavigateToLogin = { coordinator.navigateTo(AppStep.Login) },
                             isDarkMode = isDarkMode,
@@ -85,7 +86,6 @@ fun App() {
                                 isDarkMode = newThemeValue
                                 storage.putBoolean(themeKey, newThemeValue)
                             },
-                            onCoffeeClick = { uriHandler.openUri(SettingsLabels.URL_COFFEE) },
                             onTipsClick = { uriHandler.openUri(SettingsLabels.URL_SITE) },
                             onContactClick = { uriHandler.openUri(SettingsLabels.URL_CONTACT) }
                         )

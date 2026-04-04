@@ -132,7 +132,6 @@ object SettingsLabels {
     val DELETE_ACCOUNT_TITLE @Composable get() = stringResource(Res.string.settings_delete_account)
     val DELETE_ACCOUNT_SUBTITLE @Composable get() = stringResource(Res.string.settings_delete_account_subtitle)
 
-    const val URL_COFFEE = "https://buymeacoffee.com/lycast"
     const val URL_SITE = "https://abknative.fr"
     const val URL_CONTACT = "https://abknative.fr/contact"
 

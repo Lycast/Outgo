@@ -155,7 +155,7 @@ fun WalletEditDialog(
         },
         confirmButton = {
             Button(
-                onClick = { if (isValidInput) onConfirm(nameValue, parsedAmount!!) },
+                onClick = { if (isValidInput) onConfirm(nameValue, parsedAmount) },
                 enabled = isValidInput,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = AppTheme.colors.primary.toColor(),
