@@ -64,24 +64,29 @@ fun DashboardScreen(
     val currentDay = state.currentDay ?: 0
     val currentMonth = state.currentMonth
     val selectedMonth = state.selectedMonth
-    val filteredList = remember(state.operations, currentFilter, currentDay, currentMonth, selectedMonth, isPremium) {
-        val baseList = if (isPremium) { state.operations
-        } else { state.operations.filter { it.operation.type == OperationType.EXPENSE } }
+    val filteredList = remember(state.operations, currentFilter, currentDay, currentMonth, selectedMonth, state.selectedYear, currentYearNow, isPremium) {
+
+        val baseList = if (isPremium) { state.operations } else {
+            state.operations.filter { it.operation.type == OperationType.EXPENSE }
+        }
+
+        val absoluteSelectedMonth = state.selectedYear * 12 + selectedMonth
+        val absoluteCurrentMonth = currentYearNow * 12 + currentMonth
 
         when (currentFilter) {
             OperationFilter.ALL -> baseList
-            OperationFilter.PAID -> {
+            OperationFilter.PAST -> {
                 when {
-                    selectedMonth < currentMonth -> baseList
-                    selectedMonth > currentMonth -> emptyList()
+                    absoluteSelectedMonth < absoluteCurrentMonth -> baseList
+                    absoluteSelectedMonth > absoluteCurrentMonth -> emptyList()
                     else -> baseList.filter { timeProvider.dayOfMonth(it.projectedDate) < currentDay }
                 }
             }
 
             OperationFilter.REMAINING -> {
                 when {
-                    selectedMonth < currentMonth -> emptyList()
-                    selectedMonth > currentMonth -> baseList
+                    absoluteSelectedMonth < absoluteCurrentMonth -> emptyList()
+                    absoluteSelectedMonth > absoluteCurrentMonth -> baseList
                     else -> baseList.filter { timeProvider.dayOfMonth(it.projectedDate) >= currentDay }
                 }
             }

@@ -24,7 +24,7 @@ fun EmptyStateView(
 
     val message = when (filter) {
         OperationFilter.ALL -> DashboardLabels.EMPTY_ALL
-        OperationFilter.PAID -> DashboardLabels.EMPTY_PAID
+        OperationFilter.PAST -> DashboardLabels.EMPTY_PAID
         OperationFilter.REMAINING -> DashboardLabels.EMPTY_REMAINING
     }
 

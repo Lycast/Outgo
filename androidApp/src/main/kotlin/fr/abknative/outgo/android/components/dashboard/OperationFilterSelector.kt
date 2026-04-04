@@ -54,8 +54,8 @@ fun OperationFilterSelector(
         FilterTabItem(
             modifier = Modifier.weight(1f),
             label = DashboardLabels.TAB_PAID,
-            isSelected = selectedFilter == OperationFilter.PAID,
-            onClick = { onFilterSelected(OperationFilter.PAID) }
+            isSelected = selectedFilter == OperationFilter.PAST,
+            onClick = { onFilterSelected(OperationFilter.PAST) }
         )
 
         Spacer(modifier = Modifier.width(AppTheme.spacing.large))
