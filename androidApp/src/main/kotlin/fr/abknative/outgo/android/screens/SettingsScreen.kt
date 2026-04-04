@@ -12,8 +12,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import fr.abknative.outgo.android.R
 import fr.abknative.outgo.android.components.common.ConfirmationDialog
@@ -26,29 +26,34 @@ import fr.abknative.outgo.android.ui.CommonLabels
 import fr.abknative.outgo.android.ui.DialogLabels
 import fr.abknative.outgo.android.ui.SettingsLabels
 import fr.abknative.outgo.android.ui.theme.AppTheme
-import fr.abknative.outgo.android.ui.theme.OutgoTheme
 import fr.abknative.outgo.android.ui.theme.toColor
-import fr.abknative.outgo.auth.api.model.UserSession
-import fr.abknative.outgo.dashboard.api.SyncUiState
+import fr.abknative.outgo.settings.api.SettingsIntent
+import fr.abknative.outgo.settings.api.SettingsPresenter
 
+/**
+ * Settings screen allowing the user to manage app appearance, local data, and account synchronization.
+ */
 @Composable
 fun SettingsScreen(
-    session: UserSession?,
-    onLogout: () -> Unit,
-    onDeleteAccount: () -> Unit,
-    onPurgeLocalData: () -> Unit,
+    presenter: SettingsPresenter,
     onNavigateBack: () -> Unit,
     onNavigateToLogin: () -> Unit,
-    onTipsClick: () -> Unit,
-    onContactClick: () -> Unit,
     isDarkMode: Boolean,
     onToggleDarkMode: (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
-
+    val state by presenter.state.collectAsState()
     val scrollState = rememberScrollState()
+    val uriHandler = LocalUriHandler.current
 
-    // --- États pour les Dialogues ---
+    // --- Navigation Effect ---
+    LaunchedEffect(state.actionSuccess) {
+        if (state.actionSuccess) {
+            presenter.onIntent(SettingsIntent.ResetSuccessFlag)
+        }
+    }
+
+    // --- Dialog States ---
     var showLogoutConfirm by remember { mutableStateOf(false) }
     var showDeleteAccountConfirm by remember { mutableStateOf(false) }
     var showPurgeConfirm by remember { mutableStateOf(false) }
@@ -57,18 +62,29 @@ fun SettingsScreen(
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
+    val headerContent = @Composable { isVerticalLayout: Boolean ->
+        Header(
+            syncState = state.syncState,
+            isVertical = isVerticalLayout,
+            isSettingsScreen = true,
+            onSyncIconClick = {
+                when {
+                    state.syncState.isUnauthenticated -> showSyncModal = true
+                    state.syncState.isPending || state.syncState.isError || state.syncState.isUpToDate -> {
+                        presenter.onIntent(SettingsIntent.RefreshSync)
+                    }
+                }
+            },
+            onSyncNavigationClick = onNavigateBack,
+        )
+    }
+
     Scaffold(
         modifier = modifier.fillMaxSize(),
         containerColor = Color.Transparent,
         topBar = {
             if (!isLandscape) {
-                Header(
-                    syncState = if (session == null) SyncUiState.UNAUTHENTICATED else SyncUiState.UP_TO_DATE,
-                    isVertical = false,
-                    isSettingsScreen = true,
-                    onSyncIconClick = { if (session == null) showSyncModal = true },
-                    onSyncNavigationClick = onNavigateBack,
-                )
+                headerContent(false)
             }
         }
     ) { paddingValues ->
@@ -79,13 +95,7 @@ fun SettingsScreen(
                 .padding(if (isLandscape) PaddingValues(0.dp) else paddingValues)
         ) {
             if (isLandscape) {
-                Header(
-                    syncState = if (session == null) SyncUiState.UNAUTHENTICATED else SyncUiState.UP_TO_DATE,
-                    isVertical = true,
-                    isSettingsScreen = true,
-                    onSyncIconClick = { if (session == null) showSyncModal = true },
-                    onSyncNavigationClick = onNavigateBack,
-                )
+                headerContent(true)
                 VerticalDivider(
                     thickness = 1.dp,
                     color = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.1f)
@@ -117,30 +127,29 @@ fun SettingsScreen(
                         icon = R.drawable.lightbulb_duotone,
                         title = SettingsLabels.TIPS_TITLE,
                         subtitle = SettingsLabels.TIPS_SUBTITLE,
-                        onClick = onTipsClick
+                        onClick = { uriHandler.openUri(SettingsLabels.URL_SITE) }
                     )
                     HorizontalDivider(color = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.1f))
                     SettingsRowClickable(
                         icon = R.drawable.envelope_duotone,
                         title = SettingsLabels.CONTACT_TITLE,
                         subtitle = SettingsLabels.CONTACT_SUBTITLE,
-                        onClick = onContactClick
+                        onClick = { uriHandler.openUri(SettingsLabels.URL_CONTACT) }
                     )
                 }
-
 
                 // --- SECTION 3 : Données Locales ---
                 SettingsSection(title = SettingsLabels.SECTION_DATA) {
                     SettingsRowClickable(
                         icon = R.drawable.trash_duotone,
-                        title = "Vider le cache local", // TODO: Labels
-                        subtitle = "Supprime les données de l'appareil sans toucher au serveur.",
+                        title = DialogLabels.PURGE_TITLE,
+                        subtitle = "Supprime les données de l'appareil sans toucher au serveur.", // TODO: Mettre dans les labels
                         onClick = { showPurgeConfirm = true }
                     )
                 }
 
                 // --- SECTION 4 : Compte ---
-                if (session == null) {
+                if (state.session == null) {
                     SettingsSection(title = SettingsLabels.SECTION_ACCOUNT) {
                         SettingsRowClickable(
                             icon = R.drawable.arrows_clockwise_duotone,
@@ -167,7 +176,6 @@ fun SettingsScreen(
                     }
                 }
 
-
                 // Version de l'app (Footer)
                 Text(
                     text = SettingsLabels.APP_VERSION_PREFIX,
@@ -182,6 +190,7 @@ fun SettingsScreen(
         }
     }
 
+    // --- MODALES DE CONFIRMATION ---
     if (showLogoutConfirm) {
         ConfirmationDialog(
             title = DialogLabels.LOGOUT_TITLE,
@@ -190,7 +199,7 @@ fun SettingsScreen(
             cancelLabel = CommonLabels.ACTION_CANCEL,
             isDestructive = true,
             onConfirm = {
-                onLogout()
+                presenter.onIntent(SettingsIntent.Logout)
                 showLogoutConfirm = false
             },
             onDismiss = { showLogoutConfirm = false }
@@ -205,7 +214,7 @@ fun SettingsScreen(
             cancelLabel = CommonLabels.ACTION_CANCEL,
             isDestructive = true,
             onConfirm = {
-                onDeleteAccount()
+                presenter.onIntent(SettingsIntent.DeleteAccount)
                 showDeleteAccountConfirm = false
             },
             onDismiss = { showDeleteAccountConfirm = false }
@@ -220,7 +229,7 @@ fun SettingsScreen(
             cancelLabel = CommonLabels.ACTION_CANCEL,
             isDestructive = true,
             onConfirm = {
-                onPurgeLocalData()
+                presenter.onIntent(SettingsIntent.PurgeLocalData)
                 showPurgeConfirm = false
             },
             onDismiss = { showPurgeConfirm = false }
@@ -234,45 +243,6 @@ fun SettingsScreen(
                 showSyncModal = false
                 onNavigateToLogin()
             }
-        )
-    }
-}
-
-@Preview(showBackground = true, name = "Settings - Mode Clair")
-@Composable
-fun PreviewSettingsScreen() {
-
-    OutgoTheme(darkTheme = false) {
-        SettingsScreen(
-            session = null,
-            onLogout = { },
-            onDeleteAccount = {},
-            onPurgeLocalData = {},
-            onNavigateBack = { /* Navigation retour */ },
-            onNavigateToLogin = { },
-            onTipsClick = { /* Action astuces */ },
-            onContactClick = { /* Action contact */ },
-            isDarkMode = false,
-            onToggleDarkMode = { },
-        )
-    }
-}
-
-@Preview(showBackground = true, name = "Settings - Mode Sombre", uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES)
-@Composable
-fun PreviewSettingsScreenDark() {
-    OutgoTheme(darkTheme = true) {
-        SettingsScreen(
-            session = null,
-            onLogout = { },
-            onDeleteAccount = {},
-            onPurgeLocalData = {},
-            onNavigateBack = { /* Navigation retour */ },
-            onNavigateToLogin = { },
-            onTipsClick = { /* Action astuces */ },
-            onContactClick = { /* Action contact */ },
-            isDarkMode = true,
-            onToggleDarkMode = {},
         )
     }
 }

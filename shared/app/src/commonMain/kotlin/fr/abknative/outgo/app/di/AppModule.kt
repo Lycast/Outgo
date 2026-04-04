@@ -6,6 +6,7 @@ import fr.abknative.outgo.core.impl.di.coreModule
 import fr.abknative.outgo.dashboard.impl.di.dashboardPresentationModule
 import fr.abknative.outgo.database.di.databaseModule
 import fr.abknative.outgo.login.impl.di.loginPresentationModule
+import fr.abknative.outgo.settings.impl.di.settingsPresentationModule
 import fr.abknative.outgo.subscription.impl.di.subscriptionModule
 import fr.abknative.outgo.sync.impl.di.syncModule
 import fr.abknative.outgo.wallet.impl.di.walletModule
@@ -37,6 +38,7 @@ fun initKoin(appDeclaration: KoinAppDeclaration = {}) = startKoin {
 
         // Modules UI (Présentation)
         loginPresentationModule,
-        dashboardPresentationModule
+        dashboardPresentationModule,
+        settingsPresentationModule
     )
 }

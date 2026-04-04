@@ -10,18 +10,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalUriHandler
 import fr.abknative.outgo.android.screens.DashboardScreen
 import fr.abknative.outgo.android.screens.LoginScreen
 import fr.abknative.outgo.android.screens.SettingsScreen
-import fr.abknative.outgo.android.ui.SettingsLabels
 import fr.abknative.outgo.android.ui.theme.AppTheme
 import fr.abknative.outgo.android.ui.theme.OutgoTheme
 import fr.abknative.outgo.android.ui.theme.toColor
 import fr.abknative.outgo.app.nav.AppCoordinator
 import fr.abknative.outgo.app.nav.AppStep
 import fr.abknative.outgo.core.api.KeyValueStorage
-import fr.abknative.outgo.login.api.LoginIntent
 import fr.abknative.outgo.login.api.LoginPresenter
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
@@ -31,7 +28,6 @@ fun App() {
 
     val coordinator: AppCoordinator = koinInject()
     val storage: KeyValueStorage = koinInject()
-    val uriHandler = LocalUriHandler.current
 
     val navState by coordinator.state.collectAsState()
 
@@ -70,24 +66,15 @@ fun App() {
                     }
 
                     AppStep.Settings -> {
-
-                        val loginPresenter = koinViewModel<LoginPresenter>()
-                        val loginState by loginPresenter.state.collectAsState()
-
                         SettingsScreen(
-                            session = loginState.session,
-                            onLogout = { loginPresenter.onIntent(LoginIntent.Logout) },
-                            onDeleteAccount = { /* On gèrera ça après */ },
-                            onPurgeLocalData = { /* On gèrera ça après */ },
+                            presenter = koinViewModel(),
                             onNavigateBack = { coordinator.handleBack() },
                             onNavigateToLogin = { coordinator.navigateTo(AppStep.Login) },
                             isDarkMode = isDarkMode,
                             onToggleDarkMode = { newThemeValue ->
                                 isDarkMode = newThemeValue
                                 storage.putBoolean(themeKey, newThemeValue)
-                            },
-                            onTipsClick = { uriHandler.openUri(SettingsLabels.URL_SITE) },
-                            onContactClick = { uriHandler.openUri(SettingsLabels.URL_CONTACT) }
+                            }
                         )
                     }
 

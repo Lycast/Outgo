@@ -14,6 +14,8 @@ kotlin {
         commonMain.dependencies {
             implementation(projects.shared.core.api)
             implementation(projects.shared.feature.auth.api)
+            implementation(projects.shared.feature.sync.api)
+            implementation(projects.shared.presentation.settings.api)
 
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.serialization.json)

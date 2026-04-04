@@ -1,4 +1,4 @@
-package fr.abknative.outgo.dashboard.api
+package fr.abknative.outgo.core.api.model
 
 enum class SyncUiState {
     UNAUTHENTICATED, // 1. Cloud barré

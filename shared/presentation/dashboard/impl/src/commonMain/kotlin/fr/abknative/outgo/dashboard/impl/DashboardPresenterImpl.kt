@@ -7,10 +7,10 @@ import fr.abknative.outgo.core.api.TimeProvider
 import fr.abknative.outgo.core.api.extensions.safeLaunch
 import fr.abknative.outgo.core.api.logs.AppException
 import fr.abknative.outgo.core.api.logs.Result
+import fr.abknative.outgo.core.api.model.SyncUiState
 import fr.abknative.outgo.dashboard.api.DashboardIntent
 import fr.abknative.outgo.dashboard.api.DashboardPresenter
 import fr.abknative.outgo.dashboard.api.DashboardState
-import fr.abknative.outgo.dashboard.api.SyncUiState
 import fr.abknative.outgo.subscription.api.FeatureManager
 import fr.abknative.outgo.sync.api.SyncManager
 import fr.abknative.outgo.wallet.api.model.operation.OperationType

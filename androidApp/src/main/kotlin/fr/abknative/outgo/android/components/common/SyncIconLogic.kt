@@ -16,7 +16,7 @@ import fr.abknative.outgo.android.R
 import fr.abknative.outgo.android.ui.AccessibilityLabels
 import fr.abknative.outgo.android.ui.theme.AppTheme
 import fr.abknative.outgo.android.ui.theme.toColor
-import fr.abknative.outgo.dashboard.api.SyncUiState
+import fr.abknative.outgo.core.api.model.SyncUiState
 
 @Composable
 fun SyncIconLogic(

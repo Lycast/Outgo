@@ -1,6 +1,7 @@
 package fr.abknative.outgo.dashboard.api
 
 import fr.abknative.outgo.core.api.logs.AppException
+import fr.abknative.outgo.core.api.model.SyncUiState
 import fr.abknative.outgo.wallet.api.model.dashboard.ProjectedOperation
 
 /**

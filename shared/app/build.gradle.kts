@@ -27,6 +27,7 @@ kotlin {
 
             export(projects.shared.presentation.dashboard.api)
             export(projects.shared.presentation.login.api)
+            export(projects.shared.presentation.settings.api)
 
             export(projects.shared.feature.wallet.api)
             export(projects.shared.feature.auth.api)
@@ -46,6 +47,7 @@ kotlin {
             // --- Couches Présentation (pour que Koin puisse les instancier) ---
             implementation(projects.shared.presentation.dashboard.impl)
             implementation(projects.shared.presentation.login.impl)
+            implementation(projects.shared.presentation.settings.impl)
 
             implementation(libs.koin.core)
             implementation(libs.kotlinx.coroutines.core)
@@ -57,6 +59,7 @@ kotlin {
             // Exposer les contrats UI
             api(projects.shared.presentation.dashboard.api)
             api(projects.shared.presentation.login.api)
+            api(projects.shared.presentation.settings.api)
 
             // Exposer les contrats métier
             api(projects.shared.feature.wallet.api)

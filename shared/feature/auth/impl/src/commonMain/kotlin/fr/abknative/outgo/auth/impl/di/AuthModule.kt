@@ -1,11 +1,13 @@
 package fr.abknative.outgo.auth.impl.di
 
 import fr.abknative.outgo.auth.api.repository.AuthRepository
+import fr.abknative.outgo.auth.api.usecase.DeleteAccountUseCase
 import fr.abknative.outgo.auth.api.usecase.LoginUseCase
 import fr.abknative.outgo.auth.api.usecase.LogoutUseCase
 import fr.abknative.outgo.auth.api.usecase.ObserveUserSessionUseCase
 import fr.abknative.outgo.auth.impl.AuthDataPurger
 import fr.abknative.outgo.auth.impl.repository.AuthRepositoryImpl
+import fr.abknative.outgo.auth.impl.usecase.DeleteAccountUseCaseImpl
 import fr.abknative.outgo.auth.impl.usecase.LoginUseCaseImpl
 import fr.abknative.outgo.auth.impl.usecase.LogoutUseCaseImpl
 import fr.abknative.outgo.auth.impl.usecase.ObserveUserSessionUseCaseImpl
@@ -22,6 +24,8 @@ val authModule = module {
     factoryOf(::LoginUseCaseImpl) { bind<LoginUseCase>() }
     factoryOf(::LogoutUseCaseImpl) { bind<LogoutUseCase>() }
     factoryOf(::ObserveUserSessionUseCaseImpl) { bind<ObserveUserSessionUseCase>() }
+
+    factoryOf(::DeleteAccountUseCaseImpl) { bind<DeleteAccountUseCase>() }
 
     single<DataPurger> { AuthDataPurger(get()) }
 }
