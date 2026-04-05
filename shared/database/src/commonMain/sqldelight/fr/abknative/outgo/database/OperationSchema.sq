@@ -1,5 +1,6 @@
 CREATE TABLE OperationEntity (
     id TEXT NOT NULL PRIMARY KEY,
+    userId TEXT NOT NULL,
     walletId TEXT NOT NULL,
     name TEXT NOT NULL,
     amountInCents INTEGER NOT NULL,

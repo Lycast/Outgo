@@ -3,8 +3,8 @@
 -- ==========================================
 
 insertWallet:
-INSERT INTO WalletEntity(id, name, createdAt, updatedAt, deletedAt, syncStatus)
-VALUES (?, ?, ?, ?, ?, ?);
+INSERT INTO WalletEntity(id, userId, name, createdAt, updatedAt, deletedAt, syncStatus)
+VALUES (?, ?, ?, ?, ?, ?, ?);
 
 updateWallet:
 UPDATE WalletEntity
@@ -12,7 +12,7 @@ SET name = ?,
     updatedAt = ?,
     deletedAt = ?,
     syncStatus = ?
-WHERE id = ?;
+WHERE id = ? AND userId = ?;
 
 -- ==========================================
 -- 📖 READ (Queries)
@@ -20,15 +20,15 @@ WHERE id = ?;
 
 getActiveWallets:
 SELECT * FROM WalletEntity
-WHERE deletedAt IS NULL;
+WHERE deletedAt IS NULL AND userId = :userId;
 
 getActiveWalletById:
 SELECT * FROM WalletEntity
-WHERE id = ? AND deletedAt IS NULL;
+WHERE id = ? AND deletedAt IS NULL AND userId = ?;
 
 getWalletById:
 SELECT * FROM WalletEntity
-WHERE id = ?;
+WHERE id = ? AND userId = ?;
 
 -- ==========================================
 -- 🗑️ DELETE (Soft & Hard)
@@ -37,26 +37,33 @@ WHERE id = ?;
 markAsDeleted:
 UPDATE WalletEntity
 SET deletedAt = ?, syncStatus = 'PENDING_DELETE', updatedAt = ?
-WHERE id = ?;
+WHERE id = ? AND userId = ?;
 
--- Sécurité : Supprime physiquement UNIQUEMENT si jamais envoyé au serveur
+-- Security: Hard delete ONLY if it was never synced to the server
 hardDeletePendingCreate:
 DELETE FROM WalletEntity
-WHERE id = ? AND syncStatus = 'PENDING_CREATE';
+WHERE id = ? AND syncStatus = 'PENDING_CREATE' AND userId = ?;
 
--- Purge totale (Bouton Danger Zone)
-deleteAll:
-DELETE FROM WalletEntity;
+-- Total purge for the current user
+deleteAllForUser:
+DELETE FROM WalletEntity
+WHERE userId = :userId;
 
 -- ==========================================
--- 🔄 SYNC (Engine)
+-- 🔄 SYNC & MIGRATION (Engine)
 -- ==========================================
 
 getPendingWallets:
 SELECT * FROM WalletEntity
-WHERE syncStatus != 'SYNCED';
+WHERE syncStatus != 'SYNCED' AND userId = :userId;
 
 updateSyncStatus:
 UPDATE WalletEntity
 SET syncStatus = ?
-WHERE id = ?;
+WHERE id = ? AND userId = ?;
+
+-- Migrates offline local data to a real authenticated account
+updateUserId:
+UPDATE WalletEntity
+SET userId = :newUserId
+WHERE userId = :oldUserId;

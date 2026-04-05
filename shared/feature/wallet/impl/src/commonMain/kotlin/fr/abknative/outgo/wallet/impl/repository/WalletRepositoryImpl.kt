@@ -2,6 +2,7 @@ package fr.abknative.outgo.wallet.impl.repository
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
+import fr.abknative.outgo.auth.api.provider.SessionProvider
 import fr.abknative.outgo.core.api.AppDispatchers
 import fr.abknative.outgo.core.api.IdProvider
 import fr.abknative.outgo.core.api.TimeProvider
@@ -20,20 +21,25 @@ import kotlinx.coroutines.withContext
  *
  * Uses [OutgoDatabase] as the local source of truth and handles
  * data mapping from database entities to domain models.
+ * Enforces data isolation by scoping all queries to the current user's ID.
  */
 internal class WalletRepositoryImpl(
     private val database: OutgoDatabase,
     private val dispatchers: AppDispatchers,
     private val timeProvider: TimeProvider,
-    private val idProvider: IdProvider
+    private val idProvider: IdProvider,
+    private val sessionProvider: SessionProvider
 ) : WalletRepository {
 
     private val queries = database.walletQueries
     private val operationQueries = database.operationQueries
     private val tag = "WalletLocalRepo"
 
+    private val currentUserId: String
+        get() = sessionProvider.getCurrentUserId()
+
     override fun observeActiveWallets(): Flow<List<Wallet>> {
-        return queries.getActiveWallets()
+        return queries.getActiveWallets(userId = currentUserId)
             .asFlow()
             .mapToList(dispatchers.io)
             .map { entities -> entities.map { it.toDomain() } }
@@ -46,7 +52,7 @@ internal class WalletRepositoryImpl(
                 CommonError.DatabaseError(it)
             }
         ) {
-            queries.getWalletById(id).executeAsOneOrNull()?.toDomain()
+            queries.getWalletById(id = id, userId = currentUserId).executeAsOneOrNull()?.toDomain()
         }
     }
 
@@ -59,12 +65,14 @@ internal class WalletRepositoryImpl(
         ) {
             queries.transaction {
                 val now = timeProvider.now()
-                val existing = queries.getWalletById(wallet.id).executeAsOneOrNull()
+                val uid = currentUserId
+                val existing = queries.getWalletById(id = wallet.id, userId = uid).executeAsOneOrNull()
 
                 if (existing == null) {
                     val finalId = wallet.id.ifBlank { idProvider.generate() }
                     queries.insertWallet(
                         id = finalId,
+                        userId = uid,
                         name = wallet.name,
                         createdAt = now,
                         updatedAt = now,
@@ -85,7 +93,8 @@ internal class WalletRepositoryImpl(
                             updatedAt = now,
                             deletedAt = existing.deletedAt,
                             syncStatus = nextStatus.name,
-                            id = wallet.id
+                            id = wallet.id,
+                            userId = uid
                         )
                     }
                 }
@@ -102,18 +111,22 @@ internal class WalletRepositoryImpl(
         ) {
             queries.transaction {
                 val now = timeProvider.now()
+                val uid = currentUserId
 
                 // Soft Delete of Wallet
                 queries.markAsDeleted(
                     deletedAt = now,
                     updatedAt = now,
-                    id = id
+                    id = id,
+                    userId = uid
                 )
 
+                // Cascading Soft Delete of Operations
                 operationQueries.softDeleteByWalletId(
                     deletedAt = now,
                     updatedAt = now,
-                    walletId = id
+                    walletId = id,
+                    userId = uid
                 )
             }
         }
@@ -126,7 +139,7 @@ internal class WalletRepositoryImpl(
                 CommonError.DatabaseError(it)
             }
         ) {
-            queries.getPendingWallets().executeAsList().map { it.toDomain() }
+            queries.getPendingWallets(userId = currentUserId).executeAsList().map { it.toDomain() }
         }
     }
 
@@ -140,7 +153,7 @@ internal class WalletRepositoryImpl(
                 CommonError.DatabaseError(it)
             }
         ) {
-            queries.updateSyncStatus(syncStatus = status.name, id = id)
+            queries.updateSyncStatus(syncStatus = status.name, id = id, userId = currentUserId)
             Unit
         }
     }
@@ -154,19 +167,22 @@ internal class WalletRepositoryImpl(
                 }
             ) {
                 queries.transaction {
+                    val uid = currentUserId
                     wallets.forEach { remoteWallet ->
-                        val exists = queries.getWalletById(remoteWallet.id).executeAsOneOrNull() != null
+                        val exists = queries.getWalletById(id = remoteWallet.id, userId = uid).executeAsOneOrNull() != null
                         if (exists) {
                             queries.updateWallet(
                                 name = remoteWallet.name,
                                 updatedAt = remoteWallet.updatedAt,
                                 deletedAt = remoteWallet.deletedAt,
                                 syncStatus = SyncStatus.SYNCED.name,
-                                id = remoteWallet.id
+                                id = remoteWallet.id,
+                                userId = uid
                             )
                         } else {
                             queries.insertWallet(
                                 id = remoteWallet.id,
+                                userId = uid,
                                 name = remoteWallet.name,
                                 createdAt = remoteWallet.createdAt,
                                 updatedAt = remoteWallet.updatedAt,
@@ -186,7 +202,7 @@ internal class WalletRepositoryImpl(
                 CommonError.DatabaseError(it)
             }
         ) {
-            queries.deleteAll()
+            queries.deleteAllForUser(userId = currentUserId)
             Unit
         }
     }

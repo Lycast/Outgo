@@ -9,8 +9,8 @@ import fr.abknative.outgo.core.api.KeyValueStorage
 import fr.abknative.outgo.core.api.logs.*
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
@@ -32,7 +32,7 @@ internal class AuthRepositoryImpl(
     private val firebaseAuth = Firebase.auth
     private val sessionState = MutableStateFlow(loadSessionFromStorage())
 
-    override fun observeSession(): Flow<UserSession?> = sessionState.asStateFlow()
+    override fun observeSession(): StateFlow<UserSession?> = sessionState.asStateFlow()
 
     init {
         @OptIn(DelicateCoroutinesApi::class)
@@ -78,45 +78,19 @@ internal class AuthRepositoryImpl(
     override suspend fun register(email: String, password: String): Result<Unit, AppException> = asResult(
         onError = ::mapFirebaseError
     ) {
-        if (email.isBlank() || password.isBlank()) {
-            throw AuthError.InvalidCredentials()
-        }
+        if (email.isBlank() || password.isBlank()) throw AuthError.InvalidCredentials()
 
         val authResult = firebaseAuth.createUserWithEmailAndPassword(email, password)
-        val user = authResult.user ?: throw AuthError.UserNotFound()
-
-        val token = user.getIdToken(forceRefresh = true) ?: throw CommonError.Unauthorized()
-
-        val session = UserSession(
-            userId = user.uid,
-            email = user.email ?: email,
-            token = token
-        )
-
-        saveSessionToStorage(session)
-        sessionState.value = session
+        createAndSaveSession(authResult.user, email)
     }
 
     override suspend fun login(email: String, password: String): Result<Unit, AppException> = asResult(
         onError = ::mapFirebaseError
     ) {
-        if (email.isBlank() || password.isBlank()) {
-            throw AuthError.InvalidCredentials()
-        }
+        if (email.isBlank() || password.isBlank()) throw AuthError.InvalidCredentials()
 
         val authResult = firebaseAuth.signInWithEmailAndPassword(email, password)
-        val user = authResult.user ?: throw AuthError.UserNotFound()
-
-        val token = user.getIdToken(forceRefresh = true) ?: throw CommonError.Unauthorized()
-
-        val session = UserSession(
-            userId = user.uid,
-            email = user.email ?: email,
-            token = token
-        )
-
-        saveSessionToStorage(session)
-        sessionState.value = session
+        createAndSaveSession(authResult.user, email)
     }
 
     override suspend fun logout(): Result<Unit, AppException> = asResult(
@@ -149,6 +123,25 @@ internal class AuthRepositoryImpl(
             is AppException -> e
             else -> CommonError.UnknownError(e)
         }
+    }
+
+    /**
+     * Extracts the token, creates the UserSession, and saves it locally.
+     * Prevents code duplication between login and register.
+     */
+    private suspend fun createAndSaveSession(user: FirebaseUser?, fallbackEmail: String) {
+        if (user == null) throw AuthError.UserNotFound()
+
+        val token = user.getIdToken(forceRefresh = true) ?: throw CommonError.Unauthorized()
+
+        val session = UserSession(
+            userId = user.uid,
+            email = user.email ?: fallbackEmail,
+            token = token
+        )
+
+        saveSessionToStorage(session)
+        sessionState.value = session
     }
 
     private fun clearLocalSession() {

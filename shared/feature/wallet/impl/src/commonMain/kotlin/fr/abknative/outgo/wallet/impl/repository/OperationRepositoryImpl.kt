@@ -2,12 +2,14 @@ package fr.abknative.outgo.wallet.impl.repository
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
+import fr.abknative.outgo.auth.api.provider.SessionProvider
 import fr.abknative.outgo.core.api.AppDispatchers
 import fr.abknative.outgo.core.api.EpochMillis
 import fr.abknative.outgo.core.api.IdProvider
 import fr.abknative.outgo.core.api.TimeProvider
 import fr.abknative.outgo.core.api.logs.*
 import fr.abknative.outgo.core.api.model.SyncStatus
+import fr.abknative.outgo.database.OperationEntity
 import fr.abknative.outgo.database.OutgoDatabase
 import fr.abknative.outgo.wallet.api.model.Operation
 import fr.abknative.outgo.wallet.api.repository.OperationRepository
@@ -20,22 +22,25 @@ import kotlinx.coroutines.withContext
 /**
  * SQLDelight implementation of [OperationRepository].
  *
- * Uses [OutgoDatabase] as the local source of truth and handles
- * data mapping from database entities to domain models. All synchronous
- * database operations are safely delegated to the IO dispatcher.
+ * Uses [OutgoDatabase] as the local source of truth.
+ * Enforces data isolation by scoping all queries to the current user's ID.
  */
 internal class OperationRepositoryImpl(
     private val database: OutgoDatabase,
     private val dispatchers: AppDispatchers,
     private val timeProvider: TimeProvider,
-    private val idProvider: IdProvider
+    private val idProvider: IdProvider,
+    private val sessionProvider: SessionProvider
 ) : OperationRepository {
 
     private val queries = database.operationQueries
     private val tag = "OperationLocalRepo"
 
+    private val currentUserId: String
+        get() = sessionProvider.getCurrentUserId()
+
     override fun observeOperationsByPeriod(walletId: String, from: EpochMillis, to: EpochMillis): Flow<List<Operation>> {
-        return queries.getOperationsByPeriod(walletId = walletId, from = from, to = to)
+        return queries.getOperationsByPeriod(walletId = walletId, from = from, to = to, userId = currentUserId)
             .asFlow()
             .mapToList(dispatchers.io)
             .map { entities -> entities.map { it.toDomain() } }
@@ -43,7 +48,7 @@ internal class OperationRepositoryImpl(
     }
 
     override suspend fun getOperationById(id: String): Operation? = withContext(dispatchers.io) {
-        queries.getOperationById(id).executeAsOneOrNull()?.toDomain()
+        queries.getOperationById(id = id, userId = currentUserId).executeAsOneOrNull()?.toDomain()
     }
 
     override suspend fun save(operation: Operation): Result<Unit, AppException> = withContext(dispatchers.io) {
@@ -55,12 +60,14 @@ internal class OperationRepositoryImpl(
         ) {
             queries.transaction {
                 val now = timeProvider.now()
-                val existing = queries.getOperationById(operation.id).executeAsOneOrNull()
+                val uid = currentUserId
+                val existing = queries.getOperationById(id = operation.id, userId = uid).executeAsOneOrNull()
 
                 if (existing == null) {
                     val finalId = operation.id.ifBlank { idProvider.generate() }
                     queries.insertOperation(
                         id = finalId,
+                        userId = uid,
                         walletId = operation.walletId,
                         name = operation.name,
                         amountInCents = operation.amountInCents,
@@ -73,35 +80,21 @@ internal class OperationRepositoryImpl(
                         deletedAt = null,
                         syncStatus = SyncStatus.PENDING_CREATE.name
                     )
-                } else {
-                    val currentStatus = SyncStatus.fromString(existing.syncStatus)
-                    val nextStatus = if (currentStatus == SyncStatus.PENDING_CREATE) {
-                        SyncStatus.PENDING_CREATE
-                    } else {
-                        SyncStatus.PENDING_UPDATE
-                    }
-                    val hasChanged = existing.name != operation.name ||
-                            existing.amountInCents != operation.amountInCents ||
-                            existing.startDate != operation.startDate ||
-                            existing.endDate != operation.endDate ||
-                            existing.type != operation.type.name ||
-                            existing.recurrence != operation.recurrence.name
-
-                    if (hasChanged) {
-                        queries.updateOperation(
-                            walletId = operation.walletId,
-                            name = operation.name,
-                            amountInCents = operation.amountInCents,
-                            type = operation.type.name,
-                            recurrence = operation.recurrence.name,
-                            startDate = operation.startDate,
-                            endDate = operation.endDate,
-                            updatedAt = now,
-                            deletedAt = existing.deletedAt,
-                            syncStatus = nextStatus.name,
-                            id = operation.id
-                        )
-                    }
+                } else if (existing.hasChanged(operation)) {
+                    queries.updateOperation(
+                        walletId = operation.walletId,
+                        name = operation.name,
+                        amountInCents = operation.amountInCents,
+                        type = operation.type.name,
+                        recurrence = operation.recurrence.name,
+                        startDate = operation.startDate,
+                        endDate = operation.endDate,
+                        updatedAt = now,
+                        deletedAt = existing.deletedAt,
+                        syncStatus = determineNextStatus(existing.syncStatus),
+                        id = operation.id,
+                        userId = uid
+                    )
                 }
             }
             Unit
@@ -116,15 +109,17 @@ internal class OperationRepositoryImpl(
             }
         ) {
             queries.transaction {
-                val current = queries.getOperationById(id).executeAsOneOrNull()
+                val uid = currentUserId
+                val current = queries.getOperationById(id = id, userId = uid).executeAsOneOrNull()
 
                 if (current?.syncStatus == SyncStatus.PENDING_CREATE.name) {
-                    queries.hardDeletePendingCreate(id)
+                    queries.hardDeletePendingCreate(id = id, userId = uid)
                 } else {
                     queries.markAsDeleted(
                         deletedAt = timeProvider.now(),
                         updatedAt = timeProvider.now(),
-                        id = id
+                        id = id,
+                        userId = uid
                     )
                 }
             }
@@ -139,7 +134,7 @@ internal class OperationRepositoryImpl(
                 CommonError.DatabaseError(it)
             }
         ) {
-            queries.getPendingOperations().executeAsList().map { it.toDomain() }
+            queries.getPendingOperations(userId = currentUserId).executeAsList().map { it.toDomain() }
         }
     }
 
@@ -153,7 +148,7 @@ internal class OperationRepositoryImpl(
                 CommonError.DatabaseError(it)
             }
         ) {
-            queries.updateSyncStatus(syncStatus = status.name, id = id)
+            queries.updateSyncStatus(syncStatus = status.name, id = id, userId = currentUserId)
             Unit
         }
     }
@@ -166,8 +161,9 @@ internal class OperationRepositoryImpl(
             }
         ) {
             queries.transaction {
+                val uid = currentUserId
                 operations.forEach { remote ->
-                    val exists = queries.getOperationById(remote.id).executeAsOneOrNull() != null
+                    val exists = queries.getOperationById(id = remote.id, userId = uid).executeAsOneOrNull() != null
 
                     if (exists) {
                         queries.updateOperation(
@@ -181,11 +177,13 @@ internal class OperationRepositoryImpl(
                             updatedAt = remote.updatedAt,
                             deletedAt = remote.deletedAt,
                             syncStatus = SyncStatus.SYNCED.name,
-                            id = remote.id
+                            id = remote.id,
+                            userId = uid
                         )
                     } else {
                         queries.insertOperation(
                             id = remote.id,
+                            userId = uid,
                             walletId = remote.walletId,
                             name = remote.name,
                             amountInCents = remote.amountInCents,
@@ -212,8 +210,36 @@ internal class OperationRepositoryImpl(
                 CommonError.DatabaseError(it)
             }
         ) {
-            queries.deleteAll()
+            queries.deleteAllForUser(userId = currentUserId)
             Unit
+        }
+    }
+
+    // ==========================================
+    // 🛠️ PRIVATE HELPERS (Refactoring)
+    // ==========================================
+
+    /**
+     * Checks if any domain field differs from the database entity.
+     */
+    private fun OperationEntity.hasChanged(domain: Operation): Boolean {
+        return name != domain.name ||
+                amountInCents != domain.amountInCents ||
+                startDate != domain.startDate ||
+                endDate != domain.endDate ||
+                type != domain.type.name ||
+                recurrence != domain.recurrence.name
+    }
+
+    /**
+     * Determines the next sync status when updating an existing operation.
+     */
+    private fun determineNextStatus(currentStatusStr: String): String {
+        val currentStatus = SyncStatus.fromString(currentStatusStr)
+        return if (currentStatus == SyncStatus.PENDING_CREATE) {
+            SyncStatus.PENDING_CREATE.name
+        } else {
+            SyncStatus.PENDING_UPDATE.name
         }
     }
 }

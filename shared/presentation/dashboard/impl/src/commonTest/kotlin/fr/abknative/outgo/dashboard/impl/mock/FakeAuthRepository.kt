@@ -4,8 +4,8 @@ import fr.abknative.outgo.auth.api.model.UserSession
 import fr.abknative.outgo.auth.api.repository.AuthRepository
 import fr.abknative.outgo.core.api.logs.AppException
 import fr.abknative.outgo.core.api.logs.Result
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 class FakeAuthRepository : AuthRepository {
     private val _sessionFlow = MutableStateFlow<UserSession?>(null)
@@ -14,7 +14,7 @@ class FakeAuthRepository : AuthRepository {
         _sessionFlow.value = session
     }
 
-    override fun observeSession(): Flow<UserSession?> = _sessionFlow
+    override fun observeSession(): StateFlow<UserSession?> = _sessionFlow
 
     override suspend fun getSession(): UserSession? = _sessionFlow.value
 

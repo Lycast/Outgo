@@ -4,9 +4,9 @@
 
 insertOperation:
 INSERT INTO OperationEntity(
-    id, walletId, name, amountInCents, type, recurrence, startDate, endDate,
+    id, userId, walletId, name, amountInCents, type, recurrence, startDate, endDate,
     createdAt, updatedAt, deletedAt, syncStatus
-) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
 updateOperation:
 UPDATE OperationEntity
@@ -21,16 +21,17 @@ SET
     updatedAt = ?,
     deletedAt = ?,
     syncStatus = ?
-WHERE id = ?;
+WHERE id = ? AND userId = ?;
 
 -- ==========================================
 -- 📖 READ (Queries)
 -- ==========================================
 
--- Le moteur temporel : Filtre sur la période active
+-- Time engine: Filter by active period
 getOperationsByPeriod:
 SELECT * FROM OperationEntity
 WHERE deletedAt IS NULL
+  AND userId = :userId
   AND walletId = :walletId
   AND startDate <= :to
   AND (endDate IS NULL OR endDate >= :from)
@@ -38,7 +39,7 @@ ORDER BY startDate ASC;
 
 getOperationById:
 SELECT * FROM OperationEntity
-WHERE id = ?;
+WHERE id = ? AND userId = ?;
 
 -- ==========================================
 -- 🗑️ DELETE (Soft & Hard)
@@ -47,32 +48,39 @@ WHERE id = ?;
 markAsDeleted:
 UPDATE OperationEntity
 SET deletedAt = ?, syncStatus = 'PENDING_DELETE', updatedAt = ?
-WHERE id = ?;
+WHERE id = ? AND userId = ?;
 
--- INDISPENSABLE : Pour la suppression en cascade lors de la suppression d'un Wallet
+-- Essential: For cascading soft deletes when a wallet is soft-deleted
 softDeleteByWalletId:
 UPDATE OperationEntity
 SET deletedAt = ?, syncStatus = 'PENDING_DELETE', updatedAt = ?
-WHERE walletId = ? AND deletedAt IS NULL;
+WHERE walletId = ? AND deletedAt IS NULL AND userId = ?;
 
--- Sécurité : Supprime physiquement UNIQUEMENT si jamais envoyé au serveur
+-- Security: Hard delete ONLY if it was never synced to the server
 hardDeletePendingCreate:
 DELETE FROM OperationEntity
-WHERE id = ? AND syncStatus = 'PENDING_CREATE';
+WHERE id = ? AND syncStatus = 'PENDING_CREATE' AND userId = ?;
 
--- Purge totale (Bouton Danger Zone)
-deleteAll:
-DELETE FROM OperationEntity;
+-- Total purge for the current user
+deleteAllForUser:
+DELETE FROM OperationEntity
+WHERE userId = :userId;
 
 -- ==========================================
--- 🔄 SYNC (Engine)
+-- 🔄 SYNC & MIGRATION (Engine)
 -- ==========================================
 
 getPendingOperations:
 SELECT * FROM OperationEntity
-WHERE syncStatus != 'SYNCED';
+WHERE syncStatus != 'SYNCED' AND userId = :userId;
 
 updateSyncStatus:
 UPDATE OperationEntity
 SET syncStatus = ?
-WHERE id = ?;
+WHERE id = ? AND userId = ?;
+
+-- Migrates offline local data to a real authenticated account
+updateUserId:
+UPDATE OperationEntity
+SET userId = :newUserId
+WHERE userId = :oldUserId;
