@@ -8,9 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
-import fr.abknative.outgo.android.components.common.ConfirmationDialog
-import fr.abknative.outgo.android.components.common.Header
-import fr.abknative.outgo.android.components.common.SyncPromotionModal
+import fr.abknative.outgo.android.components.common.*
 import fr.abknative.outgo.android.components.dashboard.*
 import fr.abknative.outgo.android.ui.CommonLabels
 import fr.abknative.outgo.android.ui.DialogLabels
@@ -112,8 +110,8 @@ fun DashboardScreen(
         }
     }
 
-    LaunchedEffect(state.isLoading, state.monthlyIncomeInCents) {
-        if (!state.isLoading && state.monthlyIncomeInCents <= 0L) {
+    LaunchedEffect(state.isLoading, state.activeWalletId) {
+        if (!state.isLoading && state.activeWalletId == null) {
             showBudgetDialog = true
         }
     }
@@ -307,14 +305,27 @@ fun DashboardScreen(
         ConfirmationDialog(
             title = DialogLabels.DELETE_OPERATION_TITLE,
             description = DialogLabels.DELETE_OPERATION_DESC,
-            confirmLabel = CommonLabels.ACTION_DELETE,
-            cancelLabel = CommonLabels.ACTION_CANCEL,
-            isDestructive = true,
-            onConfirm = {
-                operationToDelete?.let { presenter.onIntent(DashboardIntent.Delete(it.operation.id)) }
-                operationToDelete = null
+            onDismiss = { operationToDelete = null },
+
+            confirmButton = {
+                PrimaryButton(
+                    label = CommonLabels.ACTION_DELETE,
+                    labelColor = AppTheme.colors.error.toColor(),
+                    containerColor = AppTheme.colors.primary.toColor().copy(alpha = 0.1f),
+                    onClick = { operationToDelete?.let { presenter.onIntent(DashboardIntent.Delete(it.operation.id)) }
+                        operationToDelete = null
+                    }
+                )
             },
-            onDismiss = { operationToDelete = null }
+
+            dismissButton = {
+                SecondaryButton(
+                    label = CommonLabels.ACTION_CANCEL,
+                    labelColor = AppTheme.colors.textSecondary.toColor(),
+                    onClick = { operationToDelete = null },
+                    modifier = Modifier.padding(end = AppTheme.spacing.medium)
+                )
+            }
         )
     }
 }

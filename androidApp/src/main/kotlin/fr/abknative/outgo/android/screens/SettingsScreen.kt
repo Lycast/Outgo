@@ -16,9 +16,7 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import fr.abknative.outgo.android.R
-import fr.abknative.outgo.android.components.common.ConfirmationDialog
-import fr.abknative.outgo.android.components.common.Header
-import fr.abknative.outgo.android.components.common.SyncPromotionModal
+import fr.abknative.outgo.android.components.common.*
 import fr.abknative.outgo.android.components.settings.DeleteAccountDialog
 import fr.abknative.outgo.android.components.settings.SettingsRowClickable
 import fr.abknative.outgo.android.components.settings.SettingsRowToggle
@@ -150,7 +148,7 @@ fun SettingsScreen(
                         HorizontalDivider(color = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.1f))
                         SettingsRowClickable(
                             icon = R.drawable.trash_duotone,
-                            title = DialogLabels.PURGE_TITLE,
+                            title = SettingsLabels.PURGE_TITLE,
                             subtitle = SettingsLabels.PURGE_SUBTITLE,
                             onClick = { showPurgeConfirm = true }
                         )
@@ -188,19 +186,33 @@ fun SettingsScreen(
         }
     }
 
-    // --- MODALES DE CONFIRMATION ---
+    // --- MODAL DE CONFIRMATION ---
     if (showLogoutConfirm) {
         ConfirmationDialog(
             title = DialogLabels.LOGOUT_TITLE,
             description = DialogLabels.LOGOUT_DESC,
-            confirmLabel = DialogLabels.LOGOUT_CONFIRM,
-            cancelLabel = CommonLabels.ACTION_CANCEL,
-            isDestructive = true,
-            onConfirm = {
-                presenter.onIntent(SettingsIntent.Logout)
-                showLogoutConfirm = false
+            onDismiss = { showLogoutConfirm = false },
+
+            confirmButton = {
+                PrimaryButton(
+                    label = DialogLabels.LOGOUT_CONFIRM,
+                    labelColor = AppTheme.colors.primary.toColor(),
+                    containerColor = AppTheme.colors.primary.toColor().copy(alpha = 0.1f),
+                    onClick = {
+                        presenter.onIntent(SettingsIntent.Logout)
+                        showLogoutConfirm = false
+                    }
+                )
             },
-            onDismiss = { showLogoutConfirm = false }
+
+            dismissButton = {
+                SecondaryButton(
+                    label = CommonLabels.ACTION_CANCEL,
+                    labelColor = AppTheme.colors.textSecondary.toColor(),
+                    onClick = { showLogoutConfirm = false },
+                    modifier = Modifier.padding(end = AppTheme.spacing.medium)
+                )
+            }
         )
     }
 
@@ -218,14 +230,26 @@ fun SettingsScreen(
         ConfirmationDialog(
             title = DialogLabels.PURGE_TITLE,
             description = DialogLabels.PURGE_DESC,
-            confirmLabel = DialogLabels.PURGE_CONFIRM,
-            cancelLabel = CommonLabels.ACTION_CANCEL,
-            isDestructive = true,
-            onConfirm = {
-                presenter.onIntent(SettingsIntent.PurgeLocalData)
-                showPurgeConfirm = false
+            onDismiss = { showPurgeConfirm = false },
+
+            confirmButton = {
+                HoldToConfirmButton(
+                    label = DialogLabels.PURGE_CONFIRM,
+                    onConfirm = {
+                        presenter.onIntent(SettingsIntent.PurgeLocalData)
+                        showPurgeConfirm = false
+                    }
+                )
             },
-            onDismiss = { showPurgeConfirm = false }
+
+            dismissButton = {
+                SecondaryButton(
+                    label = CommonLabels.ACTION_CANCEL,
+                    labelColor = AppTheme.colors.textSecondary.toColor(),
+                    onClick = { showPurgeConfirm = false },
+                    modifier = Modifier.padding(end = AppTheme.spacing.medium)
+                )
+            }
         )
     }
 

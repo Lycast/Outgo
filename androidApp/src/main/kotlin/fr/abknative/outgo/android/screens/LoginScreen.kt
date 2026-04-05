@@ -29,6 +29,16 @@ fun LoginScreen(
     val state by presenter.state.collectAsState()
     val formState = rememberLoginFormState()
 
+    val textFieldColors = OutlinedTextFieldDefaults.colors(
+        focusedBorderColor = AppTheme.colors.primary.toColor(),
+        unfocusedBorderColor = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.2f),
+        focusedLabelColor = AppTheme.colors.primary.toColor(),
+        unfocusedLabelColor = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.6f),
+        cursorColor = AppTheme.colors.primary.toColor(),
+        focusedTextColor = AppTheme.colors.textPrimary.toColor(),
+        unfocusedTextColor = AppTheme.colors.textPrimary.toColor()
+    )
+
     LaunchedEffect(state.session) {
         if (state.session != null) onLoginSuccess()
     }
@@ -45,6 +55,9 @@ fun LoginScreen(
                         )
                     }
                 },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = AppTheme.colors.background.toColor()
+                )
             )
         },
         containerColor = AppTheme.colors.background.toColor()
@@ -69,6 +82,7 @@ fun LoginScreen(
                 value = formState.email,
                 onValueChange = { formState.email = it },
                 label = { Text(LoginLabels.EMAIL_LABEL) },
+                colors = textFieldColors,
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true
             )
@@ -79,6 +93,7 @@ fun LoginScreen(
                 value = formState.password,
                 onValueChange = { formState.password = it },
                 label = { Text(LoginLabels.PASSWORD_LABEL) },
+                colors = textFieldColors,
                 modifier = Modifier.fillMaxWidth(),
                 visualTransformation = PasswordVisualTransformation(),
                 singleLine = true
@@ -110,7 +125,7 @@ fun LoginScreen(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    text = "Pas encore de compte ? S'inscrire",
+                    text = "Pas encore de compte ? S'inscrire", // todo extraire
                     color = AppTheme.colors.primary.toColor()
                 )
             }

@@ -1,9 +1,6 @@
 package fr.abknative.outgo.android.components.dashboard
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
@@ -63,7 +60,7 @@ fun WalletEditDialog(
         containerColor = AppTheme.colors.surface200.toColor(),
         title = {
             Text(
-                text = WalletEditDialogLabels.DIALOG_BUDGET_TITLE, // Tu pourras renommer ce label plus tard
+                text = WalletEditDialogLabels.DIALOG_BUDGET_TITLE,
                 style = AppTheme.typo.subtitle,
                 color = AppTheme.colors.textPrimary.toColor()
             )
@@ -179,7 +176,8 @@ fun WalletEditDialog(
             ) {
                 Text(
                     text = CommonLabels.ACTION_CANCEL,
-                    style = AppTheme.typo.label
+                    style = AppTheme.typo.label,
+                    modifier = Modifier.padding(end = AppTheme.spacing.medium)
                 )
             }
         }

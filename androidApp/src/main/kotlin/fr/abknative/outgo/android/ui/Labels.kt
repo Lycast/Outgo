@@ -34,7 +34,6 @@ object DialogLabels {
     // --- Paramètres : Suppression Compte ---
     val DELETE_ACCOUNT_TITLE @Composable get() = stringResource(Res.string.dialog_delete_account_title)
     val DELETE_ACCOUNT_DESC @Composable get() = stringResource(Res.string.dialog_delete_account_desc)
-    val DELETE_ACCOUNT_CONFIRM @Composable get() = stringResource(Res.string.dialog_delete_account_confirm)
 
     const val DELETE_ACCOUNT_CHOICE_DESC = "Choisissez ce que vous souhaitez effacer. Cette action est irréversible."
 
@@ -128,9 +127,6 @@ object SettingsLabels {
 
     val DARK_MODE_TITLE @Composable get() = stringResource(Res.string.settings_dark_mode_title)
     val DARK_MODE_SUBTITLE @Composable get() = stringResource(Res.string.settings_dark_mode_subtitle)
-
-    val COFFEE_TITLE @Composable get() = stringResource(Res.string.settings_coffee_title)
-    val COFFEE_SUBTITLE @Composable get() = stringResource(Res.string.settings_coffee_subtitle)
     val TIPS_TITLE @Composable get() = stringResource(Res.string.settings_tips_title)
     val TIPS_SUBTITLE @Composable get() = stringResource(Res.string.settings_tips_subtitle)
     val CONTACT_TITLE @Composable get() = stringResource(Res.string.settings_contact_title)
@@ -142,6 +138,8 @@ object SettingsLabels {
     val LOGOUT_SUBTITLE @Composable get() = stringResource(Res.string.settings_logout_subtitle)
     val DELETE_ACCOUNT_TITLE @Composable get() = stringResource(Res.string.settings_delete_account)
     val DELETE_ACCOUNT_SUBTITLE @Composable get() = stringResource(Res.string.settings_delete_account_subtitle)
+    val PURGE_TITLE @Composable get() = stringResource(Res.string.settings_local_purge_title)
+    val PURGE_SUBTITLE @Composable get() = stringResource(Res.string.settings_local_purge_subtitle)
 
     const val URL_SITE = "https://abknative.fr"
     const val URL_CONTACT = "https://abknative.fr/contact"
@@ -149,7 +147,6 @@ object SettingsLabels {
     val APP_VERSION_PREFIX @Composable get() = stringResource(Res.string.settings_app_version_prefix)
 
     const val SECTION_DATA_AND_ACCOUNT = "Données & Compte"
-    const val PURGE_SUBTITLE = "Efface les saisies de cet appareil."
 }
 
 object LoginLabels {

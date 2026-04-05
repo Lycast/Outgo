@@ -38,12 +38,12 @@ fun SyncIconLogic(
     val (iconRes, iconTint, contentDescription) = when (syncState) {
         SyncUiState.UNAUTHENTICATED -> Triple(
             R.drawable.cloud_slash,
-            AppTheme.colors.textPrimary.toColor(),
+            AppTheme.colors.textSecondary.toColor().copy(alpha = 0.7f),
             AccessibilityLabels.NOT_SYNCED
         )
         SyncUiState.OFFLINE -> Triple(
             R.drawable.cloud_warning,
-            AppTheme.colors.error.toColor().copy(alpha = 0.7f),
+            AppTheme.colors.textSecondary.toColor().copy(alpha = 0.7f),
             AccessibilityLabels.SYNC_ERROR
         )
         SyncUiState.PENDING -> Triple(
@@ -63,7 +63,7 @@ fun SyncIconLogic(
         )
         SyncUiState.ERROR -> Triple(
             R.drawable.cloud_warning,
-            AppTheme.colors.error.toColor(),
+            AppTheme.colors.textSecondary.toColor().copy(alpha = 0.7f),
             AccessibilityLabels.SYNC_ERROR
         )
     }

@@ -6,6 +6,7 @@ import fr.abknative.outgo.core.api.KeyValueStorage
 import fr.abknative.outgo.core.api.TimeProvider
 import fr.abknative.outgo.core.api.extensions.safeLaunch
 import fr.abknative.outgo.core.api.logs.AppException
+import fr.abknative.outgo.core.api.logs.CommonError
 import fr.abknative.outgo.core.api.logs.Result
 import fr.abknative.outgo.core.api.model.SyncUiState
 import fr.abknative.outgo.dashboard.api.DashboardIntent
@@ -50,22 +51,16 @@ internal class DashboardPresenterImpl(
     private val selectedYearFlow = MutableStateFlow(timeProvider.yearValue(timeProvider.now()))
 
     private val onCoroutineError: (AppException) -> Unit = { error ->
-        _state.update {
-            val isNetworkIssue = error is fr.abknative.outgo.core.api.logs.CommonError.NetworkError
-            val fallbackState = if (isNetworkIssue) SyncUiState.OFFLINE else SyncUiState.ERROR
+        _state.update { it.copy(isLoading = false, error = error) }
 
-            it.copy(
-                isLoading = false,
-                error = error,
-                syncState = if (it.syncState == SyncUiState.UNAUTHENTICATED) SyncUiState.UNAUTHENTICATED else fallbackState
-            )
-        }
+        val targetState = if (error is CommonError.NetworkError) SyncUiState.OFFLINE else SyncUiState.ERROR
+        updateSyncState(targetState)
     }
 
     init {
+        ensureDefaultWalletExists()
         startObservingSession()
         startObservingPremiumStatus()
-        ensureDefaultWalletExists()
         startObservingData()
     }
 
@@ -73,7 +68,7 @@ internal class DashboardPresenterImpl(
         viewModelScope.safeLaunch(onError = onCoroutineError) {
             val wallets = observeWallets().first()
             if (wallets.isEmpty()) {
-                saveWallet(name = "Mon Compte") // todo text en dur pour le moment
+                saveWallet(name = "Mon Compte")
             }
         }
     }
@@ -81,15 +76,11 @@ internal class DashboardPresenterImpl(
     private fun startObservingSession() {
         viewModelScope.safeLaunch(onError = onCoroutineError) {
             observeUserSession().collect { session ->
-                val wasUnauthenticated = _state.value.syncState.isUnauthenticated
-
                 if (session == null) {
-                    _state.update { it.copy(syncState = SyncUiState.UNAUTHENTICATED) }
-                } else {
-                    if (wasUnauthenticated) {
-                        _state.update { it.copy(syncState = SyncUiState.PENDING) }
-                        handleRefreshSync()
-                    }
+                    updateSyncState(SyncUiState.UNAUTHENTICATED)
+                } else if (_state.value.syncState.isUnauthenticated) {
+                    updateSyncState(SyncUiState.PENDING)
+                    handleRefreshSync()
                 }
             }
         }
@@ -116,15 +107,12 @@ internal class DashboardPresenterImpl(
                 if (wallet == null) {
                     flowOf(emptyList())
                 } else {
-                    val creationMonth = timeProvider.monthValue(wallet.createdAt)
-                    val creationYear = timeProvider.yearValue(wallet.createdAt)
-
                     _state.update {
                         it.copy(
                             activeWalletId = wallet.id,
                             activeWalletName = wallet.name,
-                            walletCreationMonth = creationMonth,
-                            walletCreationYear = creationYear
+                            walletCreationMonth = timeProvider.monthValue(wallet.createdAt),
+                            walletCreationYear = timeProvider.yearValue(wallet.createdAt)
                         )
                     }
                     observeActiveOperations(wallet.id, month, year)
@@ -173,7 +161,6 @@ internal class DashboardPresenterImpl(
     private fun handleSaveOperation(intent: DashboardIntent.SaveOperation) {
         viewModelScope.safeLaunch(onError = onCoroutineError) {
             _state.update { it.copy(isLoading = true) }
-
             val result = saveOperation(
                 id = intent.id,
                 walletId = intent.walletId,
@@ -184,7 +171,6 @@ internal class DashboardPresenterImpl(
                 startDate = intent.startDate,
                 endDate = intent.endDate
             )
-
             handleOperationResult(result)
         }
     }
@@ -200,18 +186,16 @@ internal class DashboardPresenterImpl(
             }
 
             val existingIncome = _state.value.operations.firstOrNull { it.operation.type == OperationType.INCOME }
-
             val operationResult = saveOperation(
                 id = existingIncome?.operation?.id,
                 walletId = intent.walletId,
-                name = "Revenu Principal", // todo text en dur pour le moment
+                name = "Revenu Principal",
                 amountInCents = intent.incomeAmountInCents,
                 type = OperationType.INCOME,
                 recurrence = Recurrence.MONTHLY,
                 startDate = existingIncome?.operation?.startDate ?: intent.startDate,
                 endDate = null
             )
-
             handleOperationResult(operationResult)
         }
     }
@@ -220,11 +204,9 @@ internal class DashboardPresenterImpl(
         viewModelScope.safeLaunch(onError = onCoroutineError) {
             val result = deleteOperation(intent.id)
             if (result is Result.Success) {
-                _state.update { it.copy(syncState = SyncUiState.PENDING) }
-
+                updateSyncState(SyncUiState.PENDING)
                 val syncResult = syncManager.syncAll()
                 updateSyncStateFromResult(syncResult)
-
             } else if (result is Result.Error) {
                 _state.update { it.copy(error = result.error) }
             }
@@ -232,55 +214,77 @@ internal class DashboardPresenterImpl(
     }
 
     private fun handleRefreshSync() {
+        if (_state.value.syncState.isUnauthenticated || _state.value.syncState.isInProgress) return
 
-        val currentState = _state.value.syncState
-
-        if (currentState.isUnauthenticated || currentState.isInProgress) return
         viewModelScope.safeLaunch(onError = onCoroutineError) {
-            _state.update { it.copy(syncState = SyncUiState.IN_PROGRESS) }
-
+            updateSyncState(SyncUiState.IN_PROGRESS)
             val result = syncManager.syncAll()
-
-            _state.update {
-                when (result) {
-                    is Result.Success -> it.copy(syncState = SyncUiState.UP_TO_DATE, error = null)
-                    is Result.Error -> {
-                        val isNetworkIssue = result.error is fr.abknative.outgo.core.api.logs.CommonError.NetworkError
-                        it.copy(
-                            syncState = if (isNetworkIssue) SyncUiState.OFFLINE else SyncUiState.ERROR,
-                            error = if (isNetworkIssue) null else result.error
-                        )
-                    }
-                }
-            }
+            updateSyncStateFromResult(result)
         }
     }
 
-    /**
-     * Handles the result of a local database operation, updates the loading state,
-     * and triggers a cloud sync on success.
-     */
     private suspend fun handleOperationResult(result: Result<Unit, AppException>) {
+        _state.update { it.copy(isLoading = false) }
+
         if (result is Result.Success) {
-            _state.update { it.copy(isLoading = false, error = null, syncState = SyncUiState.PENDING) }
+            _state.update { it.copy(error = null) }
+            updateSyncState(SyncUiState.PENDING)
 
             val syncResult = syncManager.syncAll()
             updateSyncStateFromResult(syncResult)
-
         } else if (result is Result.Error) {
-            _state.update { it.copy(isLoading = false, error = result.error) }
+            _state.update { it.copy(error = result.error) }
+            updateSyncState(SyncUiState.ERROR)
         }
     }
 
     private fun updateSyncStateFromResult(result: Result<Unit, AppException>) {
-        _state.update {
-            when (result) {
-                is Result.Success -> it.copy(syncState = SyncUiState.UP_TO_DATE)
-                is Result.Error -> {
-                    val isNetworkIssue = result.error is fr.abknative.outgo.core.api.logs.CommonError.NetworkError
-                    it.copy(syncState = if (isNetworkIssue) SyncUiState.OFFLINE else SyncUiState.ERROR)
+        val error = (result as? Result.Error)?.error
+
+        val targetState = when (result) {
+            is Result.Success -> SyncUiState.UP_TO_DATE
+            is Result.Error -> {
+                when (error) {
+                    is CommonError.NetworkError -> SyncUiState.OFFLINE
+                    is CommonError.Unauthorized -> SyncUiState.UNAUTHENTICATED
+                    else -> SyncUiState.ERROR
                 }
             }
         }
+
+        _state.update { currentState ->
+            val resolved = resolveNewSyncState(currentState.syncState, targetState)
+            currentState.copy(
+                syncState = resolved,
+                error = if (result is Result.Error && error !is CommonError.NetworkError) error else currentState.error
+            )
+        }
+    }
+
+    /**
+     * Centralized function to resolve sync state based on priority.
+     * Hierarchy: UNAUTHENTICATED > OFFLINE/ERROR > IN_PROGRESS > PENDING > UP_TO_DATE
+     */
+    private fun updateSyncState(newState: SyncUiState) {
+        _state.update { currentState ->
+            val resolvedState = resolveNewSyncState(currentState.syncState, newState)
+            currentState.copy(syncState = resolvedState)
+        }
+    }
+
+    private fun resolveNewSyncState(current: SyncUiState, new: SyncUiState): SyncUiState {
+        if (current == SyncUiState.UNAUTHENTICATED && !new.isPending && !new.isInProgress) {
+            return SyncUiState.UNAUTHENTICATED
+        }
+        if (new == SyncUiState.UNAUTHENTICATED) return SyncUiState.UNAUTHENTICATED
+
+        if (new == SyncUiState.OFFLINE || new == SyncUiState.ERROR) return new
+        if (current == SyncUiState.OFFLINE && (new == SyncUiState.PENDING || new == SyncUiState.UP_TO_DATE)) {
+            return SyncUiState.OFFLINE
+        }
+
+        if (new == SyncUiState.IN_PROGRESS) return SyncUiState.IN_PROGRESS
+
+        return new
     }
 }

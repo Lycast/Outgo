@@ -7,6 +7,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.text.font.FontWeight
+import fr.abknative.outgo.android.components.common.HoldToConfirmButton
 import fr.abknative.outgo.android.ui.CommonLabels
 import fr.abknative.outgo.android.ui.DialogLabels
 import fr.abknative.outgo.android.ui.theme.AppTheme
@@ -17,16 +18,18 @@ fun DeleteAccountDialog(
     onConfirm: (wipeLocal: Boolean, wipeServer: Boolean, revokeAuth: Boolean) -> Unit,
     onDismiss: () -> Unit
 ) {
-    // États initiaux de nos 3 niveaux de suppression
+
     var wipeLocal by remember { mutableStateOf(false) }
-    var wipeServer by remember { mutableStateOf(true) }
-    var revokeAuth by remember { mutableStateOf(true) }
+    var wipeServer by remember { mutableStateOf(false) }
+    var revokeAuth by remember { mutableStateOf(false) }
 
     LaunchedEffect(revokeAuth) {
         if (revokeAuth) {
             wipeServer = true
         }
     }
+
+    val canConfirm = wipeLocal || wipeServer || revokeAuth
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -48,7 +51,6 @@ fun DeleteAccountDialog(
 
                 Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.small)) {
 
-                    // Niveau 1 : Local
                     DialogSwitchRow(
                         title = DialogLabels.DELETE_ACCOUNT_LOCAL_TITLE,
                         subtitle = DialogLabels.DELETE_ACCOUNT_LOCAL_DESC,
@@ -56,7 +58,6 @@ fun DeleteAccountDialog(
                         onCheckedChange = { wipeLocal = it }
                     )
 
-                    // Niveau 2 : Serveur (Désactivé si Firebase est coché)
                     DialogSwitchRow(
                         title = DialogLabels.DELETE_ACCOUNT_SERVER_TITLE,
                         subtitle = DialogLabels.DELETE_ACCOUNT_SERVER_DESC,
@@ -65,7 +66,6 @@ fun DeleteAccountDialog(
                         onCheckedChange = { wipeServer = it }
                     )
 
-                    // Niveau 3 : Profil / Firebase
                     DialogSwitchRow(
                         title = DialogLabels.DELETE_ACCOUNT_AUTH_TITLE,
                         subtitle = DialogLabels.DELETE_ACCOUNT_AUTH_DESC,
@@ -76,19 +76,21 @@ fun DeleteAccountDialog(
             }
         },
         confirmButton = {
-            TextButton(
-                onClick = { onConfirm(wipeLocal, wipeServer, revokeAuth) },
-                colors = ButtonDefaults.textButtonColors(contentColor = AppTheme.colors.error.toColor())
-            ) {
-                Text(text = DialogLabels.DELETE_ACCOUNT_CONFIRM, style = AppTheme.typo.label)
-            }
-        },
+                HoldToConfirmButton(
+                    label = CommonLabels.ACTION_DELETE,
+                    enabled = canConfirm,
+                    onConfirm = { onConfirm(wipeLocal, wipeServer, revokeAuth) },
+                )
+            },
         dismissButton = {
             TextButton(
                 onClick = onDismiss,
                 colors = ButtonDefaults.textButtonColors(contentColor = AppTheme.colors.textSecondary.toColor())
             ) {
-                Text(text = CommonLabels.ACTION_CANCEL, style = AppTheme.typo.label)
+                Text(
+                    text = CommonLabels.ACTION_CANCEL, style = AppTheme.typo.label,
+                    modifier = Modifier.padding(end = AppTheme.spacing.medium)
+                )
             }
         }
     )

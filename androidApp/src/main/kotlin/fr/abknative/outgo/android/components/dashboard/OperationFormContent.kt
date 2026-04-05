@@ -167,7 +167,10 @@ fun OperationFormContent(
                 modifier = Modifier.padding(end = AppTheme.spacing.small),
                 colors = ButtonDefaults.textButtonColors(contentColor = AppTheme.colors.textSecondary.toColor())
             ) {
-                Text(text = CommonLabels.ACTION_CANCEL, style = AppTheme.typo.label)
+                Text(
+                    text = CommonLabels.ACTION_CANCEL, style = AppTheme.typo.label,
+                    modifier = Modifier.padding(end = AppTheme.spacing.medium)
+                )
             }
 
             Button(

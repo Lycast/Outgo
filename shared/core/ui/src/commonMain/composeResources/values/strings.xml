@@ -38,7 +38,6 @@
     <string name="dialog_purge_confirm">Vider le cache</string>
     <string name="dialog_delete_account_title">Supprimer le compte ?</string>
     <string name="dialog_delete_account_desc">Cette action est définitive. Toutes vos données seront effacées de nos serveurs de manière irréversible.</string>
-    <string name="dialog_delete_account_confirm">Supprimer définitivement</string>
 
     <string name="dashboard_tooltip_balance_title">Votre reste à vivre</string>
     <string name="dashboard_tooltip_balance_desc">C'est le montant final dont vous disposez (ou qu'il vous manque) après avoir soustrait l'ensemble de vos dépenses.</string>
@@ -100,8 +99,6 @@
     <string name="settings_section_account">Compte</string>
     <string name="settings_dark_mode_title">Mode sombre</string>
     <string name="settings_dark_mode_subtitle">Réduire la fatigue visuelle</string>
-    <string name="settings_coffee_title">Offrir un café ☕</string>
-    <string name="settings_coffee_subtitle">Aidez à maintenir l'application gratuite</string>
     <string name="settings_tips_title">Découvrir Outgo</string>
     <string name="settings_tips_subtitle">Présentation du projet, aide et astuces</string>
     <string name="settings_contact_title">Me contacter</string>
@@ -112,6 +109,8 @@
     <string name="settings_logout_subtitle">Se déconnecter de votre compte</string>
     <string name="settings_delete_account">Supprimer mon compte</string>
     <string name="settings_delete_account_subtitle">Cette action est irréversible</string>
+    <string name="settings_local_purge_title">Supprimer les données</string>
+    <string name="settings_local_purge_subtitle">Réinitialise l'application sur cet appareil.</string>
     <string name="settings_app_version_prefix">Outgo v1.0.0</string>
 
     <string name="login_title">Bienvenue sur Outgo</string>
