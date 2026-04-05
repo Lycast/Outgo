@@ -12,9 +12,14 @@ class ProcessSyncPushUseCase(
     private val operationRepository: OperationRepository,
     private val transactionRunner: TransactionRunner
 ) {
-    operator fun invoke(userId: String, request: SyncPushRequest) {
+    /**
+     * Processes incoming sync data from the mobile client.
+     * Ensures the user exists in the database with their latest email.
+     */
+    operator fun invoke(userId: String, email: String, request: SyncPushRequest) {
         transactionRunner {
-            userRepository.ensureUserExists(userId)
+            userRepository.ensureUserExists(userId, email)
+
             request.wallets.forEach { walletRepository.upsertFromDto(userId, it) }
             request.operations.forEach { operationRepository.upsertFromDto(userId, it) }
         }

@@ -1,9 +1,14 @@
 package fr.abknative.outgo.server.api.extensions
 
+import fr.abknative.outgo.server.api.plugins.UserPrincipal
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 
 fun ApplicationCall.userId(): String {
-    return principal<UserIdPrincipal>()?.name
-        ?: throw IllegalStateException("User principal not found")
+    return principal<UserPrincipal>()?.uid
+        ?: throw IllegalStateException("User UID not found in principal")
+}
+
+fun ApplicationCall.userEmail(): String {
+    return principal<UserPrincipal>()?.email ?: "unknown@outgo.app"
 }

@@ -25,6 +25,8 @@ dependencies {
     implementation(libs.ktor.serialization.json)
     implementation(libs.ktor.server.request.validation)
 
+    implementation(libs.firebase.admin)
+
     implementation(libs.ktor.server.status.pages)
     implementation(libs.ktor.server.call.logging)
 

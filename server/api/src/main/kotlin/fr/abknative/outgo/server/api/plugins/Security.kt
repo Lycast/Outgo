@@ -1,17 +1,18 @@
 package fr.abknative.outgo.server.api.plugins
 
+import fr.abknative.outgo.server.api.FirebaseAdmin
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
+
+data class UserPrincipal(val uid: String, val email: String?)
 
 fun Application.configureSecurity() {
     install(Authentication) {
         bearer("auth-firebase") {
             authenticate { tokenCredential ->
-                if (tokenCredential.token == "debug") {
-                    UserIdPrincipal("user_debug_123")
-                } else {
-                    null
-                }
+                val token = tokenCredential.token
+                val firebaseToken = FirebaseAdmin.verifyToken(token)
+                if (firebaseToken != null) { UserPrincipal(uid = firebaseToken.uid, email = firebaseToken.email) } else { null }
             }
         }
     }

@@ -17,6 +17,7 @@ fun main() {
 fun Application.module() {
 
     DatabaseFactory.init()
+    FirebaseAdmin.init()
 
     configureDependencyInjection()
     configureSerialization()

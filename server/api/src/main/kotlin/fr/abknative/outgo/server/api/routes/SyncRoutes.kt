@@ -1,5 +1,6 @@
 package fr.abknative.outgo.server.api.routes
 
+import fr.abknative.outgo.server.api.extensions.userEmail
 import fr.abknative.outgo.server.api.extensions.userId
 import fr.abknative.outgo.server.core.usecase.GetSyncPullUseCase
 import fr.abknative.outgo.server.core.usecase.ProcessSyncPushUseCase
@@ -12,6 +13,10 @@ import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
 import org.slf4j.LoggerFactory
 
+/**
+ * Defines synchronization routes for pushing and pulling data.
+ * All routes are protected by Firebase Authentication.
+ */
 fun Route.syncRoutes() {
     val processSyncPush by inject<ProcessSyncPushUseCase>()
     val getSyncPull by inject<GetSyncPullUseCase>()
@@ -19,12 +24,16 @@ fun Route.syncRoutes() {
 
     authenticate("auth-firebase") {
         route("/sync") {
+
             post("/push") {
                 val userId = call.userId()
+                val email = call.userEmail()
                 val request = call.receive<SyncPushRequest>()
 
-                logger.info("PUSH: Received ${request.wallets.size} wallets and ${request.operations.size} operations for $userId")
-                processSyncPush(userId = userId, request = request)
+                logger.info("PUSH: Received ${request.wallets.size} wallets for $email ($userId)")
+
+                // On passe bien les 3 arguments : userId, email, et la request
+                processSyncPush(userId = userId, email = email, request = request)
 
                 call.respond(HttpStatusCode.OK, "Sync Successful")
             }

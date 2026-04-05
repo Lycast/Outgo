@@ -6,6 +6,7 @@ compose-multiplatform = "1.7.3"
 sqldelight = "2.3.2"
 ktor = "3.4.1"
 google-secrets-plugin = "2.0.1"
+firebase-admin = "9.2.0"
 firebase-gitlive = "2.4.0"
 firebase-ios = "12.11.0"
 google-services = "4.4.4"
@@ -45,7 +46,7 @@ kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-pl
 
 # --- FIREBASE KMP ---
 firebase-auth = { module = "dev.gitlive:firebase-auth", version.ref = "firebase-gitlive" }
-
+firebase-admin = { module = "com.google.firebase:firebase-admin", version.ref = "firebase-admin" }
 
 # --- KOTLIN & COROUTINES ---
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
