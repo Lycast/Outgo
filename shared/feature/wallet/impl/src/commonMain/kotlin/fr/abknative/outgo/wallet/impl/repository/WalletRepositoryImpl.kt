@@ -13,6 +13,7 @@ import fr.abknative.outgo.wallet.api.repository.WalletRepository
 import fr.abknative.outgo.wallet.impl.mapper.toDomain
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 
 /**
  * SQLDelight implementation of [WalletRepository].
@@ -38,136 +39,155 @@ internal class WalletRepositoryImpl(
             .map { entities -> entities.map { it.toDomain() } }
     }
 
-    override suspend fun getWalletById(id: String): Result<Wallet?, AppException> = asResult(
-        onError = {
-            AppLogger.get()?.e(tag, "Failed to fetch wallet with id: $id", it)
-            CommonError.DatabaseError(it)
+    override suspend fun getWalletById(id: String): Result<Wallet?, AppException> = withContext(dispatchers.io) {
+        asResult(
+            onError = {
+                AppLogger.get()?.e(tag, "Failed to fetch wallet with id: $id", it)
+                CommonError.DatabaseError(it)
+            }
+        ) {
+            queries.getWalletById(id).executeAsOneOrNull()?.toDomain()
         }
-    ) {
-        queries.getWalletById(id).executeAsOneOrNull()?.toDomain()
     }
 
-    override suspend fun save(wallet: Wallet): Result<Unit, AppException> = asResult(
-        onError = {
-            AppLogger.get()?.e(tag, "Failed to save wallet: ${wallet.id}", it)
-            CommonError.DatabaseError(it)
-        }
-    ) {
-        queries.transaction {
-            val now = timeProvider.now()
-            val existing = queries.getWalletById(wallet.id).executeAsOneOrNull()
+    override suspend fun save(wallet: Wallet): Result<Unit, AppException> = withContext(dispatchers.io) {
+        asResult(
+            onError = {
+                AppLogger.get()?.e(tag, "Failed to save wallet: ${wallet.id}", it)
+                CommonError.DatabaseError(it)
+            }
+        ) {
+            queries.transaction {
+                val now = timeProvider.now()
+                val existing = queries.getWalletById(wallet.id).executeAsOneOrNull()
 
-            if (existing == null) {
-                val finalId = wallet.id.ifBlank { idProvider.generate() }
-                queries.insertWallet(
-                    id = finalId,
-                    name = wallet.name,
-                    createdAt = now,
-                    updatedAt = now,
-                    deletedAt = null,
-                    syncStatus = SyncStatus.PENDING_CREATE.name
-                )
-            } else {
-                val currentStatus = SyncStatus.fromString(existing.syncStatus)
-                val nextStatus = if (currentStatus == SyncStatus.PENDING_CREATE) { SyncStatus.PENDING_CREATE
-                } else { SyncStatus.PENDING_UPDATE }
-
-                if (existing.name != wallet.name) {
-                    queries.updateWallet(
+                if (existing == null) {
+                    val finalId = wallet.id.ifBlank { idProvider.generate() }
+                    queries.insertWallet(
+                        id = finalId,
                         name = wallet.name,
+                        createdAt = now,
                         updatedAt = now,
-                        deletedAt = existing.deletedAt,
-                        syncStatus = nextStatus.name,
-                        id = wallet.id
+                        deletedAt = null,
+                        syncStatus = SyncStatus.PENDING_CREATE.name
                     )
+                } else {
+                    val currentStatus = SyncStatus.fromString(existing.syncStatus)
+                    val nextStatus = if (currentStatus == SyncStatus.PENDING_CREATE) {
+                        SyncStatus.PENDING_CREATE
+                    } else {
+                        SyncStatus.PENDING_UPDATE
+                    }
+
+                    if (existing.name != wallet.name) {
+                        queries.updateWallet(
+                            name = wallet.name,
+                            updatedAt = now,
+                            deletedAt = existing.deletedAt,
+                            syncStatus = nextStatus.name,
+                            id = wallet.id
+                        )
+                    }
                 }
             }
         }
     }
 
-    override suspend fun markAsDeleted(id: String): Result<Unit, AppException> = asResult(
-        onError = {
-            AppLogger.get()?.e(tag, "Failed to mark wallet as deleted: $id", it)
-            CommonError.DatabaseError(it)
-        }
-    ) {
-        queries.transaction {
-            val now = timeProvider.now()
+    override suspend fun markAsDeleted(id: String): Result<Unit, AppException> = withContext(dispatchers.io) {
+        asResult(
+            onError = {
+                AppLogger.get()?.e(tag, "Failed to mark wallet as deleted: $id", it)
+                CommonError.DatabaseError(it)
+            }
+        ) {
+            queries.transaction {
+                val now = timeProvider.now()
 
-            // Soft Delete of Wallet
-            queries.markAsDeleted(
-                deletedAt = now,
-                updatedAt = now,
-                id = id
-            )
+                // Soft Delete of Wallet
+                queries.markAsDeleted(
+                    deletedAt = now,
+                    updatedAt = now,
+                    id = id
+                )
 
-            // CASCADING Soft Delete of all operations
-            operationQueries.softDeleteByWalletId(
-                deletedAt = now,
-                updatedAt = now,
-                walletId = id
-            )
+                operationQueries.softDeleteByWalletId(
+                    deletedAt = now,
+                    updatedAt = now,
+                    walletId = id
+                )
+            }
         }
     }
 
-    override suspend fun getPendingWallets(): Result<List<Wallet>, AppException> = asResult(
-        onError = {
-            AppLogger.get()?.e(tag, "Failed to fetch pending wallets", it)
-            CommonError.DatabaseError(it)
+    override suspend fun getPendingWallets(): Result<List<Wallet>, AppException> = withContext(dispatchers.io) {
+        asResult(
+            onError = {
+                AppLogger.get()?.e(tag, "Failed to fetch pending wallets", it)
+                CommonError.DatabaseError(it)
+            }
+        ) {
+            queries.getPendingWallets().executeAsList().map { it.toDomain() }
         }
-    ) {
-        queries.getPendingWallets().executeAsList().map { it.toDomain() }
     }
 
     override suspend fun updateSyncStatus(
         id: String,
         status: SyncStatus
-    ): Result<Unit, AppException> = asResult(
-        onError = {
-            AppLogger.get()?.e(tag, "Failed to update sync status ($status) for id: $id", it)
-            CommonError.DatabaseError(it)
+    ): Result<Unit, AppException> = withContext(dispatchers.io) {
+        asResult(
+            onError = {
+                AppLogger.get()?.e(tag, "Failed to update sync status ($status) for id: $id", it)
+                CommonError.DatabaseError(it)
+            }
+        ) {
+            queries.updateSyncStatus(syncStatus = status.name, id = id)
+            Unit
         }
-    ) {
-        queries.updateSyncStatus(syncStatus = status.name, id = id)
     }
 
-    override suspend fun syncFromServer(wallets: List<Wallet>): Result<Unit, AppException> = asResult(
-        onError = {
-            AppLogger.get()?.e(tag, "Failed to sync ${wallets.size} wallets from server", it)
-            CommonError.DatabaseError(it)
-        }
-    ) {
-        queries.transaction {
-            wallets.forEach { remoteWallet ->
-                val exists = queries.getWalletById(remoteWallet.id).executeAsOneOrNull() != null
-                if (exists) {
-                    queries.updateWallet(
-                        name = remoteWallet.name,
-                        updatedAt = remoteWallet.updatedAt,
-                        deletedAt = remoteWallet.deletedAt,
-                        syncStatus = SyncStatus.SYNCED.name,
-                        id = remoteWallet.id
-                    )
-                } else {
-                    queries.insertWallet(
-                        id = remoteWallet.id,
-                        name = remoteWallet.name,
-                        createdAt = remoteWallet.createdAt,
-                        updatedAt = remoteWallet.updatedAt,
-                        deletedAt = remoteWallet.deletedAt,
-                        syncStatus = SyncStatus.SYNCED.name
-                    )
+    override suspend fun syncFromServer(wallets: List<Wallet>): Result<Unit, AppException> =
+        withContext(dispatchers.io) {
+            asResult(
+                onError = {
+                    AppLogger.get()?.e(tag, "Failed to sync ${wallets.size} wallets from server", it)
+                    CommonError.DatabaseError(it)
+                }
+            ) {
+                queries.transaction {
+                    wallets.forEach { remoteWallet ->
+                        val exists = queries.getWalletById(remoteWallet.id).executeAsOneOrNull() != null
+                        if (exists) {
+                            queries.updateWallet(
+                                name = remoteWallet.name,
+                                updatedAt = remoteWallet.updatedAt,
+                                deletedAt = remoteWallet.deletedAt,
+                                syncStatus = SyncStatus.SYNCED.name,
+                                id = remoteWallet.id
+                            )
+                        } else {
+                            queries.insertWallet(
+                                id = remoteWallet.id,
+                                name = remoteWallet.name,
+                                createdAt = remoteWallet.createdAt,
+                                updatedAt = remoteWallet.updatedAt,
+                                deletedAt = remoteWallet.deletedAt,
+                                syncStatus = SyncStatus.SYNCED.name
+                            )
+                        }
+                    }
                 }
             }
         }
-    }
 
-    override suspend fun deleteAll(): Result<Unit, AppException> = asResult(
-        onError = {
-            AppLogger.get()?.e(tag, "Failed to delete all wallets", it)
-            CommonError.DatabaseError(it)
+    override suspend fun deleteAll(): Result<Unit, AppException> = withContext(dispatchers.io) {
+        asResult(
+            onError = {
+                AppLogger.get()?.e(tag, "Failed to delete all wallets", it)
+                CommonError.DatabaseError(it)
+            }
+        ) {
+            queries.deleteAll()
+            Unit
         }
-    ) {
-        queries.deleteAll()
     }
 }

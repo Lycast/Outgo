@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import fr.abknative.outgo.auth.api.usecase.LoginUseCase
 import fr.abknative.outgo.auth.api.usecase.LogoutUseCase
 import fr.abknative.outgo.auth.api.usecase.ObserveUserSessionUseCase
+import fr.abknative.outgo.auth.api.usecase.RegisterUseCase
 import fr.abknative.outgo.core.api.extensions.safeLaunch
 import fr.abknative.outgo.core.api.logs.AppException
 import fr.abknative.outgo.core.api.logs.Result
@@ -16,6 +17,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 internal class LoginPresenterImpl(
+    private val registerUseCase: RegisterUseCase,
     private val loginUseCase: LoginUseCase,
     private val logoutUseCase: LogoutUseCase,
     private val observeUserSession: ObserveUserSessionUseCase
@@ -38,10 +40,28 @@ internal class LoginPresenterImpl(
 
     override fun onIntent(intent: LoginIntent) {
         when (intent) {
+            is LoginIntent.SubmitRegister -> handleRegister(intent.email, intent.password)
             is LoginIntent.SubmitLogin -> handleLogin(intent.email, intent.password)
             is LoginIntent.LoginWithGoogle, LoginIntent.LoginWithApple -> { /* Rien pour l'instant */ }
             LoginIntent.Logout -> handleLogout()
             LoginIntent.DismissError -> _state.update { it.copy(error = null) }
+        }
+    }
+
+    private fun handleRegister(email: String, password: String) {
+        viewModelScope.safeLaunch(onError = onCoroutineError) {
+            _state.update { it.copy(isLoading = true, error = null) }
+
+            val result = registerUseCase(email, password)
+
+            when (result) {
+                is Result.Success -> {
+                    _state.update { it.copy(isLoading = false, error = null) }
+                }
+                is Result.Error -> {
+                    _state.update { it.copy(isLoading = false, error = result.error) }
+                }
+            }
         }
     }
 

@@ -6,8 +6,9 @@ compose-multiplatform = "1.7.3"
 sqldelight = "2.3.2"
 ktor = "3.4.1"
 google-secrets-plugin = "2.0.1"
-firebase-gitlive = "2.1.0"
-google-services = "4.4.2"
+firebase-gitlive = "2.4.0"
+firebase-ios = "12.11.0"
+google-services = "4.4.4"
 
 # Android Specific
 android-compileSdk = "36"

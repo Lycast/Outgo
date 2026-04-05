@@ -15,12 +15,14 @@ import fr.abknative.outgo.wallet.impl.mapper.toDomain
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 
 /**
  * SQLDelight implementation of [OperationRepository].
  *
  * Uses [OutgoDatabase] as the local source of truth and handles
- * data mapping from database entities to domain models.
+ * data mapping from database entities to domain models. All synchronous
+ * database operations are safely delegated to the IO dispatcher.
  */
 internal class OperationRepositoryImpl(
     private val database: OutgoDatabase,
@@ -40,52 +42,25 @@ internal class OperationRepositoryImpl(
             .distinctUntilChanged()
     }
 
-    override suspend fun getOperationById(id: String): Operation? {
-        return queries.getOperationById(id).executeAsOneOrNull()?.toDomain()
+    override suspend fun getOperationById(id: String): Operation? = withContext(dispatchers.io) {
+        queries.getOperationById(id).executeAsOneOrNull()?.toDomain()
     }
 
-    override suspend fun save(operation: Operation): Result<Unit, AppException> = asResult(
-        onError = {
-            AppLogger.get()?.e(tag, "Failed to save operation: ${operation.id}", it)
-            CommonError.DatabaseError(it)
-        }
-    ) {
-        queries.transaction {
-            val now = timeProvider.now()
-            val existing = queries.getOperationById(operation.id).executeAsOneOrNull()
+    override suspend fun save(operation: Operation): Result<Unit, AppException> = withContext(dispatchers.io) {
+        asResult(
+            onError = {
+                AppLogger.get()?.e(tag, "Failed to save operation: ${operation.id}", it)
+                CommonError.DatabaseError(it)
+            }
+        ) {
+            queries.transaction {
+                val now = timeProvider.now()
+                val existing = queries.getOperationById(operation.id).executeAsOneOrNull()
 
-            if (existing == null) {
-                val finalId = operation.id.ifBlank { idProvider.generate() }
-                queries.insertOperation(
-                    id = finalId,
-                    walletId = operation.walletId,
-                    name = operation.name,
-                    amountInCents = operation.amountInCents,
-                    type = operation.type.name,
-                    recurrence = operation.recurrence.name,
-                    startDate = operation.startDate,
-                    endDate = operation.endDate,
-                    createdAt = now,
-                    updatedAt = now,
-                    deletedAt = null,
-                    syncStatus = SyncStatus.PENDING_CREATE.name
-                )
-            } else {
-                val currentStatus = SyncStatus.fromString(existing.syncStatus)
-                val nextStatus = if (currentStatus == SyncStatus.PENDING_CREATE) {
-                    SyncStatus.PENDING_CREATE
-                } else {
-                    SyncStatus.PENDING_UPDATE
-                }
-                val hasChanged = existing.name != operation.name ||
-                        existing.amountInCents != operation.amountInCents ||
-                        existing.startDate != operation.startDate ||
-                        existing.endDate != operation.endDate ||
-                        existing.type != operation.type.name ||
-                        existing.recurrence != operation.recurrence.name
-
-                if (hasChanged) {
-                    queries.updateOperation(
+                if (existing == null) {
+                    val finalId = operation.id.ifBlank { idProvider.generate() }
+                    queries.insertOperation(
+                        id = finalId,
                         walletId = operation.walletId,
                         name = operation.name,
                         amountInCents = operation.amountInCents,
@@ -93,108 +68,152 @@ internal class OperationRepositoryImpl(
                         recurrence = operation.recurrence.name,
                         startDate = operation.startDate,
                         endDate = operation.endDate,
+                        createdAt = now,
                         updatedAt = now,
-                        deletedAt = existing.deletedAt,
-                        syncStatus = nextStatus.name,
-                        id = operation.id
+                        deletedAt = null,
+                        syncStatus = SyncStatus.PENDING_CREATE.name
+                    )
+                } else {
+                    val currentStatus = SyncStatus.fromString(existing.syncStatus)
+                    val nextStatus = if (currentStatus == SyncStatus.PENDING_CREATE) {
+                        SyncStatus.PENDING_CREATE
+                    } else {
+                        SyncStatus.PENDING_UPDATE
+                    }
+                    val hasChanged = existing.name != operation.name ||
+                            existing.amountInCents != operation.amountInCents ||
+                            existing.startDate != operation.startDate ||
+                            existing.endDate != operation.endDate ||
+                            existing.type != operation.type.name ||
+                            existing.recurrence != operation.recurrence.name
+
+                    if (hasChanged) {
+                        queries.updateOperation(
+                            walletId = operation.walletId,
+                            name = operation.name,
+                            amountInCents = operation.amountInCents,
+                            type = operation.type.name,
+                            recurrence = operation.recurrence.name,
+                            startDate = operation.startDate,
+                            endDate = operation.endDate,
+                            updatedAt = now,
+                            deletedAt = existing.deletedAt,
+                            syncStatus = nextStatus.name,
+                            id = operation.id
+                        )
+                    }
+                }
+            }
+            Unit
+        }
+    }
+
+    override suspend fun markAsDeleted(id: String): Result<Unit, AppException> = withContext(dispatchers.io) {
+        asResult(
+            onError = {
+                AppLogger.get()?.e(tag, "Failed to mark operation as deleted: $id", it)
+                CommonError.DatabaseError(it)
+            }
+        ) {
+            queries.transaction {
+                val current = queries.getOperationById(id).executeAsOneOrNull()
+
+                if (current?.syncStatus == SyncStatus.PENDING_CREATE.name) {
+                    queries.hardDeletePendingCreate(id)
+                } else {
+                    queries.markAsDeleted(
+                        deletedAt = timeProvider.now(),
+                        updatedAt = timeProvider.now(),
+                        id = id
                     )
                 }
             }
+            Unit
         }
     }
 
-    override suspend fun markAsDeleted(id: String): Result<Unit, AppException> = asResult(
-        onError = {
-            AppLogger.get()?.e(tag, "Failed to mark operation as deleted: $id", it)
-            CommonError.DatabaseError(it)
-        }
-    ) {
-        queries.transaction {
-            val current = queries.getOperationById(id).executeAsOneOrNull()
-
-            if (current?.syncStatus == SyncStatus.PENDING_CREATE.name) {
-                queries.hardDeletePendingCreate(id)
-            } else {
-                queries.markAsDeleted(
-                    deletedAt = timeProvider.now(),
-                    updatedAt = timeProvider.now(),
-                    id = id
-                )
+    override suspend fun getPendingOperations(): Result<List<Operation>, AppException> = withContext(dispatchers.io) {
+        asResult(
+            onError = {
+                AppLogger.get()?.e(tag, "Failed to fetch pending operations", it)
+                CommonError.DatabaseError(it)
             }
+        ) {
+            queries.getPendingOperations().executeAsList().map { it.toDomain() }
         }
-    }
-
-    override suspend fun getPendingOperations(): Result<List<Operation>, AppException> = asResult(
-        onError = {
-            AppLogger.get()?.e(tag, "Failed to fetch pending operations", it)
-            CommonError.DatabaseError(it)
-        }
-    ) {
-        queries.getPendingOperations().executeAsList().map { it.toDomain() }
     }
 
     override suspend fun updateSyncStatus(
         id: String,
         status: SyncStatus
-    ): Result<Unit, AppException> = asResult(
-        onError = {
-            AppLogger.get()?.e(tag, "Failed to update sync status ($status) for operation: $id", it)
-            CommonError.DatabaseError(it)
+    ): Result<Unit, AppException> = withContext(dispatchers.io) {
+        asResult(
+            onError = {
+                AppLogger.get()?.e(tag, "Failed to update sync status ($status) for operation: $id", it)
+                CommonError.DatabaseError(it)
+            }
+        ) {
+            queries.updateSyncStatus(syncStatus = status.name, id = id)
+            Unit
         }
-    ) {
-        queries.updateSyncStatus(syncStatus = status.name, id = id)
     }
 
-    override suspend fun syncFromServer(operations: List<Operation>): Result<Unit, AppException> = asResult(
-        onError = {
-            AppLogger.get()?.e(tag, "Failed to sync ${operations.size} operations from server", it)
-            CommonError.DatabaseError(it)
-        }
-    ) {
-        queries.transaction {
-            operations.forEach { remote ->
-                val exists = queries.getOperationById(remote.id).executeAsOneOrNull() != null
+    override suspend fun syncFromServer(operations: List<Operation>): Result<Unit, AppException> = withContext(dispatchers.io) {
+        asResult(
+            onError = {
+                AppLogger.get()?.e(tag, "Failed to sync ${operations.size} operations from server", it)
+                CommonError.DatabaseError(it)
+            }
+        ) {
+            queries.transaction {
+                operations.forEach { remote ->
+                    val exists = queries.getOperationById(remote.id).executeAsOneOrNull() != null
 
-                if (exists) {
-                    queries.updateOperation(
-                        walletId = remote.walletId,
-                        name = remote.name,
-                        amountInCents = remote.amountInCents,
-                        type = remote.type.name,
-                        recurrence = remote.recurrence.name,
-                        startDate = remote.startDate,
-                        endDate = remote.endDate,
-                        updatedAt = remote.updatedAt,
-                        deletedAt = remote.deletedAt,
-                        syncStatus = SyncStatus.SYNCED.name,
-                        id = remote.id
-                    )
-                } else {
-                    queries.insertOperation(
-                        id = remote.id,
-                        walletId = remote.walletId,
-                        name = remote.name,
-                        amountInCents = remote.amountInCents,
-                        type = remote.type.name,
-                        recurrence = remote.recurrence.name,
-                        startDate = remote.startDate,
-                        endDate = remote.endDate,
-                        createdAt = remote.createdAt,
-                        updatedAt = remote.updatedAt,
-                        deletedAt = remote.deletedAt,
-                        syncStatus = SyncStatus.SYNCED.name
-                    )
+                    if (exists) {
+                        queries.updateOperation(
+                            walletId = remote.walletId,
+                            name = remote.name,
+                            amountInCents = remote.amountInCents,
+                            type = remote.type.name,
+                            recurrence = remote.recurrence.name,
+                            startDate = remote.startDate,
+                            endDate = remote.endDate,
+                            updatedAt = remote.updatedAt,
+                            deletedAt = remote.deletedAt,
+                            syncStatus = SyncStatus.SYNCED.name,
+                            id = remote.id
+                        )
+                    } else {
+                        queries.insertOperation(
+                            id = remote.id,
+                            walletId = remote.walletId,
+                            name = remote.name,
+                            amountInCents = remote.amountInCents,
+                            type = remote.type.name,
+                            recurrence = remote.recurrence.name,
+                            startDate = remote.startDate,
+                            endDate = remote.endDate,
+                            createdAt = remote.createdAt,
+                            updatedAt = remote.updatedAt,
+                            deletedAt = remote.deletedAt,
+                            syncStatus = SyncStatus.SYNCED.name
+                        )
+                    }
                 }
             }
+            Unit
         }
     }
 
-    override suspend fun deleteAll(): Result<Unit, AppException> = asResult(
-        onError = {
-            AppLogger.get()?.e(tag, "Failed to delete all operations", it)
-            CommonError.DatabaseError(it)
+    override suspend fun deleteAll(): Result<Unit, AppException> = withContext(dispatchers.io) {
+        asResult(
+            onError = {
+                AppLogger.get()?.e(tag, "Failed to delete all operations", it)
+                CommonError.DatabaseError(it)
+            }
+        ) {
+            queries.deleteAll()
+            Unit
         }
-    ) {
-        queries.deleteAll()
     }
 }

@@ -9,6 +9,8 @@ interface AuthRepository {
     fun observeSession(): Flow<UserSession?>
     suspend fun getSession(): UserSession?
 
+    suspend fun register(email: String, password: String): Result<Unit, AppException>
+
     suspend fun login(email: String, password: String): Result<Unit, AppException>
     suspend fun logout(): Result<Unit, AppException>
     suspend fun deleteAccount(): Result<Unit, AppException>

@@ -18,6 +18,10 @@ class FakeAuthRepository : AuthRepository {
 
     override suspend fun getSession(): UserSession? = _sessionFlow.value
 
+    override suspend fun register(email: String, password: String): Result<Unit, AppException> {
+        return Result.Success(Unit)
+    }
+
     override suspend fun login(email: String, password: String): Result<Unit, AppException> {
         return Result.Success(Unit)
     }

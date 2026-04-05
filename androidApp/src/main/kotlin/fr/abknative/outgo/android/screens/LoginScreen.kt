@@ -100,6 +100,21 @@ fun LoginScreen(
                 }
             }
 
+            Spacer(modifier = Modifier.height(AppTheme.spacing.medium))
+
+            TextButton(
+                onClick = {
+                    presenter.onIntent(LoginIntent.SubmitRegister(formState.email, formState.password))
+                },
+                enabled = formState.isValid && !state.isLoading,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = "Pas encore de compte ? S'inscrire",
+                    color = AppTheme.colors.primary.toColor()
+                )
+            }
+
             if (state.error != null) {
                 Spacer(modifier = Modifier.height(AppTheme.spacing.small))
                 Text(text = LoginLabels.ERROR_MESSAGE, color = AppTheme.colors.error.toColor())
