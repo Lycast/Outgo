@@ -21,6 +21,8 @@ kotlin {
 
             implementation(libs.firebase.auth)
 
+            implementation(libs.ktor.client.core)
+
             implementation(libs.koin.core)
             implementation(libs.koin.core.viewmodel)
         }

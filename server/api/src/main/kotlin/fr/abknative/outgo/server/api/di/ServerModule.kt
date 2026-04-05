@@ -1,17 +1,10 @@
 package fr.abknative.outgo.server.api.di
 
-import fr.abknative.outgo.server.core.repository.GarbageCollectorRepository
-import fr.abknative.outgo.server.core.repository.OperationRepository
-import fr.abknative.outgo.server.core.repository.TransactionRunner
-import fr.abknative.outgo.server.core.repository.UserRepository
-import fr.abknative.outgo.server.core.repository.WalletRepository
+import fr.abknative.outgo.server.core.repository.*
+import fr.abknative.outgo.server.core.usecase.DeleteUserAccountUseCase
 import fr.abknative.outgo.server.core.usecase.GetSyncPullUseCase
 import fr.abknative.outgo.server.core.usecase.ProcessSyncPushUseCase
-import fr.abknative.outgo.server.data.repository.ExposedTransactionRunner
-import fr.abknative.outgo.server.data.repository.GarbageCollectorRepositoryImpl
-import fr.abknative.outgo.server.data.repository.OperationRepositoryImpl
-import fr.abknative.outgo.server.data.repository.UserRepositoryImpl
-import fr.abknative.outgo.server.data.repository.WalletRepositoryImpl
+import fr.abknative.outgo.server.data.repository.*
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
@@ -27,4 +20,5 @@ val serverModule = module {
     // UseCases
     singleOf(::ProcessSyncPushUseCase) { bind<ProcessSyncPushUseCase>() }
     singleOf(::GetSyncPullUseCase)
+    singleOf(::DeleteUserAccountUseCase)
 }

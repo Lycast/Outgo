@@ -12,7 +12,9 @@ import fr.abknative.outgo.database.OutgoDatabase
 import fr.abknative.outgo.wallet.api.model.Wallet
 import fr.abknative.outgo.wallet.api.repository.WalletRepository
 import fr.abknative.outgo.wallet.impl.mapper.toDomain
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
@@ -38,11 +40,15 @@ internal class WalletRepositoryImpl(
     private val currentUserId: String
         get() = sessionProvider.getCurrentUserId()
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     override fun observeActiveWallets(): Flow<List<Wallet>> {
-        return queries.getActiveWallets(userId = currentUserId)
-            .asFlow()
-            .mapToList(dispatchers.io)
-            .map { entities -> entities.map { it.toDomain() } }
+        return sessionProvider.observeUserId()
+            .flatMapLatest { uid ->
+                queries.getActiveWallets(userId = uid)
+                    .asFlow()
+                    .mapToList(dispatchers.io)
+                    .map { entities -> entities.map { it.toDomain() } }
+            }
     }
 
     override suspend fun getWalletById(id: String): Result<Wallet?, AppException> = withContext(dispatchers.io) {

@@ -14,8 +14,10 @@ import fr.abknative.outgo.database.OutgoDatabase
 import fr.abknative.outgo.wallet.api.model.Operation
 import fr.abknative.outgo.wallet.api.repository.OperationRepository
 import fr.abknative.outgo.wallet.impl.mapper.toDomain
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
@@ -39,12 +41,16 @@ internal class OperationRepositoryImpl(
     private val currentUserId: String
         get() = sessionProvider.getCurrentUserId()
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     override fun observeOperationsByPeriod(walletId: String, from: EpochMillis, to: EpochMillis): Flow<List<Operation>> {
-        return queries.getOperationsByPeriod(walletId = walletId, from = from, to = to, userId = currentUserId)
-            .asFlow()
-            .mapToList(dispatchers.io)
-            .map { entities -> entities.map { it.toDomain() } }
-            .distinctUntilChanged()
+        return sessionProvider.observeUserId()
+            .flatMapLatest { uid ->
+                queries.getOperationsByPeriod(walletId = walletId, from = from, to = to, userId = uid)
+                    .asFlow()
+                    .mapToList(dispatchers.io)
+                    .map { entities -> entities.map { it.toDomain() } }
+                    .distinctUntilChanged()
+            }
     }
 
     override suspend fun getOperationById(id: String): Operation? = withContext(dispatchers.io) {

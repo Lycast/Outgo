@@ -1,5 +1,7 @@
 package fr.abknative.outgo.auth.api.provider
 
+import kotlinx.coroutines.flow.Flow
+
 /**
  * Provides the current user identifier to secure local data access.
  */
@@ -9,4 +11,6 @@ interface SessionProvider {
      * If no authenticated user is present, returns a stable offline fallback ID.
      */
     fun getCurrentUserId(): String
+
+    fun observeUserId(): Flow<String>
 }

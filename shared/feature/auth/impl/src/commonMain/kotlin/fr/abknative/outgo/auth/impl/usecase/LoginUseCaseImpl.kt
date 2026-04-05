@@ -1,12 +1,21 @@
 package fr.abknative.outgo.auth.impl.usecase
 
+import fr.abknative.outgo.auth.api.provider.SessionProvider
 import fr.abknative.outgo.auth.api.repository.AuthRepository
 import fr.abknative.outgo.auth.api.usecase.LoginUseCase
+import fr.abknative.outgo.core.api.LocalDataMigrator
 import fr.abknative.outgo.core.api.logs.AppException
 import fr.abknative.outgo.core.api.logs.Result
 
-internal class LoginUseCaseImpl(private val repository: AuthRepository) : LoginUseCase {
+internal class LoginUseCaseImpl(
+    private val authRepository: AuthRepository,
+    private val sessionProvider: SessionProvider,
+    private val localDataMigrator: LocalDataMigrator
+) : LoginUseCase {
+
     override suspend fun invoke(email: String, password: String): Result<Unit, AppException> {
-        return repository.login(email, password)
+        return executeAuthWithMigration(sessionProvider, localDataMigrator, authRepository) {
+            authRepository.login(email, password)
+        }
     }
 }

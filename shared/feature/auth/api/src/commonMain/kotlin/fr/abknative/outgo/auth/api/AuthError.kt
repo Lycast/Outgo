@@ -7,4 +7,5 @@ sealed class AuthError(cause: Throwable? = null) : AppException(cause) {
     class UserNotFound : AuthError()
     class SessionExpired : AuthError()
     class NeedsReauthentication : AuthError() // todo map l'erreur coté UI
+    class DataConflict : AuthError() // todo map l'erreur coté UI
 }

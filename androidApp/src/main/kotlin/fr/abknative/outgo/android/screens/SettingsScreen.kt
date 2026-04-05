@@ -19,6 +19,7 @@ import fr.abknative.outgo.android.R
 import fr.abknative.outgo.android.components.common.ConfirmationDialog
 import fr.abknative.outgo.android.components.common.Header
 import fr.abknative.outgo.android.components.common.SyncPromotionModal
+import fr.abknative.outgo.android.components.settings.DeleteAccountDialog
 import fr.abknative.outgo.android.components.settings.SettingsRowClickable
 import fr.abknative.outgo.android.components.settings.SettingsRowToggle
 import fr.abknative.outgo.android.components.settings.SettingsSection
@@ -138,27 +139,24 @@ fun SettingsScreen(
                     )
                 }
 
-                // --- SECTION 3 : Données Locales ---
-                SettingsSection(title = SettingsLabels.SECTION_DATA) {
-                    SettingsRowClickable(
-                        icon = R.drawable.trash_duotone,
-                        title = DialogLabels.PURGE_TITLE,
-                        subtitle = "Supprime les données de l'appareil sans toucher au serveur.", // TODO: Mettre dans les labels
-                        onClick = { showPurgeConfirm = true }
-                    )
-                }
-
-                // --- SECTION 4 : Compte ---
                 if (state.session == null) {
-                    SettingsSection(title = SettingsLabels.SECTION_ACCOUNT) {
+                    SettingsSection(title = SettingsLabels.SECTION_DATA_AND_ACCOUNT) {
                         SettingsRowClickable(
                             icon = R.drawable.arrows_clockwise_duotone,
                             title = SettingsLabels.SYNC_TITLE,
                             subtitle = SettingsLabels.SYNC_SUBTITLE,
                             onClick = { showSyncModal = true }
                         )
+                        HorizontalDivider(color = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.1f))
+                        SettingsRowClickable(
+                            icon = R.drawable.trash_duotone,
+                            title = DialogLabels.PURGE_TITLE,
+                            subtitle = SettingsLabels.PURGE_SUBTITLE,
+                            onClick = { showPurgeConfirm = true }
+                        )
                     }
                 } else {
+                    // UTILISATEUR CONNECTÉ
                     SettingsSection(title = SettingsLabels.SECTION_ACCOUNT) {
                         SettingsRowClickable(
                             icon = R.drawable.sign_out_duotone,
@@ -207,14 +205,9 @@ fun SettingsScreen(
     }
 
     if (showDeleteAccountConfirm) {
-        ConfirmationDialog(
-            title = DialogLabels.DELETE_ACCOUNT_TITLE,
-            description = DialogLabels.DELETE_ACCOUNT_DESC,
-            confirmLabel = DialogLabels.DELETE_ACCOUNT_CONFIRM,
-            cancelLabel = CommonLabels.ACTION_CANCEL,
-            isDestructive = true,
-            onConfirm = {
-                presenter.onIntent(SettingsIntent.DeleteAccount)
+        DeleteAccountDialog(
+            onConfirm = { wipeLocal, wipeServer, revokeAuth ->
+                presenter.onIntent(SettingsIntent.DeleteAccount(wipeLocal, wipeServer, revokeAuth))
                 showDeleteAccountConfirm = false
             },
             onDismiss = { showDeleteAccountConfirm = false }

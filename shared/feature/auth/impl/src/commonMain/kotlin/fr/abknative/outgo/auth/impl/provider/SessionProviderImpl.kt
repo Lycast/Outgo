@@ -3,6 +3,9 @@ package fr.abknative.outgo.auth.impl.provider
 import fr.abknative.outgo.auth.api.provider.SessionProvider
 import fr.abknative.outgo.auth.api.repository.AuthRepository
 import fr.abknative.outgo.core.api.KeyValueStorage
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
@@ -33,5 +36,11 @@ internal class SessionProviderImpl(
         }
 
         return offlineId
+    }
+
+    override fun observeUserId(): Flow<String> {
+        return authRepository.observeSession()
+            .map { session -> session?.userId ?: getCurrentUserId() }
+            .distinctUntilChanged()
     }
 }

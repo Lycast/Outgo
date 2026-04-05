@@ -35,6 +35,17 @@ object DialogLabels {
     val DELETE_ACCOUNT_TITLE @Composable get() = stringResource(Res.string.dialog_delete_account_title)
     val DELETE_ACCOUNT_DESC @Composable get() = stringResource(Res.string.dialog_delete_account_desc)
     val DELETE_ACCOUNT_CONFIRM @Composable get() = stringResource(Res.string.dialog_delete_account_confirm)
+
+    const val DELETE_ACCOUNT_CHOICE_DESC = "Choisissez ce que vous souhaitez effacer. Cette action est irréversible."
+
+    const val DELETE_ACCOUNT_LOCAL_TITLE = "Vider cet appareil"
+    const val DELETE_ACCOUNT_LOCAL_DESC = "Supprime les données de cet appareil."
+
+    const val DELETE_ACCOUNT_SERVER_TITLE = "Effacer mon Cloud"
+    const val DELETE_ACCOUNT_SERVER_DESC = "Supprime vos données des serveurs Outgo."
+
+    const val DELETE_ACCOUNT_AUTH_TITLE = "Supprimer mon profil"
+    const val DELETE_ACCOUNT_AUTH_DESC = "Révoque l'accès et détruit votre identité."
 }
 
 object DashboardLabels {
@@ -136,6 +147,9 @@ object SettingsLabels {
     const val URL_CONTACT = "https://abknative.fr/contact"
 
     val APP_VERSION_PREFIX @Composable get() = stringResource(Res.string.settings_app_version_prefix)
+
+    const val SECTION_DATA_AND_ACCOUNT = "Données & Compte"
+    const val PURGE_SUBTITLE = "Efface les saisies de cet appareil."
 }
 
 object LoginLabels {

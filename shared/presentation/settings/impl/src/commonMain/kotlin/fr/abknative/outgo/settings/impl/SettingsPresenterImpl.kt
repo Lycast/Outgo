@@ -68,7 +68,7 @@ internal class SettingsPresenterImpl(
     override fun onIntent(intent: SettingsIntent) {
         when (intent) {
             is SettingsIntent.Logout -> handleLogout()
-            is SettingsIntent.DeleteAccount -> handleDeleteAccount()
+            is SettingsIntent.DeleteAccount -> handleDeleteAccount(intent)
             is SettingsIntent.PurgeLocalData -> handlePurgeLocalData()
             is SettingsIntent.RefreshSync -> handleRefreshSync()
             is SettingsIntent.DismissError -> _state.update { it.copy(error = null) }
@@ -92,11 +92,15 @@ internal class SettingsPresenterImpl(
         }
     }
 
-    private fun handleDeleteAccount() {
+    private fun handleDeleteAccount(intent: SettingsIntent.DeleteAccount) {
         viewModelScope.safeLaunch(onError = onCoroutineError) {
             _state.update { it.copy(isProcessing = true) }
 
-            when (val result = deleteAccount()) {
+            when (val result = deleteAccount(
+                wipeLocal = intent.wipeLocal,
+                wipeServer = intent.wipeServer,
+                revokeAuth = intent.revokeAuth
+            )) {
                 is Result.Success -> {
                     logout()
                     _state.update {
