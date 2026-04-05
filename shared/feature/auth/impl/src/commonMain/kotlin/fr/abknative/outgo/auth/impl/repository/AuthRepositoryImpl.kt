@@ -1,10 +1,7 @@
 package fr.abknative.outgo.auth.impl.repository
 
 import dev.gitlive.firebase.Firebase
-import dev.gitlive.firebase.auth.FirebaseAuthException
-import dev.gitlive.firebase.auth.FirebaseAuthInvalidCredentialsException
-import dev.gitlive.firebase.auth.FirebaseAuthInvalidUserException
-import dev.gitlive.firebase.auth.auth
+import dev.gitlive.firebase.auth.*
 import fr.abknative.outgo.auth.api.AuthError
 import fr.abknative.outgo.auth.api.model.UserSession
 import fr.abknative.outgo.auth.api.repository.AuthRepository
@@ -145,6 +142,7 @@ internal class AuthRepositoryImpl(
     private fun mapFirebaseError(e: Exception): AppException {
         AppLogger.get()?.e(TAG, "Firebase operation failed", e)
         return when (e) {
+            is FirebaseAuthRecentLoginRequiredException -> AuthError.NeedsReauthentication()
             is FirebaseAuthInvalidCredentialsException -> AuthError.InvalidCredentials()
             is FirebaseAuthInvalidUserException -> AuthError.UserNotFound()
             is FirebaseAuthException -> CommonError.Unauthorized(e)
