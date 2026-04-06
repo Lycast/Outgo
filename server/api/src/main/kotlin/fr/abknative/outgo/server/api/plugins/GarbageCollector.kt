@@ -8,7 +8,7 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import org.koin.ktor.ext.inject
 import org.slf4j.LoggerFactory
-import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.hours
 
 fun Application.configureGarbageCollector() {
     val gcRepository by inject<GarbageCollectorRepository>()
@@ -29,7 +29,7 @@ fun Application.configureGarbageCollector() {
             }
 
             // Attente de 24 heures avant le prochain cycle
-            delay((24 * 60 * 60 * 1000L).milliseconds)
+            delay(24.hours)
         }
     }
 }
