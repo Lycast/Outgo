@@ -59,51 +59,23 @@ internal class OperationRepositoryImpl(
 
     override suspend fun save(operation: Operation): Result<Unit, AppException> = withContext(dispatchers.io) {
         asResult(
-            onError = {
-                AppLogger.get()?.e(tag, "Failed to save operation: ${operation.id}", it)
-                CommonError.DatabaseError(it)
+            onError = { e ->
+                AppLogger.get()?.e(tag, "Failed to save operation: ${operation.id}", e) // ✅ Log restauré
+                CommonError.DatabaseError(e)
             }
         ) {
             queries.transaction {
                 val now = timeProvider.now()
                 val uid = currentUserId
-                val existing = queries.getOperationById(id = operation.id, userId = uid).executeAsOneOrNull()
+                val existing = queries.getOperationById(operation.id, uid).executeAsOneOrNull()
 
                 if (existing == null) {
-                    val finalId = operation.id.ifBlank { idProvider.generate() }
-                    queries.insertOperation(
-                        id = finalId,
-                        userId = uid,
-                        walletId = operation.walletId,
-                        name = operation.name,
-                        amountInCents = operation.amountInCents,
-                        type = operation.type.name,
-                        recurrence = operation.recurrence.name,
-                        startDate = operation.startDate,
-                        endDate = operation.endDate,
-                        createdAt = now,
-                        updatedAt = now,
-                        deletedAt = null,
-                        syncStatus = SyncStatus.PENDING_CREATE.name
-                    )
+                    queries.insertFromDomain(operation, uid, SyncStatus.PENDING_CREATE, now, now, idProvider)
                 } else if (existing.hasChanged(operation)) {
-                    queries.updateOperation(
-                        walletId = operation.walletId,
-                        name = operation.name,
-                        amountInCents = operation.amountInCents,
-                        type = operation.type.name,
-                        recurrence = operation.recurrence.name,
-                        startDate = operation.startDate,
-                        endDate = operation.endDate,
-                        updatedAt = now,
-                        deletedAt = existing.deletedAt,
-                        syncStatus = determineNextStatus(existing.syncStatus),
-                        id = operation.id,
-                        userId = uid
-                    )
+                    val nextStatus = SyncStatus.fromString(determineNextStatus(existing.syncStatus))
+                    queries.updateFromDomain(operation, uid, nextStatus, now, existing.deletedAt)
                 }
             }
-            Unit
         }
     }
 
@@ -129,7 +101,6 @@ internal class OperationRepositoryImpl(
                     )
                 }
             }
-            Unit
         }
     }
 
@@ -161,51 +132,28 @@ internal class OperationRepositoryImpl(
 
     override suspend fun syncFromServer(operations: List<Operation>): Result<Unit, AppException> = withContext(dispatchers.io) {
         asResult(
-            onError = {
-                AppLogger.get()?.e(tag, "Failed to sync ${operations.size} operations from server", it)
-                CommonError.DatabaseError(it)
+            onError = { e ->
+                AppLogger.get()?.e(tag, "Failed to sync ${operations.size} operations", e) // ✅ Log restauré
+                CommonError.DatabaseError(e)
             }
         ) {
             queries.transaction {
                 val uid = currentUserId
                 operations.forEach { remote ->
-                    val exists = queries.getOperationById(id = remote.id, userId = uid).executeAsOneOrNull() != null
+                    val local = queries.getOperationById(remote.id, uid).executeAsOneOrNull()
 
-                    if (exists) {
-                        queries.updateOperation(
-                            walletId = remote.walletId,
-                            name = remote.name,
-                            amountInCents = remote.amountInCents,
-                            type = remote.type.name,
-                            recurrence = remote.recurrence.name,
-                            startDate = remote.startDate,
-                            endDate = remote.endDate,
-                            updatedAt = remote.updatedAt,
-                            deletedAt = remote.deletedAt,
-                            syncStatus = SyncStatus.SYNCED.name,
-                            id = remote.id,
-                            userId = uid
-                        )
+                    if (local == null) {
+                        queries.insertFromDomain(remote, uid, SyncStatus.SYNCED, remote.createdAt, remote.updatedAt, idProvider)
                     } else {
-                        queries.insertOperation(
-                            id = remote.id,
-                            userId = uid,
-                            walletId = remote.walletId,
-                            name = remote.name,
-                            amountInCents = remote.amountInCents,
-                            type = remote.type.name,
-                            recurrence = remote.recurrence.name,
-                            startDate = remote.startDate,
-                            endDate = remote.endDate,
-                            createdAt = remote.createdAt,
-                            updatedAt = remote.updatedAt,
-                            deletedAt = remote.deletedAt,
-                            syncStatus = SyncStatus.SYNCED.name
-                        )
+                        val isServerNewer = remote.updatedAt > local.updatedAt
+                        val isSynced = SyncStatus.fromString(local.syncStatus) == SyncStatus.SYNCED
+
+                        if (isSynced || isServerNewer) {
+                            queries.updateFromDomain(remote, uid, SyncStatus.SYNCED, remote.updatedAt, remote.deletedAt)
+                        }
                     }
                 }
             }
-            Unit
         }
     }
 
@@ -222,7 +170,7 @@ internal class OperationRepositoryImpl(
     }
 
     // ==========================================
-    // 🛠️ PRIVATE HELPERS (Refactoring)
+    // PRIVATE HELPERS
     // ==========================================
 
     /**

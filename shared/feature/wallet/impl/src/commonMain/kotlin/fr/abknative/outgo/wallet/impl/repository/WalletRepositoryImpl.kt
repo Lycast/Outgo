@@ -75,34 +75,12 @@ internal class WalletRepositoryImpl(
                 val existing = queries.getWalletById(id = wallet.id, userId = uid).executeAsOneOrNull()
 
                 if (existing == null) {
-                    val finalId = wallet.id.ifBlank { idProvider.generate() }
-                    queries.insertWallet(
-                        id = finalId,
-                        userId = uid,
-                        name = wallet.name,
-                        createdAt = now,
-                        updatedAt = now,
-                        deletedAt = null,
-                        syncStatus = SyncStatus.PENDING_CREATE.name
-                    )
-                } else {
+                    queries.insertFromDomain(wallet, uid, SyncStatus.PENDING_CREATE, now, now, idProvider)
+                } else if (existing.name != wallet.name) {
                     val currentStatus = SyncStatus.fromString(existing.syncStatus)
-                    val nextStatus = if (currentStatus == SyncStatus.PENDING_CREATE) {
-                        SyncStatus.PENDING_CREATE
-                    } else {
-                        SyncStatus.PENDING_UPDATE
-                    }
+                    val nextStatus = if (currentStatus == SyncStatus.PENDING_CREATE) SyncStatus.PENDING_CREATE else SyncStatus.PENDING_UPDATE
 
-                    if (existing.name != wallet.name) {
-                        queries.updateWallet(
-                            name = wallet.name,
-                            updatedAt = now,
-                            deletedAt = existing.deletedAt,
-                            syncStatus = nextStatus.name,
-                            id = wallet.id,
-                            userId = uid
-                        )
-                    }
+                    queries.updateFromDomain(wallet, uid, nextStatus, now, existing.deletedAt)
                 }
             }
         }
@@ -119,21 +97,8 @@ internal class WalletRepositoryImpl(
                 val now = timeProvider.now()
                 val uid = currentUserId
 
-                // Soft Delete of Wallet
-                queries.markAsDeleted(
-                    deletedAt = now,
-                    updatedAt = now,
-                    id = id,
-                    userId = uid
-                )
-
-                // Cascading Soft Delete of Operations
-                operationQueries.softDeleteByWalletId(
-                    deletedAt = now,
-                    updatedAt = now,
-                    walletId = id,
-                    userId = uid
-                )
+                queries.markAsDeleted(deletedAt = now, updatedAt = now, id = id, userId = uid)
+                operationQueries.softDeleteByWalletId(deletedAt = now, updatedAt = now, walletId = id, userId = uid)
             }
         }
     }
@@ -174,27 +139,18 @@ internal class WalletRepositoryImpl(
             ) {
                 queries.transaction {
                     val uid = currentUserId
-                    wallets.forEach { remoteWallet ->
-                        val exists = queries.getWalletById(id = remoteWallet.id, userId = uid).executeAsOneOrNull() != null
-                        if (exists) {
-                            queries.updateWallet(
-                                name = remoteWallet.name,
-                                updatedAt = remoteWallet.updatedAt,
-                                deletedAt = remoteWallet.deletedAt,
-                                syncStatus = SyncStatus.SYNCED.name,
-                                id = remoteWallet.id,
-                                userId = uid
-                            )
+                    wallets.forEach { remote ->
+                        val local = queries.getWalletById(id = remote.id, userId = uid).executeAsOneOrNull()
+
+                        if (local == null) {
+                            queries.insertFromDomain(remote, uid, SyncStatus.SYNCED, remote.createdAt, remote.updatedAt, idProvider)
                         } else {
-                            queries.insertWallet(
-                                id = remoteWallet.id,
-                                userId = uid,
-                                name = remoteWallet.name,
-                                createdAt = remoteWallet.createdAt,
-                                updatedAt = remoteWallet.updatedAt,
-                                deletedAt = remoteWallet.deletedAt,
-                                syncStatus = SyncStatus.SYNCED.name
-                            )
+                            val isServerNewer = remote.updatedAt > local.updatedAt
+                            val isSynced = SyncStatus.fromString(local.syncStatus) == SyncStatus.SYNCED
+
+                            if (isSynced || isServerNewer) {
+                                queries.updateFromDomain(remote, uid, SyncStatus.SYNCED, remote.updatedAt, remote.deletedAt)
+                            }
                         }
                     }
                 }
