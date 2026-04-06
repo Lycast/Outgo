@@ -1,14 +1,8 @@
-plugins {
-    alias(libs.plugins.kotlin.multiplatform)
-    id("outgo.android.library")
-}
+plugins { id("outgo.kmp.library") }
 
 kotlin {
 
-    androidTarget()
     jvm()
-    iosArm64()
-    iosSimulatorArm64()
     
     sourceSets {
         commonMain.dependencies {

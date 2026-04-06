@@ -139,8 +139,6 @@ data class SettingsStrings(
     val sectionData: String,
     val darkModeTitle: String,
     val darkModeSubtitle: String,
-    val coffeeTitle: String,
-    val coffeeSubtitle: String,
     val tipsTitle: String,
     val tipsSubtitle: String,
     val contactTitle: String,

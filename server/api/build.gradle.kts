@@ -34,3 +34,7 @@ dependencies {
 
     testImplementation(libs.ktor.server.test.host)
 }
+
+tasks.named<Sync>("installDist") {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}

@@ -1,7 +1,6 @@
 plugins {
-    alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.sqldelight)
-    id("outgo.android.library")
+    id("outgo.kmp.library")
 }
 
 kotlin {
@@ -9,10 +8,6 @@ kotlin {
     compilerOptions {
         freeCompilerArgs.add("-Xexpect-actual-classes")
     }
-
-    androidTarget()
-    iosArm64()
-    iosSimulatorArm64()
 
     sourceSets {
         commonMain.dependencies {
@@ -43,7 +38,7 @@ android {
 sqldelight {
     databases {
         create("OutgoDatabase") {
-            dialect(libs.sqldelight.dialect.get().toString())
+            dialect(libs.sqldelight.dialect)
             packageName.set("fr.abknative.outgo.database")
         }
     }

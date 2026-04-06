@@ -163,8 +163,6 @@ object IosStringsResourcesLoader {
         sectionData = getString(Res.string.settings_section_data),
         darkModeTitle = getString(Res.string.settings_dark_mode_title),
         darkModeSubtitle = getString(Res.string.settings_dark_mode_subtitle),
-        coffeeTitle = getString(Res.string.settings_coffee_title),
-        coffeeSubtitle = getString(Res.string.settings_coffee_subtitle),
         tipsTitle = getString(Res.string.settings_tips_title),
         tipsSubtitle = getString(Res.string.settings_tips_subtitle),
         contactTitle = getString(Res.string.settings_contact_title),

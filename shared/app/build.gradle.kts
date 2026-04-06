@@ -1,18 +1,12 @@
 plugins {
-    alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.compose.multiplatform)
     alias(libs.plugins.compose.compiler)
     kotlin("native.cocoapods")
-    id("outgo.android.library")
+    id("outgo.kmp.library")
     alias(libs.plugins.skie)
 }
 
 kotlin {
-
-    androidTarget()
-
-    iosArm64()
-    iosSimulatorArm64()
 
     cocoapods {
         version = "1.0.0"

@@ -11,6 +11,8 @@ import org.jetbrains.exposed.v1.core.greater
 import org.jetbrains.exposed.v1.core.less
 import org.jetbrains.exposed.v1.jdbc.selectAll
 import org.jetbrains.exposed.v1.jdbc.upsert
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
 
 class OperationRepositoryImpl : OperationRepository {
 
@@ -35,6 +37,8 @@ class OperationRepositoryImpl : OperationRepository {
             row[createdAt] = dto.createdAt.toSqlOffsetDateTime()
             row[updatedAt] = dto.updatedAt.toSqlOffsetDateTime()
             row[deletedAt] = dto.deletedAt?.toSqlOffsetDateTime()
+
+            row[serverUpdatedAt] = OffsetDateTime.now(ZoneOffset.UTC)
         }
     }
 

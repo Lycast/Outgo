@@ -9,7 +9,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.slf4j.LoggerFactory
 import java.io.File
-import java.io.FileInputStream
 
 /**
  * Singleton object responsible for Firebase Admin SDK operations.
@@ -30,18 +29,17 @@ object FirebaseAdmin {
 
         try {
             val file = File(adminPath)
-            if (!file.exists()) {
-                error("Firebase Admin JSON file not found at: $adminPath")
-            }
+            require(file.exists()) { "Firebase Admin JSON file not found at: $adminPath" }
 
-            // 2. On utilise FileInputStream pour lire le FICHIER physique
-            val options = FirebaseOptions.builder()
-                .setCredentials(GoogleCredentials.fromStream(FileInputStream(file)))
-                .build()
+            file.inputStream().use { stream ->
+                val options = FirebaseOptions.builder()
+                    .setCredentials(GoogleCredentials.fromStream(stream))
+                    .build()
 
-            if (FirebaseApp.getApps().isEmpty()) {
-                FirebaseApp.initializeApp(options)
-                logger.info("Firebase Admin SDK initialized successfully from file.")
+                if (FirebaseApp.getApps().isEmpty()) {
+                    FirebaseApp.initializeApp(options)
+                    logger.info("Firebase Admin SDK initialized successfully.")
+                }
             }
         } catch (e: Exception) {
             logger.error("Failed to initialize Firebase Admin SDK", e)

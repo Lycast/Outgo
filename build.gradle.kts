@@ -21,3 +21,15 @@ plugins {
     alias(libs.plugins.sqldelight) apply false
     alias(libs.plugins.kotlin.serialization) apply false
 }
+
+/**
+ * Ensures unique artifact names for all modules to prevent naming collisions
+ * during the packaging phase (installDist/shadowJar).
+ */
+subprojects {
+    pluginManager.withPlugin("org.gradle.base") {
+        configure<BasePluginExtension> {
+            archivesName.set("outgo" + project.path.replace(":", "-"))
+        }
+    }
+}
