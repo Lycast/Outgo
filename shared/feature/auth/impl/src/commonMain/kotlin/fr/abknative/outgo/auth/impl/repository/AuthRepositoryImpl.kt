@@ -5,10 +5,11 @@ import dev.gitlive.firebase.auth.*
 import fr.abknative.outgo.auth.api.AuthError
 import fr.abknative.outgo.auth.api.model.UserSession
 import fr.abknative.outgo.auth.api.repository.AuthRepository
+import fr.abknative.outgo.core.api.AppDispatchers
 import fr.abknative.outgo.core.api.KeyValueStorage
 import fr.abknative.outgo.core.api.logs.*
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -19,7 +20,8 @@ import kotlinx.coroutines.launch
  * Handles login, session management, and ensures token freshness for network calls.
  */
 internal class AuthRepositoryImpl(
-    private val storage: KeyValueStorage
+    private val storage: KeyValueStorage,
+    private val dispatchers: AppDispatchers
 ) : AuthRepository {
 
     companion object {
@@ -31,12 +33,12 @@ internal class AuthRepositoryImpl(
 
     private val firebaseAuth = Firebase.auth
     private val sessionState = MutableStateFlow(loadSessionFromStorage())
+    private val repoScope = CoroutineScope(SupervisorJob() + dispatchers.io)
 
     override fun observeSession(): StateFlow<UserSession?> = sessionState.asStateFlow()
 
     init {
-        @OptIn(DelicateCoroutinesApi::class)
-        GlobalScope.launch {
+        repoScope.launch {
             firebaseAuth.authStateChanged.collect { firebaseUser ->
                 if (firebaseUser == null) { clearLocalSession() }
             }

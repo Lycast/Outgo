@@ -13,7 +13,7 @@ import io.ktor.http.*
 internal class DeleteAccountUseCaseImpl(
     private val authRepository: AuthRepository,
     private val httpClient: HttpClient,
-    private val localDataPurger: DataPurger
+    private val localDataPurgers: List<DataPurger>,
 ) : DeleteAccountUseCase {
 
     override suspend fun invoke(
@@ -44,7 +44,7 @@ internal class DeleteAccountUseCaseImpl(
 
         if (wipeLocal) {
             try {
-                localDataPurger.purgeData()
+                localDataPurgers.forEach { it.purgeData() }
             } catch (e: Exception) {
                 return Result.Error(CommonError.UnknownError(e))
             }

@@ -15,5 +15,5 @@ fun syncModule() = module {
     singleOf(::SyncNetworkApiImpl) { bind<SyncNetworkApi>() }
     singleOf(::SyncManagerImpl) { bind<SyncManager>() }
 
-    single<DataPurger> { SyncDataPurger(get()) }
+    singleOf(::SyncDataPurger) { bind<DataPurger>() }
 }

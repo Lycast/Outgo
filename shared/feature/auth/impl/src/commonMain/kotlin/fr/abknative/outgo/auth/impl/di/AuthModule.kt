@@ -23,7 +23,13 @@ val authModule = module {
     factoryOf(::ObserveUserSessionUseCaseImpl) { bind<ObserveUserSessionUseCase>() }
     factoryOf(::RegisterUseCaseImpl) { bind<RegisterUseCase>() }
 
-    factoryOf(::DeleteAccountUseCaseImpl) { bind<DeleteAccountUseCase>() }
+    factory<DeleteAccountUseCase> {
+        DeleteAccountUseCaseImpl(
+            authRepository = get(),
+            httpClient = get(),
+            localDataPurgers = getAll<DataPurger>()
+        )
+    }
 
-    single<DataPurger> { AuthDataPurger(get()) }
+    singleOf(::AuthDataPurger) { bind <DataPurger>() }
 }
