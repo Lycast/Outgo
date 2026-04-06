@@ -30,9 +30,8 @@ fun Route.syncRoutes() {
                 val email = call.userEmail()
                 val request = call.receive<SyncPushRequest>()
 
-                logger.info("PUSH: Received ${request.wallets.size} wallets for $email ($userId)")
+                logger.info("PUSH: Received ${request.wallets.size} wallets for user : $userId")
 
-                // On passe bien les 3 arguments : userId, email, et la request
                 processSyncPush(userId = userId, email = email, request = request)
 
                 call.respond(HttpStatusCode.OK, "Sync Successful")

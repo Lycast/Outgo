@@ -1,6 +1,7 @@
 package fr.abknative.outgo.server.api
 
 import fr.abknative.outgo.server.api.plugins.*
+import fr.abknative.outgo.server.api.routes.adminRoutes
 import fr.abknative.outgo.server.api.routes.syncRoutes
 import fr.abknative.outgo.server.api.routes.userRoutes
 import fr.abknative.outgo.server.data.DatabaseFactory
@@ -29,10 +30,11 @@ fun Application.module() {
     configureStatusPages()
     configureLogging()
     configureValidation()
-    configureGarbageCollector()
+    configureRateLimit()
 
     routing {
         syncRoutes()
         userRoutes()
+        adminRoutes()
     }
 }

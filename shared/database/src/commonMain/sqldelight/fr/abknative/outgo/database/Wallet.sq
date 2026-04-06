@@ -62,6 +62,11 @@ UPDATE WalletEntity
 SET syncStatus = ?
 WHERE id = ? AND userId = ?;
 
+resetAllToPendingCreate:
+UPDATE WalletEntity
+SET syncStatus = 'PENDING_CREATE', updatedAt = :now
+WHERE userId = :userId;
+
 -- Migrates offline local data to a real authenticated account
 updateUserId:
 UPDATE WalletEntity

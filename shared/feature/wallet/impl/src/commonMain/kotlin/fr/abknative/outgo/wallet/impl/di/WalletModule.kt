@@ -1,11 +1,13 @@
 package fr.abknative.outgo.wallet.impl.di
 
 import fr.abknative.outgo.core.api.DataPurger
+import fr.abknative.outgo.core.api.LocalDataDowngrader
 import fr.abknative.outgo.core.api.LocalDataMigrator
 import fr.abknative.outgo.wallet.api.repository.OperationRepository
 import fr.abknative.outgo.wallet.api.repository.WalletRepository
 import fr.abknative.outgo.wallet.api.usecase.*
-import fr.abknative.outgo.wallet.impl.WalletDataPurgerPurger
+import fr.abknative.outgo.wallet.impl.WalletDataDowngrader
+import fr.abknative.outgo.wallet.impl.WalletDataPurger
 import fr.abknative.outgo.wallet.impl.migration.LocalDataMigratorImpl
 import fr.abknative.outgo.wallet.impl.repository.OperationRepositoryImpl
 import fr.abknative.outgo.wallet.impl.repository.WalletRepositoryImpl
@@ -40,6 +42,7 @@ val walletModule = module {
     // --- Dashboard Engine Rooter ---
     factoryOf(::CalculateDashboardDataUseCaseImpl) { bind<CalculateDashboardDataUseCase>() }
 
-    singleOf(::WalletDataPurgerPurger) { bind<DataPurger>() }
+    singleOf(::WalletDataPurger) { bind<DataPurger>() }
+    singleOf(::WalletDataDowngrader) { bind<LocalDataDowngrader>() }
     singleOf(::LocalDataMigratorImpl) { bind<LocalDataMigrator>() }
 }

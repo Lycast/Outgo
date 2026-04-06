@@ -4,7 +4,7 @@ import fr.abknative.outgo.core.api.DataPurger
 import fr.abknative.outgo.wallet.api.repository.OperationRepository
 import fr.abknative.outgo.wallet.api.repository.WalletRepository
 
-internal class WalletDataPurgerPurger(
+internal class WalletDataPurger(
     private val walletRepository: WalletRepository,
     private val operationRepository: OperationRepository
 ) : DataPurger {

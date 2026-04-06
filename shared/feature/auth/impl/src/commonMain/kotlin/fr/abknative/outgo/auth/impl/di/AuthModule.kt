@@ -8,6 +8,7 @@ import fr.abknative.outgo.auth.impl.provider.SessionProviderImpl
 import fr.abknative.outgo.auth.impl.repository.AuthRepositoryImpl
 import fr.abknative.outgo.auth.impl.usecase.*
 import fr.abknative.outgo.core.api.DataPurger
+import fr.abknative.outgo.core.api.LocalDataDowngrader
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
@@ -27,7 +28,8 @@ val authModule = module {
         DeleteAccountUseCaseImpl(
             authRepository = get(),
             httpClient = get(),
-            localDataPurgers = getAll<DataPurger>()
+            localDataPurgers = getAll<DataPurger>(),
+            downgraders = getAll<LocalDataDowngrader>()
         )
     }
 

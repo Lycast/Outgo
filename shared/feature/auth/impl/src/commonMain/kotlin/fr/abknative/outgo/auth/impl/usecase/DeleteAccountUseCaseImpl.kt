@@ -3,6 +3,7 @@ package fr.abknative.outgo.auth.impl.usecase
 import fr.abknative.outgo.auth.api.repository.AuthRepository
 import fr.abknative.outgo.auth.api.usecase.DeleteAccountUseCase
 import fr.abknative.outgo.core.api.DataPurger
+import fr.abknative.outgo.core.api.LocalDataDowngrader
 import fr.abknative.outgo.core.api.logs.AppException
 import fr.abknative.outgo.core.api.logs.CommonError
 import fr.abknative.outgo.core.api.logs.Result
@@ -14,6 +15,7 @@ internal class DeleteAccountUseCaseImpl(
     private val authRepository: AuthRepository,
     private val httpClient: HttpClient,
     private val localDataPurgers: List<DataPurger>,
+    private val downgraders: List<LocalDataDowngrader>
 ) : DeleteAccountUseCase {
 
     override suspend fun invoke(
@@ -30,6 +32,7 @@ internal class DeleteAccountUseCaseImpl(
                 if (!response.status.isSuccess()) {
                     return Result.Error(CommonError.UnknownError(Exception("Failed to delete server data: ${response.status}")))
                 }
+                downgraders.forEach { it.downgradeAllToPendingCreate() }
             } catch (e: Exception) {
                 return Result.Error(CommonError.UnknownError(e))
             }
