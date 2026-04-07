@@ -78,188 +78,191 @@ fun SettingsScreen(
         )
     }
 
-    Scaffold(
-        modifier = modifier.fillMaxSize(),
-        containerColor = Color.Transparent,
-        topBar = {
-            if (!isLandscape) {
-                headerContent(false)
-            }
-        }
-    ) { paddingValues ->
+    AppBackground {
 
-        Row(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(if (isLandscape) PaddingValues(0.dp) else paddingValues)
-        ) {
-            if (isLandscape) {
-                headerContent(true)
-                VerticalDivider(
-                    thickness = 1.dp,
-                    color = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.1f)
-                )
+        Scaffold(
+            modifier = modifier.fillMaxSize(),
+            containerColor = Color.Transparent,
+            topBar = {
+                if (!isLandscape) {
+                    headerContent(false)
+                }
             }
+        ) { paddingValues ->
 
-            Column(
+            Row(
                 modifier = Modifier
                     .fillMaxSize()
-                    .verticalScroll(scrollState)
-                    .padding(AppTheme.spacing.medium),
-                verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.large)
+                    .padding(if (isLandscape) PaddingValues(0.dp) else paddingValues)
             ) {
-
-                // --- SECTION 1 : Apparence ---
-                SettingsSection(title = SettingsLabels.SECTION_APPEARANCE) {
-                    SettingsRowToggle(
-                        icon = R.drawable.moon_duotone,
-                        title = SettingsLabels.DARK_MODE_TITLE,
-                        subtitle = SettingsLabels.DARK_MODE_SUBTITLE,
-                        isChecked = isDarkMode,
-                        onCheckedChange = onToggleDarkMode
+                if (isLandscape) {
+                    headerContent(true)
+                    VerticalDivider(
+                        thickness = 1.dp,
+                        color = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.1f)
                     )
                 }
 
-                // --- SECTION 2 : Soutien & Communauté ---
-                SettingsSection(title = SettingsLabels.SECTION_SUPPORT) {
-                    SettingsRowClickable(
-                        icon = R.drawable.lightbulb_duotone,
-                        title = SettingsLabels.TIPS_TITLE,
-                        subtitle = SettingsLabels.TIPS_SUBTITLE,
-                        onClick = { uriHandler.openUri(SettingsLabels.URL_SITE) }
-                    )
-                    HorizontalDivider(color = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.1f))
-                    SettingsRowClickable(
-                        icon = R.drawable.envelope_duotone,
-                        title = SettingsLabels.CONTACT_TITLE,
-                        subtitle = SettingsLabels.CONTACT_SUBTITLE,
-                        onClick = { uriHandler.openUri(SettingsLabels.URL_CONTACT) }
-                    )
-                }
-
-                if (state.session == null) {
-                    SettingsSection(title = SettingsLabels.SECTION_DATA_AND_ACCOUNT) {
-                        SettingsRowClickable(
-                            icon = R.drawable.arrows_clockwise_duotone,
-                            title = SettingsLabels.SYNC_TITLE,
-                            subtitle = SettingsLabels.SYNC_SUBTITLE,
-                            onClick = { showSyncModal = true }
-                        )
-                        HorizontalDivider(color = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.1f))
-                        SettingsRowClickable(
-                            icon = R.drawable.trash_duotone,
-                            title = SettingsLabels.PURGE_TITLE,
-                            subtitle = SettingsLabels.PURGE_SUBTITLE,
-                            onClick = { showPurgeConfirm = true }
-                        )
-                    }
-                } else {
-                    // UTILISATEUR CONNECTÉ
-                    SettingsSection(title = SettingsLabels.SECTION_ACCOUNT) {
-                        SettingsRowClickable(
-                            icon = R.drawable.sign_out_duotone,
-                            title = SettingsLabels.LOGOUT_TITLE,
-                            subtitle = SettingsLabels.LOGOUT_SUBTITLE,
-                            onClick = { showLogoutConfirm = true }
-                        )
-                        HorizontalDivider(color = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.1f))
-                        SettingsRowClickable(
-                            icon = R.drawable.trash_duotone,
-                            title = SettingsLabels.DELETE_ACCOUNT_TITLE,
-                            subtitle = SettingsLabels.DELETE_ACCOUNT_SUBTITLE,
-                            onClick = { showDeleteAccountConfirm = true }
-                        )
-                    }
-                }
-
-                // Version de l'app (Footer)
-                Text(
-                    text = SettingsLabels.APP_VERSION_PREFIX,
-                    style = AppTheme.typo.caption,
-                    color = AppTheme.colors.textPrimary.toColor(),
+                Column(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = AppTheme.spacing.large),
-                    textAlign = TextAlign.Center
-                )
+                        .fillMaxSize()
+                        .verticalScroll(scrollState)
+                        .padding(AppTheme.spacing.medium),
+                    verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.large)
+                ) {
+
+                    // --- SECTION 1 : Apparence ---
+                    SettingsSection(title = SettingsLabels.SECTION_APPEARANCE) {
+                        SettingsRowToggle(
+                            icon = R.drawable.moon_duotone,
+                            title = SettingsLabels.DARK_MODE_TITLE,
+                            subtitle = SettingsLabels.DARK_MODE_SUBTITLE,
+                            isChecked = isDarkMode,
+                            onCheckedChange = onToggleDarkMode
+                        )
+                    }
+
+                    // --- SECTION 2 : Soutien & Communauté ---
+                    SettingsSection(title = SettingsLabels.SECTION_SUPPORT) {
+                        SettingsRowClickable(
+                            icon = R.drawable.lightbulb_duotone,
+                            title = SettingsLabels.TIPS_TITLE,
+                            subtitle = SettingsLabels.TIPS_SUBTITLE,
+                            onClick = { uriHandler.openUri(SettingsLabels.URL_SITE) }
+                        )
+                        HorizontalDivider(color = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.1f))
+                        SettingsRowClickable(
+                            icon = R.drawable.envelope_duotone,
+                            title = SettingsLabels.CONTACT_TITLE,
+                            subtitle = SettingsLabels.CONTACT_SUBTITLE,
+                            onClick = { uriHandler.openUri(SettingsLabels.URL_CONTACT) }
+                        )
+                    }
+
+                    if (state.session == null) {
+                        SettingsSection(title = SettingsLabels.SECTION_DATA_AND_ACCOUNT) {
+                            SettingsRowClickable(
+                                icon = R.drawable.arrows_clockwise_duotone,
+                                title = SettingsLabels.SYNC_TITLE,
+                                subtitle = SettingsLabels.SYNC_SUBTITLE,
+                                onClick = { showSyncModal = true }
+                            )
+                            HorizontalDivider(color = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.1f))
+                            SettingsRowClickable(
+                                icon = R.drawable.trash_duotone,
+                                title = SettingsLabels.PURGE_TITLE,
+                                subtitle = SettingsLabels.PURGE_SUBTITLE,
+                                onClick = { showPurgeConfirm = true }
+                            )
+                        }
+                    } else {
+                        // UTILISATEUR CONNECTÉ
+                        SettingsSection(title = SettingsLabels.SECTION_ACCOUNT) {
+                            SettingsRowClickable(
+                                icon = R.drawable.sign_out_duotone,
+                                title = SettingsLabels.LOGOUT_TITLE,
+                                subtitle = SettingsLabels.LOGOUT_SUBTITLE,
+                                onClick = { showLogoutConfirm = true }
+                            )
+                            HorizontalDivider(color = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.1f))
+                            SettingsRowClickable(
+                                icon = R.drawable.trash_duotone,
+                                title = SettingsLabels.DELETE_ACCOUNT_TITLE,
+                                subtitle = SettingsLabels.DELETE_ACCOUNT_SUBTITLE,
+                                onClick = { showDeleteAccountConfirm = true }
+                            )
+                        }
+                    }
+
+                    // Version de l'app (Footer)
+                    Text(
+                        text = SettingsLabels.APP_VERSION_PREFIX,
+                        style = AppTheme.typo.caption,
+                        color = AppTheme.colors.textPrimary.toColor(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = AppTheme.spacing.large),
+                        textAlign = TextAlign.Center
+                    )
+                }
             }
         }
-    }
 
-    // --- MODAL DE CONFIRMATION ---
-    if (showLogoutConfirm) {
-        ConfirmationDialog(
-            title = DialogLabels.LOGOUT_TITLE,
-            description = DialogLabels.LOGOUT_DESC,
-            onDismiss = { showLogoutConfirm = false },
+        // --- MODAL DE CONFIRMATION ---
+        if (showLogoutConfirm) {
+            ConfirmationDialog(
+                title = DialogLabels.LOGOUT_TITLE,
+                description = DialogLabels.LOGOUT_DESC,
+                onDismiss = { showLogoutConfirm = false },
 
-            confirmButton = {
-                PrimaryButton(
-                    label = DialogLabels.LOGOUT_CONFIRM,
-                    labelColor = AppTheme.colors.primary.toColor(),
-                    containerColor = AppTheme.colors.primary.toColor().copy(alpha = 0.1f),
-                    onClick = {
-                        presenter.onIntent(SettingsIntent.Logout)
-                        showLogoutConfirm = false
-                    }
-                )
-            },
+                confirmButton = {
+                    PrimaryButton(
+                        label = DialogLabels.LOGOUT_CONFIRM,
+                        labelColor = AppTheme.colors.primary.toColor(),
+                        containerColor = AppTheme.colors.primary.toColor().copy(alpha = 0.1f),
+                        onClick = {
+                            presenter.onIntent(SettingsIntent.Logout)
+                            showLogoutConfirm = false
+                        }
+                    )
+                },
 
-            dismissButton = {
-                SecondaryButton(
-                    label = CommonLabels.ACTION_CANCEL,
-                    labelColor = AppTheme.colors.textSecondary.toColor(),
-                    onClick = { showLogoutConfirm = false },
-                    modifier = Modifier.padding(end = AppTheme.spacing.medium)
-                )
-            }
-        )
-    }
+                dismissButton = {
+                    SecondaryButton(
+                        label = CommonLabels.ACTION_CANCEL,
+                        labelColor = AppTheme.colors.textSecondary.toColor(),
+                        onClick = { showLogoutConfirm = false },
+                        modifier = Modifier.padding(end = AppTheme.spacing.medium)
+                    )
+                }
+            )
+        }
 
-    if (showDeleteAccountConfirm) {
-        DeleteAccountDialog(
-            onConfirm = { wipeLocal, wipeServer, revokeAuth ->
-                presenter.onIntent(SettingsIntent.DeleteAccount(wipeLocal, wipeServer, revokeAuth))
-                showDeleteAccountConfirm = false
-            },
-            onDismiss = { showDeleteAccountConfirm = false }
-        )
-    }
+        if (showDeleteAccountConfirm) {
+            DeleteAccountDialog(
+                onConfirm = { wipeLocal, wipeServer, revokeAuth ->
+                    presenter.onIntent(SettingsIntent.DeleteAccount(wipeLocal, wipeServer, revokeAuth))
+                    showDeleteAccountConfirm = false
+                },
+                onDismiss = { showDeleteAccountConfirm = false }
+            )
+        }
 
-    if (showPurgeConfirm) {
-        ConfirmationDialog(
-            title = DialogLabels.PURGE_TITLE,
-            description = DialogLabels.PURGE_DESC,
-            onDismiss = { showPurgeConfirm = false },
+        if (showPurgeConfirm) {
+            ConfirmationDialog(
+                title = DialogLabels.PURGE_TITLE,
+                description = DialogLabels.PURGE_DESC,
+                onDismiss = { showPurgeConfirm = false },
 
-            confirmButton = {
-                HoldToConfirmButton(
-                    label = DialogLabels.PURGE_CONFIRM,
-                    onConfirm = {
-                        presenter.onIntent(SettingsIntent.PurgeLocalData)
-                        showPurgeConfirm = false
-                    }
-                )
-            },
+                confirmButton = {
+                    HoldToConfirmButton(
+                        label = DialogLabels.PURGE_CONFIRM,
+                        onConfirm = {
+                            presenter.onIntent(SettingsIntent.PurgeLocalData)
+                            showPurgeConfirm = false
+                        }
+                    )
+                },
 
-            dismissButton = {
-                SecondaryButton(
-                    label = CommonLabels.ACTION_CANCEL,
-                    labelColor = AppTheme.colors.textSecondary.toColor(),
-                    onClick = { showPurgeConfirm = false },
-                    modifier = Modifier.padding(end = AppTheme.spacing.medium)
-                )
-            }
-        )
-    }
+                dismissButton = {
+                    SecondaryButton(
+                        label = CommonLabels.ACTION_CANCEL,
+                        labelColor = AppTheme.colors.textSecondary.toColor(),
+                        onClick = { showPurgeConfirm = false },
+                        modifier = Modifier.padding(end = AppTheme.spacing.medium)
+                    )
+                }
+            )
+        }
 
-    if (showSyncModal) {
-        SyncPromotionModal(
-            onDismiss = { showSyncModal = false },
-            onNavigateToLogin = {
-                showSyncModal = false
-                onNavigateToLogin()
-            }
-        )
+        if (showSyncModal) {
+            SyncPromotionModal(
+                onDismiss = { showSyncModal = false },
+                onNavigateToLogin = {
+                    showSyncModal = false
+                    onNavigateToLogin()
+                }
+            )
+        }
     }
 }

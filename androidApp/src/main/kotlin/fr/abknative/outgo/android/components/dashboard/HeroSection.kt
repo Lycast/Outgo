@@ -4,7 +4,9 @@ import android.content.res.Configuration
 import androidx.compose.animation.*
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -20,7 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import fr.abknative.outgo.android.R
-import fr.abknative.outgo.android.components.common.CircleIcon
+import fr.abknative.outgo.android.components.common.GlassCard
 import fr.abknative.outgo.android.components.common.InfoTooltip
 import fr.abknative.outgo.android.ui.AccessibilityLabels
 import fr.abknative.outgo.android.ui.DashboardLabels
@@ -58,115 +60,114 @@ fun HeroSection(
     val totalLength = monthlyIncomeInCents.uiAmount.length + disposableIncomeInCents.uiAmount.length
     val isTooLong = totalLength > 20
 
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = AppTheme.spacing.medium),
-        colors = CardDefaults.cardColors(containerColor = AppTheme.colors.surface100.toColor()),
-        shape = MaterialTheme.shapes.medium,
+
+    Box(
+        modifier = Modifier.fillMaxWidth().padding(horizontal = AppTheme.spacing.medium)
     ) {
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            MonthBudgetSelector(
-                formattedMonthDate = formattedMonthDate,
-                canGoToPreviousMonth = canGoToPreviousMonth,
-                onPreviousMonthClick = onPreviousMonthClick,
-                onNextMonthClick = onNextMonthClick
-            )
-
-            HorizontalDivider(
-                modifier = Modifier.padding(horizontal = AppTheme.spacing.large),
-                color = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.1f)
-            )
-
-            AnimatedVisibility(
-                visible = isExpanded,
-                enter = expandVertically() + fadeIn(),
-                exit = shrinkVertically() + fadeOut()
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = AppTheme.spacing.large),
-                    verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.large),
-                ) {
-                    Spacer(modifier = Modifier.height(AppTheme.spacing.small))
-
-                    val content = @Composable {
-                        BudgetItem(
-                            amount = monthlyIncomeInCents.uiAmount,
-                            activeWalletName = activeWalletName,
-                            onClick = onEditBudgetClick
-                        )
-                        Spacer(modifier = Modifier.width(AppTheme.spacing.large))
-                        LiveItem(
-                            isNegativeLive = isNegativeLive,
-                            amount = disposableIncomeInCents.uiAmount,
-                            color = liveColor,
-                            fontWeight = if (isNegativeLive) FontWeight.Medium else FontWeight.Bold
-                        )
-                    }
-
-                    if (isTooLong) {
-                        Column(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.medium)
-                        ) {
-                            content()
-                        }
-                    } else {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceEvenly,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            content()
-                        }
-                    }
-
-                    HorizontalDivider(color = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.1f))
-
-                    PairedBudgetBar(
-                        topLabel = DashboardLabels.HERO_TOTAL_CHARGES_LABEL,
-                        topAmount = totalOutgoingsInCents.uiAmount,
-                        topProgress = totalOutgoingsInCents / maxValue,
-                        topBarColor = AppTheme.colors.primary.toColor(),
-
-                        bottomLabel = DashboardLabels.HERO_REMAINING_TO_PAY_LABEL,
-                        bottomAmount = remainingToPayInCents.uiAmount,
-                        bottomProgress = remainingToPayInCents / maxValue,
-                        bottomBarColor = AppTheme.colors.tertiary.toColor()
-                    )
-                    Spacer(modifier = Modifier.height(AppTheme.spacing.small))
-                }
-            }
-
-            val stateDesc = if (isExpanded) AccessibilityLabels.COLLAPSE_DESC else AccessibilityLabels.EXPAND_DESC
-            val clickLabel = if (isExpanded) AccessibilityLabels.COLLAPSE_HERO else AccessibilityLabels.EXPAND_HERO
-
-            // Bouton de déploiement
-            Box(
+        GlassCard {
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .semantics {
-                        stateDescription = stateDesc
-                    }
-                    .clickable(
-                        onClickLabel = clickLabel,
-                        role = Role.Button
-                    ) { onToggleExpand() }
-                    .padding(vertical = AppTheme.spacing.small),
-                contentAlignment = Alignment.Center
             ) {
-                Icon(
-                    painter = painterResource(id = if (isExpanded) R.drawable.caret_up else R.drawable.caret_down),
-                    contentDescription = null,
-                    tint = AppTheme.colors.textSecondary.toColor(),
-                    modifier = Modifier.size(24.dp)
+                MonthBudgetSelector(
+                    formattedMonthDate = formattedMonthDate,
+                    canGoToPreviousMonth = canGoToPreviousMonth,
+                    onPreviousMonthClick = onPreviousMonthClick,
+                    onNextMonthClick = onNextMonthClick
                 )
+
+                HorizontalDivider(
+                    modifier = Modifier.padding(horizontal = AppTheme.spacing.large),
+                    color = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.1f)
+                )
+
+                AnimatedVisibility(
+                    visible = isExpanded,
+                    enter = expandVertically() + fadeIn(),
+                    exit = shrinkVertically() + fadeOut()
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = AppTheme.spacing.large),
+                        verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.large),
+                    ) {
+                        Spacer(modifier = Modifier.height(AppTheme.spacing.small))
+
+                        val content = @Composable {
+                            BudgetItem(
+                                amount = monthlyIncomeInCents.uiAmount,
+                                activeWalletName = activeWalletName,
+                                onClick = onEditBudgetClick
+                            )
+                            Spacer(modifier = Modifier.width(AppTheme.spacing.large))
+                            LiveItem(
+                                isNegativeLive = isNegativeLive,
+                                amount = disposableIncomeInCents.uiAmount,
+                                color = liveColor,
+                                fontWeight = if (isNegativeLive) FontWeight.Medium else FontWeight.Bold
+                            )
+                        }
+
+                        if (isTooLong) {
+                            Column(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.medium)
+                            ) {
+                                content()
+                            }
+                        } else {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceEvenly,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                content()
+                            }
+                        }
+
+                        HorizontalDivider(color = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.1f))
+
+                        PairedBudgetBar(
+                            topLabel = DashboardLabels.HERO_TOTAL_CHARGES_LABEL,
+                            topAmount = totalOutgoingsInCents.uiAmount,
+                            topProgress = totalOutgoingsInCents / maxValue,
+                            topBarColor = AppTheme.colors.primary.toColor(),
+
+                            bottomLabel = DashboardLabels.HERO_REMAINING_TO_PAY_LABEL,
+                            bottomAmount = remainingToPayInCents.uiAmount,
+                            bottomProgress = remainingToPayInCents / maxValue,
+                            bottomBarColor = AppTheme.colors.tertiary.toColor()
+                        )
+                        Spacer(modifier = Modifier.height(AppTheme.spacing.small))
+                    }
+                }
+
+                val stateDesc = if (isExpanded) AccessibilityLabels.COLLAPSE_DESC else AccessibilityLabels.EXPAND_DESC
+                val clickLabel = if (isExpanded) AccessibilityLabels.COLLAPSE_HERO else AccessibilityLabels.EXPAND_HERO
+
+                // Bouton de déploiement
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .semantics {
+                            stateDescription = stateDesc
+                        }
+                        .clickable(
+                            onClickLabel = clickLabel,
+                            role = Role.Button
+                        ) { onToggleExpand() }
+                        .padding(vertical = AppTheme.spacing.small),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        painter = painterResource(id = if (isExpanded) R.drawable.caret_up else R.drawable.caret_down),
+                        contentDescription = null,
+                        tint = AppTheme.colors.textSecondary.toColor(),
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
             }
         }
     }
@@ -183,10 +184,11 @@ private fun BudgetItem(
         horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.medium),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        CircleIcon(
-            icon = R.drawable.bank_duotone,
-            tintColor = AppTheme.colors.textOnBrand.toColor(),
-            containerColor = AppTheme.colors.primary.toColor()
+        Icon(
+            painter = painterResource(R.drawable.bank_duotone),
+            contentDescription = null,
+            tint = AppTheme.colors.secondary.toColor(),
+            modifier = Modifier.padding(AppTheme.spacing.small).size(36.dp)
         )
         Column(
             modifier = Modifier
@@ -199,14 +201,14 @@ private fun BudgetItem(
         ) {
             Text(
                 text = activeWalletName,
-                style = AppTheme.typo.caption,
+                style = AppTheme.typo.label,
                 color = AppTheme.colors.textSecondary.toColor(),
                 fontWeight = FontWeight.Medium
             )
 
             Text(
                 text = amount,
-                style = AppTheme.typo.title,
+                style = AppTheme.typo.title.copy(fontSize = AppTheme.typo.title.fontSize * 0.8),
                 color = AppTheme.colors.textPrimary.toColor()
             )
         }
@@ -228,24 +230,31 @@ private fun LiveItem(
             horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.medium),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            CircleIcon(
-                icon = R.drawable.piggy_bank_duotone,
-                tintColor = AppTheme.colors.textOnBrand.toColor(),
-                containerColor = color
+            Icon(
+                painter = painterResource(R.drawable.piggy_bank_duotone),
+                contentDescription = null,
+                tint = AppTheme.colors.tertiary.toColor(),
+                modifier = Modifier.padding(AppTheme.spacing.small).size(36.dp)
             )
+            /*(
+                icon = R.drawable.piggy_bank_duotone,
+                size = 28,
+                tintColor = color,
+                containerColor = AppTheme.colors.textPrimary.toColor().copy(alpha = 0.04f)
+            )*/
             Column(
                 horizontalAlignment = Alignment.Start
             ) {
                 Text(
                     text = if (isNegativeLive) DashboardLabels.HERO_MISSING_INCOME_LABEL else DashboardLabels.HERO_DISPOSABLE_INCOME_LABEL,
-                    style = AppTheme.typo.caption,
+                    style = AppTheme.typo.label,
                     color = AppTheme.colors.textSecondary.toColor(),
                     fontWeight = FontWeight.Medium
                 )
 
                 Text(
                     text = amount,
-                    style = AppTheme.typo.title,
+                    style = AppTheme.typo.title.copy(fontSize = AppTheme.typo.title.fontSize * 0.8),
                     color = color,
                     fontWeight = fontWeight
                 )

@@ -1,11 +1,12 @@
 package fr.abknative.outgo.android.components.settings
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.selection.toggleable
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -14,9 +15,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import fr.abknative.outgo.android.R
 import fr.abknative.outgo.android.components.common.CircleIcon
+import fr.abknative.outgo.android.components.common.GlassCard
 import fr.abknative.outgo.android.ui.theme.AppTheme
 import fr.abknative.outgo.android.ui.theme.toColor
 
@@ -25,6 +26,7 @@ fun SettingsSection(
     title: String,
     content: @Composable ColumnScope.() -> Unit
 ) {
+
     Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.small)) {
         Text(
             text = title.uppercase(),
@@ -33,15 +35,15 @@ fun SettingsSection(
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(start = AppTheme.spacing.medium)
         )
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(
-                containerColor = AppTheme.colors.surface50.toColor()
-            ),
-            border = BorderStroke(1.dp, AppTheme.colors.textSecondary.toColor().copy(alpha = 0.1f)),
-            shape = RoundedCornerShape(AppTheme.spacing.medium),
-            content = content
-        )
+        GlassCard {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(AppTheme.spacing.medium)
+            ) {
+                content()
+            }
+        }
     }
 }
 
@@ -114,7 +116,7 @@ fun SettingsRowContent(
     subtitle: String
 ) {
     Row(verticalAlignment = Alignment.CenterVertically) {
-        CircleIcon(icon, AppTheme.colors.primary.toColor(), AppTheme.colors.surface100.toColor())
+        CircleIcon(icon, 24, AppTheme.colors.primary.toColor(), AppTheme.colors.surface100.toColor())
         Spacer(modifier = Modifier.width(AppTheme.spacing.medium))
         Column {
             Text(

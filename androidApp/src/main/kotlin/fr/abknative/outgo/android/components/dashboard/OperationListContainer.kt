@@ -1,15 +1,12 @@
 package fr.abknative.outgo.android.components.dashboard
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import fr.abknative.outgo.android.components.common.GlassCard
 import fr.abknative.outgo.android.ui.components.LoaderItem
 import fr.abknative.outgo.android.ui.states.OperationFilter
 import fr.abknative.outgo.android.ui.theme.AppTheme
@@ -26,7 +23,7 @@ fun OperationListContainer(
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth().padding(horizontal = AppTheme.spacing.medium),
         contentPadding = PaddingValues(bottom = 80.dp)
     ) {
         when {
@@ -35,13 +32,10 @@ fun OperationListContainer(
             else -> {
                 items(items = filteredList, key = { "${it.operation.id}_${it.projectedDate}" }) { projectedOp ->
 
-                    Card(
-                        modifier = modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = AppTheme.spacing.medium),
-                        colors = CardDefaults.cardColors(containerColor = AppTheme.colors.surface100.toColor()),
-                        shape = RoundedCornerShape(12.dp),
-                        border = BorderStroke(1.dp, AppTheme.colors.textSecondary.toColor().copy(alpha = 0.1f))
+                    GlassCard(
+                        modifier = Modifier.fillMaxWidth(),
+                        backgroundColorA = AppTheme.colors.surface100.toColor(),
+
                     ) {
 
                         val displayOperation = projectedOp.operation.copy(

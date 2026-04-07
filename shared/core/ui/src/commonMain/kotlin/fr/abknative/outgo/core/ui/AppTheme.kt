@@ -50,9 +50,9 @@ object DesignColor {
         secondary = ColorPalette.SECONDARY,
         tertiary = ColorPalette.TERTIARY,
         background = ColorPalette.BLACK,       // Fond noir pur (OLED)
-        surface50 = ColorPalette.PRIMARY_950,
+        surface50 = ColorPalette.PRIMARY_850,
         surface100 = ColorPalette.PRIMARY_900,
-        surface200 = ColorPalette.PRIMARY_850,
+        surface200 = ColorPalette.PRIMARY_950,
         textPrimary = ColorPalette.TEXT_MAIN_DARK,
         textSecondary = ColorPalette.TEXT_MUTED_DARK,
         textOnBrand = ColorPalette.WHITE,

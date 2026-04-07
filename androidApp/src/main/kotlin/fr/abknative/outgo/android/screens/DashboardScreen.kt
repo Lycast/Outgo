@@ -119,213 +119,223 @@ fun DashboardScreen(
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
-    // --- COMPOSANT PRINCIPAL ---
-    Scaffold(
-        modifier = modifier.fillMaxSize(),
-        containerColor = Color.Transparent,
-        snackbarHost = { SnackbarHost(snackbarHostState) },
-        topBar = {
-            if (!isLandscape) {
-                Header(
-                    syncState = state.syncState,
-                    isVertical = false,
-                    isSettingsScreen = false,
-                    onSyncIconClick = {
-                        when {
-                            state.syncState.isUnauthenticated -> showSyncModal = true
-                            state.syncState.isPending || state.syncState.isError || state.syncState.isUpToDate -> {
-                                presenter.onIntent(DashboardIntent.Refresh)
+    AppBackground {
+
+        // --- COMPOSANT PRINCIPAL ---
+        Scaffold(
+            modifier = modifier.fillMaxSize(),
+            containerColor = Color.Transparent,
+            snackbarHost = { SnackbarHost(snackbarHostState) },
+            topBar = {
+                if (!isLandscape) {
+                    Header(
+                        syncState = state.syncState,
+                        isVertical = false,
+                        isSettingsScreen = false,
+                        onSyncIconClick = {
+                            when {
+                                state.syncState.isUnauthenticated -> showSyncModal = true
+                                state.syncState.isPending || state.syncState.isError || state.syncState.isUpToDate -> {
+                                    presenter.onIntent(DashboardIntent.Refresh)
+                                }
                             }
-                        }
-                    },
-                    onSyncNavigationClick = { onNavigateToSettings() }
-                )
+                        },
+                        onSyncNavigationClick = { onNavigateToSettings() }
+                    )
+                }
+            },
+            floatingActionButton = {
+                if (state.activeWalletId != null) {
+                    AddActionTrigger(onClick = { selectedOperation = null; showFormSheet = true })
+                }
             }
-        },
-        floatingActionButton = {
-            if (state.activeWalletId != null) {
-                AddActionTrigger(onClick = { selectedOperation = null; showFormSheet = true })
-            }
-        }
-    ) { paddingValues ->
+        ) { paddingValues ->
 
-        Row(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(if (isLandscape) PaddingValues(0.dp) else paddingValues)
-        ) {
-            if (isLandscape) {
-                // Header Vertical à gauche
-                Header(
-                    syncState = state.syncState,
-                    isVertical = true,
-                    isSettingsScreen = false,
-                    onSyncIconClick = {
-                        when {
-                            state.syncState.isUnauthenticated -> showSyncModal = true
-                            state.syncState.isPending || state.syncState.isError || state.syncState.isUpToDate -> {
-                                presenter.onIntent(DashboardIntent.Refresh)
-                            }
-                        }
-                    },
-                    onSyncNavigationClick = { onNavigateToSettings() }
-                )
-
-                VerticalDivider(
-                    thickness = 1.dp,
-                    color = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.1f)
-                )
-            }
-
-            // Colonne principale avec les données
-            Column(
+            Row(
                 modifier = Modifier
-                    .weight(1f)
-                    .fillMaxHeight()
+                    .fillMaxSize()
+                    .padding(if (isLandscape) PaddingValues(0.dp) else paddingValues)
             ) {
-                // Ajustement du padding supérieur si on est en paysage
-                val topSpacerHeight = if (isLandscape) AppTheme.spacing.medium else 0.dp
                 if (isLandscape) {
-                    Spacer(modifier = Modifier.height(topSpacerHeight))
+                    // Header Vertical à gauche
+                    Header(
+                        syncState = state.syncState,
+                        isVertical = true,
+                        isSettingsScreen = false,
+                        onSyncIconClick = {
+                            when {
+                                state.syncState.isUnauthenticated -> showSyncModal = true
+                                state.syncState.isPending || state.syncState.isError || state.syncState.isUpToDate -> {
+                                    presenter.onIntent(DashboardIntent.Refresh)
+                                }
+                            }
+                        },
+                        onSyncNavigationClick = { onNavigateToSettings() }
+                    )
+
+                    VerticalDivider(
+                        thickness = 1.dp,
+                        color = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.1f)
+                    )
                 }
 
-                HeroSection(
-                    isExpanded = state.isHeroExpanded,
-                    canGoToPreviousMonth = canGoToPreviousMonth,
-                    onToggleExpand = { presenter.onIntent(DashboardIntent.ToggleHeroSection(!state.isHeroExpanded)) },
-                    formattedMonthDate = formattedSelectedMonth,
-                    activeWalletName = state.activeWalletName,
-                    monthlyIncomeInCents = state.monthlyIncomeInCents,
-                    totalOutgoingsInCents = state.totalOutgoingsInCents,
-                    disposableIncomeInCents = state.disposableIncomeInCents,
-                    remainingToPayInCents = state.remainingToPayInCents,
-                    onPreviousMonthClick = {
-                        if (canGoToPreviousMonth) {
+                // Colonne principale avec les données
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
+                ) {
+                    // Ajustement du padding supérieur si on est en paysage
+                    val topSpacerHeight = if (isLandscape) AppTheme.spacing.medium else 0.dp
+                    if (isLandscape) {
+                        Spacer(modifier = Modifier.height(topSpacerHeight))
+                    }
+
+                    HeroSection(
+                        isExpanded = state.isHeroExpanded,
+                        canGoToPreviousMonth = canGoToPreviousMonth,
+                        onToggleExpand = { presenter.onIntent(DashboardIntent.ToggleHeroSection(!state.isHeroExpanded)) },
+                        formattedMonthDate = formattedSelectedMonth,
+                        activeWalletName = state.activeWalletName,
+                        monthlyIncomeInCents = state.monthlyIncomeInCents,
+                        totalOutgoingsInCents = state.totalOutgoingsInCents,
+                        disposableIncomeInCents = state.disposableIncomeInCents,
+                        remainingToPayInCents = state.remainingToPayInCents,
+                        onPreviousMonthClick = {
+                            if (canGoToPreviousMonth) {
+                                val currentMonth = state.selectedMonth
+                                val currentYear = state.selectedYear
+                                val (newMonth, newYear) = if (currentMonth == 1) {
+                                    12 to (currentYear - 1)
+                                } else {
+                                    (currentMonth - 1) to currentYear
+                                }
+                                presenter.onIntent(DashboardIntent.SelectMonth(newMonth, newYear))
+                            }
+                        },
+                        onNextMonthClick = {
                             val currentMonth = state.selectedMonth
                             val currentYear = state.selectedYear
-                            val (newMonth, newYear) = if (currentMonth == 1) { 12 to (currentYear - 1)
-                            } else { (currentMonth - 1) to currentYear }
+                            val (newMonth, newYear) = if (currentMonth == 12) {
+                                1 to (currentYear + 1)
+                            } else {
+                                (currentMonth + 1) to currentYear
+                            }
                             presenter.onIntent(DashboardIntent.SelectMonth(newMonth, newYear))
-                        }
-                    },
-                    onNextMonthClick = {
-                        val currentMonth = state.selectedMonth
-                        val currentYear = state.selectedYear
-                        val (newMonth, newYear) = if (currentMonth == 12) { 1 to (currentYear + 1)
-                        } else { (currentMonth + 1) to currentYear }
-                        presenter.onIntent(DashboardIntent.SelectMonth(newMonth, newYear))
-                    },
-                    onEditBudgetClick = { showBudgetDialog = true }
-                )
+                        },
+                        onEditBudgetClick = { showBudgetDialog = true }
+                    )
 
-                Spacer(modifier = Modifier.height(AppTheme.spacing.extraLarge))
+                    Spacer(modifier = Modifier.height(AppTheme.spacing.extraLarge))
 
-                OperationFilterSelector(
-                    selectedFilter = currentFilter,
-                    onFilterSelected = { currentFilter = it }
-                )
+                    OperationFilterSelector(
+                        selectedFilter = currentFilter,
+                        onFilterSelected = { currentFilter = it }
+                    )
 
-                Spacer(modifier = Modifier.height(AppTheme.spacing.small))
+                    Spacer(modifier = Modifier.height(AppTheme.spacing.small))
 
-                // --- COMPOSANT LISTE ---
-                OperationListContainer(
-                    isLoading = state.isLoading,
-                    filteredList = filteredList,
-                    currentFilter = currentFilter,
-                    onDeleteRequest = { projectedOp -> operationToDelete = projectedOp },
-                    onEdit = { outgoing ->
-                        selectedOperation = outgoing
-                        showFormSheet = true
-                    },
-                    modifier = Modifier.weight(1f)
-                )
+                    // --- COMPOSANT LISTE ---
+                    OperationListContainer(
+                        isLoading = state.isLoading,
+                        filteredList = filteredList,
+                        currentFilter = currentFilter,
+                        onDeleteRequest = { projectedOp -> operationToDelete = projectedOp },
+                        onEdit = { outgoing ->
+                            selectedOperation = outgoing
+                            showFormSheet = true
+                        },
+                        modifier = Modifier.weight(1f)
+                    )
+                }
             }
         }
-    }
 
-    // --- MODALES ---
-    if (showBudgetDialog) {
-        WalletEditDialog(
-            initialWalletName = state.activeWalletName,
-            currentIncomeInCents = state.monthlyIncomeInCents,
-            onDismiss = { showBudgetDialog = false },
-            onConfirm = { newName, newIncomeInCents ->
-                val currentYear = timeProvider.yearValue(timeProvider.now())
-                val startOfSelectedMonth = timeProvider.startOfMonth(state.selectedMonth, currentYear)
+        // --- MODALES ---
+        if (showBudgetDialog) {
+            WalletEditDialog(
+                initialWalletName = state.activeWalletName,
+                currentIncomeInCents = state.monthlyIncomeInCents,
+                onDismiss = { showBudgetDialog = false },
+                onConfirm = { newName, newIncomeInCents ->
+                    val currentYear = timeProvider.yearValue(timeProvider.now())
+                    val startOfSelectedMonth = timeProvider.startOfMonth(state.selectedMonth, currentYear)
 
-                presenter.onIntent(
-                    DashboardIntent.SaveWalletAndIncome(
-                        walletId = state.activeWalletId ?: "",
-                        walletName = newName,
-                        incomeAmountInCents = newIncomeInCents,
-                        startDate = startOfSelectedMonth
+                    presenter.onIntent(
+                        DashboardIntent.SaveWalletAndIncome(
+                            walletId = state.activeWalletId ?: "",
+                            walletName = newName,
+                            incomeAmountInCents = newIncomeInCents,
+                            startDate = startOfSelectedMonth
+                        )
                     )
-                )
-                showBudgetDialog = false
-            }
-        )
-    }
+                    showBudgetDialog = false
+                }
+            )
+        }
 
-    if (showSyncModal) {
-        SyncPromotionModal(
-            onDismiss = { showSyncModal = false },
-            onNavigateToLogin = {
-                showSyncModal = false
-                onNavigateToLogin()
-            }
-        )
-    }
+        if (showSyncModal) {
+            SyncPromotionModal(
+                onDismiss = { showSyncModal = false },
+                onNavigateToLogin = {
+                    showSyncModal = false
+                    onNavigateToLogin()
+                }
+            )
+        }
 
-    if (showFormSheet) {
-        OperationFormSheet(
-            formState = formState,
-            sheetState = sheetState,
-            currentYear = currentYearNow,
-            isPremium = isPremium,
-            onEvent = { event -> formState.onEvent(event) },
-            onDismiss = { showFormSheet = false },
-            onSave = { intent -> presenter.onIntent(intent) },
-            onDeleteRequest = {
-                showFormSheet = false
-                selectedOperation?.let { operationToDelete = it }
-            },
-            onDuplicateRequest = {
-                val originalName = selectedOperation?.operation?.name ?: ""
-                selectedOperation = selectedOperation?.copy(
-                    operation = selectedOperation!!.operation.copy(
-                        id = "",
-                        name = "$originalName (Copie)"
+        if (showFormSheet) {
+            OperationFormSheet(
+                formState = formState,
+                sheetState = sheetState,
+                currentYear = currentYearNow,
+                isPremium = isPremium,
+                onEvent = { event -> formState.onEvent(event) },
+                onDismiss = { showFormSheet = false },
+                onSave = { intent -> presenter.onIntent(intent) },
+                onDeleteRequest = {
+                    showFormSheet = false
+                    selectedOperation?.let { operationToDelete = it }
+                },
+                onDuplicateRequest = {
+                    val originalName = selectedOperation?.operation?.name ?: ""
+                    selectedOperation = selectedOperation?.copy(
+                        operation = selectedOperation!!.operation.copy(
+                            id = "",
+                            name = "$originalName (Copie)"
+                        )
                     )
-                )
-            }
-        )
-    }
+                }
+            )
+        }
 
-    if (operationToDelete != null) {
-        ConfirmationDialog(
-            title = DialogLabels.DELETE_OPERATION_TITLE,
-            description = DialogLabels.DELETE_OPERATION_DESC,
-            onDismiss = { operationToDelete = null },
+        if (operationToDelete != null) {
+            ConfirmationDialog(
+                title = DialogLabels.DELETE_OPERATION_TITLE,
+                description = DialogLabels.DELETE_OPERATION_DESC,
+                onDismiss = { operationToDelete = null },
 
-            confirmButton = {
-                PrimaryButton(
-                    label = CommonLabels.ACTION_DELETE,
-                    labelColor = AppTheme.colors.error.toColor(),
-                    containerColor = AppTheme.colors.primary.toColor().copy(alpha = 0.1f),
-                    onClick = { operationToDelete?.let { presenter.onIntent(DashboardIntent.Delete(it.operation.id)) }
-                        operationToDelete = null
-                    }
-                )
-            },
+                confirmButton = {
+                    PrimaryButton(
+                        label = CommonLabels.ACTION_DELETE,
+                        labelColor = AppTheme.colors.error.toColor(),
+                        containerColor = AppTheme.colors.primary.toColor().copy(alpha = 0.1f),
+                        onClick = {
+                            operationToDelete?.let { presenter.onIntent(DashboardIntent.Delete(it.operation.id)) }
+                            operationToDelete = null
+                        }
+                    )
+                },
 
-            dismissButton = {
-                SecondaryButton(
-                    label = CommonLabels.ACTION_CANCEL,
-                    labelColor = AppTheme.colors.textSecondary.toColor(),
-                    onClick = { operationToDelete = null },
-                    modifier = Modifier.padding(end = AppTheme.spacing.medium)
-                )
-            }
-        )
+                dismissButton = {
+                    SecondaryButton(
+                        label = CommonLabels.ACTION_CANCEL,
+                        labelColor = AppTheme.colors.textSecondary.toColor(),
+                        onClick = { operationToDelete = null },
+                        modifier = Modifier.padding(end = AppTheme.spacing.medium)
+                    )
+                }
+            )
+        }
     }
 }

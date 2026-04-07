@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun CircleIcon(
     icon: Int,
+    size: Int,
     tintColor: Color,
     containerColor: Color
 ) {
@@ -25,6 +26,11 @@ fun CircleIcon(
             .background(color = containerColor, CircleShape),
         contentAlignment = Alignment.Center
     ) {
-        Icon(painter = painterResource(icon), contentDescription = null, tint = tintColor)
+        Icon(
+            painter = painterResource(icon),
+            contentDescription = null,
+            tint = tintColor,
+            modifier = Modifier.size(size.dp)
+        )
     }
 }

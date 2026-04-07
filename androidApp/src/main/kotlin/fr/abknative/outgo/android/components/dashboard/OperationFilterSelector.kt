@@ -19,6 +19,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import fr.abknative.outgo.android.components.common.GlassCard
 import fr.abknative.outgo.android.ui.DashboardLabels
 import fr.abknative.outgo.android.ui.states.OperationFilter
 import fr.abknative.outgo.android.ui.theme.AppTheme
@@ -39,7 +40,8 @@ fun OperationFilterSelector(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = AppTheme.spacing.large),
+            .padding(horizontal = AppTheme.spacing.medium)
+            .padding(vertical = AppTheme.spacing.small),
         horizontalArrangement = Arrangement.Start
     ) {
         FilterTabItem(
@@ -76,35 +78,43 @@ private fun FilterTabItem(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Column(
+    val tabShape = RoundedCornerShape(AppTheme.spacing.medium)
+
+    val content = @Composable {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(tabShape)
+                .clickable(onClick = onClick)
+                .padding(vertical = AppTheme.spacing.medium),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = label.uppercase(),
+                style = AppTheme.typo.body,
+                color = if (isSelected) AppTheme.colors.primary.toColor() else AppTheme.colors.textSecondary.toColor(),
+                fontWeight = if (isSelected) FontWeight.Medium else FontWeight.Normal
+            )
+        }
+    }
+
+    Box(
         modifier = modifier
-            .clip(RoundedCornerShape(AppTheme.spacing.small))
             .semantics {
                 selected = isSelected
                 role = Role.Tab
             }
-            .clickable(onClick = onClick)
-            .padding(vertical = AppTheme.spacing.small),
-        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
-            text = label.uppercase(),
-            style = AppTheme.typo.body,
-            color = if (isSelected) AppTheme.colors.primary.toColor() else AppTheme.colors.textSecondary.toColor(),
-            fontWeight = if (isSelected) FontWeight.Medium else FontWeight.Normal
-        )
-
-        Spacer(modifier = Modifier.height(4.dp))
-
-        Box(
-            modifier = Modifier
-                .height(3.dp)
-                .fillMaxWidth(if (isSelected) 1f else 0f)
-                .background(
-                    color = if (isSelected) AppTheme.colors.primary.toColor() else Color.Transparent,
-                    shape = RoundedCornerShape(percent = 50)
-                )
-        )
+        if (isSelected) {
+            GlassCard(
+                modifier = Modifier.fillMaxWidth(),
+                backgroundColorA = AppTheme.colors.surface200.toColor(),
+            ) {
+                content()
+            }
+        } else {
+            content()
+        }
     }
 }
 
@@ -113,7 +123,7 @@ private fun FilterTabItem(
 fun PreviewExpenseFilterSelector() {
     var currentFilter by remember { mutableStateOf(OperationFilter.ALL) }
 
-    Column(modifier = Modifier.background(Color.White).padding(16.dp)) {
+    Column(modifier = Modifier.background(Color(0xFFE5E9F0)).padding(16.dp)) { // Fond légèrement teinté pour voir le Glass
         OperationFilterSelector(
             selectedFilter = currentFilter,
             onFilterSelected = { currentFilter = it }

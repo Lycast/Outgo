@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import fr.abknative.outgo.android.R
 import fr.abknative.outgo.android.ui.AccessibilityLabels
@@ -38,21 +39,28 @@ fun Header(
         modifier
             .fillMaxWidth()
             .padding(top = AppTheme.spacing.big)
+            .padding(bottom = AppTheme.spacing.medium)
             .padding(horizontal = AppTheme.spacing.large)
     }
 
     val actionsLayout = @Composable {
-        SyncIconLogic(
-            syncState = syncState,
-            onClick = onSyncIconClick
-        )
-
-        IconButton(onClick = onSyncNavigationClick) {
-            Icon(
-                painter = painterResource(id = if (isSettingsScreen) R.drawable.house_line else R.drawable.gear_six),
-                contentDescription = if (isSettingsScreen) AccessibilityLabels.NAVIGATE_HOME else AccessibilityLabels.NAVIGATE_SETTINGS,
-                tint = AppTheme.colors.primary.toColor()
+        GlassCard(modifier = Modifier.size(42.dp)) {
+            SyncIconLogic(
+                syncState = syncState,
+                onClick = onSyncIconClick
             )
+        }
+
+        Spacer(modifier = Modifier.width(AppTheme.spacing.extraSmall))
+
+        GlassCard(modifier = Modifier.size(42.dp)) {
+            IconButton(onClick = onSyncNavigationClick) {
+                Icon(
+                    painter = painterResource(id = if (isSettingsScreen) R.drawable.house_line else R.drawable.gear_six),
+                    contentDescription = if (isSettingsScreen) AccessibilityLabels.NAVIGATE_HOME else AccessibilityLabels.NAVIGATE_SETTINGS,
+                    tint = AppTheme.colors.primary.toColor()
+                )
+            }
         }
     }
 

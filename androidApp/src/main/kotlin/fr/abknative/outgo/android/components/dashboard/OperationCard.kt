@@ -70,10 +70,10 @@ fun OperationCard(
         ) {
 
             // Icon a gauche (On pourrait adapter la couleur selon INCOME ou EXPENSE plus tard)
-            val iconColor = if (operation.type == OperationType.INCOME) AppTheme.colors.primary.toColor() else AppTheme.colors.secondary.toColor()
-            val bgColor = if (operation.type == OperationType.INCOME) AppTheme.colors.surface100.toColor() else AppTheme.colors.surface200.toColor()
+            val iconColor = AppTheme.colors.tertiary.toColor().copy(alpha = 0.5f)
+            val bgColor = AppTheme.colors.textPrimary.toColor().copy(alpha = 0.04f)
 
-            CircleIcon(R.drawable.credit_card_duotone, iconColor, bgColor)
+            CircleIcon(R.drawable.credit_card_duotone, 24, iconColor, bgColor)
             Spacer(modifier = Modifier.width(AppTheme.spacing.large))
 
             Column(verticalArrangement = Arrangement.Center) {
@@ -130,7 +130,7 @@ fun OperationCard(
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, backgroundColor = 0x0000000)
 @Composable
 fun PreviewOutgoingCard_LargeAmount() {
     val mockOperation = Operation(
