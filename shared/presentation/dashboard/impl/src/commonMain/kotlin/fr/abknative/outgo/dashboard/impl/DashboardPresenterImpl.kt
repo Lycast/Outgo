@@ -58,19 +58,9 @@ internal class DashboardPresenterImpl(
     }
 
     init {
-        ensureDefaultWalletExists()
         startObservingSession()
         startObservingPremiumStatus()
         startObservingData()
-    }
-
-    private fun ensureDefaultWalletExists() {
-        viewModelScope.safeLaunch(onError = onCoroutineError) {
-            val wallets = observeWallets().first()
-            if (wallets.isEmpty()) {
-                saveWallet(name = "Mon Compte")
-            }
-        }
     }
 
     private fun startObservingSession() {

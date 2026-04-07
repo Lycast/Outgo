@@ -24,3 +24,4 @@ kotlin-js-store/
 /iosApp/iosApp/GoogleService-Info.plist
 /shared/app/app.podspec
 /server/api/src/firebase-adminsdk.json
+/.dockerignore
