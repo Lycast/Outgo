@@ -18,6 +18,8 @@ import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.serialization.json.Json
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.bind
@@ -25,9 +27,13 @@ import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
 fun commonCoreModule() = module {
+
     singleOf(::RealTimeProvider) { bind<TimeProvider>() }
     singleOf(::StandardDispatchers) { bind<AppDispatchers>() }
     singleOf(::RealIdProvider) { bind<IdProvider>() }
+
+    single { CoroutineScope(SupervisorJob() + get<AppDispatchers>().main) }
+
     factory<ClearLocalDataUseCase> { ClearLocalDataUseCaseImpl(purgers = getAll<DataPurger>(), storage = get()) }
 
     single {
@@ -50,7 +56,7 @@ fun commonCoreModule() = module {
                 }
             }
             defaultRequest {
-                url(SecretConfig.BASE_URL) // todo url de debug ngrok
+                url(SecretConfig.BASE_URL) // todo url non dynamique nécessite le swap dans secret config
                 header(HttpHeaders.ContentType, ContentType.Application.Json)
             }
         }
