@@ -53,6 +53,17 @@ internal class OperationRepositoryImpl(
             }
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
+    override fun observePendingOperations(): Flow<List<Operation>> {
+        return sessionProvider.observeUserId()
+            .flatMapLatest { uid ->
+                queries.getPendingOperations(userId = uid)
+                    .asFlow()
+                    .mapToList(dispatchers.io)
+                    .map { entities -> entities.map { it.toDomain() } }
+            }
+    }
+
     override suspend fun getOperationById(id: String): Operation? = withContext(dispatchers.io) {
         queries.getOperationById(id = id, userId = currentUserId).executeAsOneOrNull()?.toDomain()
     }

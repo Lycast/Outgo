@@ -23,6 +23,14 @@ interface WalletRepository {
     fun observeActiveWallets(): Flow<List<Wallet>>
 
     /**
+     * Observes all wallets that have local modifications waiting to be pushed to the remote server.
+     * Returns a continuous flow that emits a new list whenever a pending wallet is created, updated, or successfully synced.
+     *
+     * @return A [Flow] emitting the list of pending [Wallet]s for the currently authenticated user.
+     */
+    fun observePendingWallets(): Flow<List<Wallet>>
+
+    /**
      * Performs a one-shot retrieval of a specific wallet by its unique identifier.
      * This query fetches the wallet even if it is marked as deleted (useful for sync resolution).
      *

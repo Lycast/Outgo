@@ -21,7 +21,7 @@ object DatabaseFactory {
             jdbcUrl = dbUrl
             username = dbUser
             password = dbPassword
-            maximumPoolSize = 3
+            maximumPoolSize = 10
             isAutoCommit = false
             transactionIsolation = "TRANSACTION_REPEATABLE_READ"
             validate()

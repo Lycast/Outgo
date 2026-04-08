@@ -112,15 +112,12 @@ internal class SettingsPresenterImpl(
     }
 
     private fun handleRefreshSync() {
-        // La protection est toujours bonne : pas besoin de lancer une synchro si on n'est pas logué ou déjà en cours
         val currentState = _state.value.syncState
         if (currentState.isUnauthenticated || currentState.isInProgress) return
 
         viewModelScope.safeLaunch(onError = onCoroutineError) {
-            // Pas besoin de modifier l'état ici, syncManager.syncAll() va passer isSyncing à true tout seul
             val result = syncManager.syncAll()
 
-            // On gère uniquement l'affichage des erreurs réseau/serveur ponctuelles via Snackbar (error = ...)
             if (result is Result.Error) {
                 _state.update { it.copy(error = result.error) }
             }

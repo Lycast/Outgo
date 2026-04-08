@@ -184,12 +184,7 @@ internal class DashboardPresenterImpl(
     private fun handleDelete(intent: DashboardIntent.Delete) {
         viewModelScope.safeLaunch(onError = onCoroutineError) {
             val result = deleteOperation(intent.id)
-            if (result is Result.Success) {
-                val syncResult = syncManager.syncAll()
-                if (syncResult is Result.Error) {
-                    _state.update { it.copy(error = syncResult.error) }
-                }
-            } else if (result is Result.Error) {
+            if (result is Result.Error) {
                 _state.update { it.copy(error = result.error) }
             }
         }
@@ -211,10 +206,6 @@ internal class DashboardPresenterImpl(
 
         if (result is Result.Success) {
             _state.update { it.copy(error = null) }
-            val syncResult = syncManager.syncAll()
-            if (syncResult is Result.Error) {
-                _state.update { it.copy(error = syncResult.error) }
-            }
         } else if (result is Result.Error) {
             _state.update { it.copy(error = result.error) }
         }

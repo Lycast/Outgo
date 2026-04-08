@@ -7,6 +7,7 @@ import fr.abknative.outgo.server.core.usecase.ProcessSyncPushUseCase
 import fr.abknative.outgo.wallet.network.SyncPushRequest
 import io.ktor.http.*
 import io.ktor.server.auth.*
+import io.ktor.server.plugins.ratelimit.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -23,28 +24,34 @@ fun Route.syncRoutes() {
     val logger = LoggerFactory.getLogger("SyncRouting")
 
     authenticate("auth-firebase") {
-        route("/sync") {
+        rateLimit(RateLimitName("sync-limit")) {
+            route("/sync") {
+                post("/push") {
+                    val userId = call.userId()
+                    val email = call.userEmail()
+                    val request = call.receive<SyncPushRequest>()
 
-            post("/push") {
-                val userId = call.userId()
-                val email = call.userEmail()
-                val request = call.receive<SyncPushRequest>()
+                    if (request.wallets.isEmpty() && request.operations.isEmpty()) {
+                        call.respond(HttpStatusCode.NoContent)
+                        return@post
+                    }
 
-                logger.info("PUSH: Received ${request.wallets.size} wallets for user : $userId")
+                    logger.info("PUSH: Received ${request.wallets.size} wallets / ${request.operations.size} ops for user: $userId")
+                    processSyncPush(userId = userId, email = email, request = request)
 
-                processSyncPush(userId = userId, email = email, request = request)
+                    call.respond(HttpStatusCode.OK, "Sync Successful")
+                }
 
-                call.respond(HttpStatusCode.OK, "Sync Successful")
-            }
+                get("/pull") {
+                    call.response.header(HttpHeaders.CacheControl, "no-store, no-cache, must-revalidate")
+                    val userId = call.userId()
+                    val since = call.request.queryParameters["since"]?.toLongOrNull() ?: 0L
 
-            get("/pull") {
-                val userId = call.userId()
-                val since = call.request.queryParameters["since"]?.toLongOrNull() ?: 0L
+                    logger.info("PULL: $userId requesting updates since $since")
+                    val response = getSyncPull(userId = userId, since = since)
 
-                logger.info("PULL: $userId requesting updates since $since")
-                val response = getSyncPull(userId = userId, since = since)
-
-                call.respond(HttpStatusCode.OK, response)
+                    call.respond(HttpStatusCode.OK, response)
+                }
             }
         }
     }

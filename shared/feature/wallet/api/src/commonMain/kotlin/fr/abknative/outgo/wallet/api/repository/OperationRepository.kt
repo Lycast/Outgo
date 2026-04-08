@@ -26,6 +26,14 @@ interface OperationRepository {
     fun observeOperationsByPeriod(walletId: String, from: EpochMillis, to: EpochMillis): Flow<List<Operation>>
 
     /**
+     * Observes all operations that have local modifications waiting to be pushed to the remote server.
+     * Returns a continuous flow that emits a new list whenever a pending operation is created, updated, or successfully synced.
+     *
+     * @return A [Flow] emitting the list of pending Operations for the currently authenticated user.
+     */
+    fun observePendingOperations(): Flow<List<Operation>>
+
+    /**
      * Retrieves a specific operation by its unique identifier.
      * Fetches the operation even if it is soft-deleted.
      *

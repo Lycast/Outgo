@@ -28,6 +28,7 @@ kotlin {
             export(projects.shared.presentation.settings.api)
             export(projects.shared.feature.wallet.api)
             export(projects.shared.feature.auth.api)
+            export(projects.shared.feature.sync.api)
         }
 
         pod("FirebaseCore") {
@@ -70,6 +71,7 @@ kotlin {
             // Exposer les contrats métier
             api(projects.shared.feature.wallet.api)
             api(projects.shared.feature.auth.api)
+            api(projects.shared.feature.sync.api)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

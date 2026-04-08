@@ -51,6 +51,17 @@ internal class WalletRepositoryImpl(
             }
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
+    override fun observePendingWallets(): Flow<List<Wallet>> {
+        return sessionProvider.observeUserId()
+            .flatMapLatest { uid ->
+                queries.getPendingWallets(userId = uid)
+                    .asFlow()
+                    .mapToList(dispatchers.io)
+                    .map { entities -> entities.map { it.toDomain() } }
+            }
+    }
+
     override suspend fun getWalletById(id: String): Result<Wallet?, AppException> = withContext(dispatchers.io) {
         asResult(
             onError = {

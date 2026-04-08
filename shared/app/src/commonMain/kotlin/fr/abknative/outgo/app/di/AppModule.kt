@@ -8,6 +8,7 @@ import fr.abknative.outgo.database.di.databaseModule
 import fr.abknative.outgo.login.impl.di.loginPresentationModule
 import fr.abknative.outgo.settings.impl.di.settingsPresentationModule
 import fr.abknative.outgo.subscription.impl.di.subscriptionModule
+import fr.abknative.outgo.sync.api.SyncOrchestrator
 import fr.abknative.outgo.sync.impl.di.syncModule
 import fr.abknative.outgo.wallet.impl.di.walletModule
 import org.koin.core.context.startKoin
@@ -19,26 +20,31 @@ val navigationModule = module {
 }
 
 /**
- * Starts the Koin DI graph with shared modules.
+ * Starts the Koin DI graph with shared modules and initializes global background processes.
  *
  * @param appDeclaration Platform-specific configuration (e.g., `androidContext`).
  */
-fun initKoin(appDeclaration: KoinAppDeclaration = {}) = startKoin {
-    appDeclaration()
-    modules(
-        navigationModule,
-        coreModule,
-        subscriptionModule,
-        databaseModule(),
-        syncModule(),
+fun initKoin(appDeclaration: KoinAppDeclaration = {}) {
+    val koinApplication = startKoin {
+        appDeclaration()
+        modules(
+            navigationModule,
+            coreModule,
+            subscriptionModule,
+            databaseModule(),
+            syncModule(),
 
-        // Modules métiers (Data/Domaine)
-        authModule,
-        walletModule,
+            // Modules métiers (Data/Domaine)
+            authModule,
+            walletModule,
 
-        // Modules UI (Présentation)
-        loginPresentationModule,
-        dashboardPresentationModule,
-        settingsPresentationModule
-    )
+            // Modules UI (Présentation)
+            loginPresentationModule,
+            dashboardPresentationModule,
+            settingsPresentationModule
+        )
+    }
+
+    val orchestrator = koinApplication.koin.get<SyncOrchestrator>()
+    orchestrator.start()
 }
