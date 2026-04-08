@@ -1,5 +1,6 @@
 package fr.abknative.outgo.sync.impl
 
+import fr.abknative.outgo.auth.api.usecase.ObserveUserSessionUseCase
 import fr.abknative.outgo.core.api.KeyValueStorage
 import fr.abknative.outgo.core.api.NetworkMonitor
 import fr.abknative.outgo.core.api.TimeProvider
@@ -19,6 +20,7 @@ import kotlin.time.Duration.Companion.milliseconds
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 internal class SyncOrchestratorImpl(
     private val syncManager: SyncManager,
+    private val observeUserSession: ObserveUserSessionUseCase,
     private val walletRepository: WalletRepository,
     private val operationRepository: OperationRepository,
     private val networkMonitor: NetworkMonitor,
@@ -36,25 +38,33 @@ internal class SyncOrchestratorImpl(
 
     override fun start() {
         AppLogger.get()?.i(TAG, "Sync Orchestrator Startup")
-
         checkStartupSync()
         startObservingPendingData()
     }
 
     private fun checkStartupSync() {
-        val lastSync = storage.getLong(LAST_SYNC_KEY, 0L)
-        val now = timeProvider.now()
+        scope.launch {
+            // Attendre la première émission de la session
+            val session = observeUserSession().first()
 
-        if (now - lastSync > SYNC_THRESHOLD_MS) {
-            AppLogger.get()?.i(TAG, "Last sync > 12h. Launching startup Pull.")
-            scope.launch {
+            // Si session est null, l'utilisateur n'est pas logué : on stoppe
+            if (session == null) {
+                AppLogger.get()?.d(TAG, "Startup Pull skipped: No active session.")
+                return@launch
+            }
+
+            val lastSync = storage.getLong(LAST_SYNC_KEY, 0L)
+            val now = timeProvider.now()
+
+            if (now - lastSync > SYNC_THRESHOLD_MS) {
+                AppLogger.get()?.i(TAG, "Last sync > 12h. Launching startup Pull.")
                 val result = syncManager.syncAll()
 
                 if (result is Result.Success) {
                     AppLogger.get()?.i(TAG, "Startup Pull successful. Resetting 12h timer.")
                     storage.putLong(LAST_SYNC_KEY, timeProvider.now())
                 } else {
-                    AppLogger.get()?.w(TAG, "Startup Pull failed. Will retry on next startup.")
+                    AppLogger.get()?.w(TAG, "Startup Pull failed. Will retry later.")
                 }
             }
         }
@@ -70,15 +80,17 @@ internal class SyncOrchestratorImpl(
 
         combine(
             hasPendingDataFlow,
-            networkMonitor.isConnected
-        ) { hasPendingData, isConnected ->
-            hasPendingData && isConnected
+            networkMonitor.isConnected,
+            observeUserSession()
+        ) { hasPendingData, isConnected, session ->
+            // Le filtre "Triple A" : Attente de données + Accès réseau + Authentifié
+            hasPendingData && isConnected && session != null
         }
             .distinctUntilChanged()
             .filter { shouldSync -> shouldSync }
             .debounce(DEBOUNCE_DELAY_MS.milliseconds)
             .onEach {
-                AppLogger.get()?.i(TAG, "Network OK + Pending data + 10s quiet period; Triggering Push.")
+                AppLogger.get()?.i(TAG, "Conditions met. Triggering Push.")
                 syncManager.syncOut()
             }
             .launchIn(scope)
