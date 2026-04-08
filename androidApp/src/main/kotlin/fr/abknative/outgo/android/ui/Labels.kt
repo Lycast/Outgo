@@ -38,13 +38,13 @@ object DialogLabels {
     const val DELETE_ACCOUNT_CHOICE_DESC = "Choisissez ce que vous souhaitez effacer. Cette action est irréversible."
 
     const val DELETE_ACCOUNT_LOCAL_TITLE = "Vider cet appareil"
-    const val DELETE_ACCOUNT_LOCAL_DESC = "Supprime les données de cet appareil."
+    const val DELETE_ACCOUNT_LOCAL_DESC = "Supprime vos données de cet appareil."
 
     const val DELETE_ACCOUNT_SERVER_TITLE = "Effacer mon Cloud"
     const val DELETE_ACCOUNT_SERVER_DESC = "Supprime vos données des serveurs Outgo."
 
     const val DELETE_ACCOUNT_AUTH_TITLE = "Supprimer mon profil"
-    const val DELETE_ACCOUNT_AUTH_DESC = "Révoque l'accès et détruit votre identité."
+    const val DELETE_ACCOUNT_AUTH_DESC = "Révoque l'accès et détruit vos données personnelles."
 }
 
 object DashboardLabels {

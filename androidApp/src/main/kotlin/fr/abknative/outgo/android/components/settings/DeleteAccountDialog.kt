@@ -7,12 +7,27 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import fr.abknative.outgo.android.components.common.GlassCard
 import fr.abknative.outgo.android.components.common.HoldToConfirmButton
 import fr.abknative.outgo.android.ui.CommonLabels
 import fr.abknative.outgo.android.ui.DialogLabels
 import fr.abknative.outgo.android.ui.theme.AppTheme
+import fr.abknative.outgo.android.ui.theme.OutgoTheme
 import fr.abknative.outgo.android.ui.theme.toColor
 
+/**
+ * A highly critical dialog allowing users to selectively delete their local data,
+ * remote server data, or their entire authentication profile.
+ * * Uses a custom [Dialog] with a [GlassCard] background to maintain UI consistency.
+ *
+ * @param onConfirm Callback invoked when the user confirms the deletion.
+ * Passes the granular boolean choices back to the presenter.
+ * @param onDismiss Callback invoked when the user cancels or taps outside the dialog.
+ */
 @Composable
 fun DeleteAccountDialog(
     onConfirm: (wipeLocal: Boolean, wipeServer: Boolean, revokeAuth: Boolean) -> Unit,
@@ -23,6 +38,7 @@ fun DeleteAccountDialog(
     var wipeServer by remember { mutableStateOf(false) }
     var revokeAuth by remember { mutableStateOf(false) }
 
+    // Enforce business logic: Revoking auth inherently requires wiping the server data.
     LaunchedEffect(revokeAuth) {
         if (revokeAuth) {
             wipeServer = true
@@ -31,26 +47,35 @@ fun DeleteAccountDialog(
 
     val canConfirm = wipeLocal || wipeServer || revokeAuth
 
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        containerColor = AppTheme.colors.surface200.toColor(),
-        title = {
-            Text(
-                text = DialogLabels.DELETE_ACCOUNT_TITLE,
-                style = AppTheme.typo.subtitle,
-                color = AppTheme.colors.textPrimary.toColor()
-            )
-        },
-        text = {
-            Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.medium)) {
+    Dialog(onDismissRequest = onDismiss) {
+        GlassCard {
+            Column(
+                modifier = Modifier.padding(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = DialogLabels.DELETE_ACCOUNT_TITLE,
+                    style = AppTheme.typo.title,
+                    color = AppTheme.colors.primary.toColor(),
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
                 Text(
                     text = DialogLabels.DELETE_ACCOUNT_CHOICE_DESC,
                     style = AppTheme.typo.body,
-                    color = AppTheme.colors.textSecondary.toColor()
+                    color = AppTheme.colors.textPrimary.toColor(),
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
                 )
 
-                Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.small)) {
+                Spacer(modifier = Modifier.height(24.dp))
 
+                // Options Container
+                Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.medium)) {
                     DialogSwitchRow(
                         title = DialogLabels.DELETE_ACCOUNT_LOCAL_TITLE,
                         subtitle = DialogLabels.DELETE_ACCOUNT_LOCAL_DESC,
@@ -62,7 +87,7 @@ fun DeleteAccountDialog(
                         title = DialogLabels.DELETE_ACCOUNT_SERVER_TITLE,
                         subtitle = DialogLabels.DELETE_ACCOUNT_SERVER_DESC,
                         isChecked = wipeServer,
-                        enabled = !revokeAuth,
+                        enabled = !revokeAuth, // Disabled if auth is revoked (forced to true)
                         onCheckedChange = { wipeServer = it }
                     )
 
@@ -73,31 +98,40 @@ fun DeleteAccountDialog(
                         onCheckedChange = { revokeAuth = it }
                     )
                 }
-            }
-        },
-        confirmButton = {
-                HoldToConfirmButton(
-                    label = CommonLabels.ACTION_DELETE,
-                    enabled = canConfirm,
-                    onConfirm = { onConfirm(wipeLocal, wipeServer, revokeAuth) },
-                )
-            },
-        dismissButton = {
-            TextButton(
-                onClick = onDismiss,
-                colors = ButtonDefaults.textButtonColors(contentColor = AppTheme.colors.textSecondary.toColor())
-            ) {
-                Text(
-                    text = CommonLabels.ACTION_CANCEL, style = AppTheme.typo.label,
-                    modifier = Modifier.padding(end = AppTheme.spacing.medium)
-                )
+
+                Spacer(modifier = Modifier.height(32.dp))
+
+                // Actions Layout
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    TextButton(
+                        onClick = onDismiss,
+                        colors = ButtonDefaults.textButtonColors(contentColor = AppTheme.colors.textSecondary.toColor())
+                    ) {
+                        Text(
+                            text = CommonLabels.ACTION_CANCEL,
+                            style = AppTheme.typo.label
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.width(AppTheme.spacing.small))
+
+                    HoldToConfirmButton(
+                        label = CommonLabels.ACTION_DELETE,
+                        enabled = canConfirm,
+                        onConfirm = { onConfirm(wipeLocal, wipeServer, revokeAuth) }
+                    )
+                }
             }
         }
-    )
+    }
 }
 
 /**
- * Composant interne pour dessiner une ligne Switch compacte adaptée aux modales.
+ * Internal component to draw a compact Switch row adapted for modal views.
  */
 @Composable
 private fun DialogSwitchRow(
@@ -123,7 +157,7 @@ private fun DialogSwitchRow(
             )
             Text(
                 text = subtitle,
-                style = AppTheme.typo.caption,
+                style = AppTheme.typo.label,
                 color = AppTheme.colors.textSecondary.toColor()
             )
         }
@@ -137,6 +171,19 @@ private fun DialogSwitchRow(
                 uncheckedThumbColor = AppTheme.colors.textSecondary.toColor(),
                 uncheckedTrackColor = AppTheme.colors.surface100.toColor()
             )
+        )
+    }
+}
+
+// --- PREVIEWS ---
+
+@Preview(showBackground = true, name = "Delete Account Dialog")
+@Composable
+fun PreviewDeleteAccountDialog() {
+    OutgoTheme {
+        DeleteAccountDialog(
+            onConfirm = { _, _, _ -> },
+            onDismiss = {}
         )
     }
 }

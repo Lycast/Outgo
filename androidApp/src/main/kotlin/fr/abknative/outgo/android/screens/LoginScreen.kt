@@ -16,11 +16,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import fr.abknative.outgo.android.R
 import fr.abknative.outgo.android.components.common.AppBackground
+import fr.abknative.outgo.android.components.login.ConflictDialog
 import fr.abknative.outgo.android.ui.LoginLabels
 import fr.abknative.outgo.android.ui.states.rememberLoginFormState
 import fr.abknative.outgo.android.ui.theme.AppTheme
 import fr.abknative.outgo.android.ui.theme.OutgoTheme
 import fr.abknative.outgo.android.ui.theme.toColor
+import fr.abknative.outgo.auth.api.model.ConflictStrategy
 import fr.abknative.outgo.login.api.LoginIntent
 import fr.abknative.outgo.login.api.LoginPresenter
 import fr.abknative.outgo.login.api.LoginState
@@ -51,7 +53,6 @@ fun LoginScreen(
     }
 
     AppBackground {
-
         Scaffold(
             topBar = {
                 TopAppBar(
@@ -148,7 +149,7 @@ fun LoginScreen(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(
-                        text = "Pas encore de compte ? S'inscrire", // todo extraire
+                        text = "Pas encore de compte ? S'inscrire",
                         color = AppTheme.colors.primary.toColor()
                     )
                 }
@@ -159,13 +160,26 @@ fun LoginScreen(
                 }
             }
         }
+
+        // --- NOUVEAU : LA POPUP DE RÉSOLUTION DE CONFLIT ---
+        if (state.showConflictDialog) {
+            ConflictDialog(
+                onMerge = {
+                    presenter.onIntent(LoginIntent.ResolveConflict(ConflictStrategy.MERGE))
+                },
+                onDiscardLocal = {
+                    presenter.onIntent(LoginIntent.ResolveConflict(ConflictStrategy.DISCARD_LOCAL))
+                },
+                onCancel = {
+                    presenter.onIntent(LoginIntent.CancelConflict)
+                }
+            )
+        }
     }
 }
 
 /**
  * Preview for the LoginScreen.
- * Wraps the screen in [OutgoTheme] and provides a dummy [LoginPresenter]
- * to satisfy the component's dependencies without real business logic.
  */
 @Preview(showBackground = true, name = "Login Screen - Default")
 @Composable
@@ -175,7 +189,8 @@ fun PreviewLoginScreen() {
             LoginState(
                 isLoading = false,
                 error = null,
-                session = null
+                session = null,
+                showConflictDialog = false
             )
         )
         override fun onIntent(intent: LoginIntent) {}

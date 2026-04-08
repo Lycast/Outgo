@@ -6,8 +6,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import fr.abknative.outgo.android.R
+import fr.abknative.outgo.android.components.common.GlassCard
 import fr.abknative.outgo.android.ui.AccessibilityLabels
 import fr.abknative.outgo.android.ui.states.OperationFormEvent
 import fr.abknative.outgo.android.ui.states.OperationFormState
@@ -68,31 +70,33 @@ fun OperationFormSheet(
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
-        containerColor = AppTheme.colors.surface200.toColor(),
+        containerColor = Color.Transparent,
     ) {
-        Column {
-            sheetHeader()
-            OperationFormContent(
-                state = formState,
-                onEvent = onEvent,
-                currentYear = currentYear,
-                isPremium = isPremium,
-                onCancel = { closeSheet() },
-                onSave = {
-                    val intent = DashboardIntent.SaveOperation(
-                        id = formState.operationId,
-                        walletId = formState.walletId,
-                        name = formState.nameBuffer,
-                        amountInCents = formState.amountInCents,
-                        type = formState.typeSelection,
-                        recurrence = formState.recurrenceSelection,
-                        startDate = formState.startDate,
-                        endDate = null
-                    )
-                    onSave(intent)
-                    closeSheet()
-                }
-            )
+        GlassCard {
+            Column {
+                sheetHeader()
+                OperationFormContent(
+                    state = formState,
+                    onEvent = onEvent,
+                    currentYear = currentYear,
+                    isPremium = isPremium,
+                    onCancel = { closeSheet() },
+                    onSave = {
+                        val intent = DashboardIntent.SaveOperation(
+                            id = formState.operationId,
+                            walletId = formState.walletId,
+                            name = formState.nameBuffer,
+                            amountInCents = formState.amountInCents,
+                            type = formState.typeSelection,
+                            recurrence = formState.recurrenceSelection,
+                            startDate = formState.startDate,
+                            endDate = null
+                        )
+                        onSave(intent)
+                        closeSheet()
+                    }
+                )
+            }
         }
     }
 }

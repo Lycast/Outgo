@@ -28,7 +28,7 @@
     <string name="common_action_duplicate">Dupliquer</string>
     <string name="common_action_close">Fermer</string>
 
-    <string name="dialog_delete_operation_title">Supprimer l'opération ?</string>
+    <string name="dialog_delete_operation_title">Supprimer l'opération</string>
     <string name="dialog_delete_operation_desc">Êtes-vous sûr de vouloir supprimer définitivement cette dépense ? Cette action est irréversible.</string>
     <string name="dialog_logout_title">Se déconnecter ?</string>
     <string name="dialog_logout_desc">Vous devrez vous reconnecter pour synchroniser vos prochaines modifications avec le cloud.</string>
@@ -36,7 +36,7 @@
     <string name="dialog_purge_title">Vider les données locales</string>
     <string name="dialog_purge_desc">Cela supprimera toutes les données Outgo présentes sur cet appareil.</string>
     <string name="dialog_purge_confirm">Vider le cache</string>
-    <string name="dialog_delete_account_title">Supprimer le compte ?</string>
+    <string name="dialog_delete_account_title">Supprimer vos données</string>
     <string name="dialog_delete_account_desc">Cette action est définitive. Toutes vos données seront effacées de nos serveurs de manière irréversible.</string>
 
     <string name="dashboard_tooltip_balance_title">Votre reste à vivre</string>
