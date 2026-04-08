@@ -1,6 +1,7 @@
 package fr.abknative.outgo.auth.impl.usecase
 
 import fr.abknative.outgo.auth.api.AuthError
+import fr.abknative.outgo.auth.api.model.ConflictStrategy
 import fr.abknative.outgo.auth.api.provider.SessionProvider
 import fr.abknative.outgo.auth.api.repository.AuthRepository
 import fr.abknative.outgo.core.api.LocalDataMigrator
@@ -13,6 +14,7 @@ internal suspend inline fun executeAuthWithMigration(
     localDataMigrator: LocalDataMigrator,
     authRepository: AuthRepository,
     syncManager: SyncManager,
+    conflictStrategy: ConflictStrategy? = null,
     crossinline authAction: suspend () -> Result<Unit, AppException>
 ): Result<Unit, AppException> {
 
@@ -28,6 +30,19 @@ internal suspend inline fun executeAuthWithMigration(
     }
 
     if (currentLocalId.startsWith("local_")) {
+
+        if (conflictStrategy != null) {
+            val resolutionResult = when (conflictStrategy) {
+                ConflictStrategy.MERGE -> localDataMigrator.mergeLocalDataToAccount(newUserId, currentLocalId)
+                ConflictStrategy.DISCARD_LOCAL -> localDataMigrator.discardLocalData(currentLocalId)
+            }
+            if (resolutionResult is Result.Error) {
+                authRepository.logout()
+                return resolutionResult
+            }
+            return Result.Success(Unit)
+        }
+
         val hasRemoteResult = syncManager.hasRemoteData()
 
         if (hasRemoteResult is Result.Error) {

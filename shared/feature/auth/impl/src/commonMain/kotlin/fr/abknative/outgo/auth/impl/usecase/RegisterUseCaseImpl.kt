@@ -1,5 +1,6 @@
 package fr.abknative.outgo.auth.impl.usecase
 
+import fr.abknative.outgo.auth.api.model.ConflictStrategy
 import fr.abknative.outgo.auth.api.provider.SessionProvider
 import fr.abknative.outgo.auth.api.repository.AuthRepository
 import fr.abknative.outgo.auth.api.usecase.RegisterUseCase
@@ -15,8 +16,18 @@ internal class RegisterUseCaseImpl(
     private val syncManager: SyncManager
 ) : RegisterUseCase {
 
-    override suspend fun invoke(email: String, password: String): Result<Unit, AppException> {
-        return executeAuthWithMigration(sessionProvider, localDataMigrator, authRepository, syncManager) {
+    override suspend fun invoke(
+        email: String,
+        password: String,
+        conflictStrategy: ConflictStrategy?
+    ): Result<Unit, AppException> {
+        return executeAuthWithMigration(
+            sessionProvider,
+            localDataMigrator,
+            authRepository,
+            syncManager,
+            conflictStrategy
+        ) {
             authRepository.register(email, password)
         }
     }
