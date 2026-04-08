@@ -1,7 +1,7 @@
 package fr.abknative.outgo.dashboard.api
 
 import fr.abknative.outgo.core.api.logs.AppException
-import fr.abknative.outgo.core.api.model.SyncUiState
+import fr.abknative.outgo.sync.api.model.SyncState
 import fr.abknative.outgo.wallet.api.model.dashboard.ProjectedOperation
 
 /**
@@ -45,7 +45,7 @@ data class DashboardState(
 
     // --- Global State ---
     val isPremium: Boolean = false,
-    val syncState: SyncUiState = SyncUiState.UNAUTHENTICATED,
+    val syncState: SyncState = SyncState.UNAUTHENTICATED,
     val error: AppException? = null,
 
     // --- KeyValueStorage ---

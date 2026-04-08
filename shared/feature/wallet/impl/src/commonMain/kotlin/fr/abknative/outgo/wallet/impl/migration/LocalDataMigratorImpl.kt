@@ -46,7 +46,6 @@ internal class LocalDataMigratorImpl(
         return withContext(dispatchers.io) {
             try {
                 database.transaction {
-                    // On bascule la propriété des Wallets ET des Opérations vers le Firebase_UID
                     database.walletQueries.updateUserId(newUserId = newUserId, oldUserId = localId)
                     database.operationQueries.updateUserId(newUserId = newUserId, oldUserId = localId)
                 }
@@ -61,8 +60,6 @@ internal class LocalDataMigratorImpl(
         return withContext(dispatchers.io) {
             try {
                 database.transaction {
-                    // On purge complètement l'ID local
-                    // Attention à l'ordre des suppressions si tu as des contraintes de clés étrangères (Foreign Keys)
                     database.operationQueries.deleteAllForUser(userId = localId)
                     database.walletQueries.deleteAllForUser(userId = localId)
                 }

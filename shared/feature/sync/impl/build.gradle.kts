@@ -9,6 +9,7 @@ kotlin {
         commonMain.dependencies {
             implementation(projects.shared.core.api)
             implementation(projects.shared.feature.sync.api)
+            implementation(projects.shared.feature.auth.api)
             implementation(projects.shared.feature.wallet.api)
             implementation(projects.shared.feature.wallet.network)
 

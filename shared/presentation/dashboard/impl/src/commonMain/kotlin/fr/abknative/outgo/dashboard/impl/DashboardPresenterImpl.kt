@@ -1,19 +1,17 @@
 package fr.abknative.outgo.dashboard.impl
 
 import androidx.lifecycle.viewModelScope
-import fr.abknative.outgo.auth.api.usecase.ObserveUserSessionUseCase
 import fr.abknative.outgo.core.api.KeyValueStorage
 import fr.abknative.outgo.core.api.TimeProvider
 import fr.abknative.outgo.core.api.extensions.safeLaunch
 import fr.abknative.outgo.core.api.logs.AppException
-import fr.abknative.outgo.core.api.logs.CommonError
 import fr.abknative.outgo.core.api.logs.Result
-import fr.abknative.outgo.core.api.model.SyncUiState
 import fr.abknative.outgo.dashboard.api.DashboardIntent
 import fr.abknative.outgo.dashboard.api.DashboardPresenter
 import fr.abknative.outgo.dashboard.api.DashboardState
 import fr.abknative.outgo.subscription.api.FeatureManager
 import fr.abknative.outgo.sync.api.SyncManager
+import fr.abknative.outgo.sync.api.usecase.ObserveSyncStateUseCase
 import fr.abknative.outgo.wallet.api.model.operation.OperationType
 import fr.abknative.outgo.wallet.api.model.operation.Recurrence
 import fr.abknative.outgo.wallet.api.usecase.*
@@ -26,7 +24,7 @@ internal class DashboardPresenterImpl(
     private val saveOperation: SaveOperationUseCase,
     private val deleteOperation: DeleteOperationUseCase,
     private val calculateDashboardData: CalculateDashboardDataUseCase,
-    private val observeUserSession: ObserveUserSessionUseCase,
+    private val observeSyncState: ObserveSyncStateUseCase,
     private val saveWallet: SaveWalletUseCase,
     private val timeProvider: TimeProvider,
     private val syncManager: SyncManager,
@@ -52,26 +50,18 @@ internal class DashboardPresenterImpl(
 
     private val onCoroutineError: (AppException) -> Unit = { error ->
         _state.update { it.copy(isLoading = false, error = error) }
-
-        val targetState = if (error is CommonError.NetworkError) SyncUiState.OFFLINE else SyncUiState.ERROR
-        updateSyncState(targetState)
     }
 
     init {
-        startObservingSession()
+        startObservingSyncState()
         startObservingPremiumStatus()
         startObservingData()
     }
 
-    private fun startObservingSession() {
+    private fun startObservingSyncState() {
         viewModelScope.safeLaunch(onError = onCoroutineError) {
-            observeUserSession().collect { session ->
-                if (session == null) {
-                    updateSyncState(SyncUiState.UNAUTHENTICATED)
-                } else if (_state.value.syncState.isUnauthenticated) {
-                    updateSyncState(SyncUiState.PENDING)
-                    handleRefreshSync()
-                }
+            observeSyncState().collect { globalSyncState ->
+                _state.update { it.copy(syncState = globalSyncState) }
             }
         }
     }
@@ -96,6 +86,7 @@ internal class DashboardPresenterImpl(
             }.flatMapLatest { (wallet, month, year) ->
                 if (wallet == null) {
                     flowOf(emptyList())
+                    // todo c'est ici qu'il faudra brancher la navigation vers la première connexion
                 } else {
                     _state.update {
                         it.copy(
@@ -194,9 +185,10 @@ internal class DashboardPresenterImpl(
         viewModelScope.safeLaunch(onError = onCoroutineError) {
             val result = deleteOperation(intent.id)
             if (result is Result.Success) {
-                updateSyncState(SyncUiState.PENDING)
                 val syncResult = syncManager.syncAll()
-                updateSyncStateFromResult(syncResult)
+                if (syncResult is Result.Error) {
+                    _state.update { it.copy(error = syncResult.error) }
+                }
             } else if (result is Result.Error) {
                 _state.update { it.copy(error = result.error) }
             }
@@ -207,9 +199,10 @@ internal class DashboardPresenterImpl(
         if (_state.value.syncState.isUnauthenticated || _state.value.syncState.isInProgress) return
 
         viewModelScope.safeLaunch(onError = onCoroutineError) {
-            updateSyncState(SyncUiState.IN_PROGRESS)
             val result = syncManager.syncAll()
-            updateSyncStateFromResult(result)
+            if (result is Result.Error) {
+                _state.update { it.copy(error = result.error) }
+            }
         }
     }
 
@@ -218,63 +211,12 @@ internal class DashboardPresenterImpl(
 
         if (result is Result.Success) {
             _state.update { it.copy(error = null) }
-            updateSyncState(SyncUiState.PENDING)
-
             val syncResult = syncManager.syncAll()
-            updateSyncStateFromResult(syncResult)
+            if (syncResult is Result.Error) {
+                _state.update { it.copy(error = syncResult.error) }
+            }
         } else if (result is Result.Error) {
             _state.update { it.copy(error = result.error) }
-            updateSyncState(SyncUiState.ERROR)
         }
-    }
-
-    private fun updateSyncStateFromResult(result: Result<Unit, AppException>) {
-        val error = (result as? Result.Error)?.error
-
-        val targetState = when (result) {
-            is Result.Success -> SyncUiState.UP_TO_DATE
-            is Result.Error -> {
-                when (error) {
-                    is CommonError.NetworkError -> SyncUiState.OFFLINE
-                    is CommonError.Unauthorized -> SyncUiState.UNAUTHENTICATED
-                    else -> SyncUiState.ERROR
-                }
-            }
-        }
-
-        _state.update { currentState ->
-            val resolved = resolveNewSyncState(currentState.syncState, targetState)
-            currentState.copy(
-                syncState = resolved,
-                error = if (result is Result.Error && error !is CommonError.NetworkError) error else currentState.error
-            )
-        }
-    }
-
-    /**
-     * Centralized function to resolve sync state based on priority.
-     * Hierarchy: UNAUTHENTICATED > OFFLINE/ERROR > IN_PROGRESS > PENDING > UP_TO_DATE
-     */
-    private fun updateSyncState(newState: SyncUiState) {
-        _state.update { currentState ->
-            val resolvedState = resolveNewSyncState(currentState.syncState, newState)
-            currentState.copy(syncState = resolvedState)
-        }
-    }
-
-    private fun resolveNewSyncState(current: SyncUiState, new: SyncUiState): SyncUiState {
-        if (current == SyncUiState.UNAUTHENTICATED && !new.isPending && !new.isInProgress) {
-            return SyncUiState.UNAUTHENTICATED
-        }
-        if (new == SyncUiState.UNAUTHENTICATED) return SyncUiState.UNAUTHENTICATED
-
-        if (new == SyncUiState.OFFLINE || new == SyncUiState.ERROR) return new
-        if (current == SyncUiState.OFFLINE && (new == SyncUiState.PENDING || new == SyncUiState.UP_TO_DATE)) {
-            return SyncUiState.OFFLINE
-        }
-
-        if (new == SyncUiState.IN_PROGRESS) return SyncUiState.IN_PROGRESS
-
-        return new
     }
 }

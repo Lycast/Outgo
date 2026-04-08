@@ -19,12 +19,12 @@ import fr.abknative.outgo.android.ui.CommonLabels
 import fr.abknative.outgo.android.ui.theme.AppTheme
 import fr.abknative.outgo.android.ui.theme.OutgoTheme
 import fr.abknative.outgo.android.ui.theme.toColor
-import fr.abknative.outgo.core.api.model.SyncUiState
+import fr.abknative.outgo.sync.api.model.SyncState
 
 @Composable
 fun Header(
     modifier: Modifier = Modifier,
-    syncState: SyncUiState,
+    syncState: SyncState,
     isVertical: Boolean = false, // 👈 Nouveau paramètre
     isSettingsScreen: Boolean = false,
     onSyncIconClick: () -> Unit,
@@ -117,7 +117,7 @@ fun HeaderPreviewHorizontal() {
     OutgoTheme {
         Surface(color = AppTheme.colors.background.toColor()) {
             Header(
-                syncState = SyncUiState.IN_PROGRESS,
+                syncState = SyncState.IN_PROGRESS,
                 isVertical = false,
                 isSettingsScreen = false,
                 onSyncIconClick = {},
@@ -133,7 +133,7 @@ fun HeaderPreviewVertical() {
     OutgoTheme {
         Surface(color = AppTheme.colors.background.toColor()) {
             Header(
-                syncState = SyncUiState.IN_PROGRESS,
+                syncState = SyncState.IN_PROGRESS,
                 isVertical = true,
                 isSettingsScreen = false,
                 onSyncIconClick = {},

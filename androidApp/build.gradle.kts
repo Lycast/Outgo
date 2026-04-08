@@ -39,6 +39,7 @@ android {
 dependencies {
     implementation(projects.shared.app)
     implementation(projects.shared.core.api)
+    implementation(projects.shared.feature.sync.api)
     implementation(projects.shared.database)
 
     implementation(libs.androidx.activity.compose)

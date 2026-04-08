@@ -2,12 +2,18 @@ package fr.abknative.outgo.sync.api
 
 import fr.abknative.outgo.core.api.logs.AppException
 import fr.abknative.outgo.core.api.logs.Result
+import kotlinx.coroutines.flow.StateFlow
 
 /**
  * Main interface for data synchronization.
  * This contract is intended to be called by WorkManager (Android) or Background Tasks (iOS).
  */
 interface SyncManager {
+
+    /**
+     * Reactive stream indicating whether a synchronization is currently in progress.
+     */
+    val isSyncing: StateFlow<Boolean>
 
     /**
      * Performs a full synchronization: sends local data (Push)

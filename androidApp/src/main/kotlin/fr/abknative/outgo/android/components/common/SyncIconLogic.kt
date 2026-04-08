@@ -16,11 +16,12 @@ import fr.abknative.outgo.android.R
 import fr.abknative.outgo.android.ui.AccessibilityLabels
 import fr.abknative.outgo.android.ui.theme.AppTheme
 import fr.abknative.outgo.android.ui.theme.toColor
-import fr.abknative.outgo.core.api.model.SyncUiState
+import fr.abknative.outgo.sync.api.model.SyncState
+
 
 @Composable
 fun SyncIconLogic(
-    syncState: SyncUiState,
+    syncState: SyncState,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -36,32 +37,32 @@ fun SyncIconLogic(
     )
 
     val (iconRes, iconTint, contentDescription) = when (syncState) {
-        SyncUiState.UNAUTHENTICATED -> Triple(
+        SyncState.UNAUTHENTICATED -> Triple(
             R.drawable.cloud_slash,
             AppTheme.colors.textSecondary.toColor().copy(alpha = 0.7f),
             AccessibilityLabels.NOT_SYNCED
         )
-        SyncUiState.OFFLINE -> Triple(
+        SyncState.OFFLINE -> Triple(
             R.drawable.cloud_warning,
             AppTheme.colors.textSecondary.toColor().copy(alpha = 0.7f),
             AccessibilityLabels.SYNC_ERROR
         )
-        SyncUiState.PENDING -> Triple(
+        SyncState.PENDING -> Triple(
             R.drawable.arrows_clockwise,
             AppTheme.colors.primary.toColor(),
             AccessibilityLabels.NOT_SYNCED
         )
-        SyncUiState.IN_PROGRESS -> Triple(
+        SyncState.IN_PROGRESS -> Triple(
             R.drawable.arrows_clockwise,
             AppTheme.colors.primary.toColor(),
             AccessibilityLabels.LOADING
         )
-        SyncUiState.UP_TO_DATE -> Triple(
+        SyncState.UP_TO_DATE -> Triple(
             R.drawable.cloud_check,
             AppTheme.colors.primary.toColor(),
             AccessibilityLabels.SYNCED
         )
-        SyncUiState.ERROR -> Triple(
+        SyncState.ERROR -> Triple(
             R.drawable.cloud_warning,
             AppTheme.colors.textSecondary.toColor().copy(alpha = 0.7f),
             AccessibilityLabels.SYNC_ERROR

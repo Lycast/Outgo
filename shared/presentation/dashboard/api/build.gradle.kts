@@ -1,13 +1,12 @@
 plugins { id("outgo.kmp.library") }
 
 kotlin {
-
-    jvm()
     
     sourceSets {
         commonMain.dependencies {
             implementation(projects.shared.core.api)
             implementation(projects.shared.feature.wallet.api)
+            implementation(projects.shared.feature.sync.api)
 
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.androidx.lifecycle.viewmodel)

@@ -6,14 +6,13 @@ import fr.abknative.outgo.auth.api.usecase.LogoutUseCase
 import fr.abknative.outgo.auth.api.usecase.ObserveUserSessionUseCase
 import fr.abknative.outgo.core.api.extensions.safeLaunch
 import fr.abknative.outgo.core.api.logs.AppException
-import fr.abknative.outgo.core.api.logs.CommonError
 import fr.abknative.outgo.core.api.logs.Result
-import fr.abknative.outgo.core.api.model.SyncUiState
 import fr.abknative.outgo.core.api.usecase.ClearLocalDataUseCase
 import fr.abknative.outgo.settings.api.SettingsIntent
 import fr.abknative.outgo.settings.api.SettingsPresenter
 import fr.abknative.outgo.settings.api.SettingsState
 import fr.abknative.outgo.sync.api.SyncManager
+import fr.abknative.outgo.sync.api.usecase.ObserveSyncStateUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -21,6 +20,7 @@ import kotlinx.coroutines.flow.update
 
 internal class SettingsPresenterImpl(
     private val observeUserSession: ObserveUserSessionUseCase,
+    private val observeSyncState: ObserveSyncStateUseCase,
     private val logout: LogoutUseCase,
     private val deleteAccount: DeleteAccountUseCase,
     private val clearLocalData: ClearLocalDataUseCase,
@@ -32,30 +32,25 @@ internal class SettingsPresenterImpl(
 
     private val onCoroutineError: (AppException) -> Unit = { error ->
         _state.update { it.copy(isProcessing = false, error = error) }
-
-        val targetState = if (error is CommonError.NetworkError) SyncUiState.OFFLINE else SyncUiState.ERROR
-        updateSyncState(targetState)
     }
 
     init {
         startObservingSession()
+        startObservingSyncState()
     }
 
     private fun startObservingSession() {
         viewModelScope.safeLaunch(onError = onCoroutineError) {
             observeUserSession().collect { session ->
-                if (session == null) {
-                    _state.update { it.copy(session = null) }
-                    updateSyncState(SyncUiState.UNAUTHENTICATED)
-                } else {
-                    val wasUnauthenticated = _state.value.syncState.isUnauthenticated
-                    _state.update { it.copy(session = session) }
+                _state.update { it.copy(session = session) }
+            }
+        }
+    }
 
-                    if (wasUnauthenticated) {
-                        updateSyncState(SyncUiState.PENDING)
-                        handleRefreshSync()
-                    }
-                }
+    private fun startObservingSyncState() {
+        viewModelScope.safeLaunch(onError = onCoroutineError) {
+            observeSyncState().collect { globalSyncState ->
+                _state.update { it.copy(syncState = globalSyncState) }
             }
         }
     }
@@ -74,9 +69,12 @@ internal class SettingsPresenterImpl(
     private fun handleLogout() {
         viewModelScope.safeLaunch(onError = onCoroutineError) {
             _state.update { it.copy(isProcessing = true) }
-            logout()
-            _state.update { it.copy(isProcessing = false, actionSuccess = true) }
-            updateSyncState(SyncUiState.UNAUTHENTICATED)
+            val result = logout()
+            if (result is Result.Success) {
+                _state.update { it.copy(isProcessing = false, actionSuccess = true) }
+            } else if (result is Result.Error) {
+                _state.update { it.copy(isProcessing = false, error = result.error) }
+            }
         }
     }
 
@@ -91,9 +89,7 @@ internal class SettingsPresenterImpl(
             )
 
             if (result is Result.Success) {
-                logout()
                 _state.update { it.copy(isProcessing = false, actionSuccess = true) }
-                updateSyncState(SyncUiState.UNAUTHENTICATED)
             } else if (result is Result.Error) {
                 _state.update { it.copy(isProcessing = false, error = result.error) }
             }
@@ -104,69 +100,30 @@ internal class SettingsPresenterImpl(
         viewModelScope.safeLaunch(onError = onCoroutineError) {
             _state.update { it.copy(isProcessing = true) }
             clearLocalData()
-            logout()
-            _state.update { it.copy(isProcessing = false, actionSuccess = true) }
-            updateSyncState(SyncUiState.UNAUTHENTICATED)
+
+            val logoutResult = logout()
+
+            if (logoutResult is Result.Success) {
+                _state.update { it.copy(isProcessing = false, actionSuccess = true) }
+            } else if (logoutResult is Result.Error) {
+                _state.update { it.copy(isProcessing = false, error = logoutResult.error) }
+            }
         }
     }
 
     private fun handleRefreshSync() {
+        // La protection est toujours bonne : pas besoin de lancer une synchro si on n'est pas logué ou déjà en cours
         val currentState = _state.value.syncState
         if (currentState.isUnauthenticated || currentState.isInProgress) return
 
         viewModelScope.safeLaunch(onError = onCoroutineError) {
-            updateSyncState(SyncUiState.IN_PROGRESS)
+            // Pas besoin de modifier l'état ici, syncManager.syncAll() va passer isSyncing à true tout seul
             val result = syncManager.syncAll()
-            updateSyncStateFromResult(result)
-        }
-    }
 
-    private fun updateSyncStateFromResult(result: Result<Unit, AppException>) {
-        val error = (result as? Result.Error)?.error
-
-        val targetState = when (result) {
-            is Result.Success -> SyncUiState.UP_TO_DATE
-            is Result.Error -> {
-                when (error) {
-                    is CommonError.NetworkError -> SyncUiState.OFFLINE
-                    is CommonError.Unauthorized -> SyncUiState.UNAUTHENTICATED
-                    else -> SyncUiState.ERROR
-                }
+            // On gère uniquement l'affichage des erreurs réseau/serveur ponctuelles via Snackbar (error = ...)
+            if (result is Result.Error) {
+                _state.update { it.copy(error = result.error) }
             }
         }
-
-        _state.update { currentState ->
-            val resolved = resolveNewSyncState(currentState.syncState, targetState)
-            currentState.copy(
-                syncState = resolved,
-                error = if (result is Result.Error && error !is CommonError.NetworkError) error else currentState.error
-            )
-        }
-    }
-
-    /**
-     * Centralized sync state management with priority rules.
-     */
-    private fun updateSyncState(newState: SyncUiState) {
-        _state.update { currentState ->
-            val resolved = resolveNewSyncState(currentState.syncState, newState)
-            currentState.copy(syncState = resolved)
-        }
-    }
-
-    private fun resolveNewSyncState(current: SyncUiState, new: SyncUiState): SyncUiState {
-        if (current == SyncUiState.UNAUTHENTICATED && !new.isPending && !new.isInProgress) {
-            return SyncUiState.UNAUTHENTICATED
-        }
-        if (new == SyncUiState.UNAUTHENTICATED) return SyncUiState.UNAUTHENTICATED
-
-        if (new == SyncUiState.OFFLINE || new == SyncUiState.ERROR) return new
-        if (current == SyncUiState.OFFLINE && (new == SyncUiState.PENDING || new == SyncUiState.UP_TO_DATE)) {
-            return SyncUiState.OFFLINE
-        }
-
-        if (new == SyncUiState.IN_PROGRESS) return SyncUiState.IN_PROGRESS
-
-        return new
     }
 }
