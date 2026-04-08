@@ -5,8 +5,8 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(projects.shared.core.api)
-            implementation(projects.shared.feature.auth.api)
-
+            implementation(projects.shared.feature.wallet.api)
+            implementation(projects.shared.feature.sync.api)
 
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.androidx.lifecycle.viewmodel)
@@ -18,5 +18,5 @@ kotlin {
 }
 
 android {
-    namespace = "fr.abknative.outgo.shared.presentation.settings.api"
+    namespace = "fr.abknative.outgo.shared.presentation.shell.api"
 }

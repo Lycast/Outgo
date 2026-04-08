@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.update
 
 sealed interface AppStep {
     data object Dashboard : AppStep
+    data object Analyse : AppStep
     data object Settings : AppStep
     data object Login : AppStep
 }

@@ -1,4 +1,4 @@
-package fr.abknative.outgo.android.components.common
+package fr.abknative.outgo.android.components.shell
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

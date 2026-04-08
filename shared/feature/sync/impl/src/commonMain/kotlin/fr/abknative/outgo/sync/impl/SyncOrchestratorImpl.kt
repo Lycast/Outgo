@@ -44,10 +44,8 @@ internal class SyncOrchestratorImpl(
 
     private fun checkStartupSync() {
         scope.launch {
-            // Attendre la première émission de la session
             val session = observeUserSession().first()
 
-            // Si session est null, l'utilisateur n'est pas logué : on stoppe
             if (session == null) {
                 AppLogger.get()?.d(TAG, "Startup Pull skipped: No active session.")
                 return@launch
@@ -83,7 +81,6 @@ internal class SyncOrchestratorImpl(
             networkMonitor.isConnected,
             observeUserSession()
         ) { hasPendingData, isConnected, session ->
-            // Le filtre "Triple A" : Attente de données + Accès réseau + Authentifié
             hasPendingData && isConnected && session != null
         }
             .distinctUntilChanged()

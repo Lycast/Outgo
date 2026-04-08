@@ -44,6 +44,8 @@ include(":shared:presentation:dashboard:api")
 include(":shared:presentation:dashboard:impl")
 include(":shared:presentation:settings:api")
 include(":shared:presentation:settings:impl")
+include(":shared:presentation:shell:api")
+include(":shared:presentation:shell:impl")
 
 include(":androidApp")
 include(":webApp")

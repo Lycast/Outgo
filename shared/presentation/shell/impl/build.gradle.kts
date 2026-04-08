@@ -8,10 +8,13 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             // Dépendance vers son propre contrat (API)
-            implementation(projects.shared.presentation.dashboard.api)
+            implementation(projects.shared.presentation.shell.api)
 
             // Dépendances vers les couches inférieures
             implementation(projects.shared.core.api)
+            implementation(projects.shared.feature.sync.api)
+            implementation(projects.shared.feature.subscription.api)
+            implementation(projects.shared.feature.auth.api)
             implementation(projects.shared.feature.wallet.api)
 
 
@@ -30,5 +33,5 @@ kotlin {
 }
 
 android {
-    namespace = "fr.abknative.outgo.shared.presentation.dashboard.impl"
+    namespace = "fr.abknative.outgo.shared.presentation.shell.impl"
 }

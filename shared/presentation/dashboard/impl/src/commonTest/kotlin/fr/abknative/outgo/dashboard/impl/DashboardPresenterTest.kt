@@ -1,6 +1,5 @@
 package fr.abknative.outgo.dashboard.impl
 
-import fr.abknative.outgo.auth.api.usecase.ObserveUserSessionUseCase
 import fr.abknative.outgo.dashboard.api.DashboardIntent
 import fr.abknative.outgo.dashboard.impl.mock.*
 import fr.abknative.outgo.wallet.api.model.Wallet
@@ -21,10 +20,7 @@ class DashboardPresenterTest {
 
     private val testDispatcher = UnconfinedTestDispatcher()
     private val timeProvider = FakeTimeProvider()
-    private val syncManager = FakeSyncManager()
-    private val fakeFeatureManager = FakeFeatureManager()
     private val storage = FakeKeyValueStorage()
-    private val authRepository = FakeAuthRepository()
 
     // Nouveaux Fakes
     private val observeWallets = FakeObserveWalletsUseCase()
@@ -41,9 +37,6 @@ class DashboardPresenterTest {
     fun setup() {
         Dispatchers.setMain(testDispatcher)
 
-        val fakeObserveUserSession = object : ObserveUserSessionUseCase {
-            override fun invoke() = authRepository.observeSession()
-        }
 
         presenter = DashboardPresenterImpl(
             observeActiveOperations = observeActiveOperations,
@@ -51,11 +44,8 @@ class DashboardPresenterTest {
             saveOperation = saveOperation,
             deleteOperation = deleteOperation,
             calculateDashboardData = calculateDashboardData,
-            observeUserSession = fakeObserveUserSession,
             saveWallet = saveWalletUseCase,
             timeProvider = timeProvider,
-            syncManager = syncManager,
-            featureManager = fakeFeatureManager,
             storage = storage
         )
     }

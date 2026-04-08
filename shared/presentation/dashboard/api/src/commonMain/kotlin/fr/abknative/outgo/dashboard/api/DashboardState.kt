@@ -1,7 +1,6 @@
 package fr.abknative.outgo.dashboard.api
 
 import fr.abknative.outgo.core.api.logs.AppException
-import fr.abknative.outgo.sync.api.model.SyncState
 import fr.abknative.outgo.wallet.api.model.dashboard.ProjectedOperation
 
 /**
@@ -17,7 +16,6 @@ import fr.abknative.outgo.wallet.api.model.dashboard.ProjectedOperation
  * @property totalOutgoingsInCents The smoothed sum of all expenses (e.g., accounting for yearly recurrences).
  * @property disposableIncomeInCents The remaining budget after subtracting [totalOutgoingsInCents] from income.
  * @property remainingToPayInCents The exact sum of expenses still due in the [selectedMonth] based on the [currentDay].
- * @property syncState Indicates if the app is actively synchronizing data with the remote server.
  * @property error The current error state to be handled by the UI, or null if successful.
  * @property isHeroExpanded Persisted user preference indicating if the top summary section is expanded.
  */
@@ -44,8 +42,6 @@ data class DashboardState(
     val remainingToPayInCents: Long = 0L,
 
     // --- Global State ---
-    val isPremium: Boolean = false,
-    val syncState: SyncState = SyncState.UNAUTHENTICATED,
     val error: AppException? = null,
 
     // --- KeyValueStorage ---

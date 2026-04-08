@@ -34,18 +34,18 @@ import fr.abknative.outgo.android.ui.theme.toColor
  */
 @Composable
 fun SegmentedControl(
+    modifier: Modifier = Modifier,
     items: List<String>,
     selectedIndex: Int,
     onItemSelected: (Int) -> Unit,
     activeColor: Color = AppTheme.colors.primary.toColor(),
-    modifier: Modifier = Modifier
 ) {
     BoxWithConstraints(
         modifier = modifier
             .fillMaxWidth()
             .height(48.dp)
             .clip(CircleShape)
-            .background(AppTheme.colors.surface100.toColor())
+            .background(AppTheme.colors.surface50.toColor().copy(alpha = 0.3f))
             .padding(4.dp) // Espace interne pour que la pastille respire
     ) {
         val segmentWidth = maxWidth / items.size

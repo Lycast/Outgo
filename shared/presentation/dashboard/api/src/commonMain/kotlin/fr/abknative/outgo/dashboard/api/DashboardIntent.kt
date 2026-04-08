@@ -40,8 +40,6 @@ sealed interface DashboardIntent {
     /** Intent to expand or collapse the top summary (hero) section. */
     data class ToggleHeroSection(val isExpanded: Boolean) : DashboardIntent
 
-    /** Intent to manually trigger a cloud synchronization. */
-    object Refresh : DashboardIntent
 
     /** Intent to clear the current error state from the UI. */
     object DismissError : DashboardIntent

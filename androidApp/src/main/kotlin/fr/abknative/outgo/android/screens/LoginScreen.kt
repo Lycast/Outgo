@@ -15,8 +15,8 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import fr.abknative.outgo.android.R
-import fr.abknative.outgo.android.components.common.AppBackground
 import fr.abknative.outgo.android.components.login.ConflictDialog
+import fr.abknative.outgo.android.components.shell.AppBackground
 import fr.abknative.outgo.android.ui.LoginLabels
 import fr.abknative.outgo.android.ui.states.rememberLoginFormState
 import fr.abknative.outgo.android.ui.theme.AppTheme
@@ -182,6 +182,7 @@ fun LoginScreen(
  * Preview for the LoginScreen.
  */
 @Preview(showBackground = true, name = "Login Screen - Default")
+@Preview(showBackground = true, name = "Login Screen - Default", uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun PreviewLoginScreen() {
     val dummyPresenter = object : LoginPresenter() {

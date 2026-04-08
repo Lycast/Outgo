@@ -11,8 +11,6 @@ import fr.abknative.outgo.core.api.usecase.ClearLocalDataUseCase
 import fr.abknative.outgo.settings.api.SettingsIntent
 import fr.abknative.outgo.settings.api.SettingsPresenter
 import fr.abknative.outgo.settings.api.SettingsState
-import fr.abknative.outgo.sync.api.SyncManager
-import fr.abknative.outgo.sync.api.usecase.ObserveSyncStateUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -20,11 +18,9 @@ import kotlinx.coroutines.flow.update
 
 internal class SettingsPresenterImpl(
     private val observeUserSession: ObserveUserSessionUseCase,
-    private val observeSyncState: ObserveSyncStateUseCase,
     private val logout: LogoutUseCase,
     private val deleteAccount: DeleteAccountUseCase,
-    private val clearLocalData: ClearLocalDataUseCase,
-    private val syncManager: SyncManager
+    private val clearLocalData: ClearLocalDataUseCase
 ) : SettingsPresenter() {
 
     private val _state = MutableStateFlow(SettingsState())
@@ -36,7 +32,6 @@ internal class SettingsPresenterImpl(
 
     init {
         startObservingSession()
-        startObservingSyncState()
     }
 
     private fun startObservingSession() {
@@ -47,20 +42,11 @@ internal class SettingsPresenterImpl(
         }
     }
 
-    private fun startObservingSyncState() {
-        viewModelScope.safeLaunch(onError = onCoroutineError) {
-            observeSyncState().collect { globalSyncState ->
-                _state.update { it.copy(syncState = globalSyncState) }
-            }
-        }
-    }
-
     override fun onIntent(intent: SettingsIntent) {
         when (intent) {
             is SettingsIntent.Logout -> handleLogout()
             is SettingsIntent.DeleteAccount -> handleDeleteAccount(intent)
             is SettingsIntent.PurgeLocalData -> handlePurgeLocalData()
-            is SettingsIntent.RefreshSync -> handleRefreshSync()
             is SettingsIntent.DismissError -> _state.update { it.copy(error = null) }
             is SettingsIntent.ResetSuccessFlag -> _state.update { it.copy(actionSuccess = false) }
         }
@@ -107,19 +93,6 @@ internal class SettingsPresenterImpl(
                 _state.update { it.copy(isProcessing = false, actionSuccess = true) }
             } else if (logoutResult is Result.Error) {
                 _state.update { it.copy(isProcessing = false, error = logoutResult.error) }
-            }
-        }
-    }
-
-    private fun handleRefreshSync() {
-        val currentState = _state.value.syncState
-        if (currentState.isUnauthenticated || currentState.isInProgress) return
-
-        viewModelScope.safeLaunch(onError = onCoroutineError) {
-            val result = syncManager.syncAll()
-
-            if (result is Result.Error) {
-                _state.update { it.copy(error = result.error) }
             }
         }
     }

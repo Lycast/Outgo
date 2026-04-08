@@ -21,14 +21,16 @@ kotlin {
             freeCompilerArgs += "-Xbinary=bundleId=fr.abknative.outgo.shared"
             freeCompilerArgs += listOf("-Xoverride-konan-properties=min_os_version_ios_simulator_arm64=17.0")
 
-            export(projects.shared.core.ui)
             export(projects.shared.core.api)
-            export(projects.shared.presentation.dashboard.api)
-            export(projects.shared.presentation.login.api)
-            export(projects.shared.presentation.settings.api)
             export(projects.shared.feature.wallet.api)
             export(projects.shared.feature.auth.api)
             export(projects.shared.feature.sync.api)
+
+            export(projects.shared.core.ui)
+            export(projects.shared.presentation.dashboard.api)
+            export(projects.shared.presentation.login.api)
+            export(projects.shared.presentation.settings.api)
+            export(projects.shared.presentation.shell.api)
         }
 
         pod("FirebaseCore") {
@@ -55,6 +57,7 @@ kotlin {
             implementation(projects.shared.presentation.dashboard.impl)
             implementation(projects.shared.presentation.login.impl)
             implementation(projects.shared.presentation.settings.impl)
+            implementation(projects.shared.presentation.shell.impl)
 
             implementation(libs.koin.core)
             implementation(libs.kotlinx.coroutines.core)
@@ -67,6 +70,7 @@ kotlin {
             api(projects.shared.presentation.dashboard.api)
             api(projects.shared.presentation.login.api)
             api(projects.shared.presentation.settings.api)
+            api(projects.shared.presentation.shell.api)
 
             // Exposer les contrats métier
             api(projects.shared.feature.wallet.api)

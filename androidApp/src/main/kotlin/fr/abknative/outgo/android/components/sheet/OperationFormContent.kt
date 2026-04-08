@@ -17,6 +17,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
+import fr.abknative.outgo.android.components.common.AppTextField
+import fr.abknative.outgo.android.components.common.FormattedDateInput
+import fr.abknative.outgo.android.components.sheet.OperationTypeSelector
 import fr.abknative.outgo.android.ui.CommonLabels
 import fr.abknative.outgo.android.ui.FormLabels
 import fr.abknative.outgo.android.ui.states.OperationFormEvent
@@ -29,7 +32,6 @@ import fr.abknative.outgo.android.ui.theme.toColor
 fun OperationFormContent(
     modifier: Modifier = Modifier,
     state: OperationFormState,
-    currentYear: Int,
     isPremium: Boolean,
     onEvent: (OperationFormEvent) -> Unit,
     onCancel: () -> Unit,
@@ -38,58 +40,35 @@ fun OperationFormContent(
 
     val lockSheetConnection = remember {
         object : NestedScrollConnection {
-            override fun onPostScroll(consumed: Offset, available: Offset, source: NestedScrollSource): Offset = available
+            override fun onPostScroll(consumed: Offset, available: Offset, source: NestedScrollSource): Offset =
+                available
         }
     }
 
     val isEditMode = state.operationId != null
 
-    val textFieldColors = OutlinedTextFieldDefaults.colors(
-        focusedBorderColor = AppTheme.colors.primary.toColor(),
-        unfocusedBorderColor = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.2f),
-        focusedLabelColor = AppTheme.colors.primary.toColor(),
-        unfocusedLabelColor = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.6f),
-        cursorColor = AppTheme.colors.primary.toColor(),
-        focusedTextColor = AppTheme.colors.textPrimary.toColor(),
-        unfocusedTextColor = AppTheme.colors.textPrimary.toColor()
-    )
-
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(AppTheme.spacing.large)
+            .padding(horizontal = AppTheme.spacing.large)
             .nestedScroll(lockSheetConnection)
             .verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.medium),
+        verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.large),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // --- Titre ---
+// --- Titre ---
         Text(
             text = if (isEditMode) FormLabels.SHEET_TITLE_EDIT else FormLabels.SHEET_TITLE_ADD,
             style = AppTheme.typo.subtitle,
             color = AppTheme.colors.textPrimary.toColor()
         )
 
-        Spacer(modifier = Modifier.height(AppTheme.spacing.small))
-
-        // --- Sélecteur : Type d'opération (Revenu / Dépense) ---
-        if (isPremium) {
-            OperationTypeSelector(
-                selectedType = state.typeSelection,
-                onTypeChanged = { onEvent(OperationFormEvent.UpdateType(it)) }
-            )
-            Spacer(modifier = Modifier.height(AppTheme.spacing.medium))
-        }
-
-        // --- Champ : Nom de la dépense/revenu ---
-        OutlinedTextField(
+// --- Champ : Nom de la dépense/revenu ---
+        AppTextField(
             value = state.nameBuffer,
             onValueChange = { onEvent(OperationFormEvent.UpdateName(it)) },
-            label = { Text(text = FormLabels.FIELD_NAME, style = AppTheme.typo.caption) },
-            placeholder = { Text(text = FormLabels.FIELD_PLACE_HOLDER_NAME, style = AppTheme.typo.body) },
-            singleLine = true,
-            textStyle = AppTheme.typo.body,
-            colors = textFieldColors,
+            label = FormLabels.FIELD_NAME,
+            placeholder = FormLabels.FIELD_PLACE_HOLDER_NAME,
             keyboardOptions = KeyboardOptions(
                 capitalization = KeyboardCapitalization.Sentences,
                 imeAction = ImeAction.Next
@@ -97,71 +76,60 @@ fun OperationFormContent(
             modifier = Modifier.fillMaxWidth()
         )
 
-        // --- Champ : Montant ---
-        OutlinedTextField(
+// --- Champ : Montant ---
+        AppTextField(
             value = state.amountBuffer,
             onValueChange = { onEvent(OperationFormEvent.UpdateAmount(it)) },
-            label = { Text(text = FormLabels.FIELD_AMOUNT, style = AppTheme.typo.caption) },
-            placeholder = { Text(text = FormLabels.FIELD_PLACE_HOLDER_AMOUNT, style = AppTheme.typo.body) },
-            singleLine = true,
-            textStyle = AppTheme.typo.body,
-            colors = textFieldColors,
+            label = FormLabels.FIELD_AMOUNT,
+            placeholder = FormLabels.FIELD_PLACE_HOLDER_AMOUNT,
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Decimal,
-                imeAction = ImeAction.Done
+                imeAction = ImeAction.Next
             ),
             suffix = { Text(CommonLabels.CURRENCY_SYMBOL, style = AppTheme.typo.body) },
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(modifier = Modifier.height(AppTheme.spacing.medium))
-
-        Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.small)) {
-
-            // --- Sélecteur Temporel (Jour & Récurrence) ---
-            Text(
-                text = FormLabels.FIELD_DATE_DESC,
-                style = AppTheme.typo.caption,
-                color = AppTheme.colors.textSecondary.toColor(),
-                modifier = Modifier.padding(horizontal = AppTheme.spacing.small)
+// --- Sélecteur de start date ---
+        FormattedDateInput(
+            value = state.dateBuffer,
+            onValueChange = { onEvent(OperationFormEvent.UpdateDateString(it)) },
+            onDateSelected = { millis -> onEvent(OperationFormEvent.UpdateDateMillis(millis)) },
+            initialDateMillis = state.startDate,
+            label = "Date de l'opération",
+            isError = state.isDateError,
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Number,
+                imeAction = if (isPremium) ImeAction.Next else ImeAction.Done
             )
-
-            OperationDateSelector(
-                selectedDay = state.dayBuffer,
-                selectedMonth = state.monthBuffer,
-                selectedYear = state.yearBuffer,
-                currentYear = currentYear,
-                onDayChanged = { onEvent(OperationFormEvent.UpdateDay(it)) },
-                onMonthChanged = { onEvent(OperationFormEvent.UpdateMonth(it)) },
-                onYearChanged = { onEvent(OperationFormEvent.UpdateYear(it)) }
-            )
-        }
-
-        Spacer(modifier = Modifier.height(AppTheme.spacing.medium))
-
-        // --- NOUVEAU : Sélecteur de Récurrence ---
-        Text(
-            text = "Sélectionnez le type de récurrence", // TODO: Extract to FormLabels
-            style = AppTheme.typo.caption,
-            color = AppTheme.colors.textSecondary.toColor(),
-            modifier = Modifier.padding(horizontal = AppTheme.spacing.small)
         )
 
+// --- Sélecteur de Récurrence ---
         RecurrenceSelector(
             selectedRecurrence = state.recurrenceSelection,
             onRecurrenceChanged = { onEvent(OperationFormEvent.UpdateRecurrence(it)) }
         )
 
-        Spacer(modifier = Modifier.height(AppTheme.spacing.medium))
+// --- Sélecteur : Type d'opération (Revenu / Dépense) ---
+        if (isPremium) {
+            OperationTypeSelector(
+                selectedType = state.typeSelection,
+                onTypeChanged = { onEvent(OperationFormEvent.UpdateType(it)) }
+            )
+        }
 
-        // --- Actions Boutons ---
+        Spacer(modifier = Modifier.height(AppTheme.spacing.small))
+
+
+// --- Actions Boutons ---
         Row(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = AppTheme.spacing.medium),
+                .fillMaxWidth(),
             horizontalArrangement = Arrangement.End,
             verticalAlignment = Alignment.CenterVertically
         ) {
+
+            // Cancel button
             TextButton(
                 onClick = onCancel,
                 modifier = Modifier.padding(end = AppTheme.spacing.small),
@@ -173,14 +141,15 @@ fun OperationFormContent(
                 )
             }
 
+            // Save button
             Button(
                 onClick = onSave,
                 enabled = state.isValid,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = AppTheme.colors.primary.toColor(),
                     contentColor = AppTheme.colors.textOnBrand.toColor(),
-                    disabledContainerColor = AppTheme.colors.surface100.toColor().copy(alpha = 0.5f),
-                    disabledContentColor = AppTheme.colors.textSecondary.toColor()
+                    disabledContainerColor = AppTheme.colors.surface50.toColor().copy(alpha = 0.5f),
+                    disabledContentColor = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.5f)
                 )
             ) {
                 Text(

@@ -10,7 +10,6 @@ sealed interface SettingsIntent {
     ) : SettingsIntent
 
     object PurgeLocalData : SettingsIntent
-    object RefreshSync : SettingsIntent
     object DismissError : SettingsIntent
     object ResetSuccessFlag : SettingsIntent
 }

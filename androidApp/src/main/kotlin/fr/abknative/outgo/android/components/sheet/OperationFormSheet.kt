@@ -1,4 +1,4 @@
-package fr.abknative.outgo.android.components.dashboard
+package fr.abknative.outgo.android.components.sheet
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -10,6 +10,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import fr.abknative.outgo.android.R
 import fr.abknative.outgo.android.components.common.GlassCard
+import fr.abknative.outgo.android.components.dashboard.OperationFormContent
 import fr.abknative.outgo.android.ui.AccessibilityLabels
 import fr.abknative.outgo.android.ui.states.OperationFormEvent
 import fr.abknative.outgo.android.ui.states.OperationFormState
@@ -23,7 +24,6 @@ import kotlinx.coroutines.launch
 fun OperationFormSheet(
     formState: OperationFormState,
     sheetState: SheetState,
-    currentYear: Int,
     isPremium: Boolean,
     onEvent: (OperationFormEvent) -> Unit,
     onDismiss: () -> Unit,
@@ -40,45 +40,60 @@ fun OperationFormSheet(
     }
 
     val sheetHeader = @Composable {
-        Row(
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(AppTheme.spacing.medium),
-            horizontalArrangement = Arrangement.End,
-            verticalAlignment = Alignment.CenterVertically
+                .padding(horizontal = AppTheme.spacing.medium),
+            contentAlignment = Alignment.Center
         ) {
-            if (!formState.operationId.isNullOrBlank()) {
-                IconButton(onClick = onDeleteRequest) {
-                    Icon(
-                        painter = painterResource(R.drawable.trash),
-                        contentDescription = AccessibilityLabels.DELETE_EXPENSE,
-                        tint = AppTheme.colors.error.toColor()
-                    )
-                }
+            BottomSheetDefaults.DragHandle(
+                color = AppTheme.colors.textSecondary.toColor()
+            )
 
-                IconButton(onClick = onDuplicateRequest) {
-                    Icon(
-                        painter = painterResource(R.drawable.copy),
-                        contentDescription = AccessibilityLabels.DUPLICATE_EXPENSE,
-                        tint = AppTheme.colors.primary.toColor()
-                    )
+            if (!formState.operationId.isNullOrBlank()) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    IconButton(onClick = onDeleteRequest) {
+                        Icon(
+                            painter = painterResource(R.drawable.trash),
+                            contentDescription = AccessibilityLabels.DELETE_EXPENSE,
+                            tint = AppTheme.colors.error.toColor().copy(alpha = 0.75f)
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.weight(1f))
+
+                    IconButton(onClick = onDuplicateRequest) {
+                        Icon(
+                            painter = painterResource(R.drawable.copy),
+                            contentDescription = AccessibilityLabels.DUPLICATE_EXPENSE,
+                            tint = AppTheme.colors.primary.toColor()
+                        )
+                    }
                 }
             }
         }
     }
 
+
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
         containerColor = Color.Transparent,
+        dragHandle = null
     ) {
-        GlassCard {
-            Column {
+
+        GlassCard(
+            modifier = Modifier.padding(top = AppTheme.spacing.medium)
+        ) {
+            Column(modifier = Modifier.padding(bottom = AppTheme.spacing.big)) {
                 sheetHeader()
                 OperationFormContent(
                     state = formState,
                     onEvent = onEvent,
-                    currentYear = currentYear,
                     isPremium = isPremium,
                     onCancel = { closeSheet() },
                     onSave = {

@@ -9,9 +9,6 @@ import fr.abknative.outgo.core.api.logs.Result
 import fr.abknative.outgo.dashboard.api.DashboardIntent
 import fr.abknative.outgo.dashboard.api.DashboardPresenter
 import fr.abknative.outgo.dashboard.api.DashboardState
-import fr.abknative.outgo.subscription.api.FeatureManager
-import fr.abknative.outgo.sync.api.SyncManager
-import fr.abknative.outgo.sync.api.usecase.ObserveSyncStateUseCase
 import fr.abknative.outgo.wallet.api.model.operation.OperationType
 import fr.abknative.outgo.wallet.api.model.operation.Recurrence
 import fr.abknative.outgo.wallet.api.usecase.*
@@ -24,12 +21,9 @@ internal class DashboardPresenterImpl(
     private val saveOperation: SaveOperationUseCase,
     private val deleteOperation: DeleteOperationUseCase,
     private val calculateDashboardData: CalculateDashboardDataUseCase,
-    private val observeSyncState: ObserveSyncStateUseCase,
     private val saveWallet: SaveWalletUseCase,
     private val timeProvider: TimeProvider,
-    private val syncManager: SyncManager,
-    private val storage: KeyValueStorage,
-    private val featureManager: FeatureManager
+    private val storage: KeyValueStorage
 ) : DashboardPresenter() {
 
     private val heroExpandedKey = "hero_section_expanded"
@@ -53,25 +47,7 @@ internal class DashboardPresenterImpl(
     }
 
     init {
-        startObservingSyncState()
-        startObservingPremiumStatus()
         startObservingData()
-    }
-
-    private fun startObservingSyncState() {
-        viewModelScope.safeLaunch(onError = onCoroutineError) {
-            observeSyncState().collect { globalSyncState ->
-                _state.update { it.copy(syncState = globalSyncState) }
-            }
-        }
-    }
-
-    private fun startObservingPremiumStatus() {
-        viewModelScope.safeLaunch(onError = onCoroutineError) {
-            featureManager.isPremiumFlow.collect { isPremium ->
-                _state.update { it.copy(isPremium = isPremium) }
-            }
-        }
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -134,7 +110,6 @@ internal class DashboardPresenterImpl(
                 storage.putBoolean(heroExpandedKey, intent.isExpanded)
                 _state.update { it.copy(isHeroExpanded = intent.isExpanded) }
             }
-            is DashboardIntent.Refresh -> handleRefreshSync()
             is DashboardIntent.DismissError -> { _state.update { it.copy(error = null) } }
         }
     }
@@ -184,17 +159,6 @@ internal class DashboardPresenterImpl(
     private fun handleDelete(intent: DashboardIntent.Delete) {
         viewModelScope.safeLaunch(onError = onCoroutineError) {
             val result = deleteOperation(intent.id)
-            if (result is Result.Error) {
-                _state.update { it.copy(error = result.error) }
-            }
-        }
-    }
-
-    private fun handleRefreshSync() {
-        if (_state.value.syncState.isUnauthenticated || _state.value.syncState.isInProgress) return
-
-        viewModelScope.safeLaunch(onError = onCoroutineError) {
-            val result = syncManager.syncAll()
             if (result is Result.Error) {
                 _state.update { it.copy(error = result.error) }
             }
