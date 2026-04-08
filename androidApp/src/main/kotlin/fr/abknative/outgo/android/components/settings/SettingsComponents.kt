@@ -127,7 +127,7 @@ fun SettingsRowContent(
             )
             Text(
                 text = subtitle,
-                style = AppTheme.typo.caption,
+                style = AppTheme.typo.label,
                 color = AppTheme.colors.textSecondary.toColor()
             )
         }

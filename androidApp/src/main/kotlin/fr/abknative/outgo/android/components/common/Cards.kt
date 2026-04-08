@@ -7,13 +7,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.composed
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.unit.Dp
 import fr.abknative.outgo.android.ui.theme.AppTheme
 import fr.abknative.outgo.android.ui.theme.toColor
 
@@ -40,19 +36,14 @@ fun GlassCard(
 
     val backgroundBrush = remember(backgroundColorA, textSecondaryColor) {
         Brush.horizontalGradient(
-            colors = listOf(
-                textSecondaryColor.copy(alpha = 0.05f),
-                backgroundColorA.copy(alpha = 0.8f)
+            colors = listOf(textSecondaryColor.copy(alpha = 0.05f), backgroundColorA.copy(alpha = 0.8f)
             )
         )
     }
 
     val borderBrush = remember(surface50Color) {
         Brush.verticalGradient(
-            colors = listOf(
-                surface50Color.copy(alpha = 0.5f),
-                surface50Color.copy(alpha = 0.1f)
-            )
+            colors = listOf(surface50Color.copy(alpha = 0.5f), surface50Color.copy(alpha = 0.1f))
         )
     }
 
@@ -90,49 +81,3 @@ fun GlassCard(
     }
 }
 
-/**
- * Applies a glassmorphism visual effect to the component.
- * Uses [composed] to safely access the Compose theme within the modifier chain.
- *
- * @param shape The shape of the glass effect boundaries (e.g., RoundedCornerShape).
- * @param borderSize The thickness of the gradient border.
- */
-fun Modifier.glassEffect(
-    shape: Shape,
-    borderSize: Dp
-): Modifier = composed {
-
-    val colorA = AppTheme.colors.textPrimary.toColor()
-    val colorB = AppTheme.colors.textSecondary.toColor()
-    val borderColor = AppTheme.colors.surface50.toColor()
-
-    val backgroundBrush = remember(colorA, colorB) {
-        Brush.horizontalGradient(
-            colors = listOf(
-                colorB.copy(alpha = 0.02f),
-                colorA.copy(alpha = 0.05f)
-            )
-        )
-    }
-
-    val borderBrush = remember(borderColor) {
-        Brush.verticalGradient(
-            colors = listOf(
-                borderColor,
-                borderColor.copy(alpha = 0.5f)
-            )
-        )
-    }
-
-
-    this.then(
-        Modifier
-            .clip(shape)
-            .background(brush = backgroundBrush)
-            .border(
-                width = borderSize,
-                brush = borderBrush,
-                shape = shape
-            )
-    )
-}

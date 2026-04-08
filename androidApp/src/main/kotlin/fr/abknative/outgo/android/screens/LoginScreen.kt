@@ -10,6 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -56,15 +57,15 @@ fun LoginScreen(
                 TopAppBar(
                     title = { Text(
                         LoginLabels.BACK_TITLE,
-                        style = AppTheme.typo.subtitle,
-                        color = AppTheme.colors.textPrimary.toColor()
+                        style = AppTheme.typo.title.copy(fontWeight = FontWeight.Medium),
+                        color = AppTheme.colors.textSecondary.toColor()
                     ) },
                     navigationIcon = {
                         IconButton(onClick = onNavigateBack) {
                             Icon(
                                 painter = painterResource(R.drawable.caret_left),
                                 contentDescription = LoginLabels.BACK_TITLE,
-                                tint = AppTheme.colors.textPrimary.toColor()
+                                tint = AppTheme.colors.textSecondary.toColor()
                             )
                         }
                     },
