@@ -89,3 +89,8 @@ updateUserId:
 UPDATE OperationEntity
 SET userId = :newUserId
 WHERE userId = :oldUserId;
+
+downgradeToLocal:
+UPDATE OperationEntity
+SET userId = :newLocalId, syncStatus = 'PENDING_CREATE', updatedAt = :now
+WHERE userId = :firebaseId;

@@ -72,3 +72,8 @@ updateUserId:
 UPDATE WalletEntity
 SET userId = :newUserId
 WHERE userId = :oldUserId;
+
+downgradeToLocal:
+UPDATE WalletEntity
+SET userId = :newLocalId, syncStatus = 'PENDING_CREATE', updatedAt = :now
+WHERE userId = :firebaseId;

@@ -27,6 +27,9 @@ val authModule = module {
     factory<DeleteAccountUseCase> {
         DeleteAccountUseCaseImpl(
             authRepository = get(),
+            sessionProvider = get(),
+            storage = get(),
+            timeProvider = get(),
             httpClient = get(),
             localDataPurgers = getAll<DataPurger>(),
             downgraders = getAll<LocalDataDowngrader>()

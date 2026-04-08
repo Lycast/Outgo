@@ -101,6 +101,21 @@ internal class SyncManagerImpl(
         return Result.Success(Unit)
     }
 
+    override suspend fun hasRemoteData(): Result<Boolean, AppException> {
+        if (!networkMonitor.isConnected.value) {
+            return Result.Error(CommonError.NetworkError())
+        }
+
+        val pullResult = networkApi.pullData(since = 0L)
+        if (pullResult is Result.Error) return pullResult
+
+        val response = (pullResult as Result.Success).data
+
+        val hasData = response.wallets.isNotEmpty() || response.operations.isNotEmpty()
+
+        return Result.Success(hasData)
+    }
+
     override fun clearSyncState() {
         storage.remove(LAST_SYNC_KEY)
     }

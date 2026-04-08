@@ -6,33 +6,49 @@ import fr.abknative.outgo.auth.api.repository.AuthRepository
 import fr.abknative.outgo.core.api.LocalDataMigrator
 import fr.abknative.outgo.core.api.logs.AppException
 import fr.abknative.outgo.core.api.logs.Result
+import fr.abknative.outgo.sync.api.SyncManager
 
-/**
- * Encapsule la logique commune de migration et de vérification des conflits
- * après une tentative d'authentification (Login ou Register).
- */
 internal suspend inline fun executeAuthWithMigration(
     sessionProvider: SessionProvider,
     localDataMigrator: LocalDataMigrator,
     authRepository: AuthRepository,
+    syncManager: SyncManager,
     crossinline authAction: suspend () -> Result<Unit, AppException>
 ): Result<Unit, AppException> {
 
     val currentLocalId = sessionProvider.getCurrentUserId()
 
-    // On exécute l'action spécifique (login ou register)
     val authResult = authAction()
-
-    if (authResult is Result.Error) {
-        return authResult
-    }
+    if (authResult is Result.Error) return authResult
 
     val newUserId = sessionProvider.getCurrentUserId()
-    val migrationResult = localDataMigrator.checkConflictAndMigrate(newUserId, currentLocalId)
 
-    if (migrationResult is Result.Error) {
-        authRepository.logout()
-        return Result.Error(AuthError.DataConflict())
+    if (currentLocalId == newUserId) {
+        return Result.Success(Unit)
+    }
+
+    if (currentLocalId.startsWith("local_")) {
+        val hasRemoteResult = syncManager.hasRemoteData()
+
+        if (hasRemoteResult is Result.Error) {
+            authRepository.logout()
+            return hasRemoteResult
+        }
+
+        val hasRemoteData = (hasRemoteResult as Result.Success).data
+
+        if (!hasRemoteData) {
+            val migrationResult = localDataMigrator.checkConflictAndMigrate(newUserId, currentLocalId)
+            if (migrationResult is Result.Error) {
+                authRepository.logout()
+                return migrationResult
+            }
+        } else {
+            authRepository.logout()
+            return Result.Error(AuthError.DataConflict())
+        }
+    } else {
+        syncManager.clearSyncState()
     }
 
     return Result.Success(Unit)

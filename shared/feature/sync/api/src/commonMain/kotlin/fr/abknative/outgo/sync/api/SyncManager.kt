@@ -25,5 +25,11 @@ interface SyncManager {
      */
     suspend fun syncIn(): Result<Unit, AppException>
 
+    /**
+     * Checks if the authenticated account already has data on the server.
+     * Helps detect potential conflicts with local data during the sign-in process.
+     */
+    suspend fun hasRemoteData(): Result<Boolean, AppException>
+
     fun clearSyncState()
 }

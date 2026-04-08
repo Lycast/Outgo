@@ -16,28 +16,36 @@ internal class SessionProviderImpl(
 ) : SessionProvider {
 
     companion object {
-        private const val KEY_OFFLINE_USER_ID = "offline_user_id"
+        private const val KEY_PERSISTENT_USER_ID = "persistent_user_id"
     }
 
+    /**
+     * Retrieves the active user ID.
+     * Stores the authenticated Firebase UID as the persistent ID if a session is active.
+     * If no session is active (e.g., after logout), it falls back to the last known
+     * persistent ID to keep data visible offline. Generates a local ID on first launch.
+     */
     override fun getCurrentUserId(): String {
-        // 1. Lecture synchrone et sécurisée grâce au StateFlow
         val currentSession = authRepository.observeSession().value
 
         if (currentSession != null) {
+            storage.putString(KEY_PERSISTENT_USER_ID, currentSession.userId)
             return currentSession.userId
         }
 
-        // 2. Fallback sur l'ID hors-ligne
-        var offlineId = storage.getString(KEY_OFFLINE_USER_ID)
+        var lastId = storage.getString(KEY_PERSISTENT_USER_ID)
 
-        if (offlineId == null) {
-            offlineId = "local_${Uuid.random()}"
-            storage.putString(KEY_OFFLINE_USER_ID, offlineId)
+        if (lastId == null) {
+            lastId = "local_${Uuid.random()}"
+            storage.putString(KEY_PERSISTENT_USER_ID, lastId)
         }
 
-        return offlineId
+        return lastId
     }
 
+    /**
+     * Observes the user ID changes.
+     */
     override fun observeUserId(): Flow<String> {
         return authRepository.observeSession()
             .map { session -> session?.userId ?: getCurrentUserId() }

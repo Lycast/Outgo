@@ -12,4 +12,10 @@ interface LocalDataMigrator {
      * @return Success si tout va bien, Error(DataConflict) si conflit.
      */
     suspend fun checkConflictAndMigrate(newUserId: String, currentLocalId: String): Result<Unit, AppException>
+
+    // NOUVEAU : Option A -> L'utilisateur choisit de "Fusionner"
+    suspend fun mergeLocalDataToAccount(newUserId: String, localId: String): Result<Unit, AppException>
+
+    // NOUVEAU : Option B -> L'utilisateur choisit de "Télécharger depuis le Cloud" (on écrase le local)
+    suspend fun discardLocalData(localId: String): Result<Unit, AppException>
 }
