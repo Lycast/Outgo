@@ -9,6 +9,7 @@ import fr.abknative.outgo.core.api.logs.Result
 import fr.abknative.outgo.dashboard.api.DashboardIntent
 import fr.abknative.outgo.dashboard.api.DashboardPresenter
 import fr.abknative.outgo.dashboard.api.DashboardState
+import fr.abknative.outgo.wallet.api.logs.WalletError
 import fr.abknative.outgo.wallet.api.model.operation.OperationType
 import fr.abknative.outgo.wallet.api.model.operation.Recurrence
 import fr.abknative.outgo.wallet.api.usecase.*
@@ -61,8 +62,8 @@ internal class DashboardPresenterImpl(
                 Triple(wallets.firstOrNull(), month, year)
             }.flatMapLatest { (wallet, month, year) ->
                 if (wallet == null) {
+                    onCoroutineError(WalletError.NoActiveWallet())
                     flowOf(emptyList())
-                    // todo c'est ici qu'il faudra brancher la navigation vers la première connexion
                 } else {
                     _state.update {
                         it.copy(
@@ -100,7 +101,8 @@ internal class DashboardPresenterImpl(
     override fun onIntent(intent: DashboardIntent) {
         when (intent) {
             is DashboardIntent.SaveOperation -> handleSaveOperation(intent)
-            is DashboardIntent.SaveWalletAndIncome -> handleSaveWalletAndIncome(intent)
+            is DashboardIntent.SaveWalletAndIncome -> handleSaveWalletAndIncome(intent) // 🌟 RETOUR
+            is DashboardIntent.SaveWallet -> handleSaveWallet(intent)
             is DashboardIntent.SelectMonth -> {
                 selectedMonthFlow.value = intent.month
                 selectedYearFlow.value = intent.year
@@ -141,18 +143,34 @@ internal class DashboardPresenterImpl(
                 return@safeLaunch
             }
 
-            val existingIncome = _state.value.operations.firstOrNull { it.operation.type == OperationType.INCOME }
+            val existingIncome = _state.value.operations.firstOrNull {
+                it.operation.type == OperationType.INCOME && it.operation.walletId == intent.walletId
+            }
+
             val operationResult = saveOperation(
                 id = existingIncome?.operation?.id,
                 walletId = intent.walletId,
-                name = "Revenu Principal",
+                name = existingIncome?.operation?.name ?: "",
                 amountInCents = intent.incomeAmountInCents,
                 type = OperationType.INCOME,
                 recurrence = Recurrence.MONTHLY,
                 startDate = existingIncome?.operation?.startDate ?: intent.startDate,
                 endDate = null
             )
+
             handleOperationResult(operationResult)
+        }
+    }
+    private fun handleSaveWallet(intent: DashboardIntent.SaveWallet) {
+        viewModelScope.safeLaunch(onError = onCoroutineError) {
+            _state.update { it.copy(isLoading = true) }
+
+            val result = saveWallet(id = intent.id, name = intent.name)
+
+            _state.update { it.copy(isLoading = false) }
+            if (result is Result.Error) {
+                _state.update { it.copy(error = result.error) }
+            }
         }
     }
 

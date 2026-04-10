@@ -5,6 +5,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 sealed interface AppStep {
+    data object Splash : AppStep
+    data object Onboarding : AppStep
     data object Dashboard : AppStep
     data object Analyse : AppStep
     data object Settings : AppStep
@@ -12,7 +14,7 @@ sealed interface AppStep {
 }
 
 data class NavigationState(
-    val stack: List<AppStep> = listOf(AppStep.Dashboard)
+    val stack: List<AppStep> = listOf(AppStep.Splash)
 ) {
     val currentStep: AppStep get() = stack.last()
     val canGoBack: Boolean get() = stack.size > 1
@@ -27,6 +29,10 @@ class AppCoordinator {
             if (currentState.currentStep == step) return@update currentState
             currentState.copy(stack = currentState.stack + step)
         }
+    }
+
+    fun replaceRoot(step: AppStep) {
+        _state.update { it.copy(stack = listOf(step)) }
     }
 
     fun handleBack(): Boolean {

@@ -1,5 +1,6 @@
 package fr.abknative.outgo.android.screens
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -22,7 +23,6 @@ import fr.abknative.outgo.android.ui.states.rememberLoginFormState
 import fr.abknative.outgo.android.ui.theme.AppTheme
 import fr.abknative.outgo.android.ui.theme.OutgoTheme
 import fr.abknative.outgo.android.ui.theme.toColor
-import fr.abknative.outgo.auth.api.model.ConflictStrategy
 import fr.abknative.outgo.login.api.LoginIntent
 import fr.abknative.outgo.login.api.LoginPresenter
 import fr.abknative.outgo.login.api.LoginState
@@ -37,6 +37,7 @@ fun LoginScreen(
 ) {
     val state by presenter.state.collectAsState()
     val formState = rememberLoginFormState()
+    BackHandler(enabled = state.isLoading) {}
 
     val textFieldColors = OutlinedTextFieldDefaults.colors(
         focusedBorderColor = AppTheme.colors.primary.toColor(),
@@ -48,8 +49,10 @@ fun LoginScreen(
         unfocusedTextColor = AppTheme.colors.textPrimary.toColor()
     )
 
-    LaunchedEffect(state.session) {
-        if (state.session != null) onLoginSuccess()
+    LaunchedEffect(state.isLoginSuccessful) {
+        if (state.isLoginSuccessful) {
+            onLoginSuccess()
+        }
     }
 
     AppBackground {
@@ -62,7 +65,10 @@ fun LoginScreen(
                         color = AppTheme.colors.textSecondary.toColor()
                     ) },
                     navigationIcon = {
-                        IconButton(onClick = onNavigateBack) {
+                        IconButton(
+                            enabled = !state.isLoading,
+                            onClick = onNavigateBack
+                        ) {
                             Icon(
                                 painter = painterResource(R.drawable.caret_left),
                                 contentDescription = LoginLabels.BACK_TITLE,
@@ -164,11 +170,8 @@ fun LoginScreen(
         // --- NOUVEAU : LA POPUP DE RÉSOLUTION DE CONFLIT ---
         if (state.showConflictDialog) {
             ConflictDialog(
-                onMerge = {
-                    presenter.onIntent(LoginIntent.ResolveConflict(ConflictStrategy.MERGE))
-                },
-                onDiscardLocal = {
-                    presenter.onIntent(LoginIntent.ResolveConflict(ConflictStrategy.DISCARD_LOCAL))
+                onConfirm = {
+                    presenter.onIntent(LoginIntent.ResolveConflict)
                 },
                 onCancel = {
                     presenter.onIntent(LoginIntent.CancelConflict)

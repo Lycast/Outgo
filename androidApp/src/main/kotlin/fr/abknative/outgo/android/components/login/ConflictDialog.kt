@@ -1,7 +1,10 @@
 package fr.abknative.outgo.android.components.login
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -17,8 +20,7 @@ import fr.abknative.outgo.android.ui.theme.toColor
 
 @Composable
 fun ConflictDialog(
-    onMerge: () -> Unit,
-    onDiscardLocal: () -> Unit,
+    onConfirm: () -> Unit,
     onCancel: () -> Unit
 ) {
     Dialog(onDismissRequest = onCancel) {
@@ -36,13 +38,9 @@ fun ConflictDialog(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                Text(
-                    text = "Ce compte possède déjà des données sur le cloud.\n\n" +
-                            "Choix 1 : Fusionner vos données actuel avec celles du cloud\n\n" +
-                            "Choix 2 : Télécharger les données du cloud mais vous perdrez vos données actuel",
-                    color = AppTheme.colors.textPrimary.toColor(),
-                    style = AppTheme.typo.label
-                )
+                Text("Ce compte contient déjà des données sur nos serveurs. " +
+                        "En vous connectant, vos données actuelles seront mises de côté " +
+                        "pour afficher celles de votre compte en ligne.")
 
                 Spacer(modifier = Modifier.height(AppTheme.spacing.large))
 
@@ -58,24 +56,11 @@ fun ConflictDialog(
 
                 // Bouton : Option A (Fusion)
                 Button(
-                    onClick = onMerge,
+                    onClick = onConfirm,
                     modifier = Modifier.fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(containerColor = AppTheme.colors.primary.toColor())
                 ) {
-                    Text("Fusionner avec le cloud")
-                }
-
-
-                Spacer(modifier = Modifier.height(AppTheme.spacing.medium))
-
-                // Bouton : Option B (Écraser)
-                OutlinedButton(
-                    onClick = onDiscardLocal,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(
-                        text = "Télécharger le Cloud",
-                        color = AppTheme.colors.textPrimary.toColor())
+                    Text("Télécharger le Cloud")
                 }
 
 
@@ -102,8 +87,7 @@ fun ConflictDialog(
 fun PreviewConflictDialog() {
     OutgoTheme {
         ConflictDialog(
-            onMerge = {},
-            onDiscardLocal = {},
+            onConfirm = {},
             onCancel = {}
         )
     }

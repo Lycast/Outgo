@@ -1,5 +1,6 @@
 package fr.abknative.outgo.sync.impl
 
+import fr.abknative.outgo.auth.api.provider.SessionProvider
 import fr.abknative.outgo.auth.api.usecase.ObserveUserSessionUseCase
 import fr.abknative.outgo.core.api.KeyValueStorage
 import fr.abknative.outgo.core.api.NetworkMonitor
@@ -20,6 +21,7 @@ import kotlin.time.Duration.Companion.milliseconds
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 internal class SyncOrchestratorImpl(
     private val syncManager: SyncManager,
+    private val sessionProvider: SessionProvider,
     private val observeUserSession: ObserveUserSessionUseCase,
     private val walletRepository: WalletRepository,
     private val operationRepository: OperationRepository,
@@ -44,10 +46,12 @@ internal class SyncOrchestratorImpl(
 
     private fun checkStartupSync() {
         scope.launch {
-            val session = observeUserSession().first()
 
-            if (session == null) {
-                AppLogger.get()?.d(TAG, "Startup Pull skipped: No active session.")
+            val session = observeUserSession().filterNotNull().first()
+            val currentUserId = sessionProvider.observeUserId().first()
+
+            if (currentUserId.startsWith("local_")) {
+                AppLogger.get()?.d(TAG, "Startup Pull skipped: Local session active.")
                 return@launch
             }
 
@@ -69,6 +73,7 @@ internal class SyncOrchestratorImpl(
     }
 
     private fun startObservingPendingData() {
+
         val hasPendingDataFlow = combine(
             walletRepository.observePendingWallets(),
             operationRepository.observePendingOperations()
@@ -79,9 +84,10 @@ internal class SyncOrchestratorImpl(
         combine(
             hasPendingDataFlow,
             networkMonitor.isConnected,
+            sessionProvider.observeUserId(),
             observeUserSession()
-        ) { hasPendingData, isConnected, session ->
-            hasPendingData && isConnected && session != null
+        ) { hasPendingData, isConnected, userId, session ->
+            hasPendingData && isConnected && !userId.startsWith("local_") && session != null
         }
             .distinctUntilChanged()
             .filter { shouldSync -> shouldSync }

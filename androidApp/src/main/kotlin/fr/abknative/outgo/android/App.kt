@@ -7,6 +7,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -23,6 +24,7 @@ import fr.abknative.outgo.android.components.common.SyncPromotionModal
 import fr.abknative.outgo.android.components.shell.AppBackground
 import fr.abknative.outgo.android.screens.DashboardScreen
 import fr.abknative.outgo.android.screens.LoginScreen
+import fr.abknative.outgo.android.screens.OnboardingScreen
 import fr.abknative.outgo.android.screens.SettingsScreen
 import fr.abknative.outgo.android.ui.theme.AppTheme
 import fr.abknative.outgo.android.ui.theme.OutgoTheme
@@ -33,6 +35,8 @@ import fr.abknative.outgo.core.api.KeyValueStorage
 import fr.abknative.outgo.login.api.LoginPresenter
 import fr.abknative.outgo.shell.api.ShellIntent
 import fr.abknative.outgo.shell.api.ShellPresenter
+import fr.abknative.outgo.wallet.api.usecase.ObserveWalletsUseCase
+import kotlinx.coroutines.flow.firstOrNull
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 
@@ -40,12 +44,22 @@ import org.koin.compose.koinInject
 fun App() {
     val coordinator: AppCoordinator = koinInject()
     val storage: KeyValueStorage = koinInject()
+    val observeWalletsUseCase: ObserveWalletsUseCase = koinInject() // todo appeler un usecase dans l'ui est ce valable ? ce n'est pas le travail du presenter ?
 
-    // 🌟 1. On injecte notre nouveau ShellPresenter
     val shellPresenter: ShellPresenter = koinViewModel()
     val shellState by shellPresenter.state.collectAsState()
 
     val navState by coordinator.state.collectAsState()
+
+    LaunchedEffect(Unit) {
+        val wallets = observeWalletsUseCase().firstOrNull()
+
+        if (wallets.isNullOrEmpty()) {
+            coordinator.replaceRoot(AppStep.Onboarding)
+        } else {
+            coordinator.replaceRoot(AppStep.Dashboard)
+        }
+    }
 
     BackHandler(enabled = navState.canGoBack) {
         coordinator.handleBack()
@@ -57,7 +71,6 @@ fun App() {
         mutableStateOf(storage.getBoolean(themeKey, systemTheme))
     }
 
-    // Gestion des modales globales
     var showPremiumTeasingModal by remember { mutableStateOf(false) }
     var showSyncModal by remember { mutableStateOf(false) }
 
@@ -65,7 +78,9 @@ fun App() {
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
     val currentStep = navState.currentStep
 
-    // 🌟 2. On extrait la logique du Header pour ne pas la dupliquer
+    // Règle d'affichage du Header : On le cache sur Login, Splash et Onboarding
+    val shouldShowHeader = currentStep != AppStep.Login && currentStep != AppStep.Splash && currentStep != AppStep.Onboarding
+
     val globalHeader = @Composable { isVertical: Boolean ->
         Header(
             syncState = shellState.syncState,
@@ -95,7 +110,7 @@ fun App() {
             AppBackground {
                 Row(modifier = Modifier.fillMaxSize()) {
 
-                    if (isLandscape && currentStep != AppStep.Login) {
+                    if (isLandscape && shouldShowHeader) {
                         globalHeader(true)
                         VerticalDivider(
                             thickness = 1.dp,
@@ -103,13 +118,11 @@ fun App() {
                         )
                     }
 
-                    // Le Scaffold prend l'espace restant
                     Scaffold(
                         modifier = Modifier.weight(1f),
                         containerColor = Color.Transparent,
                         topBar = {
-                            // Si on est en portrait, le Header est en haut
-                            if (!isLandscape && currentStep != AppStep.Login) {
+                            if (!isLandscape && shouldShowHeader) {
                                 globalHeader(false)
                             }
                         }
@@ -122,10 +135,23 @@ fun App() {
                             modifier = Modifier.padding(innerPadding) // On applique le padding du Scaffold !
                         ) { step ->
                             when (step) {
+
+                                AppStep.Splash -> {
+                                    Box(modifier = Modifier.fillMaxSize())
+                                }
+
+                                AppStep.Onboarding -> {
+                                    OnboardingScreen(
+                                        presenter = koinViewModel(),
+                                        onLoginClicked = { coordinator.navigateTo(AppStep.Login) },
+                                        onOnboardingComplete = { coordinator.replaceRoot(AppStep.Dashboard) }
+                                    )
+                                }
+
                                 AppStep.Dashboard -> {
                                     DashboardScreen(
                                         presenter = koinViewModel(),
-                                        isPremium = shellState.isPremium, // On passe l'info si Dashboard en a besoin
+                                        isPremium = shellState.isPremium,
                                         onNavigateToLogin = { coordinator.navigateTo(AppStep.Login) }
                                     )
                                 }
@@ -150,7 +176,7 @@ fun App() {
                                     )
                                 }
 
-                                else -> {} // Pour Analyse plus tard
+                                else -> {}
                             }
                         }
                     }

@@ -8,8 +8,8 @@ internal class WalletDataPurger(
     private val walletRepository: WalletRepository,
     private val operationRepository: OperationRepository
 ) : DataPurger {
-    override suspend fun purgeData() {
-        walletRepository.deleteAll()
-        operationRepository.deleteAll()
+    override suspend fun purgeData(userId: String?) {
+        walletRepository.deleteAll(userId)
+        operationRepository.deleteAll(userId)
     }
 }

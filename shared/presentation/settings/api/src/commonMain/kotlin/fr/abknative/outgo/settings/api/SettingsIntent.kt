@@ -1,7 +1,6 @@
 package fr.abknative.outgo.settings.api
 
 sealed interface SettingsIntent {
-    object Logout : SettingsIntent
 
     data class DeleteAccount(
         val wipeLocal: Boolean,
@@ -9,6 +8,7 @@ sealed interface SettingsIntent {
         val revokeAuth: Boolean
     ) : SettingsIntent
 
+    data class Logout(val displayLocalData: Boolean) : SettingsIntent
     object PurgeLocalData : SettingsIntent
     object DismissError : SettingsIntent
     object ResetSuccessFlag : SettingsIntent

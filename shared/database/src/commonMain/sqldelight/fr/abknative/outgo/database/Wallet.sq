@@ -49,6 +49,10 @@ deleteAllForUser:
 DELETE FROM WalletEntity
 WHERE userId = :userId;
 
+-- Factory Reset
+deleteAll:
+DELETE FROM WalletEntity;
+
 -- ==========================================
 -- 🔄 SYNC & MIGRATION (Engine)
 -- ==========================================

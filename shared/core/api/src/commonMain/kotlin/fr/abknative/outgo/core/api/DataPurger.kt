@@ -1,8 +1,13 @@
 package fr.abknative.outgo.core.api
 
 /**
- * Contrat implémenté par chaque feature pour nettoyer ses propres données.
+ * Contract implemented by each feature to clean up its own data.
  */
 interface DataPurger {
-    suspend fun purgeData()
+
+    /**
+     * Purges data from the module.
+     * @param userId If null, purges everything. If provided, purges only for that user.
+     */
+    suspend fun purgeData(userId: String? = null)
 }

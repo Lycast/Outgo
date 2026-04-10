@@ -66,6 +66,10 @@ deleteAllForUser:
 DELETE FROM OperationEntity
 WHERE userId = :userId;
 
+-- Factory Reset
+deleteAll:
+DELETE FROM OperationEntity;
+
 -- ==========================================
 -- 🔄 SYNC & MIGRATION (Engine)
 -- ==========================================

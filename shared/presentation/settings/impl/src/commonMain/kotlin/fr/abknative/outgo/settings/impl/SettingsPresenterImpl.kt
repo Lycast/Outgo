@@ -44,18 +44,20 @@ internal class SettingsPresenterImpl(
 
     override fun onIntent(intent: SettingsIntent) {
         when (intent) {
-            is SettingsIntent.Logout -> handleLogout()
             is SettingsIntent.DeleteAccount -> handleDeleteAccount(intent)
+            is SettingsIntent.Logout -> handleLogout(intent.displayLocalData)
             is SettingsIntent.PurgeLocalData -> handlePurgeLocalData()
             is SettingsIntent.DismissError -> _state.update { it.copy(error = null) }
             is SettingsIntent.ResetSuccessFlag -> _state.update { it.copy(actionSuccess = false) }
         }
     }
 
-    private fun handleLogout() {
+    private fun handleLogout(displayLocalData: Boolean) {
         viewModelScope.safeLaunch(onError = onCoroutineError) {
             _state.update { it.copy(isProcessing = true) }
-            val result = logout()
+
+            val result = logout(displayLocalData = displayLocalData)
+
             if (result is Result.Success) {
                 _state.update { it.copy(isProcessing = false, actionSuccess = true) }
             } else if (result is Result.Error) {
@@ -85,9 +87,10 @@ internal class SettingsPresenterImpl(
     private fun handlePurgeLocalData() {
         viewModelScope.safeLaunch(onError = onCoroutineError) {
             _state.update { it.copy(isProcessing = true) }
+
             clearLocalData()
 
-            val logoutResult = logout()
+            val logoutResult = logout(displayLocalData = false)
 
             if (logoutResult is Result.Success) {
                 _state.update { it.copy(isProcessing = false, actionSuccess = true) }

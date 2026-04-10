@@ -82,8 +82,9 @@ interface OperationRepository {
     suspend fun syncFromServer(operations: List<Operation>): Result<Unit, AppException>
 
     /**
-     * Hard deletes all operations from the local database.
-     * WARNING: This is destructive and should only be used for app resets.
-     */
-    suspend fun deleteAll(): Result<Unit, AppException>
+    * Deletes operations based on the provided scope.
+    * @param userId If provided, only deletes data for this specific user.
+    * If null, performs a complete factory reset.
+    */
+    suspend fun deleteAll(userId: String?): Result<Unit, AppException>
 }

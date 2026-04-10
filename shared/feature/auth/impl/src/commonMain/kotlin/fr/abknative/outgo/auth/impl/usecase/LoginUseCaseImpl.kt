@@ -1,6 +1,5 @@
 package fr.abknative.outgo.auth.impl.usecase
 
-import fr.abknative.outgo.auth.api.model.ConflictStrategy
 import fr.abknative.outgo.auth.api.provider.SessionProvider
 import fr.abknative.outgo.auth.api.repository.AuthRepository
 import fr.abknative.outgo.auth.api.usecase.LoginUseCase
@@ -19,14 +18,14 @@ internal class LoginUseCaseImpl(
     override suspend fun invoke(
         email: String,
         password: String,
-        conflictStrategy: ConflictStrategy?
+        forceSwitch: Boolean
     ): Result<Unit, AppException> {
         return executeAuthWithMigration(
             sessionProvider,
             localDataMigrator,
             authRepository,
             syncManager,
-            conflictStrategy
+            forceSwitch
         ) {
             authRepository.login(email, password)
         }

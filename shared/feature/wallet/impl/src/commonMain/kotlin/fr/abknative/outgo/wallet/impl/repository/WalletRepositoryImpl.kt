@@ -168,14 +168,18 @@ internal class WalletRepositoryImpl(
             }
         }
 
-    override suspend fun deleteAll(): Result<Unit, AppException> = withContext(dispatchers.io) {
+    override suspend fun deleteAll(userId: String?): Result<Unit, AppException> = withContext(dispatchers.io) {
         asResult(
             onError = {
                 AppLogger.get()?.e(tag, "Failed to delete all wallets", it)
                 CommonError.DatabaseError(it)
             }
         ) {
-            queries.deleteAllForUser(userId = currentUserId)
+            if (userId != null) {
+                queries.deleteAllForUser(userId = userId)
+            } else {
+                queries.deleteAll()
+            }
             Unit
         }
     }

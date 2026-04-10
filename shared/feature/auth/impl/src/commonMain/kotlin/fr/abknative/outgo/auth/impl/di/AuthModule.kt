@@ -12,6 +12,8 @@ import fr.abknative.outgo.core.api.LocalDataDowngrader
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
+import org.koin.core.qualifier.named
+import org.koin.dsl.bind
 import org.koin.dsl.module
 
 val authModule = module {
@@ -36,5 +38,5 @@ val authModule = module {
         )
     }
 
-    singleOf(::AuthDataPurger) { bind <DataPurger>() }
+    single(named("AuthDataPurger")) { AuthDataPurger(get(), get()) } bind DataPurger::class
 }

@@ -124,12 +124,6 @@ fun DashboardScreen(
         }
     }
 
-    LaunchedEffect(state.isLoading, state.activeWalletId) {
-        if (!state.isLoading && state.activeWalletId == null) {
-            showBudgetDialog = true
-        }
-    }
-
     Box(
         modifier = modifier.fillMaxSize()
     ) {
@@ -207,6 +201,40 @@ fun DashboardScreen(
                     .padding(AppTheme.spacing.large)
             )
         }
+        /* todo on enleve pour l'instant
+        if (state.error is WalletError.NoActiveWallet) {
+            Column(
+                modifier = Modifier.fillMaxSize().padding(AppTheme.spacing.extraLarge),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = "Oups, espace introuvable 🕵️",
+                    style = MaterialTheme.typography.headlineMedium,
+                    color = AppTheme.colors.textPrimary.toColor()
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    text = "Il semble que vos données soient corrompues ou introuvables. Vous devez reconfigurer votre espace de départ.",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = AppTheme.colors.textSecondary.toColor(),
+                    textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                )
+                Spacer(modifier = Modifier.height(32.dp))
+                Button(
+                    onClick = {
+                        // Tu peux passer un callback `onCriticalError` depuis App.kt
+                        // qui appellera coordinator.replaceRoot(AppStep.Onboarding)
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Reconfigurer mon espace")
+                }
+            }
+
+            // On "return" prématurément pour ne pas dessiner le reste du Dashboard cassé
+            return
+        }*/
     }
 
     // --- MODALS ---

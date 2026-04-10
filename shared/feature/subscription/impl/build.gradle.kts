@@ -5,6 +5,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(projects.shared.core.api)
+            implementation(projects.shared.feature.auth.api)
             implementation(projects.shared.feature.subscription.api)
 
             // Coroutines & Koin

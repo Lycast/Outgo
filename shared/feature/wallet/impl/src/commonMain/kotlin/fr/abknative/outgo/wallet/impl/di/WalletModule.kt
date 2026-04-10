@@ -17,6 +17,8 @@ import fr.abknative.outgo.wallet.impl.usecase.engine.TimelineEngine
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
+import org.koin.core.qualifier.named
+import org.koin.dsl.bind
 import org.koin.dsl.module
 
 val walletModule = module {
@@ -39,10 +41,13 @@ val walletModule = module {
     factoryOf(::DeleteOperationUseCaseImpl) { bind<DeleteOperationUseCase>() }
     factoryOf(::ObserveActiveOperationsUseCaseImpl) { bind<ObserveActiveOperationsUseCase>() }
 
+    // --- UseCases Dashboard ---
+    factoryOf(::InitializeBudgetUseCaseImpl) { bind<InitializeBudgetUseCase>() }
+
     // --- Dashboard Engine Rooter ---
     factoryOf(::CalculateDashboardDataUseCaseImpl) { bind<CalculateDashboardDataUseCase>() }
 
-    singleOf(::WalletDataPurger) { bind<DataPurger>() }
+    single(named("WalletDataPurger")) { WalletDataPurger(get(), get()) } bind DataPurger::class
     singleOf(::WalletDataDowngrader) { bind<LocalDataDowngrader>() }
     singleOf(::LocalDataMigratorImpl) { bind<LocalDataMigrator>() }
 }

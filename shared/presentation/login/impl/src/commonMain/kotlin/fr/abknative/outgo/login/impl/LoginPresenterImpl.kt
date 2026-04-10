@@ -2,7 +2,6 @@ package fr.abknative.outgo.login.impl
 
 import androidx.lifecycle.viewModelScope
 import fr.abknative.outgo.auth.api.AuthError
-import fr.abknative.outgo.auth.api.model.ConflictStrategy
 import fr.abknative.outgo.auth.api.usecase.LoginUseCase
 import fr.abknative.outgo.auth.api.usecase.LogoutUseCase
 import fr.abknative.outgo.auth.api.usecase.ObserveUserSessionUseCase
@@ -25,7 +24,7 @@ internal class LoginPresenterImpl(
     private val observeUserSession: ObserveUserSessionUseCase
 ) : LoginPresenter() {
 
-    private val _state = MutableStateFlow(LoginState(isLoading = true))
+    private val _state = MutableStateFlow(LoginState(isLoading = false))
     override val state: StateFlow<LoginState> = _state.asStateFlow()
 
     // PRIVATES VARIABLES FOR RETRY LOGIN AFTER CONFLICT
@@ -40,7 +39,7 @@ internal class LoginPresenterImpl(
     init {
         viewModelScope.safeLaunch(onError = onCoroutineError) {
             observeUserSession().collect { session ->
-                _state.update { it.copy(session = session, isLoading = false) }
+                _state.update { it.copy(session = session) }
             }
         }
     }
@@ -52,7 +51,7 @@ internal class LoginPresenterImpl(
             is LoginIntent.LoginWithGoogle, LoginIntent.LoginWithApple -> { /* Rien pour l'instant */ }
             is LoginIntent.Logout -> handleLogout()
             is LoginIntent.DismissError -> _state.update { it.copy(error = null) }
-            is LoginIntent.ResolveConflict -> handleResolveConflict(intent.strategy)
+            is LoginIntent.ResolveConflict -> handleResolveConflict()
             is LoginIntent.CancelConflict -> handleCancelConflict()
         }
     }
@@ -85,8 +84,8 @@ internal class LoginPresenterImpl(
     ) {
         when (result) {
             is Result.Success -> {
-                _state.update { it.copy(isLoading = false, error = null) }
                 clearPendingAuth()
+                _state.update { it.copy(isLoading = false, error = null, isLoginSuccessful = true) }
             }
             is Result.Error -> {
                 if (result.error is AuthError.DataConflict) {
@@ -101,20 +100,17 @@ internal class LoginPresenterImpl(
         }
     }
 
-    /**
-     * Called when the user has selected a strategy from the popup.
-     * Restarts the initial action (Login or Register) by enforcing the chosen strategy.
-     */
-    private fun handleResolveConflict(strategy: ConflictStrategy) {
-        if (pendingEmail.isBlank()) return // Sécurité
+    private fun handleResolveConflict() {
+        if (pendingEmail.isBlank()) return
 
         viewModelScope.safeLaunch(onError = onCoroutineError) {
             _state.update { it.copy(isLoading = true, showConflictDialog = false) }
 
+            // On relance avec forceSwitch = true
             val result = if (pendingIsRegister) {
-                registerUseCase(pendingEmail, pendingPassword, strategy)
+                registerUseCase(pendingEmail, pendingPassword, forceSwitch = true)
             } else {
-                loginUseCase(pendingEmail, pendingPassword, strategy)
+                loginUseCase(pendingEmail, pendingPassword, forceSwitch = true)
             }
 
             processAuthResult(result, pendingEmail, pendingPassword, pendingIsRegister)
@@ -128,7 +124,7 @@ internal class LoginPresenterImpl(
 
     private fun handleLogout() {
         viewModelScope.safeLaunch(onError = onCoroutineError) {
-            logoutUseCase()
+            logoutUseCase(displayLocalData = false)
         }
     }
 

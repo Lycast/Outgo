@@ -29,6 +29,7 @@ kotlin {
             export(projects.shared.core.ui)
             export(projects.shared.presentation.dashboard.api)
             export(projects.shared.presentation.login.api)
+            export(projects.shared.presentation.onboarding.api)
             export(projects.shared.presentation.settings.api)
             export(projects.shared.presentation.shell.api)
         }
@@ -56,6 +57,7 @@ kotlin {
             // --- Couches Présentation (pour que Koin puisse les instancier) ---
             implementation(projects.shared.presentation.dashboard.impl)
             implementation(projects.shared.presentation.login.impl)
+            implementation(projects.shared.presentation.onboarding.impl)
             implementation(projects.shared.presentation.settings.impl)
             implementation(projects.shared.presentation.shell.impl)
 
@@ -69,6 +71,7 @@ kotlin {
             // Exposer les contrats UI
             api(projects.shared.presentation.dashboard.api)
             api(projects.shared.presentation.login.api)
+            api(projects.shared.presentation.onboarding.api)
             api(projects.shared.presentation.settings.api)
             api(projects.shared.presentation.shell.api)
 

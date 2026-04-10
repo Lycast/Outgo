@@ -7,5 +7,6 @@ data class LoginState(
     val session: UserSession? = null,
     val isLoading: Boolean = false,
     val error: AppException? = null,
-    val showConflictDialog: Boolean = false
+    val showConflictDialog: Boolean = false,
+    val isLoginSuccessful: Boolean = false
 )

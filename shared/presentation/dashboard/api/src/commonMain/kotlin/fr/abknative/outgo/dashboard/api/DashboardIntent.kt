@@ -21,15 +21,16 @@ sealed interface DashboardIntent {
         val endDate: EpochMillis? = null
     ) : DashboardIntent
 
-    /** * Intent to simultaneously update the main wallet's name and its primary monthly income.
-     * Primarily used in the Free tier experience.
-     */
+    /** Intent to simultaneously update the main wallet's name and its primary monthly income. */
     data class SaveWalletAndIncome(
         val walletId: String,
         val walletName: String,
         val incomeAmountInCents: Long,
         val startDate: EpochMillis
     ) : DashboardIntent
+
+    /** Intent to save or update a wallet's basic info (like its name). */
+    data class SaveWallet(val id: String?, val name: String) : DashboardIntent
 
     /** Intent to change the currently displayed month. */
     data class SelectMonth(val month: Int, val year: Int) : DashboardIntent

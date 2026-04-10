@@ -80,8 +80,9 @@ interface WalletRepository {
     suspend fun syncFromServer(wallets: List<Wallet>): Result<Unit, AppException>
 
     /**
-     * Hard deletes all wallets from the local database.
-     * WARNING: This is destructive and should only be used for app resets.
+     * Deletes wallets based on the provided scope.
+     * @param userId If provided, only deletes data for this specific user.
+     * If null, performs a complete factory reset.
      */
-    suspend fun deleteAll(): Result<Unit, AppException>
+    suspend fun deleteAll(userId: String?): Result<Unit, AppException>
 }

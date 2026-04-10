@@ -15,5 +15,5 @@ interface KeyValueStorage {
     fun putString(key: String, value: String)
     fun remove(key: String)
 
-    fun clearAll() // TODO Implementer clearAll
+    fun clearAll()
 }
