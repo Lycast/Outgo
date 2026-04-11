@@ -144,7 +144,7 @@ internal class OperationRepositoryImpl(
     override suspend fun syncFromServer(operations: List<Operation>): Result<Unit, AppException> = withContext(dispatchers.io) {
         asResult(
             onError = { e ->
-                AppLogger.get()?.e(tag, "Failed to sync ${operations.size} operations", e) // ✅ Log restauré
+                AppLogger.get()?.e(tag, "Failed to sync ${operations.size} operations", e)
                 CommonError.DatabaseError(e)
             }
         ) {

@@ -1,79 +1,92 @@
 package fr.abknative.outgo.android.components.login
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import fr.abknative.outgo.android.components.common.GlassCard
-import fr.abknative.outgo.android.ui.theme.AppTheme
-import fr.abknative.outgo.android.ui.theme.OutgoTheme
-import fr.abknative.outgo.android.ui.theme.toColor
+import fr.abknative.outgo.android.designsystem.components.buttons.AppButton
+import fr.abknative.outgo.android.designsystem.components.buttons.AppTextButton
+import fr.abknative.outgo.android.designsystem.components.cards.GlassCard
+import fr.abknative.outgo.android.designsystem.foundation.AppBackground
+import fr.abknative.outgo.android.designsystem.foundation.AppTheme
+import fr.abknative.outgo.android.designsystem.foundation.OutgoTheme
+import fr.abknative.outgo.android.designsystem.foundation.toColor
+import fr.abknative.outgo.android.ui.LoginLabels
 
+/**
+ * A specialized dialog shown when a data conflict is detected between
+ * the local database and the cloud storage.
+ * It uses the [GlassCard] container to maintain UI consistency.
+ *
+ * @param onConfirm Callback invoked when the user chooses to resolve the conflict (e.g., download cloud data).
+ * @param onCancel Callback invoked to dismiss the dialog or keep local state.
+ */
 @Composable
 fun ConflictDialog(
     onConfirm: () -> Unit,
     onCancel: () -> Unit
 ) {
+
     Dialog(onDismissRequest = onCancel) {
         GlassCard {
             Column(
-                modifier = Modifier.padding(AppTheme.spacing.large),
+                modifier = Modifier.padding(AppTheme.dimens.large),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+
+                // --- Title ---
                 Text(
-                    text = "Sauvegarde existante", // TODO: À extraire dans LoginLabels
+                    text = LoginLabels.CONFLICT_TITLE,
                     style = AppTheme.typo.title,
                     color = AppTheme.colors.primary.toColor(),
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center
                 )
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(AppTheme.dimens.large))
 
-                Text("Ce compte contient déjà des données sur nos serveurs. " +
-                        "En vous connectant, vos données actuelles seront mises de côté " +
-                        "pour afficher celles de votre compte en ligne.")
-
-                Spacer(modifier = Modifier.height(AppTheme.spacing.large))
-
+                // --- Main Explanation ---
                 Text(
-                    text = "Que voulez-vous faire ?",
-                    color = AppTheme.colors.primary.toColor(),
+                    text = LoginLabels.CONFLICT_DESC,
+                    style = AppTheme.typo.body,
+                    color = AppTheme.colors.textSecondary.toColor(),
+                    textAlign = TextAlign.Center
+                )
+
+                Spacer(modifier = Modifier.height(AppTheme.dimens.large))
+
+                // --- The "Question" or Call to Action text ---
+                Text(
+                    text = LoginLabels.CONFLICT_QUESTION,
                     style = AppTheme.typo.caption,
+                    color = AppTheme.colors.textPrimary.toColor(),
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth(),
                 )
 
-                Spacer(modifier = Modifier.height(AppTheme.spacing.large))
+                Spacer(modifier = Modifier.height(AppTheme.dimens.extraLarge))
 
-                // Bouton : Option A (Fusion)
-                Button(
+                // --- Primary Action: Confirm/Download ---
+                AppButton(
                     onClick = onConfirm,
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.buttonColors(containerColor = AppTheme.colors.primary.toColor())
+                    modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("Télécharger le Cloud")
+                    Text(text = LoginLabels.CONFLICT_CONFIRM)
                 }
 
+                Spacer(modifier = Modifier.height(AppTheme.dimens.small))
 
-                Spacer(modifier = Modifier.height(AppTheme.spacing.medium))
-
-                // Bouton : Annuler
-                TextButton(
+                // --- Secondary Action: Cancel/Keep Local ---
+                AppTextButton(
                     onClick = onCancel,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text(
-                        text = "Annuler la connexion",
-                        color = AppTheme.colors.textSecondary.toColor())
+                    Text(text = LoginLabels.CONFLICT_CANCEL)
                 }
             }
         }
@@ -82,13 +95,16 @@ fun ConflictDialog(
 
 // --- PREVIEWS ---
 
-@Preview(showBackground = true, name = "Conflict Dialog - Default")
+@Preview(showBackground = true, name = "Conflict Dialog - Refactored")
 @Composable
 fun PreviewConflictDialog() {
     OutgoTheme {
-        ConflictDialog(
-            onConfirm = {},
-            onCancel = {}
-        )
+        // Adding the background to better visualize the Glassmorphism
+        AppBackground {
+            ConflictDialog(
+                onConfirm = {},
+                onCancel = {}
+            )
+        }
     }
 }

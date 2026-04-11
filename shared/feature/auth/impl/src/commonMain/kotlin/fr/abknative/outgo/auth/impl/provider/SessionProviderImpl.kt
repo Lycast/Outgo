@@ -38,6 +38,10 @@ internal class SessionProviderImpl(
         _currentIdFlow.value = userId
     }
 
+    override fun getLastLocalId(): String? {
+        return storage.getString(KEY_LAST_LOCAL_ID)
+    }
+
     /**
      * Reverts to the previous local ID if it exists.
      */

@@ -66,9 +66,13 @@ internal class LoginPresenterImpl(
 
     private fun handleLogin(email: String, password: String) {
         viewModelScope.safeLaunch(onError = onCoroutineError) {
-            _state.update { it.copy(isLoading = true, error = null, showConflictDialog = false) }
-            val result = loginUseCase(email, password)
-            processAuthResult(result, email, password, isRegister = false)
+            try {
+                _state.update { it.copy(isLoading = true, error = null, showConflictDialog = false) }
+                val result = loginUseCase(email, password)
+                processAuthResult(result, email, password, isRegister = false)
+            } finally {
+                _state.update { it.copy(isLoading = false) }
+            }
         }
     }
 

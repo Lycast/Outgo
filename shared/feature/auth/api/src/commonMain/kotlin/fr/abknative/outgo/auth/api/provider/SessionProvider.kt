@@ -35,4 +35,10 @@ interface SessionProvider {
      * @param userId The validated ID to persist as the new truth.
      */
     fun commitPersistentId(userId: String)
+
+    /**
+    * Retrieves the last known local ID before the user authenticated.
+    * Returns null if no local session was ever saved.
+    */
+    fun getLastLocalId(): String?
 }

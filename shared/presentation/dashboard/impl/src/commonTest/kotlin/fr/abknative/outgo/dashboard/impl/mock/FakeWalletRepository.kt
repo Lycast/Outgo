@@ -21,6 +21,9 @@ class FakeWalletRepository : WalletRepository {
     }
 
     override fun observeActiveWallets(): Flow<List<Wallet>> = _walletsFlow
+    override fun observePendingWallets(): Flow<List<Wallet>> {
+        TODO("Not yet implemented")
+    }
 
     override suspend fun getWalletById(id: String): Result<Wallet?, AppException> {
         if (shouldReturnError) return Result.Error(CommonError.DatabaseError())
@@ -54,9 +57,7 @@ class FakeWalletRepository : WalletRepository {
         return Result.Success(Unit)
     }
 
-    override suspend fun deleteAll(): Result<Unit, AppException> {
-        wallets.clear()
-        _walletsFlow.value = emptyList()
-        return Result.Success(Unit)
+    override suspend fun deleteAll(userId: String?): Result<Unit, AppException> {
+        TODO("Not yet implemented")
     }
 }

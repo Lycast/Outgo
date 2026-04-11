@@ -16,15 +16,15 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import fr.abknative.outgo.android.R
-import fr.abknative.outgo.android.components.common.CircleIcon
+import fr.abknative.outgo.android.designsystem.atoms.CircleIcon
+import fr.abknative.outgo.android.designsystem.foundation.AppTheme
+import fr.abknative.outgo.android.designsystem.foundation.OutgoTheme
+import fr.abknative.outgo.android.designsystem.foundation.toColor
 import fr.abknative.outgo.android.ui.DashboardLabels
 import fr.abknative.outgo.android.ui.extensions.getUiColor
 import fr.abknative.outgo.android.ui.extensions.uiAmount
 import fr.abknative.outgo.android.ui.extensions.uiFrequencySummary
 import fr.abknative.outgo.android.ui.extensions.uiTitle
-import fr.abknative.outgo.android.ui.theme.AppTheme
-import fr.abknative.outgo.android.ui.theme.OutgoTheme
-import fr.abknative.outgo.android.ui.theme.toColor
 import fr.abknative.outgo.core.api.model.SyncStatus
 import fr.abknative.outgo.wallet.api.model.Operation
 import fr.abknative.outgo.wallet.api.model.operation.OperationType
@@ -41,7 +41,6 @@ fun OperationCard(
     modifier: Modifier = Modifier
 ) {
 
-    // Formatage dynamique de la date absolue
     val dateFormatter = remember { SimpleDateFormat("dd MMM", Locale.getDefault()) }
     val formattedDate = remember(operation.startDate) { dateFormatter.format(Date(operation.startDate)) }
 
@@ -61,20 +60,20 @@ fun OperationCard(
             )
     ) {
 
-        // --- PARTIE 1 : Le contenu toujours visible ---
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = AppTheme.spacing.large, vertical = AppTheme.spacing.large),
+                .padding(horizontal = AppTheme.dimens.large, vertical = AppTheme.dimens.large),
             verticalAlignment = Alignment.CenterVertically
         ) {
 
-            // Icon a gauche (On pourrait adapter la couleur selon INCOME ou EXPENSE plus tard)
             val iconColor = AppTheme.colors.tertiary.toColor().copy(alpha = 0.5f)
-            val bgColor = AppTheme.colors.textPrimary.toColor().copy(alpha = 0.04f)
 
-            CircleIcon(R.drawable.credit_card_duotone, 24, iconColor, bgColor)
-            Spacer(modifier = Modifier.width(AppTheme.spacing.large))
+            CircleIcon(
+                iconRes = R.drawable.credit_card_duotone,
+                tint = iconColor
+            )
+            Spacer(modifier = Modifier.width(AppTheme.dimens.large))
 
             Column(verticalArrangement = Arrangement.Center) {
 
@@ -91,7 +90,7 @@ fun OperationCard(
                     )
                 }
 
-                Spacer(modifier = Modifier.height(AppTheme.spacing.small))
+                Spacer(modifier = Modifier.height(AppTheme.dimens.small))
 
                 // --- Date et récurrence + Montant ---
                 Row(modifier = Modifier.fillMaxWidth(),
@@ -112,7 +111,7 @@ fun OperationCard(
                         )
                     }
 
-                    Spacer(modifier = Modifier.width(AppTheme.spacing.medium))
+                    Spacer(modifier = Modifier.width(AppTheme.dimens.medium))
 
                     // Montant de la dépense
                     Text(

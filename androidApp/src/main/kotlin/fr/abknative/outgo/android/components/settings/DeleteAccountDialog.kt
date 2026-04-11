@@ -11,13 +11,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import fr.abknative.outgo.android.components.common.GlassCard
-import fr.abknative.outgo.android.components.common.HoldToConfirmButton
+import fr.abknative.outgo.android.designsystem.components.buttons.HoldToConfirmButton
+import fr.abknative.outgo.android.designsystem.components.cards.GlassCard
+import fr.abknative.outgo.android.designsystem.foundation.AppTheme
+import fr.abknative.outgo.android.designsystem.foundation.OutgoTheme
+import fr.abknative.outgo.android.designsystem.foundation.toColor
 import fr.abknative.outgo.android.ui.CommonLabels
 import fr.abknative.outgo.android.ui.DialogLabels
-import fr.abknative.outgo.android.ui.theme.AppTheme
-import fr.abknative.outgo.android.ui.theme.OutgoTheme
-import fr.abknative.outgo.android.ui.theme.toColor
 
 /**
  * A highly critical dialog allowing users to selectively delete their local data,
@@ -75,7 +75,7 @@ fun DeleteAccountDialog(
                 Spacer(modifier = Modifier.height(24.dp))
 
                 // Options Container
-                Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.medium)) {
+                Column(verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.medium)) {
                     DialogSwitchRow(
                         title = DialogLabels.DELETE_ACCOUNT_LOCAL_TITLE,
                         subtitle = DialogLabels.DELETE_ACCOUNT_LOCAL_DESC,
@@ -117,7 +117,7 @@ fun DeleteAccountDialog(
                         )
                     }
 
-                    Spacer(modifier = Modifier.width(AppTheme.spacing.small))
+                    Spacer(modifier = Modifier.width(AppTheme.dimens.small))
 
                     HoldToConfirmButton(
                         label = CommonLabels.ACTION_DELETE,
@@ -148,7 +148,7 @@ private fun DialogSwitchRow(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Column(modifier = Modifier.weight(1f).padding(end = AppTheme.spacing.small)) {
+        Column(modifier = Modifier.weight(1f).padding(end = AppTheme.dimens.small)) {
             Text(
                 text = title,
                 style = AppTheme.typo.body,

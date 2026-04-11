@@ -37,7 +37,7 @@ internal class DeleteAccountUseCaseImpl(
         val shouldWipeServer = wipeServer || revokeAuth
 
         val currentUserId = sessionProvider.getCurrentUserId()
-        val newLocalId = "local_${Uuid.random()}"
+        val targetLocalId = sessionProvider.getLastLocalId() ?: "local_${Uuid.random()}"
 
         // 1. Handle Remote Data Deletion
         if (shouldWipeServer) {
@@ -55,7 +55,7 @@ internal class DeleteAccountUseCaseImpl(
                     if (revokeAuth) {
                         // Case B: Account destroyed. Detach data from Firebase UID and assign the new local ID.
                         downgraders.forEach {
-                            it.downgradeToLocal(firebaseId = currentUserId, newLocalId = newLocalId, now = now)
+                            it.downgradeToLocal(firebaseId = currentUserId, newLocalId = targetLocalId, now = now)
                         }
                     } else {
                         // Case A: Cloud wiped, but account remains. Queue existing data to be re-uploaded.
@@ -84,17 +84,13 @@ internal class DeleteAccountUseCaseImpl(
         // 3. Handle Local State & Sticky Identity
         if (wipeLocal) {
             try {
-                localDataPurgers.forEach { it.purgeData() }
-                // Erase the sticky session. The app will generate a fresh local ID on next launch.
-                storage.remove("persistent_user_id")
+                localDataPurgers.forEach { it.purgeData(userId = currentUserId) }
+                sessionProvider.commitPersistentId("")
             } catch (e: Exception) {
                 return Result.Error(CommonError.DatabaseError(e))
             }
         } else if (revokeAuth) {
-            // The account is gone, but local data was kept and downgraded.
-            // We immediately update the sticky session to the newly generated local ID.
-            // This ensures the UI doesn't blink or show an empty screen, maintaining perfect continuity.
-            storage.putString("persistent_user_id", newLocalId)
+            sessionProvider.commitPersistentId(targetLocalId)
         }
 
         return Result.Success(Unit)

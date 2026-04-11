@@ -9,7 +9,7 @@ import fr.abknative.outgo.core.api.logs.Result
 import fr.abknative.outgo.dashboard.api.DashboardIntent
 import fr.abknative.outgo.dashboard.api.DashboardPresenter
 import fr.abknative.outgo.dashboard.api.DashboardState
-import fr.abknative.outgo.wallet.api.logs.WalletError
+import fr.abknative.outgo.dashboard.api.OperationFilter
 import fr.abknative.outgo.wallet.api.model.operation.OperationType
 import fr.abknative.outgo.wallet.api.model.operation.Recurrence
 import fr.abknative.outgo.wallet.api.usecase.*
@@ -23,11 +23,19 @@ internal class DashboardPresenterImpl(
     private val deleteOperation: DeleteOperationUseCase,
     private val calculateDashboardData: CalculateDashboardDataUseCase,
     private val saveWallet: SaveWalletUseCase,
+    private val mapper: DashboardStateMapper,
     private val timeProvider: TimeProvider,
     private val storage: KeyValueStorage
 ) : DashboardPresenter() {
 
     private val heroExpandedKey = "hero_section_expanded"
+
+    // Flows de navigation
+    private val selectedMonthFlow = MutableStateFlow(timeProvider.monthValue())
+    private val selectedYearFlow = MutableStateFlow(timeProvider.yearValue())
+    private val currentFilterFlow = MutableStateFlow(OperationFilter.ALL)
+    private val isPremiumFlow = MutableStateFlow(true)
+
     private val _state = MutableStateFlow(
         DashboardState(
             isLoading = true,
@@ -35,13 +43,11 @@ internal class DashboardPresenterImpl(
             currentDay = timeProvider.dayOfMonth(),
             currentMonth = timeProvider.monthValue(),
             selectedMonth = timeProvider.monthValue(),
-            selectedYear = timeProvider.yearValue()
+            selectedYear = timeProvider.yearValue(),
+            isPremium = isPremiumFlow.value
         )
     )
     override val state: StateFlow<DashboardState> = _state.asStateFlow()
-
-    private val selectedMonthFlow = MutableStateFlow(timeProvider.monthValue(timeProvider.now()))
-    private val selectedYearFlow = MutableStateFlow(timeProvider.yearValue(timeProvider.now()))
 
     private val onCoroutineError: (AppException) -> Unit = { error ->
         _state.update { it.copy(isLoading = false, error = error) }
@@ -54,80 +60,81 @@ internal class DashboardPresenterImpl(
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun startObservingData() {
         viewModelScope.safeLaunch(onError = onCoroutineError) {
-            combine(
-                observeWallets(),
-                selectedMonthFlow,
-                selectedYearFlow
-            ) { wallets, month, year ->
-                Triple(wallets.firstOrNull(), month, year)
-            }.flatMapLatest { (wallet, month, year) ->
-                if (wallet == null) {
-                    onCoroutineError(WalletError.NoActiveWallet())
-                    flowOf(emptyList())
-                } else {
-                    _state.update {
-                        it.copy(
-                            activeWalletId = wallet.id,
-                            activeWalletName = wallet.name,
-                            walletCreationMonth = timeProvider.monthValue(wallet.createdAt),
-                            walletCreationYear = timeProvider.yearValue(wallet.createdAt)
-                        )
+            observeWallets()
+                .filter { it.isNotEmpty() }
+                .flatMapLatest { wallets ->
+                    combine(selectedMonthFlow, selectedYearFlow, currentFilterFlow, isPremiumFlow) { m, y, f, p ->
+                        PipelineInput(wallets.first(), m, y, f, p)
                     }
-                    observeActiveOperations(wallet.id, month, year)
                 }
-            }.collect { projectedOperations ->
-                val month = selectedMonthFlow.value
-                val year = selectedYearFlow.value
-                val dashboardData = calculateDashboardData(projectedOperations, month, year)
-
-                _state.update {
-                    it.copy(
-                        operations = projectedOperations,
-                        monthlyIncomeInCents = projectedOperations
-                            .filter { it.operation.type == OperationType.INCOME }
-                            .sumOf { it.operation.amountInCents },
-                        totalOutgoingsInCents = dashboardData.totalExpensesInCents,
-                        remainingToPayInCents = dashboardData.remainingToPayInCents,
-                        disposableIncomeInCents = dashboardData.disposableIncomeInCents,
-                        selectedMonth = month,
-                        selectedYear = year,
-                        isLoading = false
-                    )
+                .flatMapLatest { input ->
+                    observeActiveOperations(input.wallet.id, input.month, input.year)
+                        .map { ops ->
+                            // 🌟 ON DÉLÈGUE TOUT LE TRAVAIL AU MAPPER
+                            val stats = calculateDashboardData(ops, input.month, input.year)
+                            mapper.mapToState(
+                                currentOperations = ops,
+                                stats = stats,
+                                input = input,
+                                currentHeroExpanded = storage.getBoolean(heroExpandedKey, true)
+                            )
+                        }
                 }
-            }
+                .collect { newState ->
+                    _state.value = newState
+                }
         }
     }
 
     override fun onIntent(intent: DashboardIntent) {
         when (intent) {
+            is DashboardIntent.UpdateFilter -> currentFilterFlow.value = intent.filter
+            is DashboardIntent.NavigateMonth -> handleNavigateMonth(intent.isNext)
             is DashboardIntent.SaveOperation -> handleSaveOperation(intent)
-            is DashboardIntent.SaveWalletAndIncome -> handleSaveWalletAndIncome(intent) // 🌟 RETOUR
+            is DashboardIntent.SaveWalletAndIncome -> handleSaveWalletAndIncome(intent)
             is DashboardIntent.SaveWallet -> handleSaveWallet(intent)
+            is DashboardIntent.Delete -> handleDelete(intent)
             is DashboardIntent.SelectMonth -> {
                 selectedMonthFlow.value = intent.month
                 selectedYearFlow.value = intent.year
             }
-            is DashboardIntent.Delete -> handleDelete(intent)
             is DashboardIntent.ToggleHeroSection -> {
                 storage.putBoolean(heroExpandedKey, intent.isExpanded)
                 _state.update { it.copy(isHeroExpanded = intent.isExpanded) }
             }
-            is DashboardIntent.DismissError -> { _state.update { it.copy(error = null) } }
+            is DashboardIntent.DismissError -> _state.update { it.copy(error = null) }
         }
     }
+
+    private fun handleNavigateMonth(isNext: Boolean) {
+        val currentMonth = selectedMonthFlow.value
+        val currentYear = selectedYearFlow.value
+        if (isNext) {
+            if (currentMonth == 12) {
+                selectedMonthFlow.value = 1
+                selectedYearFlow.value = currentYear + 1
+            } else {
+                selectedMonthFlow.value = currentMonth + 1
+            }
+        } else {
+            if (currentMonth == 1) {
+                selectedMonthFlow.value = 12
+                selectedYearFlow.value = currentYear - 1
+            } else {
+                selectedMonthFlow.value = currentMonth - 1
+            }
+        }
+    }
+
+    // --- Les actions de base (Sauvegarde/Suppression) ---
 
     private fun handleSaveOperation(intent: DashboardIntent.SaveOperation) {
         viewModelScope.safeLaunch(onError = onCoroutineError) {
             _state.update { it.copy(isLoading = true) }
             val result = saveOperation(
-                id = intent.id,
-                walletId = intent.walletId,
-                name = intent.name,
-                amountInCents = intent.amountInCents,
-                type = intent.type,
-                recurrence = intent.recurrence,
-                startDate = intent.startDate,
-                endDate = intent.endDate
+                id = intent.id, walletId = intent.walletId, name = intent.name,
+                amountInCents = intent.amountInCents, type = intent.type,
+                recurrence = intent.recurrence, startDate = intent.startDate, endDate = intent.endDate
             )
             handleOperationResult(result)
         }
@@ -136,60 +143,37 @@ internal class DashboardPresenterImpl(
     private fun handleSaveWalletAndIncome(intent: DashboardIntent.SaveWalletAndIncome) {
         viewModelScope.safeLaunch(onError = onCoroutineError) {
             _state.update { it.copy(isLoading = true) }
-
-            val walletResult = saveWallet(id = intent.walletId, name = intent.walletName)
-            if (walletResult is Result.Error) {
-                _state.update { it.copy(isLoading = false, error = walletResult.error) }
-                return@safeLaunch
-            }
-
+            saveWallet(id = intent.walletId, name = intent.walletName)
             val existingIncome = _state.value.operations.firstOrNull {
                 it.operation.type == OperationType.INCOME && it.operation.walletId == intent.walletId
             }
-
-            val operationResult = saveOperation(
-                id = existingIncome?.operation?.id,
-                walletId = intent.walletId,
-                name = existingIncome?.operation?.name ?: "",
-                amountInCents = intent.incomeAmountInCents,
-                type = OperationType.INCOME,
-                recurrence = Recurrence.MONTHLY,
-                startDate = existingIncome?.operation?.startDate ?: intent.startDate,
-                endDate = null
+            val result = saveOperation(
+                id = existingIncome?.operation?.id, walletId = intent.walletId,
+                name = existingIncome?.operation?.name ?: "Revenu",
+                amountInCents = intent.incomeAmountInCents, type = OperationType.INCOME,
+                recurrence = Recurrence.MONTHLY, startDate = intent.startDate
             )
-
-            handleOperationResult(operationResult)
+            handleOperationResult(result)
         }
     }
+
     private fun handleSaveWallet(intent: DashboardIntent.SaveWallet) {
         viewModelScope.safeLaunch(onError = onCoroutineError) {
             _state.update { it.copy(isLoading = true) }
-
             val result = saveWallet(id = intent.id, name = intent.name)
-
+            if (result is Result.Error) _state.update { it.copy(error = result.error) }
             _state.update { it.copy(isLoading = false) }
-            if (result is Result.Error) {
-                _state.update { it.copy(error = result.error) }
-            }
         }
     }
 
     private fun handleDelete(intent: DashboardIntent.Delete) {
         viewModelScope.safeLaunch(onError = onCoroutineError) {
             val result = deleteOperation(intent.id)
-            if (result is Result.Error) {
-                _state.update { it.copy(error = result.error) }
-            }
+            if (result is Result.Error) _state.update { it.copy(error = result.error) }
         }
     }
 
-    private suspend fun handleOperationResult(result: Result<Unit, AppException>) {
-        _state.update { it.copy(isLoading = false) }
-
-        if (result is Result.Success) {
-            _state.update { it.copy(error = null) }
-        } else if (result is Result.Error) {
-            _state.update { it.copy(error = result.error) }
-        }
+    private fun handleOperationResult(result: Result<Unit, AppException>) {
+        _state.update { it.copy(isLoading = false, error = (result as? Result.Error)?.error) }
     }
 }

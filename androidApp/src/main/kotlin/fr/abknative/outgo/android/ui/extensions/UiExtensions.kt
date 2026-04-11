@@ -2,11 +2,11 @@ package fr.abknative.outgo.android.ui.extensions
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import fr.abknative.outgo.android.designsystem.foundation.AppTheme
+import fr.abknative.outgo.android.designsystem.foundation.toColor
 import fr.abknative.outgo.android.ui.CommonLabels
 import fr.abknative.outgo.android.ui.DashboardLabels
 import fr.abknative.outgo.android.ui.FormLabels
-import fr.abknative.outgo.android.ui.theme.AppTheme
-import fr.abknative.outgo.android.ui.theme.toColor
 import fr.abknative.outgo.wallet.api.model.Operation
 import fr.abknative.outgo.wallet.api.model.operation.Recurrence
 import kotlin.math.absoluteValue

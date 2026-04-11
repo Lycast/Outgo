@@ -1,4 +1,4 @@
-package fr.abknative.outgo.android.components.common
+package fr.abknative.outgo.android.components.shell
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Text
@@ -6,18 +6,23 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.sp
-import fr.abknative.outgo.android.components.shell.HeaderNavIcon
-import fr.abknative.outgo.android.components.shell.NavigationIcons
+import fr.abknative.outgo.android.designsystem.foundation.AppTheme
+import fr.abknative.outgo.android.designsystem.foundation.toColor
 import fr.abknative.outgo.android.ui.CommonLabels
-import fr.abknative.outgo.android.ui.theme.AppTheme
-import fr.abknative.outgo.android.ui.theme.toColor
-import fr.abknative.outgo.app.nav.AppStep
+import fr.abknative.outgo.core.api.nav.AppStep
 import fr.abknative.outgo.sync.api.model.SyncState
 
 /**
  * Global Header component that handles both horizontal (portrait) and vertical (landscape) layouts.
- * It dynamically displays navigation icons, hiding the icon corresponding to the current screen.
+ * It dynamically displays navigation icons and synchronization status.
+ *
+ * @param syncState Current synchronization state.
+ * @param currentStep The current active navigation step.
+ * @param isPremium Whether the user has premium status.
+ * @param isVertical Whether the header should be rendered as a side rail (vertical).
+ * @param onSyncIconClick Action when sync icon is clicked.
+ * @param onNavigate Navigation callback.
+ * @param onTeasingClick Action for locked features.
  */
 @Composable
 fun Header(
@@ -33,22 +38,23 @@ fun Header(
     val containerModifier = if (isVertical) {
         modifier
             .fillMaxHeight()
-            .width(intrinsicSize = IntrinsicSize.Min)
-            .padding(vertical = AppTheme.spacing.large)
+            .width(IntrinsicSize.Min)
+            .padding(vertical = AppTheme.dimens.large)
     } else {
         modifier
             .fillMaxWidth()
-            .padding(top = AppTheme.spacing.big)
-            .padding(bottom = AppTheme.spacing.medium)
-            .padding(horizontal = AppTheme.spacing.large)
+            .padding(top = AppTheme.dimens.big)
+            .padding(bottom = AppTheme.dimens.medium)
+            .padding(horizontal = AppTheme.dimens.large)
     }
 
-    // --- Actions Logic (Defined once, used in Row or Column) ---
+    // --- ACTIONS CONTENT ---
     val actionsContent = @Composable {
-        // 1. Sync Icon (Always visible)
-        HeaderNavIcon {
-            SyncIconLogic(syncState = syncState, onClick = onSyncIconClick)
-        }
+        // SyncIconLogic handles its own button/tooltip container
+        SyncIconLogic(
+            syncState = syncState,
+            onClick = onSyncIconClick
+        )
 
         NavigationIcons(
             currentStep = currentStep,
@@ -58,7 +64,7 @@ fun Header(
         )
     }
 
-    // --- Final Layout Rendering ---
+    // --- RENDER ---
     if (isVertical) {
         Column(
             modifier = containerModifier,
@@ -67,16 +73,18 @@ fun Header(
         ) {
             Text(
                 text = CommonLabels.APP_NAME,
-                style = AppTheme.typo.title,
-                fontSize = 24.sp,
+                style = AppTheme.typo.title, // Uses Design System typography
                 color = AppTheme.colors.primary.toColor(),
                 textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth().padding(horizontal = AppTheme.spacing.medium).padding(top = AppTheme.spacing.medium)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = AppTheme.dimens.medium)
+                    .padding(top = AppTheme.dimens.medium)
             )
 
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.medium)
+                verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.medium)
             ) {
                 actionsContent()
             }
@@ -90,13 +98,12 @@ fun Header(
             Text(
                 text = CommonLabels.APP_NAME,
                 style = AppTheme.typo.title,
-                fontSize = 24.sp,
                 color = AppTheme.colors.primary.toColor()
             )
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.medium)
+                horizontalArrangement = Arrangement.spacedBy(AppTheme.dimens.medium)
             ) {
                 actionsContent()
             }

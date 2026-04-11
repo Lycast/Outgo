@@ -16,10 +16,10 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.text.font.FontWeight
 import fr.abknative.outgo.android.R
-import fr.abknative.outgo.android.components.common.CircleIcon
-import fr.abknative.outgo.android.components.common.GlassCard
-import fr.abknative.outgo.android.ui.theme.AppTheme
-import fr.abknative.outgo.android.ui.theme.toColor
+import fr.abknative.outgo.android.designsystem.atoms.CircleIcon
+import fr.abknative.outgo.android.designsystem.components.cards.GlassCard
+import fr.abknative.outgo.android.designsystem.foundation.AppTheme
+import fr.abknative.outgo.android.designsystem.foundation.toColor
 
 @Composable
 fun SettingsSection(
@@ -27,19 +27,19 @@ fun SettingsSection(
     content: @Composable ColumnScope.() -> Unit
 ) {
 
-    Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.small)) {
+    Column(verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.small)) {
         Text(
             text = title.uppercase(),
             style = AppTheme.typo.label,
             color = AppTheme.colors.primary.toColor(),
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(start = AppTheme.spacing.medium)
+            modifier = Modifier.padding(start = AppTheme.dimens.medium)
         )
         GlassCard {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(AppTheme.spacing.medium)
+                    .padding(AppTheme.dimens.medium)
             ) {
                 content()
             }
@@ -58,7 +58,7 @@ fun SettingsRowClickable(
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = onClick, role = Role.Button)
-            .padding(AppTheme.spacing.medium),
+            .padding(AppTheme.dimens.medium),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -87,7 +87,7 @@ fun SettingsRowToggle(
                 onValueChange = onCheckedChange,
                 role = Role.Switch
             )
-            .padding(AppTheme.spacing.medium),
+            .padding(AppTheme.dimens.medium),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -116,8 +116,8 @@ fun SettingsRowContent(
     subtitle: String
 ) {
     Row(verticalAlignment = Alignment.CenterVertically) {
-        CircleIcon(icon, 24, AppTheme.colors.primary.toColor(), AppTheme.colors.surface100.toColor())
-        Spacer(modifier = Modifier.width(AppTheme.spacing.medium))
+        CircleIcon(icon)
+        Spacer(modifier = Modifier.width(AppTheme.dimens.medium))
         Column {
             Text(
                 text = title,

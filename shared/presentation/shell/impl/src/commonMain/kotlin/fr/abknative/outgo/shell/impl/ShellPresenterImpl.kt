@@ -4,12 +4,15 @@ import androidx.lifecycle.viewModelScope
 import fr.abknative.outgo.core.api.extensions.safeLaunch
 import fr.abknative.outgo.core.api.logs.AppException
 import fr.abknative.outgo.core.api.logs.Result
+import fr.abknative.outgo.core.api.nav.AppStep
+import fr.abknative.outgo.core.api.nav.NavCoordinator
 import fr.abknative.outgo.shell.api.ShellIntent
 import fr.abknative.outgo.shell.api.ShellPresenter
 import fr.abknative.outgo.shell.api.ShellState
 import fr.abknative.outgo.subscription.api.FeatureManager
 import fr.abknative.outgo.sync.api.SyncManager
 import fr.abknative.outgo.sync.api.usecase.ObserveSyncStateUseCase
+import fr.abknative.outgo.wallet.api.usecase.ObserveWalletsUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -18,7 +21,9 @@ import kotlinx.coroutines.flow.update
 internal class ShellPresenterImpl(
     private val observeSyncState: ObserveSyncStateUseCase,
     private val syncManager: SyncManager,
-    private val featureManager: FeatureManager
+    private val featureManager: FeatureManager,
+    private val observeWallets: ObserveWalletsUseCase,
+    private val coordinator: NavCoordinator
 ) : ShellPresenter() {
 
     private val _state = MutableStateFlow(ShellState())
@@ -31,6 +36,7 @@ internal class ShellPresenterImpl(
     init {
         startObservingSyncState()
         startObservingPremiumStatus()
+        startGlobalNavigationLogic()
     }
 
     private fun startObservingSyncState() {
@@ -45,6 +51,18 @@ internal class ShellPresenterImpl(
         viewModelScope.safeLaunch(onError = onCoroutineError) {
             featureManager.isPremiumFlow.collect { isPremium ->
                 _state.update { it.copy(isPremium = isPremium) }
+            }
+        }
+    }
+
+    private fun startGlobalNavigationLogic() {
+        viewModelScope.safeLaunch(onError = onCoroutineError) {
+            observeWallets().collect { wallets ->
+                if (wallets.isEmpty()) {
+                    coordinator.replaceRoot(AppStep.Onboarding)
+                } else {
+                    coordinator.replaceRoot(AppStep.Dashboard)
+                }
             }
         }
     }

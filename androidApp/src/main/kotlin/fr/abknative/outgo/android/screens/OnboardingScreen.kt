@@ -8,8 +8,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import fr.abknative.outgo.android.components.onbaording.ConfigurationStep
-import fr.abknative.outgo.android.components.onbaording.WelcomeStep
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import fr.abknative.outgo.android.components.onboarding.ConfigurationStep
+import fr.abknative.outgo.android.components.onboarding.WelcomeStep
 import fr.abknative.outgo.onboarding.api.OnboardingIntent
 import fr.abknative.outgo.onboarding.api.OnboardingPresenter
 
@@ -21,12 +22,10 @@ fun OnboardingScreen(
     onOnboardingComplete: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val state by presenter.state.collectAsState()
 
-    // Gère l'étape locale (1 = Accueil, 2 = Configuration)
+    val state by presenter.state.collectAsStateWithLifecycle()
     var currentStep by remember { mutableIntStateOf(1) }
 
-    // 🌟 Le point de sortie magique
     LaunchedEffect(state.isCompleted) {
         if (state.isCompleted) {
             onOnboardingComplete()
@@ -41,7 +40,6 @@ fun OnboardingScreen(
         AnimatedContent(
             targetState = currentStep,
             transitionSpec = {
-                // Animation de glissement de droite à gauche
                 slideInHorizontally(animationSpec = tween(400)) { fullWidth -> fullWidth } + fadeIn() togetherWith
                         slideOutHorizontally(animationSpec = tween(400)) { fullWidth -> -fullWidth } + fadeOut()
             },

@@ -5,8 +5,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -15,14 +15,20 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import fr.abknative.outgo.android.R
 import fr.abknative.outgo.android.components.login.ConflictDialog
-import fr.abknative.outgo.android.components.shell.AppBackground
+import fr.abknative.outgo.android.designsystem.components.buttons.AppButton
+import fr.abknative.outgo.android.designsystem.components.buttons.AppOutlinedButton
+import fr.abknative.outgo.android.designsystem.components.feedback.AppSnackbar
+import fr.abknative.outgo.android.designsystem.components.inputs.AppTextField
+import fr.abknative.outgo.android.designsystem.foundation.AppBackground
+import fr.abknative.outgo.android.designsystem.foundation.AppTheme
+import fr.abknative.outgo.android.designsystem.foundation.OutgoTheme
+import fr.abknative.outgo.android.designsystem.foundation.toColor
 import fr.abknative.outgo.android.ui.LoginLabels
 import fr.abknative.outgo.android.ui.states.rememberLoginFormState
-import fr.abknative.outgo.android.ui.theme.AppTheme
-import fr.abknative.outgo.android.ui.theme.OutgoTheme
-import fr.abknative.outgo.android.ui.theme.toColor
+import fr.abknative.outgo.android.ui.toUIString
 import fr.abknative.outgo.login.api.LoginIntent
 import fr.abknative.outgo.login.api.LoginPresenter
 import fr.abknative.outgo.login.api.LoginState
@@ -35,23 +41,25 @@ fun LoginScreen(
     onNavigateBack: () -> Unit,
     onLoginSuccess: () -> Unit
 ) {
-    val state by presenter.state.collectAsState()
-    val formState = rememberLoginFormState()
-    BackHandler(enabled = state.isLoading) {}
 
-    val textFieldColors = OutlinedTextFieldDefaults.colors(
-        focusedBorderColor = AppTheme.colors.primary.toColor(),
-        unfocusedBorderColor = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.2f),
-        focusedLabelColor = AppTheme.colors.primary.toColor(),
-        unfocusedLabelColor = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.6f),
-        cursorColor = AppTheme.colors.primary.toColor(),
-        focusedTextColor = AppTheme.colors.textPrimary.toColor(),
-        unfocusedTextColor = AppTheme.colors.textPrimary.toColor()
-    )
+    val state by presenter.state.collectAsStateWithLifecycle()
+    val formState = rememberLoginFormState()
+
+    val snackbarHostState = remember { SnackbarHostState() }
+    val errorMessage = state.error?.toUIString()
+
+    BackHandler(enabled = state.isLoading) {}
 
     LaunchedEffect(state.isLoginSuccessful) {
         if (state.isLoginSuccessful) {
             onLoginSuccess()
+        }
+    }
+
+    LaunchedEffect(state.error) {
+        if (state.error != null && errorMessage != null) {
+            snackbarHostState.showSnackbar(message = errorMessage, withDismissAction = true)
+            presenter.onIntent(LoginIntent.DismissError)
         }
     }
 
@@ -60,7 +68,7 @@ fun LoginScreen(
             topBar = {
                 TopAppBar(
                     title = { Text(
-                        LoginLabels.BACK_TITLE,
+                        text = LoginLabels.BACK_TITLE,
                         style = AppTheme.typo.title.copy(fontWeight = FontWeight.Medium),
                         color = AppTheme.colors.textSecondary.toColor()
                     ) },
@@ -83,86 +91,79 @@ fun LoginScreen(
             },
             containerColor = Color.Transparent
         ) { paddingValues ->
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-                    .padding(AppTheme.spacing.large),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = LoginLabels.TITLE,
-                    style = AppTheme.typo.title,
-                    color = AppTheme.colors.primary.toColor()
-                )
-
-                Spacer(modifier = Modifier.height(AppTheme.spacing.large))
-
-                OutlinedTextField(
-                    value = formState.email,
-                    onValueChange = { formState.email = it },
-                    label = { Text(LoginLabels.EMAIL_LABEL) },
-                    colors = textFieldColors,
-                    modifier = Modifier.fillMaxWidth(),
-                    singleLine = true
-                )
-
-                Spacer(modifier = Modifier.height(AppTheme.spacing.small))
-
-                OutlinedTextField(
-                    value = formState.password,
-                    onValueChange = { formState.password = it },
-                    label = { Text(LoginLabels.PASSWORD_LABEL) },
-                    colors = textFieldColors,
-                    modifier = Modifier.fillMaxWidth(),
-                    visualTransformation = PasswordVisualTransformation(),
-                    singleLine = true
-                )
-
-                Spacer(modifier = Modifier.height(AppTheme.spacing.extraLarge))
-
-                Button(
-                    modifier = Modifier.fillMaxWidth(),
-                    onClick = {
-                        presenter.onIntent(LoginIntent.SubmitLogin(formState.email, formState.password))
-                    },
-                    enabled = formState.isValid && !state.isLoading,
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = AppTheme.colors.primary.toColor().copy(alpha = 0.8f),
-                        contentColor = AppTheme.colors.textOnBrand.toColor(),
-                        disabledContainerColor = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.2f),
-                        disabledContentColor = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.8f)
-                    )
-                ) {
-                    if (state.isLoading) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(24.dp),
-                            color = AppTheme.colors.surface100.toColor()
-                        )
-                    } else {
-                        Text(LoginLabels.SUBMIT_BUTTON)
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(AppTheme.spacing.medium))
-
-                TextButton(
-                    onClick = {
-                        presenter.onIntent(LoginIntent.SubmitRegister(formState.email, formState.password))
-                    },
-                    enabled = formState.isValid && !state.isLoading,
-                    modifier = Modifier.fillMaxWidth()
+            Box(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues)
+                        .padding(AppTheme.dimens.large),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "Pas encore de compte ? S'inscrire",
+                        text = LoginLabels.TITLE,
+                        style = AppTheme.typo.title,
                         color = AppTheme.colors.primary.toColor()
                     )
-                }
 
-                if (state.error != null) {
-                    Spacer(modifier = Modifier.height(AppTheme.spacing.small))
-                    Text(text = LoginLabels.ERROR_MESSAGE, color = AppTheme.colors.error.toColor())
+                    Spacer(modifier = Modifier.height(AppTheme.dimens.large))
+
+                    AppTextField(
+                        value = formState.email,
+                        onValueChange = { formState.email = it },
+                        label = LoginLabels.EMAIL_LABEL,
+                        placeholder = "", // Ajout d'un placeholder vide ou d'un label adéquat
+                        enabled = !state.isLoading
+                    )
+
+                    Spacer(modifier = Modifier.height(AppTheme.dimens.small))
+
+                    AppTextField(
+                        value = formState.password,
+                        onValueChange = { formState.password = it },
+                        label = LoginLabels.PASSWORD_LABEL,
+                        placeholder = "",
+                        visualTransformation = PasswordVisualTransformation(),
+                        enabled = !state.isLoading
+                    )
+
+                    Spacer(modifier = Modifier.height(AppTheme.dimens.extraLarge))
+
+                    AppButton(
+                        onClick = {
+                            presenter.onIntent(LoginIntent.SubmitLogin(formState.email, formState.password))
+                        },
+                        enabled = formState.isValid && !state.isLoading,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        if (state.isLoading) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(24.dp),
+                                color = AppTheme.colors.textOnBrand.toColor(),
+                                strokeWidth = 2.dp
+                            )
+                        } else {
+                            Text(LoginLabels.SUBMIT_BUTTON)
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(AppTheme.dimens.medium))
+
+                    AppOutlinedButton(
+                        onClick = {
+                            presenter.onIntent(LoginIntent.SubmitRegister(formState.email, formState.password))
+                        },
+                        enabled = formState.isValid && !state.isLoading,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(text = LoginLabels.REGISTER_ACTION)
+                    }
+                }
+                SnackbarHost(
+                    hostState = snackbarHostState,
+                    modifier = Modifier.align(Alignment.TopCenter)
+                ) { data ->
+                    AppSnackbar(data)
                 }
             }
         }

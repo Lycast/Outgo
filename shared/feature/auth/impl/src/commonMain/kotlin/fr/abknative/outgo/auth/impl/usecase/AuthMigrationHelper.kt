@@ -3,11 +3,14 @@ package fr.abknative.outgo.auth.impl.usecase
 import fr.abknative.outgo.auth.api.AuthError
 import fr.abknative.outgo.auth.api.provider.SessionProvider
 import fr.abknative.outgo.auth.api.repository.AuthRepository
+import fr.abknative.outgo.core.api.AppDispatchers
 import fr.abknative.outgo.core.api.LocalDataMigrator
 import fr.abknative.outgo.core.api.logs.AppException
 import fr.abknative.outgo.core.api.logs.CommonError
 import fr.abknative.outgo.core.api.logs.Result
 import fr.abknative.outgo.sync.api.SyncManager
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 internal suspend inline fun executeAuthWithMigration(
     sessionProvider: SessionProvider,
@@ -15,6 +18,7 @@ internal suspend inline fun executeAuthWithMigration(
     authRepository: AuthRepository,
     syncManager: SyncManager,
     forceSwitch: Boolean = false,
+    dispatchers: AppDispatchers,
     crossinline authAction: suspend () -> Result<Unit, AppException>
 ): Result<Unit, AppException> {
 
@@ -62,8 +66,9 @@ internal suspend inline fun executeAuthWithMigration(
         sessionProvider.commitPersistentId(newUserId)
     }
 
-    // Force a pull to ensure the UI is up to date immediately after login
-    syncManager.syncIn()
+    CoroutineScope(dispatchers.io).launch {
+        syncManager.syncIn()
+    }
 
     return Result.Success(Unit)
 }

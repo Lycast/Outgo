@@ -1,37 +1,27 @@
 package fr.abknative.outgo.android.components.dashboard
 
-import android.content.res.Configuration
 import androidx.compose.animation.*
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.stateDescription
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import fr.abknative.outgo.android.R
-import fr.abknative.outgo.android.components.common.GlassCard
-import fr.abknative.outgo.android.components.common.InfoTooltip
-import fr.abknative.outgo.android.ui.AccessibilityLabels
-import fr.abknative.outgo.android.ui.DashboardLabels
-import fr.abknative.outgo.android.ui.extensions.uiAmount
-import fr.abknative.outgo.android.ui.theme.AppTheme
-import fr.abknative.outgo.android.ui.theme.OutgoTheme
-import fr.abknative.outgo.android.ui.theme.toColor
+import fr.abknative.outgo.android.designsystem.components.cards.GlassCard
+import fr.abknative.outgo.android.designsystem.foundation.AppTheme
+import fr.abknative.outgo.android.designsystem.foundation.toColor
+import kotlinx.coroutines.launch
 
-
+/**
+ * The main Dashboard header. Displays monthly budget summaries, income vs outgoings,
+ * and a month navigator within a GlassCard.
+ */
 @Composable
 fun HeroSection(
     isExpanded: Boolean,
@@ -49,26 +39,22 @@ fun HeroSection(
 ) {
 
     val haptic = LocalHapticFeedback.current
+
+    val scope = rememberCoroutineScope()
+    val pageCount = 2
+    val pagerState = rememberPagerState(pageCount = { pageCount })
+
     LaunchedEffect(isExpanded) {
-        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+        if (isExpanded) haptic.performHapticFeedback(HapticFeedbackType.LongPress)
     }
 
-    val maxValue = maxOf(monthlyIncomeInCents, totalOutgoingsInCents).coerceAtLeast(1L).toFloat()
-    val isNegativeLive = disposableIncomeInCents < 0
-    val liveColor = if (isNegativeLive) AppTheme.colors.error.toColor() else AppTheme.colors.tertiary.toColor()
-
-    val totalLength = monthlyIncomeInCents.uiAmount.length + disposableIncomeInCents.uiAmount.length
-    val isTooLong = totalLength > 20
-
-
     Box(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = AppTheme.spacing.medium)
+        modifier = Modifier.fillMaxWidth().padding(horizontal = AppTheme.dimens.medium)
     ) {
         GlassCard {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-            ) {
+            Column(modifier = Modifier.fillMaxWidth()) {
+
+                // Static Header
                 MonthBudgetSelector(
                     formattedMonthDate = formattedMonthDate,
                     canGoToPreviousMonth = canGoToPreviousMonth,
@@ -77,235 +63,62 @@ fun HeroSection(
                 )
 
                 HorizontalDivider(
-                    modifier = Modifier.padding(horizontal = AppTheme.spacing.large),
+                    modifier = Modifier.padding(horizontal = AppTheme.dimens.large),
                     color = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.1f)
                 )
 
                 AnimatedVisibility(
                     visible = isExpanded,
                     enter = expandVertically() + fadeIn(),
-                    exit = shrinkVertically() + fadeOut()
+                    exit = shrinkVertically() + fadeOut(),
                 ) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = AppTheme.spacing.large),
-                        verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.large),
-                    ) {
-                        Spacer(modifier = Modifier.height(AppTheme.spacing.small))
 
-                        val content = @Composable {
-                            BudgetItem(
-                                amount = monthlyIncomeInCents.uiAmount,
+                    // Carousel Content
+                    HorizontalPager(
+                        state = pagerState,
+                        modifier = Modifier.fillMaxWidth().height(220.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) { pageIndex ->
+                        when (pageIndex) {
+                            0 -> HeroGlobalContent(
                                 activeWalletName = activeWalletName,
-                                onClick = onEditBudgetClick
+                                monthlyIncomeInCents = monthlyIncomeInCents,
+                                totalOutgoingsInCents = totalOutgoingsInCents,
+                                disposableIncomeInCents = disposableIncomeInCents,
+                                remainingToPayInCents = remainingToPayInCents,
+                                onEditBudgetClick = onEditBudgetClick
                             )
-                            Spacer(modifier = Modifier.width(AppTheme.spacing.large))
-                            LiveItem(
-                                isNegativeLive = isNegativeLive,
-                                amount = disposableIncomeInCents.uiAmount,
-                                color = liveColor,
-                                fontWeight = if (isNegativeLive) FontWeight.Medium else FontWeight.Bold
+
+                            1 -> HeroExpenseContent(
+                                totalOutgoingsInCents = totalOutgoingsInCents,
+                                remainingToPayInCents = remainingToPayInCents
                             )
                         }
-
-                        if (isTooLong) {
-                            Column(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.medium)
-                            ) {
-                                content()
-                            }
-                        } else {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceEvenly,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                content()
-                            }
-                        }
-
-                        HorizontalDivider(color = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.1f))
-
-                        PairedBudgetBar(
-                            topLabel = DashboardLabels.HERO_TOTAL_CHARGES_LABEL,
-                            topAmount = totalOutgoingsInCents.uiAmount,
-                            topProgress = totalOutgoingsInCents / maxValue,
-                            topBarColor = AppTheme.colors.primary.toColor(),
-
-                            bottomLabel = DashboardLabels.HERO_REMAINING_TO_PAY_LABEL,
-                            bottomAmount = remainingToPayInCents.uiAmount,
-                            bottomProgress = remainingToPayInCents / maxValue,
-                            bottomBarColor = AppTheme.colors.tertiary.toColor()
-                        )
-                        Spacer(modifier = Modifier.height(AppTheme.spacing.small))
                     }
-                }
 
-                val stateDesc = if (isExpanded) AccessibilityLabels.COLLAPSE_DESC else AccessibilityLabels.EXPAND_DESC
-                val clickLabel = if (isExpanded) AccessibilityLabels.COLLAPSE_HERO else AccessibilityLabels.EXPAND_HERO
-
-                // Bouton de déploiement
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .semantics {
-                            stateDescription = stateDesc
-                        }
-                        .clickable(
-                            onClickLabel = clickLabel,
-                            role = Role.Button
-                        ) { onToggleExpand() }
-                        .padding(vertical = AppTheme.spacing.small),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        painter = painterResource(id = if (isExpanded) R.drawable.caret_up else R.drawable.caret_down),
-                        contentDescription = null,
-                        tint = AppTheme.colors.textSecondary.toColor(),
-                        modifier = Modifier.size(24.dp)
+                    HorizontalDivider(
+                        modifier = Modifier.padding(horizontal = AppTheme.dimens.large),
+                        color = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.1f)
                     )
                 }
-            }
-        }
-    }
-}
 
-
-@Composable
-private fun BudgetItem(
-    activeWalletName: String,
-    amount: String,
-    onClick: () -> Unit
-) {
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.medium),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Icon(
-            painter = painterResource(R.drawable.bank_duotone),
-            contentDescription = null,
-            tint = AppTheme.colors.secondary.toColor(),
-            modifier = Modifier.padding(AppTheme.spacing.small).size(36.dp)
-        )
-        Column(
-            modifier = Modifier
-                .clickable(
-                    onClickLabel = AccessibilityLabels.EDIT_BUDGET,
-                    role = Role.Button,
-                    onClick = onClick
-                ),
-            horizontalAlignment = Alignment.Start
-        ) {
-            Text(
-                text = activeWalletName,
-                style = AppTheme.typo.label,
-                color = AppTheme.colors.textSecondary.toColor(),
-                fontWeight = FontWeight.Medium
-            )
-
-            Text(
-                text = amount,
-                style = AppTheme.typo.title.copy(fontSize = AppTheme.typo.title.fontSize * 0.8),
-                color = AppTheme.colors.textPrimary.toColor()
-            )
-        }
-    }
-}
-
-@Composable
-private fun LiveItem(
-    isNegativeLive: Boolean,
-    amount: String,
-    color: Color,
-    fontWeight: FontWeight
-) {
-    InfoTooltip(
-        title = DashboardLabels.TOOLTIP_BALANCE_TITLE,
-        description = DashboardLabels.TOOLTIP_BALANCE_DESC,
-    ) {
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.medium),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.piggy_bank_duotone),
-                contentDescription = null,
-                tint = AppTheme.colors.tertiary.toColor(),
-                modifier = Modifier.padding(AppTheme.spacing.small).size(36.dp)
-            )
-            /*(
-                icon = R.drawable.piggy_bank_duotone,
-                size = 28,
-                tintColor = color,
-                containerColor = AppTheme.colors.textPrimary.toColor().copy(alpha = 0.04f)
-            )*/
-            Column(
-                horizontalAlignment = Alignment.Start
-            ) {
-                Text(
-                    text = if (isNegativeLive) DashboardLabels.HERO_MISSING_INCOME_LABEL else DashboardLabels.HERO_DISPOSABLE_INCOME_LABEL,
-                    style = AppTheme.typo.label,
-                    color = AppTheme.colors.textSecondary.toColor(),
-                    fontWeight = FontWeight.Medium
-                )
-
-                Text(
-                    text = amount,
-                    style = AppTheme.typo.title.copy(fontSize = AppTheme.typo.title.fontSize * 0.8),
-                    color = color,
-                    fontWeight = fontWeight
+                HeroFooter(
+                    isExpanded = isExpanded,
+                    onToggleExpand = onToggleExpand,
+                    onPreviousPage = {
+                        scope.launch {
+                            val prevPage = (pagerState.currentPage - 1 + pageCount) % pageCount
+                            pagerState.animateScrollToPage(prevPage)
+                        }
+                    },
+                    onNextPage = {
+                        scope.launch {
+                            val nextPage = (pagerState.currentPage + 1) % pageCount
+                            pagerState.animateScrollToPage(nextPage)
+                        }
+                    }
                 )
             }
         }
-    }
-}
-
-
-@Preview(showBackground = true, name = "Hero Section - Cas Nominal")
-@Composable
-fun PreviewHeroSectionNominal() {
-    OutgoTheme {
-        HeroSection(
-            formattedMonthDate = "Mars",
-            activeWalletName = "Mon compte",
-            monthlyIncomeInCents = 65000L, // 650.00€
-            totalOutgoingsInCents = 12000L, // 120.00€
-            disposableIncomeInCents = 30000L, // 300.00€
-            remainingToPayInCents = 45000L,   // 450.00€
-            onToggleExpand = { /* Action de test */ },
-            onPreviousMonthClick = { /* Action de test */ },
-            onNextMonthClick = { /* Action de test */ },
-            onEditBudgetClick = { /* Action de test */ },
-            isExpanded = true,
-            canGoToPreviousMonth = true
-        )
-    }
-}
-
-@Preview(
-    showBackground = true,
-    name = "Hero Section - Budget Négatif",
-    uiMode = Configuration.UI_MODE_NIGHT_YES
-)
-@Composable
-fun PreviewHeroSectionNegative() {
-    OutgoTheme {
-        HeroSection(
-            formattedMonthDate = "Mars",
-            activeWalletName = "Mon compte",
-            monthlyIncomeInCents = 15005490000L,  // 150 054 900.00€
-            totalOutgoingsInCents = 18059000000L,  // 180 590 000.00€
-            disposableIncomeInCents = -390000000L, // -3 900 000.00€ (Alerte rouge)
-            remainingToPayInCents = 2000000000L,    // 2000000.00€
-            onToggleExpand = { /* Action de test */ },
-            onPreviousMonthClick = { /* Action de test */ },
-            onNextMonthClick = { /* Action de test */ },
-            onEditBudgetClick = { /* Action de test */ },
-            isExpanded = true,
-            canGoToPreviousMonth = true
-        )
     }
 }

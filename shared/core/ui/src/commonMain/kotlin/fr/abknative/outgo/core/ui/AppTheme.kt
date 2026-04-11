@@ -49,7 +49,7 @@ object DesignColor {
         primary = ColorPalette.PRIMARY,
         secondary = ColorPalette.SECONDARY,
         tertiary = ColorPalette.TERTIARY,
-        background = ColorPalette.BLACK,       // Fond noir pur (OLED)
+        background = ColorPalette.BLACK,
         surface50 = ColorPalette.PRIMARY_850,
         surface100 = ColorPalette.PRIMARY_900,
         surface200 = ColorPalette.PRIMARY_950,

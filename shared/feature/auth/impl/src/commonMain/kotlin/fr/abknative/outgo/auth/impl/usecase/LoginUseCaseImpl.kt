@@ -3,6 +3,7 @@ package fr.abknative.outgo.auth.impl.usecase
 import fr.abknative.outgo.auth.api.provider.SessionProvider
 import fr.abknative.outgo.auth.api.repository.AuthRepository
 import fr.abknative.outgo.auth.api.usecase.LoginUseCase
+import fr.abknative.outgo.core.api.AppDispatchers
 import fr.abknative.outgo.core.api.LocalDataMigrator
 import fr.abknative.outgo.core.api.logs.AppException
 import fr.abknative.outgo.core.api.logs.Result
@@ -12,6 +13,7 @@ internal class LoginUseCaseImpl(
     private val authRepository: AuthRepository,
     private val sessionProvider: SessionProvider,
     private val localDataMigrator: LocalDataMigrator,
+    private val dispatchers: AppDispatchers,
     private val syncManager: SyncManager
 ) : LoginUseCase {
 
@@ -25,7 +27,8 @@ internal class LoginUseCaseImpl(
             localDataMigrator,
             authRepository,
             syncManager,
-            forceSwitch
+            forceSwitch,
+            dispatchers
         ) {
             authRepository.login(email, password)
         }

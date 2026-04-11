@@ -12,16 +12,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.style.TextAlign
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import fr.abknative.outgo.android.R
-import fr.abknative.outgo.android.components.common.ConfirmationDialog
-import fr.abknative.outgo.android.components.common.HoldToConfirmButton
-import fr.abknative.outgo.android.components.common.SecondaryButton
-import fr.abknative.outgo.android.components.settings.*
-import fr.abknative.outgo.android.ui.CommonLabels
-import fr.abknative.outgo.android.ui.DialogLabels
+import fr.abknative.outgo.android.components.settings.SettingsRowClickable
+import fr.abknative.outgo.android.components.settings.SettingsRowToggle
+import fr.abknative.outgo.android.components.settings.SettingsSection
+import fr.abknative.outgo.android.designsystem.components.feedback.AppSnackbar
+import fr.abknative.outgo.android.designsystem.foundation.AppTheme
+import fr.abknative.outgo.android.designsystem.foundation.toColor
 import fr.abknative.outgo.android.ui.SettingsLabels
-import fr.abknative.outgo.android.ui.theme.AppTheme
-import fr.abknative.outgo.android.ui.theme.toColor
 import fr.abknative.outgo.android.ui.toUIString
 import fr.abknative.outgo.settings.api.SettingsIntent
 import fr.abknative.outgo.settings.api.SettingsPresenter
@@ -34,16 +33,21 @@ fun SettingsScreen(
     onToggleDarkMode: (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val state by presenter.state.collectAsState()
+    val state by presenter.state.collectAsStateWithLifecycle()
     val scrollState = rememberScrollState()
     val uriHandler = LocalUriHandler.current
 
     val snackbarHostState = remember { SnackbarHostState() }
-    val currentError = state.error
-    val errorMessage = currentError?.toUIString()
 
-    LaunchedEffect(currentError) {
-        if (currentError != null && errorMessage != null) {
+    // Dialog States
+    var showLogoutOptions by remember { mutableStateOf(false) }
+    var showDeleteAccountConfirm by remember { mutableStateOf(false) }
+    var showPurgeConfirm by remember { mutableStateOf(false) }
+
+    val errorMessage = state.error?.toUIString()
+
+    LaunchedEffect(state.error) {
+        if (state.error != null && errorMessage != null) {
             snackbarHostState.showSnackbar(message = errorMessage, withDismissAction = true)
             presenter.onIntent(SettingsIntent.DismissError)
         }
@@ -55,25 +59,14 @@ fun SettingsScreen(
         }
     }
 
-    // --- Dialog States ---
-    var showLogoutOptions by remember { mutableStateOf(false) }
-    var showDeleteAccountConfirm by remember { mutableStateOf(false) }
-    var showPurgeConfirm by remember { mutableStateOf(false) }
-
     Box(modifier = modifier.fillMaxSize()) {
 
-        // Le gestionnaire de notifications
-        SnackbarHost(
-            hostState = snackbarHostState,
-            modifier = Modifier.align(Alignment.TopCenter)
-        )
-
         Column(
-            modifier = modifier
+            modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(scrollState)
-                .padding(AppTheme.spacing.medium),
-            verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.large)
+                .padding(AppTheme.dimens.medium),
+            verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.large)
         ) {
 
             // --- SECTION Apparence ---
@@ -111,7 +104,7 @@ fun SettingsScreen(
                         icon = R.drawable.arrows_clockwise_duotone,
                         title = SettingsLabels.SYNC_TITLE,
                         subtitle = SettingsLabels.SYNC_SUBTITLE,
-                        onClick = { onNavigateToLogin() }
+                        onClick = onNavigateToLogin
                     )
                     HorizontalDivider(color = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.1f))
                     SettingsRowClickable(
@@ -146,63 +139,26 @@ fun SettingsScreen(
                 color = AppTheme.colors.textPrimary.toColor(),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = AppTheme.spacing.large),
+                    .padding(top = AppTheme.dimens.large),
                 textAlign = TextAlign.Center
             )
         }
 
-        // --- MODAL DE CONFIRMATION ---
-        if (showLogoutOptions) {
-            LogoutDialog(
-                onKeepOffline = {
-                    // On reste sur l'ID actuel (Firebase ID mais offline)
-                    presenter.onIntent(SettingsIntent.Logout(displayLocalData = true))
-                    showLogoutOptions = false
-                },
-                onReturnToLocal = {
-                    // On bascule sur le vieil ID local
-                    presenter.onIntent(SettingsIntent.Logout(displayLocalData = false))
-                    showLogoutOptions = false
-                },
-                onCancel = {
-                    showLogoutOptions = false
-                }
-            )
-        }
+        // --- Intégration de ton AppSnackbar ---
+        SnackbarHost(
+            hostState = snackbarHostState,
+            modifier = Modifier.align(Alignment.TopCenter)
+        ) { data -> AppSnackbar(data) }
 
-        if (showDeleteAccountConfirm) {
-            DeleteAccountDialog(
-                onConfirm = { wipeLocal, wipeServer, revokeAuth ->
-                    presenter.onIntent(SettingsIntent.DeleteAccount(wipeLocal, wipeServer, revokeAuth))
-                    showDeleteAccountConfirm = false
-                },
-                onDismiss = { showDeleteAccountConfirm = false }
-            )
-        }
-
-        if (showPurgeConfirm) {
-            ConfirmationDialog(
-                title = DialogLabels.PURGE_TITLE,
-                description = DialogLabels.PURGE_DESC,
-                onDismiss = { showPurgeConfirm = false },
-                confirmButton = {
-                    HoldToConfirmButton(
-                        label = DialogLabels.PURGE_CONFIRM,
-                        onConfirm = {
-                            presenter.onIntent(SettingsIntent.PurgeLocalData)
-                            showPurgeConfirm = false
-                        }
-                    )
-                },
-                dismissButton = {
-                    SecondaryButton(
-                        label = CommonLabels.ACTION_CANCEL,
-                        labelColor = AppTheme.colors.textSecondary.toColor(),
-                        onClick = { showPurgeConfirm = false },
-                        modifier = Modifier.padding(end = AppTheme.spacing.medium)
-                    )
-                }
-            )
-        }
+        // --- Modales ---
+        SettingsModals(
+            showLogoutOptions = showLogoutOptions,
+            showDeleteAccountConfirm = showDeleteAccountConfirm,
+            showPurgeConfirm = showPurgeConfirm,
+            onDismissLogout = { showLogoutOptions = false },
+            onDismissDelete = { showDeleteAccountConfirm = false },
+            onDismissPurge = { showPurgeConfirm = false },
+            presenter = presenter
+        )
     }
 }

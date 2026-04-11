@@ -27,6 +27,10 @@ class FakeOperationRepository : OperationRepository {
         return flowOf(listToObserve)
     }
 
+    override fun observePendingOperations(): Flow<List<Operation>> {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun getOperationById(id: String): Operation? = operationToReturn
 
     override suspend fun markAsDeleted(id: String): Result<Unit, AppException> = Result.Success(Unit)
@@ -36,6 +40,7 @@ class FakeOperationRepository : OperationRepository {
     override suspend fun updateSyncStatus(id: String, status: SyncStatus): Result<Unit, AppException> = Result.Success(Unit)
 
     override suspend fun syncFromServer(operations: List<Operation>): Result<Unit, AppException> = Result.Success(Unit)
-
-    override suspend fun deleteAll(): Result<Unit, AppException> = Result.Success(Unit)
+    override suspend fun deleteAll(userId: String?): Result<Unit, AppException> {
+        TODO("Not yet implemented")
+    }
 }

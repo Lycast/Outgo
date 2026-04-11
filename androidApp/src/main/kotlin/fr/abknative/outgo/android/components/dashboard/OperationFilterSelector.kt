@@ -3,7 +3,6 @@ package fr.abknative.outgo.android.components.dashboard
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -19,20 +18,29 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import fr.abknative.outgo.android.components.common.GlassCard
+import fr.abknative.outgo.android.designsystem.components.cards.GlassCard
+import fr.abknative.outgo.android.designsystem.foundation.AppTheme
+import fr.abknative.outgo.android.designsystem.foundation.OutgoTheme
+import fr.abknative.outgo.android.designsystem.foundation.toColor
 import fr.abknative.outgo.android.ui.DashboardLabels
-import fr.abknative.outgo.android.ui.states.OperationFilter
-import fr.abknative.outgo.android.ui.theme.AppTheme
-import fr.abknative.outgo.android.ui.theme.toColor
+import fr.abknative.outgo.dashboard.api.OperationFilter
 
+/**
+ * A tab-based selector to filter operations on the dashboard.
+ * Uses individual [GlassCard] highlights for the selected state.
+ *
+ * @param selectedFilter The currently active [OperationFilter].
+ * @param onFilterSelected Callback triggered when a new filter is tapped.
+ * @param modifier The modifier to be applied to the row.
+ */
 @Composable
 fun OperationFilterSelector(
     selectedFilter: OperationFilter,
     onFilterSelected: (OperationFilter) -> Unit,
     modifier: Modifier = Modifier
 ) {
-
     val haptic = LocalHapticFeedback.current
+
     LaunchedEffect(selectedFilter) {
         haptic.performHapticFeedback(HapticFeedbackType.LongPress)
     }
@@ -40,9 +48,9 @@ fun OperationFilterSelector(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = AppTheme.spacing.medium)
-            .padding(vertical = AppTheme.spacing.small),
-        horizontalArrangement = Arrangement.Start
+            .padding(horizontal = AppTheme.dimens.medium)
+            .padding(vertical = AppTheme.dimens.small),
+        horizontalArrangement = Arrangement.spacedBy(AppTheme.dimens.large)
     ) {
         FilterTabItem(
             modifier = Modifier.weight(1f),
@@ -51,16 +59,12 @@ fun OperationFilterSelector(
             onClick = { onFilterSelected(OperationFilter.ALL) }
         )
 
-        Spacer(modifier = Modifier.width(AppTheme.spacing.large))
-
         FilterTabItem(
             modifier = Modifier.weight(1f),
             label = DashboardLabels.TAB_PAID,
             isSelected = selectedFilter == OperationFilter.PAST,
             onClick = { onFilterSelected(OperationFilter.PAST) }
         )
-
-        Spacer(modifier = Modifier.width(AppTheme.spacing.large))
 
         FilterTabItem(
             modifier = Modifier.weight(1f),
@@ -78,21 +82,26 @@ private fun FilterTabItem(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val tabShape = RoundedCornerShape(AppTheme.spacing.medium)
 
-    val content = @Composable {
+    val tabShape = AppTheme.shapes.large
+
+    val tabContent = @Composable {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(tabShape)
                 .clickable(onClick = onClick)
-                .padding(vertical = AppTheme.spacing.medium),
+                .padding(vertical = AppTheme.dimens.medium),
             contentAlignment = Alignment.Center
         ) {
             Text(
                 text = label.uppercase(),
                 style = AppTheme.typo.body,
-                color = if (isSelected) AppTheme.colors.primary.toColor() else AppTheme.colors.textSecondary.toColor(),
+                color = if (isSelected) {
+                    AppTheme.colors.primary.toColor()
+                } else {
+                    AppTheme.colors.textSecondary.toColor()
+                },
                 fontWeight = if (isSelected) FontWeight.Medium else FontWeight.Normal
             )
         }
@@ -110,23 +119,27 @@ private fun FilterTabItem(
                 modifier = Modifier.fillMaxWidth(),
                 backgroundColorA = AppTheme.colors.surface200.toColor(),
             ) {
-                content()
+                tabContent()
             }
         } else {
-            content()
+            tabContent()
         }
     }
 }
 
+// --- PREVIEWS ---
+
 @Preview(showBackground = true)
 @Composable
-fun PreviewExpenseFilterSelector() {
+fun PreviewOperationFilterSelector() {
     var currentFilter by remember { mutableStateOf(OperationFilter.ALL) }
 
-    Column(modifier = Modifier.background(Color(0xFFE5E9F0)).padding(16.dp)) { // Fond légèrement teinté pour voir le Glass
-        OperationFilterSelector(
-            selectedFilter = currentFilter,
-            onFilterSelected = { currentFilter = it }
-        )
+    OutgoTheme {
+        Box(modifier = Modifier.background(Color(0xFFE5E9F0)).padding(16.dp)) {
+            OperationFilterSelector(
+                selectedFilter = currentFilter,
+                onFilterSelected = { currentFilter = it }
+            )
+        }
     }
 }

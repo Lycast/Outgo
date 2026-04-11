@@ -6,11 +6,11 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import fr.abknative.outgo.android.components.common.GlassCard
-import fr.abknative.outgo.android.ui.components.LoaderItem
-import fr.abknative.outgo.android.ui.states.OperationFilter
-import fr.abknative.outgo.android.ui.theme.AppTheme
-import fr.abknative.outgo.android.ui.theme.toColor
+import fr.abknative.outgo.android.designsystem.components.cards.GlassCard
+import fr.abknative.outgo.android.designsystem.components.feedback.AppLoader
+import fr.abknative.outgo.android.designsystem.foundation.AppTheme
+import fr.abknative.outgo.android.designsystem.foundation.toColor
+import fr.abknative.outgo.dashboard.api.OperationFilter
 import fr.abknative.outgo.wallet.api.model.dashboard.ProjectedOperation
 
 @Composable
@@ -23,12 +23,12 @@ fun OperationListContainer(
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = AppTheme.spacing.medium),
+        modifier = Modifier.fillMaxWidth().padding(horizontal = AppTheme.dimens.medium),
         contentPadding = PaddingValues(bottom = 80.dp)
     ) {
         when {
-            isLoading -> item { LoaderItem() }
-            filteredList.isEmpty() -> item(key = "empty_state") { EmptyStateView(filter = currentFilter) }
+            isLoading -> item { AppLoader() }
+            filteredList.isEmpty() -> item(key = "empty_state") { DashboardEmptyState(filter = currentFilter) }
             else -> {
                 items(items = filteredList, key = { "${it.operation.id}_${it.projectedDate}" }) { projectedOp ->
 
@@ -50,7 +50,7 @@ fun OperationListContainer(
                         )
                     }
 
-                    Spacer(modifier = Modifier.height(AppTheme.spacing.medium))
+                    Spacer(modifier = Modifier.height(AppTheme.dimens.medium))
                 }
             }
         }

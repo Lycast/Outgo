@@ -1,7 +1,7 @@
 package fr.abknative.outgo.app.di
 
-import fr.abknative.outgo.app.nav.AppCoordinator
 import fr.abknative.outgo.core.api.KeyValueStorage
+import fr.abknative.outgo.core.api.nav.NavCoordinator
 import fr.abknative.outgo.dashboard.api.DashboardPresenter
 import fr.abknative.outgo.login.api.LoginPresenter
 import org.koin.core.component.KoinComponent
@@ -15,7 +15,7 @@ object IosDependencyProvider : KoinComponent {
     val loginPresenter: LoginPresenter
         get() = get()
 
-    val appCoordinator: AppCoordinator
+    val navCoordinator: NavCoordinator
         get() = get()
 
     val keyValueStorage: KeyValueStorage
