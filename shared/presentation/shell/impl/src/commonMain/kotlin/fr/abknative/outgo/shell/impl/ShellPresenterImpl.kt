@@ -75,6 +75,12 @@ internal class ShellPresenterImpl(
 
     override fun onIntent(intent: ShellIntent) {
         when (intent) {
+            is ShellIntent.TriggerAddOperation -> {
+                _state.update { it.copy(showAddOperationTrigger = true) }
+            }
+            is ShellIntent.ConsumeAddOperationTrigger -> {
+                _state.update { it.copy(showAddOperationTrigger = false) }
+            }
             is ShellIntent.RefreshSync -> handleRefreshSync()
             is ShellIntent.DismissError -> _state.update { it.copy(error = null) }
         }

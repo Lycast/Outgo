@@ -13,27 +13,23 @@ import fr.abknative.outgo.core.api.nav.AppStep
 import fr.abknative.outgo.sync.api.model.SyncState
 
 /**
- * Global Header component that handles both horizontal (portrait) and vertical (landscape) layouts.
- * It dynamically displays navigation icons and synchronization status.
+ * Global Header component.
+ * Displays the app title, sync status, and settings access.
  *
  * @param syncState Current synchronization state.
  * @param currentStep The current active navigation step.
- * @param isPremium Whether the user has premium status.
  * @param isVertical Whether the header should be rendered as a side rail (vertical).
  * @param onSyncIconClick Action when sync icon is clicked.
  * @param onNavigate Navigation callback.
- * @param onTeasingClick Action for locked features.
  */
 @Composable
 fun Header(
     modifier: Modifier = Modifier,
     syncState: SyncState,
     currentStep: AppStep,
-    isPremium: Boolean,
     isVertical: Boolean = false,
     onSyncIconClick: () -> Unit,
-    onNavigate: (AppStep) -> Unit,
-    onTeasingClick: () -> Unit
+    onNavigate: (AppStep) -> Unit
 ) {
     val containerModifier = if (isVertical) {
         modifier
@@ -48,19 +44,16 @@ fun Header(
             .padding(horizontal = AppTheme.dimens.large)
     }
 
-    // --- ACTIONS CONTENT ---
+    // --- ACTIONS CONTENT (Sync + Settings) ---
     val actionsContent = @Composable {
-        // SyncIconLogic handles its own button/tooltip container
         SyncIconLogic(
             syncState = syncState,
             onClick = onSyncIconClick
         )
 
-        NavigationIcons(
+        HeaderNavIcons(
             currentStep = currentStep,
-            isPremium = isPremium,
-            onNavigate = onNavigate,
-            onTeasingClick = onTeasingClick
+            onNavigate = onNavigate
         )
     }
 
@@ -73,7 +66,7 @@ fun Header(
         ) {
             Text(
                 text = CommonLabels.APP_NAME,
-                style = AppTheme.typo.title, // Uses Design System typography
+                style = AppTheme.typo.title,
                 color = AppTheme.colors.primary.toColor(),
                 textAlign = TextAlign.Center,
                 modifier = Modifier

@@ -51,7 +51,7 @@ fun HeroStatItem(
             painter = painterResource(iconRes),
             contentDescription = null,
             tint = iconTint,
-            modifier = Modifier.padding(AppTheme.dimens.small).size(36.dp)
+            modifier = Modifier.padding(AppTheme.dimens.small).size(32.dp)
         )
 
         Column(horizontalAlignment = Alignment.Start) {

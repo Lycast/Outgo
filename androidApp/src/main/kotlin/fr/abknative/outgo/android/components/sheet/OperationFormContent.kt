@@ -91,7 +91,14 @@ fun OperationFormContent(
         // --- Field: Amount ---
         AppTextField(
             value = state.amountBuffer,
-            onValueChange = { onEvent(OperationFormEvent.UpdateAmount(it)) },
+            onValueChange = { newValue ->
+                val sanitized = newValue.replace(',', '.')
+
+                if (sanitized.length <= 10 &&
+                    (sanitized.isEmpty() || (sanitized.count { it == '.' } <= 1 && sanitized.all { it.isDigit() || it == '.' }))) {
+                    onEvent(OperationFormEvent.UpdateAmount(sanitized))
+                }
+            },
             label = FormLabels.FIELD_AMOUNT,
             placeholder = FormLabels.FIELD_PLACE_HOLDER_AMOUNT,
             keyboardOptions = KeyboardOptions(

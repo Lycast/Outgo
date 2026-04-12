@@ -9,6 +9,7 @@ import fr.abknative.outgo.sync.api.model.SyncState
  */
 data class ShellState(
     val syncState: SyncState = SyncState.UNAUTHENTICATED,
+    val showAddOperationTrigger: Boolean = false,
     val isPremium: Boolean = false,
     val error: AppException? = null
 )

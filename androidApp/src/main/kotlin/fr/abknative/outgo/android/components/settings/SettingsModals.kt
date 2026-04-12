@@ -1,11 +1,9 @@
-package fr.abknative.outgo.android.screens
+package fr.abknative.outgo.android.components.settings
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import fr.abknative.outgo.android.components.settings.DeleteAccountDialog
-import fr.abknative.outgo.android.components.settings.LogoutDialog
 import fr.abknative.outgo.android.designsystem.components.buttons.AppOutlinedButton
 import fr.abknative.outgo.android.designsystem.components.buttons.HoldToConfirmButton
 import fr.abknative.outgo.android.designsystem.components.feedback.ConfirmationDialog

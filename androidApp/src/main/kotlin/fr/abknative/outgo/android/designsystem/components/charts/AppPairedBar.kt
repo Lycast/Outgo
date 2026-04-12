@@ -83,12 +83,12 @@ fun AppPairedBar(
 
             AnimatedProgressBar(
                 progress = topProgress,
-                color = topBarColor,
+                color = topBarColor.copy(alpha = 0.5f),
                 shape = RoundedCornerShape(topStart = strokeSize, topEnd = strokeSize)
             )
             AnimatedProgressBar(
                 progress = bottomProgress,
-                color = bottomBarColor,
+                color = bottomBarColor.copy(alpha = 0.5f),
                 shape = RoundedCornerShape(bottomStart = strokeSize, bottomEnd = strokeSize)
             )
         }
@@ -139,7 +139,7 @@ private fun AnimatedProgressBar(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(AppTheme.dimens.small)
+            .height(AppTheme.dimens.extraSmall)
             .background(
                 color = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.1f),
                 shape = shape

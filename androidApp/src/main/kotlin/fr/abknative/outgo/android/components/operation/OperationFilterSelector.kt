@@ -1,4 +1,4 @@
-package fr.abknative.outgo.android.components.dashboard
+package fr.abknative.outgo.android.components.operation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

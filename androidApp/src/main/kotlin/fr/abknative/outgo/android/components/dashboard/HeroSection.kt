@@ -14,6 +14,7 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
 import fr.abknative.outgo.android.designsystem.components.cards.GlassCard
+import fr.abknative.outgo.android.designsystem.components.selection.AppPagerContainer
 import fr.abknative.outgo.android.designsystem.foundation.AppTheme
 import fr.abknative.outgo.android.designsystem.foundation.toColor
 import kotlinx.coroutines.launch
@@ -39,22 +40,26 @@ fun HeroSection(
 ) {
 
     val haptic = LocalHapticFeedback.current
-
     val scope = rememberCoroutineScope()
-    val pageCount = 2
-    val pagerState = rememberPagerState(pageCount = { pageCount })
+
+    val actualPageCount = 2
+    val virtualPageCount = actualPageCount * 100
+
+    val pagerState = rememberPagerState(
+        initialPage = virtualPageCount / 2,
+        pageCount = { virtualPageCount }
+    )
 
     LaunchedEffect(isExpanded) {
         if (isExpanded) haptic.performHapticFeedback(HapticFeedbackType.LongPress)
     }
 
-    Box(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = AppTheme.dimens.medium)
-    ) {
-        GlassCard {
+    Box(modifier = Modifier.fillMaxWidth().padding(horizontal = AppTheme.dimens.medium)) {
+        GlassCard(
+            backgroundColorA = AppTheme.colors.surface100.toColor(),
+        ) {
             Column(modifier = Modifier.fillMaxWidth()) {
 
-                // Static Header
                 MonthBudgetSelector(
                     formattedMonthDate = formattedMonthDate,
                     canGoToPreviousMonth = canGoToPreviousMonth,
@@ -72,51 +77,57 @@ fun HeroSection(
                     enter = expandVertically() + fadeIn(),
                     exit = shrinkVertically() + fadeOut(),
                 ) {
+                    Column {
+                        // --- Pager with side navigation ---
+                        AppPagerContainer(
+                            pagerState = pagerState,
+                            actualPageCount = actualPageCount,
+                            onLeftClick = {
+                                scope.launch {
+                                    pagerState.animateScrollToPage(pagerState.currentPage - 1)
+                                }
+                            },
+                            onRightClick = {
+                                scope.launch {
+                                    pagerState.animateScrollToPage(pagerState.currentPage + 1)
+                                }
+                            }
+                        ) {
 
-                    // Carousel Content
-                    HorizontalPager(
-                        state = pagerState,
-                        modifier = Modifier.fillMaxWidth().height(220.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) { pageIndex ->
-                        when (pageIndex) {
-                            0 -> HeroGlobalContent(
-                                activeWalletName = activeWalletName,
-                                monthlyIncomeInCents = monthlyIncomeInCents,
-                                totalOutgoingsInCents = totalOutgoingsInCents,
-                                disposableIncomeInCents = disposableIncomeInCents,
-                                remainingToPayInCents = remainingToPayInCents,
-                                onEditBudgetClick = onEditBudgetClick
-                            )
-
-                            1 -> HeroExpenseContent(
-                                totalOutgoingsInCents = totalOutgoingsInCents,
-                                remainingToPayInCents = remainingToPayInCents
-                            )
+                            // Carousel Content
+                            HorizontalPager(
+                                state = pagerState,
+                                modifier = Modifier.weight(1f).height(140.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) { pageIndex ->
+                                val actualIndex = pageIndex % actualPageCount
+                                when (actualIndex) {
+                                    0 -> HeroGlobalContent(
+                                        activeWalletName = activeWalletName,
+                                        monthlyIncomeInCents = monthlyIncomeInCents,
+                                        totalOutgoingsInCents = totalOutgoingsInCents,
+                                        disposableIncomeInCents = disposableIncomeInCents,
+                                        remainingToPayInCents = remainingToPayInCents,
+                                        onEditBudgetClick = onEditBudgetClick
+                                    )
+                                    1 -> HeroExpenseContent(
+                                        totalOutgoingsInCents = totalOutgoingsInCents,
+                                        remainingToPayInCents = remainingToPayInCents
+                                    )
+                                }
+                            }
                         }
-                    }
 
-                    HorizontalDivider(
-                        modifier = Modifier.padding(horizontal = AppTheme.dimens.large),
-                        color = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.1f)
-                    )
+                        HorizontalDivider(
+                            modifier = Modifier.padding(horizontal = AppTheme.dimens.large),
+                            color = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.1f)
+                        )
+                    }
                 }
 
                 HeroFooter(
                     isExpanded = isExpanded,
-                    onToggleExpand = onToggleExpand,
-                    onPreviousPage = {
-                        scope.launch {
-                            val prevPage = (pagerState.currentPage - 1 + pageCount) % pageCount
-                            pagerState.animateScrollToPage(prevPage)
-                        }
-                    },
-                    onNextPage = {
-                        scope.launch {
-                            val nextPage = (pagerState.currentPage + 1) % pageCount
-                            pagerState.animateScrollToPage(nextPage)
-                        }
-                    }
+                    onToggleExpand = onToggleExpand
                 )
             }
         }

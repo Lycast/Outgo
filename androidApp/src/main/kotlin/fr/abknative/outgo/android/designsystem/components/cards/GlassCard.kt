@@ -31,7 +31,7 @@ fun GlassCard(
     shape: Shape = AppTheme.shapes.large,
     borderSize: Dp = AppTheme.dimens.small,
     elevation: Dp = 12.dp,
-    backgroundColorA: Color = AppTheme.colors.surface50.toColor(),
+    backgroundColorA: Color = AppTheme.colors.surface200.toColor(),
     content: @Composable () -> Unit
 ) {
     val appBackgroundColor = AppTheme.colors.background.toColor()

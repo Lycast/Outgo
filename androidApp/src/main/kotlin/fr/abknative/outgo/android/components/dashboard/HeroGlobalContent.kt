@@ -1,7 +1,6 @@
 package fr.abknative.outgo.android.components.dashboard
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -10,7 +9,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import fr.abknative.outgo.android.R
 import fr.abknative.outgo.android.designsystem.components.charts.AppDonutChart
-import fr.abknative.outgo.android.designsystem.components.charts.AppPairedBar
 import fr.abknative.outgo.android.designsystem.components.feedback.InfoTooltip
 import fr.abknative.outgo.android.designsystem.foundation.AppTheme
 import fr.abknative.outgo.android.designsystem.foundation.toColor
@@ -37,22 +35,21 @@ fun HeroGlobalContent(
 
     Column(
         modifier = modifier.fillMaxWidth()
-            .padding(horizontal = AppTheme.dimens.large)
+            .padding(horizontal = AppTheme.dimens.extraLarge)
     ) {
-
-        Spacer(modifier = Modifier.height(AppTheme.dimens.small))
 
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = AppTheme.dimens.large),
+                .padding(horizontal = AppTheme.dimens.extraLarge)
+                .padding(vertical = AppTheme.dimens.medium),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceEvenly,
         ) {
 
             Column(
                 modifier = Modifier.weight(1f, fill = false),
-                verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.small),
+                verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.small)
             ) {
                 HeroStatItem(
                     iconRes = R.drawable.bank_duotone,
@@ -60,11 +57,6 @@ fun HeroGlobalContent(
                     amount = monthlyIncomeInCents.uiAmount,
                     iconTint = AppTheme.colors.secondary.toColor(),
                     onClick = onEditBudgetClick,
-                )
-
-                HorizontalDivider(
-                    modifier = Modifier.padding(end = AppTheme.dimens.large),
-                    color = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.05f)
                 )
 
                 InfoTooltip(
@@ -82,8 +74,10 @@ fun HeroGlobalContent(
                 }
             }
 
+            Spacer(modifier = Modifier.width(AppTheme.dimens.extraLarge))
+
             Box(
-                modifier = Modifier.weight(1f, fill = false),
+                modifier = Modifier.weight(0.7f, fill = false),
             ) {
                 AppDonutChart(
                     progress = donutProgress,
@@ -92,11 +86,12 @@ fun HeroGlobalContent(
                     strokeWidth = AppTheme.dimens.extraLarge,
                     modifier = Modifier
                         .size(100.dp)
-                        .alpha(0.3f)
+                        .alpha(0.2f)
                 )
             }
         }
 
+        /*
         HorizontalDivider(color = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.1f))
 
         Box(
@@ -115,5 +110,7 @@ fun HeroGlobalContent(
             )
         }
         Spacer(modifier = Modifier.height(AppTheme.dimens.small))
+
+         */
     }
 }

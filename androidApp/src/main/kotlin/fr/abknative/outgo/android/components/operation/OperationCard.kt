@@ -1,4 +1,4 @@
-package fr.abknative.outgo.android.components.dashboard
+package fr.abknative.outgo.android.components.operation
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Spring

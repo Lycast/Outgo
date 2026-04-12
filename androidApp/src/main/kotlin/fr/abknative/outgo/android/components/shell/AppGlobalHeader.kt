@@ -8,7 +8,8 @@ import fr.abknative.outgo.shell.api.ShellPresenter
 import fr.abknative.outgo.shell.api.ShellState
 
 /**
- * Composant privé pour mutualiser l'affichage du Header (Paysage ou Portrait)
+ * Private component to centralize Header display (Landscape or Portrait).
+ * Now focused on global utilities: Sync status and Settings access.
  */
 @Composable
 fun AppGlobalHeader(
@@ -17,14 +18,12 @@ fun AppGlobalHeader(
     shellPresenter: ShellPresenter,
     shellState: ShellState,
     coordinator: NavCoordinator,
-    onShowSyncModal: () -> Unit,
-    onShowPremiumTeasing: () -> Unit
+    onShowSyncModal: () -> Unit
 ) {
     Header(
         syncState = shellState.syncState,
         isVertical = isVertical,
         currentStep = currentStep,
-        isPremium = shellState.isPremium,
         onSyncIconClick = {
             if (shellState.syncState.isUnauthenticated) {
                 onShowSyncModal()
@@ -32,7 +31,6 @@ fun AppGlobalHeader(
                 shellPresenter.onIntent(ShellIntent.RefreshSync)
             }
         },
-        onNavigate = { step -> coordinator.navigateTo(step) },
-        onTeasingClick = onShowPremiumTeasing
+        onNavigate = { step -> coordinator.navigateTo(step) }
     )
 }

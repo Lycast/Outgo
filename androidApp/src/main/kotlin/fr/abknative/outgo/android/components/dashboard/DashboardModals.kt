@@ -1,4 +1,4 @@
-package fr.abknative.outgo.android.screens
+package fr.abknative.outgo.android.components.dashboard
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -7,7 +7,6 @@ import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import fr.abknative.outgo.android.components.dashboard.WalletEditDialog
 import fr.abknative.outgo.android.components.sheet.OperationFormSheet
 import fr.abknative.outgo.android.designsystem.components.buttons.AppButton
 import fr.abknative.outgo.android.designsystem.components.buttons.AppOutlinedButton

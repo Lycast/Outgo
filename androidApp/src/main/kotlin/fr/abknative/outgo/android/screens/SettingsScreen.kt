@@ -14,6 +14,7 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.style.TextAlign
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import fr.abknative.outgo.android.R
+import fr.abknative.outgo.android.components.settings.SettingsModals
 import fr.abknative.outgo.android.components.settings.SettingsRowClickable
 import fr.abknative.outgo.android.components.settings.SettingsRowToggle
 import fr.abknative.outgo.android.components.settings.SettingsSection

@@ -9,10 +9,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import fr.abknative.outgo.android.components.dashboard.DashboardModals
 import fr.abknative.outgo.android.components.dashboard.HeroSection
-import fr.abknative.outgo.android.components.dashboard.OperationFilterSelector
 import fr.abknative.outgo.android.components.dashboard.OperationListContainer
-import fr.abknative.outgo.android.designsystem.components.buttons.AppFAB
+import fr.abknative.outgo.android.components.operation.OperationFilterSelector
 import fr.abknative.outgo.android.designsystem.components.feedback.AppSnackbar
 import fr.abknative.outgo.android.designsystem.foundation.AppTheme
 import fr.abknative.outgo.android.ui.extensions.getMonthName
@@ -21,6 +21,7 @@ import fr.abknative.outgo.android.ui.toUIString
 import fr.abknative.outgo.core.api.TimeProvider
 import fr.abknative.outgo.dashboard.api.DashboardIntent
 import fr.abknative.outgo.dashboard.api.DashboardPresenter
+import fr.abknative.outgo.shell.api.ShellState
 import fr.abknative.outgo.wallet.api.model.dashboard.ProjectedOperation
 import fr.abknative.outgo.wallet.api.model.operation.OperationType
 import fr.abknative.outgo.wallet.api.model.operation.Recurrence
@@ -30,6 +31,8 @@ import org.koin.compose.koinInject
 @Composable
 fun DashboardScreen(
     presenter: DashboardPresenter,
+    shellState: ShellState,
+    onConsumeTrigger: () -> Unit,
     isPremium: Boolean,
     modifier: Modifier = Modifier
 ) {
@@ -64,6 +67,14 @@ fun DashboardScreen(
         if (currentError != null && errorMessage != null) {
             snackbarHostState.showSnackbar(message = errorMessage, withDismissAction = true)
             presenter.onIntent(DashboardIntent.DismissError)
+        }
+    }
+
+    LaunchedEffect(shellState.showAddOperationTrigger) {
+        if (shellState.showAddOperationTrigger) {
+            selectedOperation = null
+            showFormSheet = true
+            onConsumeTrigger()
         }
     }
 
@@ -110,15 +121,6 @@ fun DashboardScreen(
                 modifier = Modifier.weight(1f)
             )
         }
-
-        // Action Flottante
-        if (state.activeWalletId != null) {
-            AppFAB(
-                onClick = { selectedOperation = null; showFormSheet = true },
-                modifier = Modifier.align(Alignment.BottomEnd).padding(AppTheme.dimens.large)
-            )
-        }
-
         SnackbarHost(
             hostState = snackbarHostState,
             modifier = Modifier.align(Alignment.TopCenter)

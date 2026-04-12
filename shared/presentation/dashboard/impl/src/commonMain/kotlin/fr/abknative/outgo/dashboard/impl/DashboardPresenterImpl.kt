@@ -34,7 +34,8 @@ internal class DashboardPresenterImpl(
     private val selectedMonthFlow = MutableStateFlow(timeProvider.monthValue())
     private val selectedYearFlow = MutableStateFlow(timeProvider.yearValue())
     private val currentFilterFlow = MutableStateFlow(OperationFilter.ALL)
-    private val isPremiumFlow = MutableStateFlow(true)
+    private val isPremiumFlow = MutableStateFlow(false)
+    // private val isPremiumFlow = featureManager.isPremiumFlow
 
     private val _state = MutableStateFlow(
         DashboardState(

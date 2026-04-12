@@ -15,6 +15,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
@@ -22,18 +23,17 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import fr.abknative.outgo.android.components.shell.AppGlobalHeader
 import fr.abknative.outgo.android.components.shell.AppGlobalModals
+import fr.abknative.outgo.android.components.shell.BottomNavBar
 import fr.abknative.outgo.android.designsystem.foundation.AppBackground
 import fr.abknative.outgo.android.designsystem.foundation.AppTheme
 import fr.abknative.outgo.android.designsystem.foundation.OutgoTheme
 import fr.abknative.outgo.android.designsystem.foundation.toColor
-import fr.abknative.outgo.android.screens.DashboardScreen
-import fr.abknative.outgo.android.screens.LoginScreen
-import fr.abknative.outgo.android.screens.OnboardingScreen
-import fr.abknative.outgo.android.screens.SettingsScreen
+import fr.abknative.outgo.android.screens.*
 import fr.abknative.outgo.core.api.KeyValueStorage
 import fr.abknative.outgo.core.api.nav.AppStep
 import fr.abknative.outgo.core.api.nav.NavCoordinator
 import fr.abknative.outgo.login.api.LoginPresenter
+import fr.abknative.outgo.shell.api.ShellIntent
 import fr.abknative.outgo.shell.api.ShellPresenter
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
@@ -82,10 +82,9 @@ fun App() {
                             isVertical = true,
                             currentStep = currentStep,
                             shellPresenter = shellPresenter,
-                            shellState = shellState, // Assure-toi de passer l'état complet ou juste les champs nécessaires
+                            shellState = shellState,
                             coordinator = coordinator,
-                            onShowSyncModal = { showSyncModal = true },
-                            onShowPremiumTeasing = { showPremiumTeasingModal = true }
+                            onShowSyncModal = { showSyncModal = true }
                         )
                         VerticalDivider(
                             thickness = 1.dp,
@@ -106,54 +105,88 @@ fun App() {
                                     shellPresenter = shellPresenter,
                                     shellState = shellState,
                                     coordinator = coordinator,
-                                    onShowSyncModal = { showSyncModal = true },
-                                    onShowPremiumTeasing = { showPremiumTeasingModal = true }
+                                    onShowSyncModal = { showSyncModal = true }
                                 )
                             }
                         }
                     ) { innerPadding ->
 
-                        LaunchedEffect(currentStep) {
-                            println("Compose dessine l'écran : $currentStep")
-                        }
+                        Box(modifier = Modifier.padding(innerPadding).fillMaxSize()) {
 
-                        AnimatedContent(
-                            targetState = currentStep,
-                            transitionSpec = { fadeIn() togetherWith fadeOut() },
-                            label = "AppNav",
-                            modifier = Modifier.padding(innerPadding)
-                        ) { step ->
-                            when (step) {
-                                AppStep.Splash -> Box(modifier = Modifier.fillMaxSize())
+                            LaunchedEffect(currentStep) {
+                                println("Compose dessine l'écran : $currentStep")
+                            }
 
-                                AppStep.Onboarding -> OnboardingScreen(
-                                    presenter = koinViewModel(),
-                                    onLoginClicked = { coordinator.navigateTo(AppStep.Login) },
-                                    onOnboardingComplete = { coordinator.replaceRoot(AppStep.Dashboard) }
-                                )
+                            AnimatedContent(
+                                targetState = currentStep,
+                                transitionSpec = { fadeIn() togetherWith fadeOut() },
+                                label = "AppNav"
+                            ) { step ->
+                                when (step) {
+                                    AppStep.Splash -> Box(modifier = Modifier.fillMaxSize())
 
-                                AppStep.Dashboard -> DashboardScreen(
-                                    presenter = koinViewModel(),
-                                    isPremium = shellState.isPremium
-                                )
+                                    AppStep.Onboarding -> OnboardingScreen(
+                                        presenter = koinViewModel(),
+                                        onLoginClicked = { coordinator.navigateTo(AppStep.Login) },
+                                        onOnboardingComplete = { coordinator.replaceRoot(AppStep.Dashboard) }
+                                    )
 
-                                AppStep.Settings -> SettingsScreen(
-                                    presenter = koinViewModel(),
-                                    onNavigateToLogin = { coordinator.navigateTo(AppStep.Login) },
-                                    isDarkMode = isDarkMode,
-                                    onToggleDarkMode = { newThemeValue ->
-                                        isDarkMode = newThemeValue
-                                        storage.putBoolean(themeKey, newThemeValue)
+                                    AppStep.Dashboard -> DashboardScreen(
+                                        presenter = koinViewModel(),
+                                        shellState = shellState,
+                                        onConsumeTrigger = { shellPresenter.onIntent(ShellIntent.ConsumeAddOperationTrigger) },
+                                        isPremium = shellState.isPremium
+                                    )
+
+                                    AppStep.Analyse -> {
+                                        if (shellState.isPremium) {
+                                            AnalyseScreen()
+                                        } else {
+                                            PremiumShowcaseScreen(
+                                                onNotifyMeClick = {
+                                                    // shellPresenter.onIntent(ShellIntent.RegisterInterestInPremium)
+                                                }
+                                            )
+                                        }
                                     }
-                                )
 
-                                AppStep.Login -> LoginScreen(
-                                    presenter = koinViewModel<LoginPresenter>(),
-                                    onNavigateBack = { coordinator.handleBack() },
-                                    onLoginSuccess = { coordinator.handleBack() }
-                                )
+                                    AppStep.Settings -> SettingsScreen(
+                                        presenter = koinViewModel(),
+                                        onNavigateToLogin = { coordinator.navigateTo(AppStep.Login) },
+                                        isDarkMode = isDarkMode,
+                                        onToggleDarkMode = { newThemeValue ->
+                                            isDarkMode = newThemeValue
+                                            storage.putBoolean(themeKey, newThemeValue)
+                                        }
+                                    )
 
-                                else -> {}
+                                    AppStep.Login -> LoginScreen(
+                                        presenter = koinViewModel<LoginPresenter>(),
+                                        onNavigateBack = { coordinator.handleBack() },
+                                        onLoginSuccess = { coordinator.handleBack() }
+                                    )
+                                }
+                            }
+
+                            Box(
+                                modifier = Modifier.align(Alignment.BottomCenter),
+                            ) {
+                                if (!isLandscape && shouldShowHeader) {
+                                    BottomNavBar(
+                                        currentStep = currentStep,
+                                        isPremium = shellState.isPremium,
+                                        onNavigate = { step -> coordinator.navigateTo(step) },
+                                        onTeasingClick = { showPremiumTeasingModal = true },
+                                        onAddClick = {
+                                            if (currentStep == AppStep.Dashboard) {
+                                                shellPresenter.onIntent(ShellIntent.TriggerAddOperation)
+                                            } else {
+                                                coordinator.navigateTo(AppStep.Dashboard)
+                                                shellPresenter.onIntent(ShellIntent.TriggerAddOperation)
+                                            }
+                                        }
+                                    )
+                                }
                             }
                         }
                     }

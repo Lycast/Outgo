@@ -33,8 +33,8 @@ fun HeroExpenseContent(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = AppTheme.dimens.large)
-            .padding(vertical = AppTheme.dimens.large),
+            .padding(horizontal = AppTheme.dimens.extraLarge)
+            .padding(vertical = AppTheme.dimens.medium),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceEvenly,
     ) {
@@ -45,12 +45,12 @@ fun HeroExpenseContent(
             trackColor = AppTheme.colors.tertiary.toColor(),
             strokeWidth = AppTheme.dimens.big,
             modifier = Modifier
-                .size(120.dp)
-                .alpha(0.5f)
+                .size(100.dp)
+                .alpha(0.2f)
         )
 
         // Data Details
-        Column(verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.small)) {
+        Column(verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.extraSmall)) {
 
             Text(
                 text = DashboardLabels.HERO_TOTAL_CHARGES_LABEL,
@@ -64,7 +64,7 @@ fun HeroExpenseContent(
                 color = AppTheme.colors.textPrimary.toColor()
             )
 
-            Spacer(modifier = Modifier.height(AppTheme.dimens.medium))
+            Spacer(modifier = Modifier.height(AppTheme.dimens.extraSmall))
 
             Text(
                 text = DashboardLabels.HERO_REMAINING_TO_PAY_LABEL,
