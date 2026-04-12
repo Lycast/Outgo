@@ -67,7 +67,7 @@ fun OperationCard(
             verticalAlignment = Alignment.CenterVertically
         ) {
 
-            val iconColor = AppTheme.colors.tertiary.toColor().copy(alpha = 0.5f)
+            val iconColor = operation.recurrence.getUiColor()
 
             CircleIcon(
                 iconRes = R.drawable.credit_card_duotone,

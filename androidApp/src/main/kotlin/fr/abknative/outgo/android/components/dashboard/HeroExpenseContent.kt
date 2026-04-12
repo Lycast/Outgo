@@ -25,58 +25,85 @@ fun HeroExpenseContent(
     totalOutgoingsInCents: Long,
     remainingToPayInCents: Long,
 ) {
-    val paidAmountInCents = totalOutgoingsInCents - remainingToPayInCents
+
+    // On calcule le poids du "Restant à payer" par rapport au total des charges
     val progress = if (totalOutgoingsInCents > 0) {
-        paidAmountInCents.toFloat() / totalOutgoingsInCents
+        // Si tu as déjà la variable remainingToPayInCents :
+        remainingToPayInCents.toFloat() / totalOutgoingsInCents.toFloat()
+
+        // OU, si tu n'as que paidAmountInCents sous la main :
+        // (totalOutgoingsInCents - paidAmountInCents).toFloat() / totalOutgoingsInCents.toFloat()
     } else 0f
 
-    Row(
+    Column(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = AppTheme.dimens.extraLarge)
-            .padding(vertical = AppTheme.dimens.medium),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceEvenly,
+            .height(160.dp)
+            .padding(vertical = AppTheme.dimens.small),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Visual Focus: The Donut
-        AppDonutChart(
-            progress = progress,
-            activeColor = AppTheme.colors.primary.toColor(),
-            trackColor = AppTheme.colors.tertiary.toColor(),
-            strokeWidth = AppTheme.dimens.big,
-            modifier = Modifier
-                .size(100.dp)
-                .alpha(0.2f)
+        Text(
+            text = "Vue sur les dépenses",
+            style = AppTheme.typo.caption,
+            fontWeight = FontWeight.Medium,
+            color = AppTheme.colors.textPrimary.toColor()
         )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = AppTheme.dimens.extraLarge)
+                .padding(top = AppTheme.dimens.large),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceEvenly,
+        ) {
 
-        // Data Details
-        Column(verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.extraSmall)) {
+            // Data Details
+            Column(verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.extraSmall)) {
 
-            Text(
-                text = DashboardLabels.HERO_TOTAL_CHARGES_LABEL,
-                style = AppTheme.typo.caption,
-                color = AppTheme.colors.primary.toColor()
-            )
+                Text(
+                    text = DashboardLabels.HERO_TOTAL_CHARGES_LABEL,
+                    style = AppTheme.typo.label,
+                    fontWeight = FontWeight.Medium,
+                    color = AppTheme.colors.textPrimary.toColor()
+                )
 
-            Text(
-                text = totalOutgoingsInCents.uiAmount,
-                style = AppTheme.typo.body,
-                color = AppTheme.colors.textPrimary.toColor()
-            )
+                Text(
+                    text = totalOutgoingsInCents.uiAmount,
+                    style = AppTheme.typo.title.copy(
+                        fontSize = AppTheme.typo.title.fontSize * 0.8
+                    ),
+                    fontWeight = FontWeight.Medium,
+                    color = AppTheme.colors.primary.toColor()
+                )
 
-            Spacer(modifier = Modifier.height(AppTheme.dimens.extraSmall))
+                Spacer(modifier = Modifier.height(AppTheme.dimens.extraSmall))
 
-            Text(
-                text = DashboardLabels.HERO_REMAINING_TO_PAY_LABEL,
-                style = AppTheme.typo.caption,
-                color = AppTheme.colors.tertiary.toColor()
-            )
+                Text(
+                    text = DashboardLabels.HERO_REMAINING_TO_PAY_LABEL,
+                    style = AppTheme.typo.label,
+                    fontWeight = FontWeight.Medium,
+                    color = AppTheme.colors.textPrimary.toColor()
+                )
 
-            Text(
-                text = remainingToPayInCents.uiAmount,
-                style = AppTheme.typo.body,
-                fontWeight = FontWeight.Medium,
-                color = AppTheme.colors.textPrimary.toColor()
+                Text(
+                    text = remainingToPayInCents.uiAmount,
+                    style = AppTheme.typo.title.copy(
+                        fontSize = AppTheme.typo.title.fontSize * 0.8
+                    ),
+                    fontWeight = FontWeight.SemiBold,
+                    color = AppTheme.colors.tertiary.toColor()
+                )
+            }
+
+            // Visual Focus: The Donut
+            AppDonutChart(
+                progress = progress,
+                isMirrored = true,
+                activeColor = AppTheme.colors.tertiary.toColor(),
+                trackColor = AppTheme.colors.primary.toColor().copy(alpha = 0.5f),
+                strokeWidth = AppTheme.dimens.large,
+                modifier = Modifier
+                    .size(90.dp)
+                    .alpha(0.8f)
             )
         }
     }

@@ -22,7 +22,7 @@ import fr.abknative.outgo.android.designsystem.foundation.toColor
  * @param iconRes The drawable resource for the icon.
  * @param label The descriptive text (e.g., "Disposable Income").
  * @param amount The formatted currency string.
- * @param iconTint The color of the icon.
+ * @param liveColor The dynamic color.
  * @param amountColor The color of the amount text.
  * @param onClick Optional click action for the item.
  * @param fontWeight Weight for the amount text.
@@ -32,10 +32,10 @@ fun HeroStatItem(
     iconRes: Int,
     label: String,
     amount: String,
-    iconTint: Color,
+    liveColor: Color,
     amountColor: Color = AppTheme.colors.textPrimary.toColor(),
     onClick: (() -> Unit)? = null,
-    fontWeight: FontWeight = FontWeight.Bold
+    fontWeight: FontWeight = FontWeight.Bold,
 ) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(AppTheme.dimens.medium),
@@ -50,16 +50,16 @@ fun HeroStatItem(
         Icon(
             painter = painterResource(iconRes),
             contentDescription = null,
-            tint = iconTint,
-            modifier = Modifier.padding(AppTheme.dimens.small).size(32.dp)
+            tint = liveColor,
+            modifier = Modifier.padding(AppTheme.dimens.small).size(36.dp)
         )
 
         Column(horizontalAlignment = Alignment.Start) {
             Text(
                 text = label,
                 style = AppTheme.typo.label,
-                color = AppTheme.colors.textSecondary.toColor(),
-                fontWeight = FontWeight.Medium
+                color = AppTheme.colors.textPrimary.toColor(),
+                fontWeight = FontWeight.Medium,
             )
 
             Text(
@@ -67,7 +67,7 @@ fun HeroStatItem(
                 style = AppTheme.typo.title.copy(
                     fontSize = AppTheme.typo.title.fontSize * 0.8
                 ),
-                color = amountColor,
+                color = liveColor,
                 fontWeight = fontWeight
             )
         }

@@ -1,6 +1,7 @@
 package fr.abknative.outgo.android.components.dashboard
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,28 +22,39 @@ fun HeroGlobalContent(
     monthlyIncomeInCents: Long,
     totalOutgoingsInCents: Long,
     disposableIncomeInCents: Long,
-    remainingToPayInCents: Long,
     onEditBudgetClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val maxValue = maxOf(monthlyIncomeInCents, totalOutgoingsInCents).coerceAtLeast(1L).toFloat()
     val isNegativeLive = disposableIncomeInCents < 0
     val liveColor = if (isNegativeLive) AppTheme.colors.error.toColor() else AppTheme.colors.tertiary.toColor()
 
     val donutProgress = if (monthlyIncomeInCents > 0) {
-        totalOutgoingsInCents.toFloat() / monthlyIncomeInCents.toFloat()
+        if (isNegativeLive) {
+            ((totalOutgoingsInCents - monthlyIncomeInCents).toFloat() / monthlyIncomeInCents.toFloat())
+                .coerceAtMost(1f)
+        } else {
+            (disposableIncomeInCents.toFloat() / monthlyIncomeInCents.toFloat())
+                .coerceAtMost(1f)
+        }
     } else 0f
 
     Column(
-        modifier = modifier.fillMaxWidth()
-            .padding(horizontal = AppTheme.dimens.extraLarge)
+        modifier = Modifier
+            .height(160.dp)
+            .padding(vertical = AppTheme.dimens.small),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
+        Text(
+            text = "Vue sur le budget",
+            style = AppTheme.typo.caption,
+            fontWeight = FontWeight.Medium,
+            color = AppTheme.colors.textPrimary.toColor()
+        )
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = AppTheme.dimens.extraLarge)
-                .padding(vertical = AppTheme.dimens.medium),
+                .padding(top = AppTheme.dimens.large),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceEvenly,
         ) {
@@ -55,7 +67,7 @@ fun HeroGlobalContent(
                     iconRes = R.drawable.bank_duotone,
                     label = activeWalletName,
                     amount = monthlyIncomeInCents.uiAmount,
-                    iconTint = AppTheme.colors.secondary.toColor(),
+                    liveColor = AppTheme.colors.secondary.toColor(),
                     onClick = onEditBudgetClick,
                 )
 
@@ -67,9 +79,8 @@ fun HeroGlobalContent(
                         iconRes = R.drawable.piggy_bank_duotone,
                         label = if (isNegativeLive) DashboardLabels.HERO_MISSING_INCOME_LABEL else DashboardLabels.HERO_DISPOSABLE_INCOME_LABEL,
                         amount = disposableIncomeInCents.uiAmount,
-                        iconTint = liveColor,
-                        amountColor = liveColor,
-                        fontWeight = if (isNegativeLive) FontWeight.Medium else FontWeight.Bold,
+                        liveColor = liveColor,
+                        fontWeight = if (isNegativeLive) FontWeight.SemiBold else FontWeight.Bold,
                     )
                 }
             }
@@ -81,36 +92,14 @@ fun HeroGlobalContent(
             ) {
                 AppDonutChart(
                     progress = donutProgress,
-                    activeColor = AppTheme.colors.secondary.toColor(),
-                    trackColor = AppTheme.colors.tertiary.toColor(),
-                    strokeWidth = AppTheme.dimens.extraLarge,
+                    activeColor = liveColor,
+                    trackColor = AppTheme.colors.secondary.toColor().copy(alpha = 0.5f),
+                    strokeWidth = AppTheme.dimens.large,
                     modifier = Modifier
-                        .size(100.dp)
-                        .alpha(0.2f)
+                        .size(90.dp)
+                        .alpha(0.8f)
                 )
             }
         }
-
-        /*
-        HorizontalDivider(color = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.1f))
-
-        Box(
-            modifier = Modifier.padding(vertical = AppTheme.dimens.medium)
-        ) {
-            AppPairedBar(
-                topLabel = DashboardLabels.HERO_TOTAL_CHARGES_LABEL,
-                topAmount = totalOutgoingsInCents.uiAmount,
-                topProgress = totalOutgoingsInCents / maxValue,
-                topBarColor = AppTheme.colors.primary.toColor(),
-
-                bottomLabel = DashboardLabels.HERO_REMAINING_TO_PAY_LABEL,
-                bottomAmount = remainingToPayInCents.uiAmount,
-                bottomProgress = remainingToPayInCents / maxValue,
-                bottomBarColor = AppTheme.colors.tertiary.toColor()
-            )
-        }
-        Spacer(modifier = Modifier.height(AppTheme.dimens.small))
-
-         */
     }
 }

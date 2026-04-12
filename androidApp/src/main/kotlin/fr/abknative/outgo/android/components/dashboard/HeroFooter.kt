@@ -38,7 +38,6 @@ fun HeroFooter(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .padding(vertical = AppTheme.dimens.extraSmall)
             .padding(horizontal = AppTheme.dimens.big),
         contentAlignment = Alignment.Center
     ) {
@@ -54,8 +53,7 @@ fun HeroFooter(
                     onClickLabel = clickLabel,
                     role = Role.Button,
                     onClick = onToggleExpand
-                )
-                .padding(vertical = AppTheme.dimens.small),
+                ),
             contentAlignment = Alignment.Center
         ) {
             Icon(

@@ -46,6 +46,6 @@ object ColorPalette {
     // Gris de texte (neutres teintés pour la lisibilité)
     const val TEXT_MAIN_LIGHT = 0xFF1E293B
     const val TEXT_MUTED_LIGHT = 0xFF64748B
-    const val TEXT_MAIN_DARK = 0xFFF8FAFC
-    const val TEXT_MUTED_DARK = 0xFF94A3B8
+    const val TEXT_MAIN_DARK = 0xFFE2E8F0
+    const val TEXT_MUTED_DARK = 0xFF64748B
 }

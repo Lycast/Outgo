@@ -62,7 +62,8 @@ fun App() {
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
     val currentStep = navState.currentStep
-    val shouldShowHeader = currentStep != AppStep.Login && currentStep != AppStep.Splash && currentStep != AppStep.Onboarding
+    val shouldShowHeader =
+        currentStep != AppStep.Login && currentStep != AppStep.Splash && currentStep != AppStep.Onboarding
 
     BackHandler(enabled = navState.canGoBack) {
         coordinator.handleBack()
@@ -111,7 +112,9 @@ fun App() {
                         }
                     ) { innerPadding ->
 
-                        Box(modifier = Modifier.padding(innerPadding).fillMaxSize()) {
+                        Box(modifier = Modifier
+                            .padding(innerPadding)
+                            .fillMaxSize()) {
 
                             LaunchedEffect(currentStep) {
                                 println("Compose dessine l'écran : $currentStep")
@@ -171,22 +174,20 @@ fun App() {
                             Box(
                                 modifier = Modifier.align(Alignment.BottomCenter),
                             ) {
-                                if (!isLandscape && shouldShowHeader) {
-                                    BottomNavBar(
-                                        currentStep = currentStep,
-                                        isPremium = shellState.isPremium,
-                                        onNavigate = { step -> coordinator.navigateTo(step) },
-                                        onTeasingClick = { showPremiumTeasingModal = true },
-                                        onAddClick = {
-                                            if (currentStep == AppStep.Dashboard) {
-                                                shellPresenter.onIntent(ShellIntent.TriggerAddOperation)
-                                            } else {
-                                                coordinator.navigateTo(AppStep.Dashboard)
-                                                shellPresenter.onIntent(ShellIntent.TriggerAddOperation)
-                                            }
+                                BottomNavBar(
+                                    currentStep = currentStep,
+                                    isPremium = shellState.isPremium,
+                                    onNavigate = { step -> coordinator.navigateTo(step) },
+                                    onTeasingClick = { showPremiumTeasingModal = true },
+                                    onAddClick = {
+                                        if (currentStep == AppStep.Dashboard) {
+                                            shellPresenter.onIntent(ShellIntent.TriggerAddOperation)
+                                        } else {
+                                            coordinator.navigateTo(AppStep.Dashboard)
+                                            shellPresenter.onIntent(ShellIntent.TriggerAddOperation)
                                         }
-                                    )
-                                }
+                                    }
+                                )
                             }
                         }
                     }

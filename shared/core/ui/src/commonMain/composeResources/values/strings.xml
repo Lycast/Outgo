@@ -90,8 +90,8 @@
     <string name="dashboard_hero_total_income">Budget</string>
     <string name="dashboard_hero_disposable_income">Restant</string>
     <string name="dashboard_hero_missing_income">Manquant</string>
-    <string name="dashboard_hero_total_charges">Total des dépenses</string>
-    <string name="dashboard_hero_remaining_to_pay">Dépenses restantes à payer</string>
+    <string name="dashboard_hero_total_charges">Total ce mois ci</string>
+    <string name="dashboard_hero_remaining_to_pay">Restantes à payer</string>
     <string name="dashboard_tab_all">TOUTES</string>
     <string name="dashboard_tab_paid">PASSÉES</string>
     <string name="dashboard_tab_remaining">À VENIR</string>

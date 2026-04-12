@@ -90,7 +90,7 @@ fun PremiumShowcaseScreen(
             Text(text = "Prévenez-moi du lancement")
         }
 
-        Spacer(modifier = Modifier.height(AppTheme.dimens.extraLarge))
+        Spacer(modifier = Modifier.height(80.dp))
     }
 }
 
@@ -120,7 +120,7 @@ private fun ShowcaseCard(
             Text(
                 text = description,
                 style = AppTheme.typo.body,
-                color = AppTheme.colors.textSecondary.toColor(),
+                color = AppTheme.colors.textPrimary.toColor(),
                 modifier = Modifier.padding(top = AppTheme.dimens.small)
             )
 
@@ -130,6 +130,7 @@ private fun ShowcaseCard(
                 Text(
                     text = "• $feature",
                     style = AppTheme.typo.body,
+                    color = AppTheme.colors.textSecondary.toColor(),
                     modifier = Modifier.padding(vertical = 2.dp)
                 )
             }

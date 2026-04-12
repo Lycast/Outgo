@@ -34,9 +34,10 @@ import fr.abknative.outgo.android.designsystem.foundation.toColor
  */
 @Composable
 fun AppDonutChart(
+    modifier: Modifier = Modifier,
     progress: Float,
     activeColor: Color,
-    modifier: Modifier = Modifier,
+    isMirrored: Boolean = false,
     trackColor: Color = activeColor.copy(alpha = 0.15f),
     strokeWidth: Dp = 16.dp,
     startAngle: Float = -90f,
@@ -60,7 +61,8 @@ fun AppDonutChart(
                 .fillMaxSize()
                 .padding(strokeWidth / 2)
         ) {
-            val sweepAngle = animatedProgress * 360f
+            val baseSweepAngle = animatedProgress * 360f
+            val actualSweepAngle = if (isMirrored) -baseSweepAngle else baseSweepAngle
 
             drawArc(
                 color = trackColor,
@@ -73,7 +75,7 @@ fun AppDonutChart(
             drawArc(
                 color = activeColor,
                 startAngle = startAngle,
-                sweepAngle = sweepAngle,
+                sweepAngle = actualSweepAngle,
                 useCenter = false,
                 style = Stroke(width = strokeWidth.toPx(), cap = StrokeCap.Butt)
             )

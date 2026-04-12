@@ -1,7 +1,10 @@
 package fr.abknative.outgo.android.components.dashboard
 
 import androidx.compose.animation.*
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.HorizontalDivider
@@ -12,7 +15,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
-import androidx.compose.ui.unit.dp
 import fr.abknative.outgo.android.designsystem.components.cards.GlassCard
 import fr.abknative.outgo.android.designsystem.components.selection.AppPagerContainer
 import fr.abknative.outgo.android.designsystem.foundation.AppTheme
@@ -97,7 +99,6 @@ fun HeroSection(
                             // Carousel Content
                             HorizontalPager(
                                 state = pagerState,
-                                modifier = Modifier.weight(1f).height(140.dp),
                                 verticalAlignment = Alignment.CenterVertically,
                             ) { pageIndex ->
                                 val actualIndex = pageIndex % actualPageCount
@@ -107,7 +108,6 @@ fun HeroSection(
                                         monthlyIncomeInCents = monthlyIncomeInCents,
                                         totalOutgoingsInCents = totalOutgoingsInCents,
                                         disposableIncomeInCents = disposableIncomeInCents,
-                                        remainingToPayInCents = remainingToPayInCents,
                                         onEditBudgetClick = onEditBudgetClick
                                     )
                                     1 -> HeroExpenseContent(
