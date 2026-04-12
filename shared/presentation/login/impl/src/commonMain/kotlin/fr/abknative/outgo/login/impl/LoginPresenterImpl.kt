@@ -9,13 +9,12 @@ import fr.abknative.outgo.auth.api.usecase.RegisterUseCase
 import fr.abknative.outgo.core.api.extensions.safeLaunch
 import fr.abknative.outgo.core.api.logs.AppException
 import fr.abknative.outgo.core.api.logs.Result
+import fr.abknative.outgo.login.api.LoginEvent
 import fr.abknative.outgo.login.api.LoginIntent
 import fr.abknative.outgo.login.api.LoginPresenter
 import fr.abknative.outgo.login.api.LoginState
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.*
 
 internal class LoginPresenterImpl(
     private val registerUseCase: RegisterUseCase,
@@ -26,6 +25,9 @@ internal class LoginPresenterImpl(
 
     private val _state = MutableStateFlow(LoginState(isLoading = false))
     override val state: StateFlow<LoginState> = _state.asStateFlow()
+
+    private val _events = Channel<LoginEvent>(Channel.BUFFERED)
+    override val events = _events.receiveAsFlow()
 
     // PRIVATES VARIABLES FOR RETRY LOGIN AFTER CONFLICT
     private var pendingEmail = ""
@@ -58,9 +60,13 @@ internal class LoginPresenterImpl(
 
     private fun handleRegister(email: String, password: String) {
         viewModelScope.safeLaunch(onError = onCoroutineError) {
-            _state.update { it.copy(isLoading = true, error = null, showConflictDialog = false) }
-            val result = registerUseCase(email, password)
-            processAuthResult(result, email, password, isRegister = true)
+            try {
+                _state.update { it.copy(isLoading = true, error = null, showConflictDialog = false) }
+                val result = registerUseCase(email, password)
+                processAuthResult(result, email, password, isRegister = true)
+            } finally {
+                _state.update { it.copy(isLoading = false) }
+            }
         }
     }
 
@@ -89,7 +95,8 @@ internal class LoginPresenterImpl(
         when (result) {
             is Result.Success -> {
                 clearPendingAuth()
-                _state.update { it.copy(isLoading = false, error = null, isLoginSuccessful = true) }
+                _state.update { it.copy(isLoading = false, error = null) }
+                _events.trySend(LoginEvent.NavigateBack)
             }
             is Result.Error -> {
                 if (result.error is AuthError.DataConflict) {

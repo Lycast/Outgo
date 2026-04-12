@@ -58,10 +58,16 @@ internal class ShellPresenterImpl(
     private fun startGlobalNavigationLogic() {
         viewModelScope.safeLaunch(onError = onCoroutineError) {
             observeWallets().collect { wallets ->
+                val currentStep = coordinator.state.value.currentStep
+
                 if (wallets.isEmpty()) {
-                    coordinator.replaceRoot(AppStep.Onboarding)
+                    if (currentStep != AppStep.Onboarding && currentStep != AppStep.Login) {
+                        coordinator.replaceRoot(AppStep.Onboarding)
+                    }
                 } else {
-                    coordinator.replaceRoot(AppStep.Dashboard)
+                    if (currentStep == AppStep.Splash || currentStep == AppStep.Onboarding) {
+                        coordinator.replaceRoot(AppStep.Dashboard)
+                    }
                 }
             }
         }

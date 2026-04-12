@@ -12,9 +12,13 @@ internal class NavCoordinatorImpl : NavCoordinator {
     override val state = _state.asStateFlow()
 
     override fun navigateTo(step: AppStep) {
+        println("NavCoordinator navigateTo($step)")
         _state.update { currentState ->
-            if (currentState.currentStep == step) return@update currentState
-            currentState.copy(stack = currentState.stack + step)
+            if (currentState.currentStep == step) {
+                return@update currentState
+            }
+            val newState = currentState.copy(stack = currentState.stack + step)
+            newState
         }
     }
 

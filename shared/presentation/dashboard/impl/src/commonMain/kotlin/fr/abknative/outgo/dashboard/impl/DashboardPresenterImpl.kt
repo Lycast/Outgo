@@ -70,7 +70,6 @@ internal class DashboardPresenterImpl(
                 .flatMapLatest { input ->
                     observeActiveOperations(input.wallet.id, input.month, input.year)
                         .map { ops ->
-                            // 🌟 ON DÉLÈGUE TOUT LE TRAVAIL AU MAPPER
                             val stats = calculateDashboardData(ops, input.month, input.year)
                             mapper.mapToState(
                                 currentOperations = ops,
@@ -130,18 +129,23 @@ internal class DashboardPresenterImpl(
 
     private fun handleSaveOperation(intent: DashboardIntent.SaveOperation) {
         viewModelScope.safeLaunch(onError = onCoroutineError) {
-            _state.update { it.copy(isLoading = true) }
+            try {
+                _state.update { it.copy(isLoading = true) }
             val result = saveOperation(
                 id = intent.id, walletId = intent.walletId, name = intent.name,
                 amountInCents = intent.amountInCents, type = intent.type,
                 recurrence = intent.recurrence, startDate = intent.startDate, endDate = intent.endDate
             )
             handleOperationResult(result)
+            } finally {
+                _state.update { it.copy(isLoading = false) }
+            }
         }
     }
 
     private fun handleSaveWalletAndIncome(intent: DashboardIntent.SaveWalletAndIncome) {
         viewModelScope.safeLaunch(onError = onCoroutineError) {
+            try {
             _state.update { it.copy(isLoading = true) }
             saveWallet(id = intent.walletId, name = intent.walletName)
             val existingIncome = _state.value.operations.firstOrNull {
@@ -154,6 +158,9 @@ internal class DashboardPresenterImpl(
                 recurrence = Recurrence.MONTHLY, startDate = intent.startDate
             )
             handleOperationResult(result)
+            } finally {
+                _state.update { it.copy(isLoading = false) }
+            }
         }
     }
 

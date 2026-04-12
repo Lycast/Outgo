@@ -15,6 +15,10 @@ import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
+/**
+ * Test suite for [DashboardPresenterImpl].
+ * Ensures the reactive pipeline correctly maps domain data to UI state.
+ */
 @OptIn(ExperimentalCoroutinesApi::class)
 class DashboardPresenterTest {
 
@@ -22,13 +26,13 @@ class DashboardPresenterTest {
     private val timeProvider = FakeTimeProvider()
     private val storage = FakeKeyValueStorage()
 
-    // Nouveaux Fakes
+    private val mapper = DashboardStateMapper(timeProvider)
+
     private val observeWallets = FakeObserveWalletsUseCase()
     private val observeActiveOperations = FakeObserveActiveOperationsUseCase()
     private val saveOperation = FakeSaveOperationUseCase()
     private val deleteOperation = FakeDeleteOperationUseCase()
     private val calculateDashboardData = FakeCalculateDashboardDataUseCase()
-
     private val saveWalletUseCase = FakeSaveWalletUseCase()
 
     private lateinit var presenter: DashboardPresenterImpl
@@ -37,7 +41,6 @@ class DashboardPresenterTest {
     fun setup() {
         Dispatchers.setMain(testDispatcher)
 
-
         presenter = DashboardPresenterImpl(
             observeActiveOperations = observeActiveOperations,
             observeWallets = observeWallets,
@@ -45,6 +48,7 @@ class DashboardPresenterTest {
             deleteOperation = deleteOperation,
             calculateDashboardData = calculateDashboardData,
             saveWallet = saveWalletUseCase,
+            mapper = mapper,
             timeProvider = timeProvider,
             storage = storage
         )

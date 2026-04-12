@@ -29,9 +29,11 @@ import fr.abknative.outgo.android.designsystem.foundation.toColor
 import fr.abknative.outgo.android.ui.LoginLabels
 import fr.abknative.outgo.android.ui.states.rememberLoginFormState
 import fr.abknative.outgo.android.ui.toUIString
+import fr.abknative.outgo.login.api.LoginEvent
 import fr.abknative.outgo.login.api.LoginIntent
 import fr.abknative.outgo.login.api.LoginPresenter
 import fr.abknative.outgo.login.api.LoginState
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -50,9 +52,14 @@ fun LoginScreen(
 
     BackHandler(enabled = state.isLoading) {}
 
-    LaunchedEffect(state.isLoginSuccessful) {
-        if (state.isLoginSuccessful) {
-            onLoginSuccess()
+    LaunchedEffect(Unit) {
+        presenter.events.collect { event ->
+            when (event) {
+                is LoginEvent.NavigateBack -> {
+                    println("🚦 [DEBUG] Événement NavigateBack reçu !")
+                    onLoginSuccess()
+                }
+            }
         }
     }
 
@@ -198,6 +205,9 @@ fun PreviewLoginScreen() {
                 showConflictDialog = false
             )
         )
+        override val events: Flow<LoginEvent>
+            get() = TODO("Not yet implemented")
+
         override fun onIntent(intent: LoginIntent) {}
     }
 

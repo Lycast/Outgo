@@ -31,7 +31,6 @@ import org.koin.compose.koinInject
 fun DashboardScreen(
     presenter: DashboardPresenter,
     isPremium: Boolean,
-    onNavigateToLogin: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val state by presenter.state.collectAsStateWithLifecycle()

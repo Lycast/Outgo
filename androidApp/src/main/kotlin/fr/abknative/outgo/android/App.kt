@@ -113,6 +113,10 @@ fun App() {
                         }
                     ) { innerPadding ->
 
+                        LaunchedEffect(currentStep) {
+                            println("Compose dessine l'écran : $currentStep")
+                        }
+
                         AnimatedContent(
                             targetState = currentStep,
                             transitionSpec = { fadeIn() togetherWith fadeOut() },
@@ -130,8 +134,7 @@ fun App() {
 
                                 AppStep.Dashboard -> DashboardScreen(
                                     presenter = koinViewModel(),
-                                    isPremium = shellState.isPremium,
-                                    onNavigateToLogin = { coordinator.navigateTo(AppStep.Login) }
+                                    isPremium = shellState.isPremium
                                 )
 
                                 AppStep.Settings -> SettingsScreen(

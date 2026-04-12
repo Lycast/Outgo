@@ -54,14 +54,17 @@ internal class SettingsPresenterImpl(
 
     private fun handleLogout(displayLocalData: Boolean) {
         viewModelScope.safeLaunch(onError = onCoroutineError) {
-            _state.update { it.copy(isProcessing = true) }
+            try {
+                _state.update { it.copy(isProcessing = true) }
+                val result = logout(displayLocalData = displayLocalData)
 
-            val result = logout(displayLocalData = displayLocalData)
-
-            if (result is Result.Success) {
-                _state.update { it.copy(isProcessing = false, actionSuccess = true) }
-            } else if (result is Result.Error) {
-                _state.update { it.copy(isProcessing = false, error = result.error) }
+                if (result is Result.Success) {
+                    _state.update { it.copy(actionSuccess = true) }
+                } else if (result is Result.Error) {
+                    _state.update { it.copy(error = result.error) }
+                }
+            } finally {
+                _state.update { it.copy(isProcessing = false) }
             }
         }
     }
