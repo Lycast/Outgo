@@ -9,11 +9,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import fr.abknative.outgo.android.components.list.HeroSection
 import fr.abknative.outgo.android.components.list.ListScreenModals
 import fr.abknative.outgo.android.components.list.OperationListContainer
 import fr.abknative.outgo.android.components.operation.OperationFilterSelector
 import fr.abknative.outgo.android.designsystem.components.feedback.AppSnackbar
+import fr.abknative.outgo.android.designsystem.components.selection.MonthTimeSelector
 import fr.abknative.outgo.android.designsystem.foundation.AppTheme
 import fr.abknative.outgo.android.ui.extensions.getMonthName
 import fr.abknative.outgo.android.ui.states.rememberOperationFormState
@@ -61,7 +61,7 @@ fun ListScreen(
     val currentError = state.error
     val errorMessage = currentError?.toUIString()
 
-    val formattedSelectedMonth = "${getMonthName(state.selectedMonth)} ${state.selectedYear}"
+    val formattedSelectedMonth = "${getMonthName(state.selectedMonth)} ${state.selectedYear}".uppercase()
 
     LaunchedEffect(currentError) {
         if (currentError != null && errorMessage != null) {
@@ -83,21 +83,17 @@ fun ListScreen(
     ) {
 
         Column(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = AppTheme.dimens.medium)
+                .padding(horizontal = AppTheme.dimens.large)
         ) {
-            HeroSection(
-                isExpanded = state.isHeroExpanded,
-                canGoToPreviousMonth = state.canGoToPreviousMonth,
-                formattedMonthDate = formattedSelectedMonth,
-                activeWalletName = state.activeWalletName,
-                monthlyIncomeInCents = state.monthlyIncomeInCents,
-                totalOutgoingsInCents = state.totalOutgoingsInCents,
-                disposableIncomeInCents = state.disposableIncomeInCents,
-                remainingToPayInCents = state.remainingToPayInCents,
-                onToggleExpand = { presenter.onIntent(ListIntent.ToggleHeroSection(!state.isHeroExpanded)) },
-                onPreviousMonthClick = { presenter.onIntent(ListIntent.NavigateMonth(isNext = false)) },
-                onNextMonthClick = { presenter.onIntent(ListIntent.NavigateMonth(isNext = true)) },
-                onEditBudgetClick = { showBudgetDialog = true }
+            // 1. Le Sélecteur de temps
+            MonthTimeSelector(
+                formattedMonth = formattedSelectedMonth,
+                canGoBack = state.canGoToPreviousMonth,
+                onPrevious = { presenter.onIntent(ListIntent.NavigateMonth(isNext = false)) },
+                onNext = { presenter.onIntent(ListIntent.NavigateMonth(isNext = true)) }
             )
 
             Spacer(modifier = Modifier.height(AppTheme.dimens.extraLarge))

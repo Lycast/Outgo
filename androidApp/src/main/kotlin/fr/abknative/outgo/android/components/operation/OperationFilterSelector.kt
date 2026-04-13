@@ -48,8 +48,7 @@ fun OperationFilterSelector(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = AppTheme.dimens.medium)
-            .padding(vertical = AppTheme.dimens.small),
+            .padding(vertical = AppTheme.dimens.medium),
         horizontalArrangement = Arrangement.spacedBy(AppTheme.dimens.large)
     ) {
         FilterTabItem(

@@ -22,12 +22,14 @@ kotlin {
             freeCompilerArgs += listOf("-Xoverride-konan-properties=min_os_version_ios_simulator_arm64=17.0")
 
             export(projects.shared.core.api)
+
             export(projects.shared.feature.wallet.api)
             export(projects.shared.feature.auth.api)
             export(projects.shared.feature.sync.api)
 
             export(projects.shared.core.ui)
             export(projects.shared.presentation.list.api)
+            export(projects.shared.presentation.month.api)
             export(projects.shared.presentation.login.api)
             export(projects.shared.presentation.onboarding.api)
             export(projects.shared.presentation.settings.api)
@@ -56,10 +58,12 @@ kotlin {
 
             // --- Couches Présentation (pour que Koin puisse les instancier) ---
             implementation(projects.shared.presentation.list.impl)
+            implementation(projects.shared.presentation.month.impl)
             implementation(projects.shared.presentation.login.impl)
             implementation(projects.shared.presentation.onboarding.impl)
             implementation(projects.shared.presentation.settings.impl)
             implementation(projects.shared.presentation.shell.impl)
+            implementation(projects.shared.presentation.year.impl)
 
             implementation(libs.koin.core)
             implementation(libs.kotlinx.coroutines.core)
@@ -70,10 +74,12 @@ kotlin {
 
             // Exposer les contrats UI
             api(projects.shared.presentation.list.api)
+            api(projects.shared.presentation.month.api)
             api(projects.shared.presentation.login.api)
             api(projects.shared.presentation.onboarding.api)
             api(projects.shared.presentation.settings.api)
             api(projects.shared.presentation.shell.api)
+            api(projects.shared.presentation.year.api)
 
             // Exposer les contrats métier
             api(projects.shared.feature.wallet.api)

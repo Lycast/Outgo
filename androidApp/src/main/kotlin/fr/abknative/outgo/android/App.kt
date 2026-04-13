@@ -130,7 +130,10 @@ fun App() {
                                     )
 
                                     AppStep.Month -> {
-                                        MonthScreen()
+                                        MonthScreen(
+                                            presenter = koinViewModel(),
+                                            isPremium = shellState.isPremium
+                                        )
                                     }
 
                                     AppStep.Year -> {

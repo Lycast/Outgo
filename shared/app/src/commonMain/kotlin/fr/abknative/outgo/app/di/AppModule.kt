@@ -5,6 +5,7 @@ import fr.abknative.outgo.core.impl.di.coreModule
 import fr.abknative.outgo.database.di.databaseModule
 import fr.abknative.outgo.list.impl.di.listPresentationModule
 import fr.abknative.outgo.login.impl.di.loginPresentationModule
+import fr.abknative.outgo.month.impl.di.monthPresentationModule
 import fr.abknative.outgo.onboarding.impl.di.onboardingPresentationModule
 import fr.abknative.outgo.settings.impl.di.settingsPresentationModule
 import fr.abknative.outgo.shell.impl.di.shellPresentationModule
@@ -35,6 +36,7 @@ fun initKoin(appDeclaration: KoinAppDeclaration = {}) {
 
             // Modules UI (Présentation)
             listPresentationModule,
+            monthPresentationModule,
             loginPresentationModule,
             onboardingPresentationModule,
             settingsPresentationModule,

@@ -1,7 +1,6 @@
-package fr.abknative.outgo.android.components.list
+package fr.abknative.outgo.android.components.month
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,21 +39,12 @@ fun HeroGlobalContent(
 
     Column(
         modifier = Modifier
-            .height(160.dp)
-            .padding(vertical = AppTheme.dimens.small),
-        horizontalAlignment = Alignment.CenterHorizontally
+            .padding(AppTheme.dimens.large),
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Text(
-            text = "Vue sur le budget",
-            style = AppTheme.typo.caption,
-            fontWeight = FontWeight.Medium,
-            color = AppTheme.colors.textPrimary.toColor()
-        )
+
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = AppTheme.dimens.extraLarge)
-                .padding(top = AppTheme.dimens.large),
+            modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceEvenly,
         ) {

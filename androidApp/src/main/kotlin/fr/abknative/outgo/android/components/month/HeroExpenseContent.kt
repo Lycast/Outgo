@@ -1,4 +1,4 @@
-package fr.abknative.outgo.android.components.list
+package fr.abknative.outgo.android.components.month
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.*
@@ -37,21 +37,12 @@ fun HeroExpenseContent(
 
     Column(
         modifier = Modifier
-            .height(160.dp)
-            .padding(vertical = AppTheme.dimens.small),
+            .padding(AppTheme.dimens.large),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
-            text = "Vue sur les dépenses",
-            style = AppTheme.typo.caption,
-            fontWeight = FontWeight.Medium,
-            color = AppTheme.colors.textPrimary.toColor()
-        )
+
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = AppTheme.dimens.extraLarge)
-                .padding(top = AppTheme.dimens.large),
+            modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceEvenly,
         ) {

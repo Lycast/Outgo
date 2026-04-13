@@ -1,4 +1,4 @@
-package fr.abknative.outgo.android.components.list
+package fr.abknative.outgo.android.components.month
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box

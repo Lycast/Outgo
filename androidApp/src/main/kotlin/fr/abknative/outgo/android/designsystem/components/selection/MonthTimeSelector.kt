@@ -1,64 +1,54 @@
-package fr.abknative.outgo.android.components.list
+package fr.abknative.outgo.android.designsystem.components.selection
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import fr.abknative.outgo.android.R
 import fr.abknative.outgo.android.designsystem.foundation.AppTheme
 import fr.abknative.outgo.android.designsystem.foundation.toColor
 import fr.abknative.outgo.android.ui.AccessibilityLabels
 
-
+/**
+ * Top navigation bar to switch between months.
+ *
+ * @param formattedMonth The currently selected month formatted as a string.
+ * @param canGoBack Whether the previous month button should be enabled.
+ * @param onPrevious Callback triggered when navigating to the previous month.
+ * @param onNext Callback triggered when navigating to the next month.
+ */
 @Composable
-fun MonthBudgetSelector(
-    formattedMonthDate: String,
-    canGoToPreviousMonth: Boolean,
-    onPreviousMonthClick: () -> Unit,
-    onNextMonthClick: () -> Unit
-){
-    val haptic = LocalHapticFeedback.current
-    LaunchedEffect(formattedMonthDate) {
-        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-    }
-
+fun MonthTimeSelector(
+    formattedMonth: String,
+    canGoBack: Boolean,
+    onPrevious: () -> Unit,
+    onNext: () -> Unit
+) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = AppTheme.dimens.large),
-        horizontalArrangement = Arrangement.SpaceEvenly,
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
-    ){
-        IconButton(
-            onClick = onPreviousMonthClick,
-            enabled = canGoToPreviousMonth,
-            modifier = Modifier.alpha(if (canGoToPreviousMonth) 1f else 0.3f)
-        ) {
+    ) {
+        IconButton(onClick = onPrevious, enabled = canGoBack) {
             Icon(
                 painter = painterResource(R.drawable.caret_left),
                 contentDescription = AccessibilityLabels.PREVIOUS_MONTH,
-                tint = AppTheme.colors.primary.toColor()
+                tint = if (canGoBack) AppTheme.colors.primary.toColor() else AppTheme.colors.textSecondary.toColor().copy(alpha = 0.5f)
             )
         }
-
         Text(
-            text = formattedMonthDate.uppercase(),
-            style = AppTheme.typo.subtitle,
+            text = formattedMonth,
+            style = AppTheme.typo.title.copy(fontWeight = FontWeight.Bold),
             color = AppTheme.colors.textPrimary.toColor()
         )
-
-        IconButton(onClick = onNextMonthClick) {
+        IconButton(onClick = onNext) {
             Icon(
                 painter = painterResource(R.drawable.caret_right),
                 contentDescription = AccessibilityLabels.NEXT_MONTH,
