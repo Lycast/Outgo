@@ -39,8 +39,8 @@ include(":shared:feature:wallet:impl")
 include(":shared:feature:wallet:network")
 
 
-include(":shared:presentation:dashboard:api")
-include(":shared:presentation:dashboard:impl")
+include(":shared:presentation:list:api")
+include(":shared:presentation:list:impl")
 include(":shared:presentation:login:api")
 include(":shared:presentation:login:impl")
 include(":shared:presentation:onboarding:api")

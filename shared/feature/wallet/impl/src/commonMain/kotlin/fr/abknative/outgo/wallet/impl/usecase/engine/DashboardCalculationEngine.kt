@@ -1,7 +1,7 @@
 package fr.abknative.outgo.wallet.impl.usecase.engine
 
-import fr.abknative.outgo.wallet.api.model.dashboard.DashboardData
-import fr.abknative.outgo.wallet.api.model.dashboard.ProjectedOperation
+import fr.abknative.outgo.wallet.api.model.presenter.PeriodStats
+import fr.abknative.outgo.wallet.api.model.presenter.ProjectedOperation
 
 internal interface DashboardCalculationEngine {
     /**
@@ -12,5 +12,5 @@ internal interface DashboardCalculationEngine {
         operations: List<ProjectedOperation>,
         currentMonth: Int,
         currentYear: Int
-    ): DashboardData
+    ): PeriodStats
 }

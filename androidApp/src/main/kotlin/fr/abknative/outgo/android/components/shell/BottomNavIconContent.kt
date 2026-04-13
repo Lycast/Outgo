@@ -2,23 +2,26 @@ package fr.abknative.outgo.android.components.shell
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Insights
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import fr.abknative.outgo.android.R
 import fr.abknative.outgo.android.designsystem.foundation.AppTheme
 import fr.abknative.outgo.android.designsystem.foundation.toColor
 import fr.abknative.outgo.android.ui.AccessibilityLabels
+import fr.abknative.outgo.android.ui.CommonLabels
 import fr.abknative.outgo.core.api.nav.AppStep
 
 /**
@@ -36,17 +39,29 @@ fun BottomNavIconContent(
 ) {
     val tint = if (isSelected) AppTheme.colors.textOnBrand.toColor() else AppTheme.colors.textSecondary.toColor()
 
-    val icon = @Composable {
+    val iconContent = @Composable {
         when (step) {
-            AppStep.Dashboard -> Icon(
-                painter = painterResource(id = R.drawable.house_line),
-                contentDescription = AccessibilityLabels.NAVIGATE_HOME,
+            // --- Les Lettres (Gauche) ---
+            AppStep.Month -> Text(
+                text = CommonLabels.TAB_MONTH_INITIAL,
+                style = AppTheme.typo.title.copy(fontWeight = FontWeight.Medium),
+                color = tint
+            )
+            AppStep.Year -> Text(
+                text = CommonLabels.TAB_YEAR_INITIAL,
+                style = AppTheme.typo.title.copy(fontWeight = FontWeight.Medium),
+                color = tint
+            )
+            // --- Les Icônes (Droite) ---
+            AppStep.List -> Icon(
+                painter = painterResource(id = R.drawable.list_bullets),
+                contentDescription = AccessibilityLabels.NAVIGATE_LIST,
                 tint = tint,
                 modifier = Modifier.size(24.dp)
             )
-            AppStep.Analyse -> Icon(
-                imageVector = Icons.Default.Insights,
-                contentDescription = AccessibilityLabels.NAVIGATE_ANALYSE,
+            AppStep.Settings -> Icon(
+                painter = painterResource(id = R.drawable.gear_six),
+                contentDescription = AccessibilityLabels.NAVIGATE_SETTINGS,
                 tint = tint,
                 modifier = Modifier.size(24.dp)
             )
@@ -59,6 +74,7 @@ fun BottomNavIconContent(
             badge = {
                 Box(
                     modifier = Modifier
+                        .offset(x = 8.dp)
                         .size(14.dp)
                         .clip(CircleShape)
                         .background(AppTheme.colors.tertiary.toColor()),
@@ -68,14 +84,14 @@ fun BottomNavIconContent(
                         imageVector = Icons.Default.Lock,
                         contentDescription = null,
                         tint = AppTheme.colors.textOnBrand.toColor(),
-                        modifier = Modifier.size(10.dp)
+                        modifier = Modifier.size(8.dp)
                     )
                 }
             }
         ) {
-            icon()
+            iconContent()
         }
     } else {
-        icon()
+        iconContent()
     }
 }

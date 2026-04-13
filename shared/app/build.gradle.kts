@@ -27,7 +27,7 @@ kotlin {
             export(projects.shared.feature.sync.api)
 
             export(projects.shared.core.ui)
-            export(projects.shared.presentation.dashboard.api)
+            export(projects.shared.presentation.list.api)
             export(projects.shared.presentation.login.api)
             export(projects.shared.presentation.onboarding.api)
             export(projects.shared.presentation.settings.api)
@@ -55,7 +55,7 @@ kotlin {
             implementation(projects.shared.feature.sync.impl)
 
             // --- Couches Présentation (pour que Koin puisse les instancier) ---
-            implementation(projects.shared.presentation.dashboard.impl)
+            implementation(projects.shared.presentation.list.impl)
             implementation(projects.shared.presentation.login.impl)
             implementation(projects.shared.presentation.onboarding.impl)
             implementation(projects.shared.presentation.settings.impl)
@@ -69,7 +69,7 @@ kotlin {
             api(projects.shared.core.ui)
 
             // Exposer les contrats UI
-            api(projects.shared.presentation.dashboard.api)
+            api(projects.shared.presentation.list.api)
             api(projects.shared.presentation.login.api)
             api(projects.shared.presentation.onboarding.api)
             api(projects.shared.presentation.settings.api)

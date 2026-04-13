@@ -16,6 +16,10 @@ object CommonLabels {
     <string name="common_action_duplicate">Dupliquer</string>
     <string name="common_action_close">Fermer</string>
 
+    <string name="nav_tab_month_initial">M</string>
+    <string name="nav_tab_year_initial">A</string>
+    <string name="nav_tab_list">Liste</string>
+    <string name="nav_tab_settings">Paramètres</string>
      */
 
     val APP_NAME @Composable get() = stringResource(Res.string.app_name)
@@ -28,10 +32,18 @@ object CommonLabels {
     val ACTION_DUPLICATE @Composable get() = stringResource(Res.string.common_action_duplicate)
     val ACTION_CLOSE @Composable get() = stringResource(Res.string.common_action_close)
 
+    // --- navigation ---
+    val TAB_MONTH_INITIAL @Composable get() = stringResource(Res.string.nav_tab_month_initial)
+    val TAB_YEAR_INITIAL @Composable get() = stringResource(Res.string.nav_tab_year_initial)
+    val TAB_LIST @Composable get() = stringResource(Res.string.nav_tab_list)
+    val TAB_SETTINGS @Composable get() = stringResource(Res.string.nav_tab_settings)
+
     // --- Temporaire ---
     const val ACTION_OK = "OK"
     const val SYNC_OFFLINE_TITLE = "Réseau indisponible"
     const val SYNC_OFFLINE_DESC = "Vérifiez votre connexion internet. L'application fonctionne normalement hors-ligne, la synchronisation reprendra plus tard."
+
+
 }
 
 object DialogLabels {
@@ -184,7 +196,7 @@ object AccessibilityLabels {
     val SYNC_ERROR @Composable get() = stringResource(Res.string.a11y_sync_error)
 
     // --- Temporaire ---
-    const val NAVIGATE_ANALYSE = "Analyse"
+    const val NAVIGATE_LIST = "liste"
     const val PREMIUM_BADGE = "Premium"
     const val NEXT_VIEW = "Vue suivante"
     const val PREVIOUS_VIEW = "Vue précédente"

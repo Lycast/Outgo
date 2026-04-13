@@ -5,8 +5,8 @@ import androidx.compose.ui.graphics.Color
 import fr.abknative.outgo.android.designsystem.foundation.AppTheme
 import fr.abknative.outgo.android.designsystem.foundation.toColor
 import fr.abknative.outgo.android.ui.CommonLabels
-import fr.abknative.outgo.android.ui.DashboardLabels
 import fr.abknative.outgo.android.ui.FormLabels
+import fr.abknative.outgo.android.ui.ListLabels
 import fr.abknative.outgo.wallet.api.model.Operation
 import fr.abknative.outgo.wallet.api.model.operation.Recurrence
 import kotlin.math.absoluteValue
@@ -57,7 +57,7 @@ fun Recurrence.getUiColor(): Color {
  * Returns the display title for the operation, falling back to a default name if blank.
  */
 val Operation.uiTitle: String
-    @Composable get() = this.name.ifBlank { DashboardLabels.DEFAULT_NAME }
+    @Composable get() = this.name.ifBlank { ListLabels.DEFAULT_NAME }
 
 /**
  * Returns a summarized string representation of the operation's frequency.
@@ -76,9 +76,9 @@ val Operation.uiFrequencySummary: String
  */
 @Composable
 fun getMonthName(month: Int): String = when (month) {
-    1 -> DashboardLabels.MONTH_1 ; 2 -> DashboardLabels.MONTH_2 ; 3 -> DashboardLabels.MONTH_3
-    4 -> DashboardLabels.MONTH_4 ; 5 -> DashboardLabels.MONTH_5 ; 6 -> DashboardLabels.MONTH_6
-    7 -> DashboardLabels.MONTH_7 ; 8 -> DashboardLabels.MONTH_8 ; 9 -> DashboardLabels.MONTH_9
-    10 -> DashboardLabels.MONTH_10; 11 -> DashboardLabels.MONTH_11; 12 -> DashboardLabels.MONTH_12
+    1 -> ListLabels.MONTH_1 ; 2 -> ListLabels.MONTH_2 ; 3 -> ListLabels.MONTH_3
+    4 -> ListLabels.MONTH_4 ; 5 -> ListLabels.MONTH_5 ; 6 -> ListLabels.MONTH_6
+    7 -> ListLabels.MONTH_7 ; 8 -> ListLabels.MONTH_8 ; 9 -> ListLabels.MONTH_9
+    10 -> ListLabels.MONTH_10; 11 -> ListLabels.MONTH_11; 12 -> ListLabels.MONTH_12
     else -> ""
 }

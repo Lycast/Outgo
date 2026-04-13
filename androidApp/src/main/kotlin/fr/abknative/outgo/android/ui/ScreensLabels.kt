@@ -37,7 +37,7 @@ object HeaderLabels {
     val SYNC_PROMO_ACTION_LATER @Composable get() = stringResource(Res.string.header_sync_promo_action_later)
 }
 
-object DashboardLabels {
+object ListLabels {
 
     /*
 
@@ -76,44 +76,44 @@ object DashboardLabels {
      */
 
     // Hero Section
-    val TOOLTIP_BALANCE_TITLE @Composable get()  = stringResource(Res.string.dashboard_tooltip_balance_title)
-    val TOOLTIP_BALANCE_DESC @Composable get()  = stringResource(Res.string.dashboard_tooltip_balance_desc)
-    val TOOLTIP_BALANCE_DUE_TITLE @Composable get()  = stringResource(Res.string.dashboard_tooltip_balance_due_title)
-    val TOOLTIP_BALANCE_DUE_DESC @Composable get()  = stringResource(Res.string.dashboard_tooltip_balance_due_desc)
-    val HERO_TOTAL_INCOME_LABEL @Composable get() = stringResource(Res.string.dashboard_hero_total_income)
-    val HERO_DISPOSABLE_INCOME_LABEL @Composable get() = stringResource(Res.string.dashboard_hero_disposable_income)
-    val HERO_MISSING_INCOME_LABEL @Composable get() = stringResource(Res.string.dashboard_hero_missing_income)
-    val HERO_TOTAL_CHARGES_LABEL @Composable get() = stringResource(Res.string.dashboard_hero_total_charges)
-    val HERO_REMAINING_TO_PAY_LABEL @Composable get() = stringResource(Res.string.dashboard_hero_remaining_to_pay)
+    val TOOLTIP_BALANCE_TITLE @Composable get()  = stringResource(Res.string.list_tooltip_balance_title)
+    val TOOLTIP_BALANCE_DESC @Composable get()  = stringResource(Res.string.list_tooltip_balance_desc)
+    val TOOLTIP_BALANCE_DUE_TITLE @Composable get()  = stringResource(Res.string.list_tooltip_balance_due_title)
+    val TOOLTIP_BALANCE_DUE_DESC @Composable get()  = stringResource(Res.string.list_tooltip_balance_due_desc)
+    val HERO_TOTAL_INCOME_LABEL @Composable get() = stringResource(Res.string.list_hero_total_income)
+    val HERO_DISPOSABLE_INCOME_LABEL @Composable get() = stringResource(Res.string.list_hero_disposable_income)
+    val HERO_MISSING_INCOME_LABEL @Composable get() = stringResource(Res.string.list_hero_missing_income)
+    val HERO_TOTAL_CHARGES_LABEL @Composable get() = stringResource(Res.string.list_hero_total_charges)
+    val HERO_REMAINING_TO_PAY_LABEL @Composable get() = stringResource(Res.string.list_hero_remaining_to_pay)
 
     // Liste et Filtres
-    val TAB_ALL @Composable get() = stringResource(Res.string.dashboard_tab_all)
-    val TAB_PAID @Composable get() = stringResource(Res.string.dashboard_tab_paid)
-    val TAB_REMAINING @Composable get() = stringResource(Res.string.dashboard_tab_remaining)
+    val TAB_ALL @Composable get() = stringResource(Res.string.list_tab_all)
+    val TAB_PAID @Composable get() = stringResource(Res.string.list_tab_paid)
+    val TAB_REMAINING @Composable get() = stringResource(Res.string.list_tab_remaining)
 
     // États de la liste
-    val EMPTY_ALL @Composable get() = stringResource(Res.string.dashboard_empty_all)
-    val EMPTY_PAID @Composable get() = stringResource(Res.string.dashboard_empty_paid)
-    val EMPTY_REMAINING @Composable get() = stringResource(Res.string.dashboard_empty_remaining)
-    val EMPTY_STATE_DESC @Composable get() = stringResource(Res.string.dashboard_empty_state_desc)
+    val EMPTY_ALL @Composable get() = stringResource(Res.string.list_empty_all)
+    val EMPTY_PAID @Composable get() = stringResource(Res.string.list_empty_paid)
+    val EMPTY_REMAINING @Composable get() = stringResource(Res.string.list_empty_remaining)
+    val EMPTY_STATE_DESC @Composable get() = stringResource(Res.string.list_empty_state_desc)
 
-    val DEFAULT_NAME @Composable get() = stringResource(Res.string.dashboard_default_name)
-    val DUE_PREFIX @Composable get() = stringResource(Res.string.dashboard_due_prefix)
-    val MONTH_ALL @Composable get() = stringResource(Res.string.dashboard_month_all)
+    val DEFAULT_NAME @Composable get() = stringResource(Res.string.list_default_name)
+    val DUE_PREFIX @Composable get() = stringResource(Res.string.list_due_prefix)
+    val MONTH_ALL @Composable get() = stringResource(Res.string.list_month_all)
 
     // Noms des mois
-    val MONTH_1 @Composable get() = stringResource(Res.string.dashboard_month_1)
-    val MONTH_2 @Composable get() = stringResource(Res.string.dashboard_month_2)
-    val MONTH_3 @Composable get() = stringResource(Res.string.dashboard_month_3)
-    val MONTH_4 @Composable get() = stringResource(Res.string.dashboard_month_4)
-    val MONTH_5 @Composable get() = stringResource(Res.string.dashboard_month_5)
-    val MONTH_6 @Composable get() = stringResource(Res.string.dashboard_month_6)
-    val MONTH_7 @Composable get() = stringResource(Res.string.dashboard_month_7)
-    val MONTH_8 @Composable get() = stringResource(Res.string.dashboard_month_8)
-    val MONTH_9 @Composable get() = stringResource(Res.string.dashboard_month_9)
-    val MONTH_10 @Composable get() = stringResource(Res.string.dashboard_month_10)
-    val MONTH_11 @Composable get() = stringResource(Res.string.dashboard_month_11)
-    val MONTH_12 @Composable get() = stringResource(Res.string.dashboard_month_12)
+    val MONTH_1 @Composable get() = stringResource(Res.string.list_month_1)
+    val MONTH_2 @Composable get() = stringResource(Res.string.list_month_2)
+    val MONTH_3 @Composable get() = stringResource(Res.string.list_month_3)
+    val MONTH_4 @Composable get() = stringResource(Res.string.list_month_4)
+    val MONTH_5 @Composable get() = stringResource(Res.string.list_month_5)
+    val MONTH_6 @Composable get() = stringResource(Res.string.list_month_6)
+    val MONTH_7 @Composable get() = stringResource(Res.string.list_month_7)
+    val MONTH_8 @Composable get() = stringResource(Res.string.list_month_8)
+    val MONTH_9 @Composable get() = stringResource(Res.string.list_month_9)
+    val MONTH_10 @Composable get() = stringResource(Res.string.list_month_10)
+    val MONTH_11 @Composable get() = stringResource(Res.string.list_month_11)
+    val MONTH_12 @Composable get() = stringResource(Res.string.list_month_12)
 
     const val HERO_PAID_LABEL = "Des dépenses payées"
 }

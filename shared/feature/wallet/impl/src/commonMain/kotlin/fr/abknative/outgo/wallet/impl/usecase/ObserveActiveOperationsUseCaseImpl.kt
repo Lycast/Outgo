@@ -2,8 +2,8 @@ package fr.abknative.outgo.wallet.impl.usecase
 
 import fr.abknative.outgo.core.api.TimeProvider
 import fr.abknative.outgo.wallet.api.model.Operation
-import fr.abknative.outgo.wallet.api.model.dashboard.ProjectedOperation
 import fr.abknative.outgo.wallet.api.model.operation.Recurrence
+import fr.abknative.outgo.wallet.api.model.presenter.ProjectedOperation
 import fr.abknative.outgo.wallet.api.repository.OperationRepository
 import fr.abknative.outgo.wallet.api.usecase.ObserveActiveOperationsUseCase
 import kotlinx.coroutines.flow.Flow

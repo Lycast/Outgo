@@ -76,7 +76,7 @@ object IosStringsResourcesLoader {
 
     private suspend fun loadDashboard() = DashboardStrings(
         tooltipBalanceTitle = getString(Res.string.dashboard_tooltip_balance_title),
-        tooltipBalanceDesc = getString(Res.string.dashboard_tooltip_balance_desc),
+        tooltipBalanceDesc = getString(Res.string.list_tooltip_balance_desc),
         tooltipBalanceDueTitle = getString(Res.string.dashboard_tooltip_balance_due_title),
         tooltipBalanceDueDesc = getString(Res.string.dashboard_tooltip_balance_due_desc),
         heroTotalIncomeLabel = getString(Res.string.dashboard_hero_total_income),

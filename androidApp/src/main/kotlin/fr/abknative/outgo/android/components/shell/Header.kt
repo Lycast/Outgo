@@ -9,7 +9,6 @@ import androidx.compose.ui.text.style.TextAlign
 import fr.abknative.outgo.android.designsystem.foundation.AppTheme
 import fr.abknative.outgo.android.designsystem.foundation.toColor
 import fr.abknative.outgo.android.ui.CommonLabels
-import fr.abknative.outgo.core.api.nav.AppStep
 import fr.abknative.outgo.sync.api.model.SyncState
 
 /**
@@ -17,19 +16,15 @@ import fr.abknative.outgo.sync.api.model.SyncState
  * Displays the app title, sync status, and settings access.
  *
  * @param syncState Current synchronization state.
- * @param currentStep The current active navigation step.
  * @param isVertical Whether the header should be rendered as a side rail (vertical).
  * @param onSyncIconClick Action when sync icon is clicked.
- * @param onNavigate Navigation callback.
  */
 @Composable
 fun Header(
     modifier: Modifier = Modifier,
     syncState: SyncState,
-    currentStep: AppStep,
     isVertical: Boolean = false,
     onSyncIconClick: () -> Unit,
-    onNavigate: (AppStep) -> Unit
 ) {
     val containerModifier = if (isVertical) {
         modifier
@@ -49,11 +44,6 @@ fun Header(
         SyncIconLogic(
             syncState = syncState,
             onClick = onSyncIconClick
-        )
-
-        HeaderNavIcons(
-            currentStep = currentStep,
-            onNavigate = onNavigate
         )
     }
 

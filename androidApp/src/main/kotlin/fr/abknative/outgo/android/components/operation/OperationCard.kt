@@ -20,7 +20,7 @@ import fr.abknative.outgo.android.designsystem.atoms.CircleIcon
 import fr.abknative.outgo.android.designsystem.foundation.AppTheme
 import fr.abknative.outgo.android.designsystem.foundation.OutgoTheme
 import fr.abknative.outgo.android.designsystem.foundation.toColor
-import fr.abknative.outgo.android.ui.DashboardLabels
+import fr.abknative.outgo.android.ui.ListLabels
 import fr.abknative.outgo.android.ui.extensions.getUiColor
 import fr.abknative.outgo.android.ui.extensions.uiAmount
 import fr.abknative.outgo.android.ui.extensions.uiFrequencySummary
@@ -100,7 +100,7 @@ fun OperationCard(
                     // Date et récurrence
                     Row(horizontalArrangement = Arrangement.End) {
                         Text(
-                            text = "${DashboardLabels.DUE_PREFIX} $formattedDate • ",
+                            text = "${ListLabels.DUE_PREFIX} $formattedDate • ",
                             style = AppTheme.typo.caption,
                             color = AppTheme.colors.textSecondary.toColor()
                         )

@@ -22,8 +22,8 @@ import fr.abknative.outgo.android.designsystem.components.cards.GlassCard
 import fr.abknative.outgo.android.designsystem.foundation.AppTheme
 import fr.abknative.outgo.android.designsystem.foundation.OutgoTheme
 import fr.abknative.outgo.android.designsystem.foundation.toColor
-import fr.abknative.outgo.android.ui.DashboardLabels
-import fr.abknative.outgo.dashboard.api.OperationFilter
+import fr.abknative.outgo.android.ui.ListLabels
+import fr.abknative.outgo.list.api.OperationFilter
 
 /**
  * A tab-based selector to filter operations on the dashboard.
@@ -54,21 +54,21 @@ fun OperationFilterSelector(
     ) {
         FilterTabItem(
             modifier = Modifier.weight(1f),
-            label = DashboardLabels.TAB_ALL,
+            label = ListLabels.TAB_ALL,
             isSelected = selectedFilter == OperationFilter.ALL,
             onClick = { onFilterSelected(OperationFilter.ALL) }
         )
 
         FilterTabItem(
             modifier = Modifier.weight(1f),
-            label = DashboardLabels.TAB_PAID,
+            label = ListLabels.TAB_PAID,
             isSelected = selectedFilter == OperationFilter.PAST,
             onClick = { onFilterSelected(OperationFilter.PAST) }
         )
 
         FilterTabItem(
             modifier = Modifier.weight(1f),
-            label = DashboardLabels.TAB_REMAINING,
+            label = ListLabels.TAB_REMAINING,
             isSelected = selectedFilter == OperationFilter.REMAINING,
             onClick = { onFilterSelected(OperationFilter.REMAINING) }
         )

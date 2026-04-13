@@ -1,6 +1,6 @@
 package fr.abknative.outgo.wallet.api.usecase
 
-import fr.abknative.outgo.wallet.api.model.dashboard.ProjectedOperation
+import fr.abknative.outgo.wallet.api.model.presenter.ProjectedOperation
 import kotlinx.coroutines.flow.Flow
 
 /**

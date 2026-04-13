@@ -5,8 +5,9 @@ import kotlinx.coroutines.flow.StateFlow
 sealed interface AppStep {
     data object Splash : AppStep
     data object Onboarding : AppStep
-    data object Dashboard : AppStep
-    data object Analyse : AppStep
+    data object Month : AppStep
+    data object Year : AppStep
+    data object List : AppStep
     data object Settings : AppStep
     data object Login : AppStep
 }

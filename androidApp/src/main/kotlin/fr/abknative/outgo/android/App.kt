@@ -62,8 +62,7 @@ fun App() {
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
     val currentStep = navState.currentStep
-    val shouldShowHeader =
-        currentStep != AppStep.Login && currentStep != AppStep.Splash && currentStep != AppStep.Onboarding
+    val shouldShowHeader = currentStep != AppStep.Login && currentStep != AppStep.Splash && currentStep != AppStep.Onboarding
 
     BackHandler(enabled = navState.canGoBack) {
         coordinator.handleBack()
@@ -81,10 +80,8 @@ fun App() {
                     if (isLandscape && shouldShowHeader) {
                         AppGlobalHeader(
                             isVertical = true,
-                            currentStep = currentStep,
                             shellPresenter = shellPresenter,
                             shellState = shellState,
-                            coordinator = coordinator,
                             onShowSyncModal = { showSyncModal = true }
                         )
                         VerticalDivider(
@@ -102,10 +99,8 @@ fun App() {
                             if (!isLandscape && shouldShowHeader) {
                                 AppGlobalHeader(
                                     isVertical = false,
-                                    currentStep = currentStep,
                                     shellPresenter = shellPresenter,
                                     shellState = shellState,
-                                    coordinator = coordinator,
                                     onShowSyncModal = { showSyncModal = true }
                                 )
                             }
@@ -131,19 +126,16 @@ fun App() {
                                     AppStep.Onboarding -> OnboardingScreen(
                                         presenter = koinViewModel(),
                                         onLoginClicked = { coordinator.navigateTo(AppStep.Login) },
-                                        onOnboardingComplete = { coordinator.replaceRoot(AppStep.Dashboard) }
+                                        onOnboardingComplete = { coordinator.replaceRoot(AppStep.Month) }
                                     )
 
-                                    AppStep.Dashboard -> DashboardScreen(
-                                        presenter = koinViewModel(),
-                                        shellState = shellState,
-                                        onConsumeTrigger = { shellPresenter.onIntent(ShellIntent.ConsumeAddOperationTrigger) },
-                                        isPremium = shellState.isPremium
-                                    )
+                                    AppStep.Month -> {
+                                        MonthScreen()
+                                    }
 
-                                    AppStep.Analyse -> {
+                                    AppStep.Year -> {
                                         if (shellState.isPremium) {
-                                            AnalyseScreen()
+                                            YearScreen()
                                         } else {
                                             PremiumShowcaseScreen(
                                                 onNotifyMeClick = {
@@ -152,6 +144,13 @@ fun App() {
                                             )
                                         }
                                     }
+
+                                    AppStep.List -> ListScreen(
+                                        presenter = koinViewModel(),
+                                        shellState = shellState,
+                                        onConsumeTrigger = { shellPresenter.onIntent(ShellIntent.ConsumeAddOperationTrigger) },
+                                        isPremium = shellState.isPremium
+                                    )
 
                                     AppStep.Settings -> SettingsScreen(
                                         presenter = koinViewModel(),
@@ -180,10 +179,10 @@ fun App() {
                                     onNavigate = { step -> coordinator.navigateTo(step) },
                                     onTeasingClick = { showPremiumTeasingModal = true },
                                     onAddClick = {
-                                        if (currentStep == AppStep.Dashboard) {
+                                        if (currentStep == AppStep.List) {
                                             shellPresenter.onIntent(ShellIntent.TriggerAddOperation)
                                         } else {
-                                            coordinator.navigateTo(AppStep.Dashboard)
+                                            coordinator.navigateTo(AppStep.List)
                                             shellPresenter.onIntent(ShellIntent.TriggerAddOperation)
                                         }
                                     }

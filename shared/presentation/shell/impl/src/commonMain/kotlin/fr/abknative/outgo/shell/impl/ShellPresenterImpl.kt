@@ -66,7 +66,7 @@ internal class ShellPresenterImpl(
                     }
                 } else {
                     if (currentStep == AppStep.Splash || currentStep == AppStep.Onboarding) {
-                        coordinator.replaceRoot(AppStep.Dashboard)
+                        coordinator.replaceRoot(AppStep.Month)
                     }
                 }
             }

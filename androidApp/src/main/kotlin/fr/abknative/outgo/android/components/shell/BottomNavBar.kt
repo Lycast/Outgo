@@ -36,11 +36,15 @@ fun BottomNavBar(
 
     val backgroundColor = AppTheme.colors.surface100.toColor()
 
-    val navItems = remember { listOf(AppStep.Dashboard, null, AppStep.Analyse) }
+    val navItems = remember {
+        listOf(AppStep.Month, AppStep.Year, null, AppStep.List, AppStep.Settings)
+    }
     val selectedIndex = remember(currentStep) {
         when (currentStep) {
-            AppStep.Dashboard -> 0
-            AppStep.Analyse -> 2
+            AppStep.Month -> 0
+            AppStep.Year -> 1
+            AppStep.List -> 3
+            AppStep.Settings -> 4
             else -> -1
         }
     }
@@ -97,8 +101,11 @@ fun BottomNavBar(
                                     interactionSource = remember { MutableInteractionSource() },
                                     indication = null,
                                     onClick = {
-                                        if (step == null) onAddClick()
-                                        else onNavigate(step)
+                                        if (step == null) {
+                                            onAddClick()
+                                        } else {
+                                            onNavigate(step)
+                                        }
                                     }
                                 ),
                             contentAlignment = Alignment.Center
@@ -107,7 +114,7 @@ fun BottomNavBar(
                                 BottomNavIconContent(
                                     step = step,
                                     isSelected = index == selectedIndex,
-                                    isLocked = step == AppStep.Analyse && !isPremium
+                                    isLocked = step == AppStep.Year && !isPremium
                                 )
                             }
                         }

@@ -1,9 +1,9 @@
 package fr.abknative.outgo.wallet.impl.usecase.engine
 
 import fr.abknative.outgo.core.api.TimeProvider
-import fr.abknative.outgo.wallet.api.model.dashboard.DashboardData
-import fr.abknative.outgo.wallet.api.model.dashboard.ProjectedOperation
 import fr.abknative.outgo.wallet.api.model.operation.OperationType
+import fr.abknative.outgo.wallet.api.model.presenter.PeriodStats
+import fr.abknative.outgo.wallet.api.model.presenter.ProjectedOperation
 
 internal class SimpleSumEngine(
     private val timeProvider: TimeProvider
@@ -13,7 +13,7 @@ internal class SimpleSumEngine(
         operations: List<ProjectedOperation>,
         currentMonth: Int,
         currentYear: Int
-    ): DashboardData {
+    ): PeriodStats {
         val realCurrentMonth = timeProvider.monthValue()
         val realCurrentYear = timeProvider.yearValue()
 
@@ -56,7 +56,7 @@ internal class SimpleSumEngine(
 
         val disposableIncome = totalIncome - totalExpenses
 
-        return DashboardData(
+        return PeriodStats(
             currentBalanceInCents = disposableIncome,
             totalExpensesInCents = totalExpenses,
             remainingToPayInCents = remainingToPay,

@@ -17,7 +17,7 @@ import fr.abknative.outgo.android.designsystem.foundation.toColor
 import fr.abknative.outgo.android.ui.AccessibilityLabels
 import fr.abknative.outgo.android.ui.states.OperationFormEvent
 import fr.abknative.outgo.android.ui.states.OperationFormState
-import fr.abknative.outgo.dashboard.api.DashboardIntent
+import fr.abknative.outgo.list.api.ListIntent
 import kotlinx.coroutines.launch
 
 /**
@@ -41,7 +41,7 @@ fun OperationFormSheet(
     isPremium: Boolean,
     onEvent: (OperationFormEvent) -> Unit,
     onDismiss: () -> Unit,
-    onSave: (DashboardIntent.SaveOperation) -> Unit,
+    onSave: (ListIntent.SaveOperation) -> Unit,
     onDeleteRequest: () -> Unit,
     onDuplicateRequest: () -> Unit
 ) {
@@ -124,7 +124,7 @@ fun OperationFormSheet(
                     isPremium = isPremium,
                     onCancel = { closeSheet() },
                     onSave = {
-                        val intent = DashboardIntent.SaveOperation(
+                        val intent = ListIntent.SaveOperation(
                             id = formState.operationId,
                             walletId = formState.walletId,
                             name = formState.nameBuffer,

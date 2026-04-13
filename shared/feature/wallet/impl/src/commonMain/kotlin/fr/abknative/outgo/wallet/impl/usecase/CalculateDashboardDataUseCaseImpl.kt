@@ -1,8 +1,8 @@
 package fr.abknative.outgo.wallet.impl.usecase
 
 import fr.abknative.outgo.subscription.api.FeatureManager
-import fr.abknative.outgo.wallet.api.model.dashboard.DashboardData
-import fr.abknative.outgo.wallet.api.model.dashboard.ProjectedOperation
+import fr.abknative.outgo.wallet.api.model.presenter.PeriodStats
+import fr.abknative.outgo.wallet.api.model.presenter.ProjectedOperation
 import fr.abknative.outgo.wallet.api.usecase.CalculateDashboardDataUseCase
 import fr.abknative.outgo.wallet.impl.usecase.engine.SimpleSumEngine
 import fr.abknative.outgo.wallet.impl.usecase.engine.TimelineEngine
@@ -17,7 +17,7 @@ internal class CalculateDashboardDataUseCaseImpl(
         operations: List<ProjectedOperation>,
         currentMonth: Int,
         currentYear: Int
-    ): DashboardData {
+    ): PeriodStats {
 
         val isPremiumUser = featureManager.isPremium()
         val engine = if (isPremiumUser) { timelineEngine } else { simpleSumEngine }
