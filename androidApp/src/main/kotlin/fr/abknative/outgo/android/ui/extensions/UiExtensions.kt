@@ -43,10 +43,10 @@ val Long.uiAmount: String
 @Composable
 fun Recurrence.getUiColor(): Color {
     return when (this) {
-        Recurrence.YEARLY -> AppTheme.colors.textSecondary.toColor().copy(alpha = 0.5f)
-        Recurrence.MONTHLY -> AppTheme.colors.primary.toColor().copy(alpha = 0.5f)
-        Recurrence.WEEKLY -> AppTheme.colors.secondary.toColor().copy(alpha = 0.5f)
-        Recurrence.UNIQUE -> AppTheme.colors.tertiary.toColor().copy(alpha = 0.5f)
+        Recurrence.YEARLY -> AppTheme.colors.textSecondary.toColor()
+        Recurrence.MONTHLY -> AppTheme.colors.primary.toColor()
+        Recurrence.WEEKLY -> AppTheme.colors.secondary.toColor()
+        Recurrence.UNIQUE -> AppTheme.colors.tertiary.toColor()
         else -> AppTheme.colors.surface200.toColor()
     }
 }
@@ -60,10 +60,10 @@ val Operation.uiTitle: String
     @Composable get() = this.name.ifBlank { ListLabels.DEFAULT_NAME }
 
 /**
- * Returns a summarized string representation of the operation's frequency.
+ * Returns the localized label for a [Recurrence] type.
  */
-val Operation.uiFrequencySummary: String
-    @Composable get() = when (this.recurrence) {
+val Recurrence.uiLabel: String
+    @Composable get() = when (this) {
         Recurrence.UNIQUE -> FormLabels.CYCLE_UNIQUE
         Recurrence.WEEKLY -> FormLabels.CYCLE_WEEKLY
         Recurrence.MONTHLY -> FormLabels.CYCLE_MONTHLY

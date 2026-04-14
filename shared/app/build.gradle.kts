@@ -32,6 +32,7 @@ kotlin {
             export(projects.shared.presentation.month.api)
             export(projects.shared.presentation.login.api)
             export(projects.shared.presentation.onboarding.api)
+            export(projects.shared.presentation.operation.api)
             export(projects.shared.presentation.settings.api)
             export(projects.shared.presentation.shell.api)
         }
@@ -61,6 +62,7 @@ kotlin {
             implementation(projects.shared.presentation.month.impl)
             implementation(projects.shared.presentation.login.impl)
             implementation(projects.shared.presentation.onboarding.impl)
+            implementation(projects.shared.presentation.operation.impl)
             implementation(projects.shared.presentation.settings.impl)
             implementation(projects.shared.presentation.shell.impl)
             implementation(projects.shared.presentation.year.impl)
@@ -77,6 +79,7 @@ kotlin {
             api(projects.shared.presentation.month.api)
             api(projects.shared.presentation.login.api)
             api(projects.shared.presentation.onboarding.api)
+            api(projects.shared.presentation.operation.api)
             api(projects.shared.presentation.settings.api)
             api(projects.shared.presentation.shell.api)
             api(projects.shared.presentation.year.api)

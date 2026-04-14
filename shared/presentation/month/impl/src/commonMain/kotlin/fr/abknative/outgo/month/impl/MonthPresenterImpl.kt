@@ -4,14 +4,15 @@ import androidx.lifecycle.viewModelScope
 import fr.abknative.outgo.core.api.TimeProvider
 import fr.abknative.outgo.core.api.extensions.safeLaunch
 import fr.abknative.outgo.core.api.logs.AppException
+import fr.abknative.outgo.core.api.logs.Result
 import fr.abknative.outgo.month.api.MonthIntent
 import fr.abknative.outgo.month.api.MonthPresenter
 import fr.abknative.outgo.month.api.MonthState
-import fr.abknative.outgo.month.api.OperationFilter
 import fr.abknative.outgo.subscription.api.FeatureManager
 import fr.abknative.outgo.wallet.api.usecase.CalculateDashboardDataUseCase
 import fr.abknative.outgo.wallet.api.usecase.ObserveActiveOperationsUseCase
 import fr.abknative.outgo.wallet.api.usecase.ObserveWalletsUseCase
+import fr.abknative.outgo.wallet.api.usecase.SaveWalletUseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 
@@ -19,6 +20,7 @@ internal class MonthPresenterImpl(
     private val observeActiveOperations: ObserveActiveOperationsUseCase,
     private val observeWallets: ObserveWalletsUseCase,
     private val calculateDashboardData: CalculateDashboardDataUseCase,
+    private val saveWallet: SaveWalletUseCase,
     private val featureManager: FeatureManager,
     private val mapper: MonthStateMapper,
     private val timeProvider: TimeProvider
@@ -52,12 +54,10 @@ internal class MonthPresenterImpl(
                 .filter { it.isNotEmpty() }
                 .flatMapLatest { wallets ->
                     combine(selectedMonthFlow, selectedYearFlow, isPremiumFlow) { m, y, p ->
-                        // p is the Boolean from isPremiumFlow
                         MonthPipelineInput(
                             wallet = wallets.first(),
                             month = m,
                             year = y,
-                            filter = OperationFilter.ALL,
                             isPremium = p
                         )
                     }
@@ -81,14 +81,26 @@ internal class MonthPresenterImpl(
 
     override fun onIntent(intent: MonthIntent) {
         when (intent) {
+            is MonthIntent.RenameWallet -> handleRenameWallet(intent)
             is MonthIntent.NavigateMonth -> handleNavigateMonth(intent.isNext)
             is MonthIntent.DismissError -> _state.update { it.copy(error = null) }
         }
     }
 
+    private fun handleRenameWallet(intent: MonthIntent.RenameWallet) {
+        viewModelScope.safeLaunch(onError = onCoroutineError) {
+            _state.update { it.copy(isLoading = true) }
+            val result = saveWallet(id = intent.id, name = intent.newName)
+
+            if (result is Result.Error) {
+                _state.update { it.copy(isLoading = false, error = result.error) }
+            } else {
+                _state.update { it.copy(isLoading = false) }
+            }
+        }
+    }
+
     private fun handleNavigateMonth(isNext: Boolean) {
-        // 🛡️ BLOCAGE PREMIUM : Si gratuit, on ignore l'action (le bouton UI devrait être grisé/invisible de toute façon)
-        if (!isPremiumFlow.value) return
 
         val currentMonth = selectedMonthFlow.value
         val currentYear = selectedYearFlow.value

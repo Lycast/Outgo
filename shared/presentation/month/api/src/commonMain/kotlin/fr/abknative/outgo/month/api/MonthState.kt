@@ -10,6 +10,7 @@ import fr.abknative.outgo.wallet.api.model.presenter.ProjectedOperation
  */
 data class MonthState(
     val isLoading: Boolean = false,
+    val activeWalletId: String? = null,
     val activeWalletName: String = "",
 
     // --- Temporal Logic ---
@@ -30,15 +31,3 @@ data class MonthState(
     // --- Global UI State ---
     val error: AppException? = null
 )
-
-/**
- * Defines the available filtering strategies for the dashboard operation list.
- */
-enum class OperationFilter {
-    /** Show all operations for the selected period regardless of their date. */
-    ALL,
-    /** Show only operations that occurred before the current day. */
-    PAST,
-    /** Show only operations that are yet to occur or are scheduled for today. */
-    REMAINING
-}

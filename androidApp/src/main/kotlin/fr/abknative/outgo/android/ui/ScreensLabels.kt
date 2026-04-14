@@ -116,6 +116,8 @@ object ListLabels {
     val MONTH_12 @Composable get() = stringResource(Res.string.list_month_12)
 
     const val HERO_PAID_LABEL = "Des dépenses payées"
+    const val TOOLTIP_TOTAL_INCOME_TITLE = "Votre budget"
+    const val TOOLTIP_TOTAL_INCOME_DESC = "C'est le cumule de votre entrée d'argent pour le mois"
 }
 
 object SettingsLabels {

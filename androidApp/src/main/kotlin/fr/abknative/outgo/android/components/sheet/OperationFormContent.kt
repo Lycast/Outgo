@@ -27,29 +27,23 @@ import fr.abknative.outgo.android.designsystem.foundation.AppTheme
 import fr.abknative.outgo.android.designsystem.foundation.toColor
 import fr.abknative.outgo.android.ui.CommonLabels
 import fr.abknative.outgo.android.ui.FormLabels
-import fr.abknative.outgo.android.ui.states.OperationFormEvent
-import fr.abknative.outgo.android.ui.states.OperationFormState
+import fr.abknative.outgo.android.ui.helpers.rememberAmountInputManager
+import fr.abknative.outgo.android.ui.helpers.rememberDateInputManager
+import fr.abknative.outgo.android.ui.helpers.rememberNameInputManager
+import fr.abknative.outgo.core.api.TimeProvider
+import fr.abknative.outgo.operation.api.OperationIntent
+import fr.abknative.outgo.operation.api.OperationState
+import org.koin.compose.koinInject
 
-/**
- * Main content for the Operation Form Sheet.
- * Orchestrates the various Design System inputs to provide a consistent data entry experience.
- *
- * @param state The current UI state of the form.
- * @param isPremium Whether the user has access to premium fields (like Type Selection).
- * @param onEvent Callback to propagate user interactions back to the presenter.
- * @param onCancel Callback invoked when the user wants to discard changes.
- * @param onSave Callback invoked when the user submits the form.
- */
 @Composable
 fun OperationFormContent(
     modifier: Modifier = Modifier,
-    state: OperationFormState,
+    state: OperationState,
     isPremium: Boolean,
-    onEvent: (OperationFormEvent) -> Unit,
+    onIntent: (OperationIntent) -> Unit,
     onCancel: () -> Unit,
     onSave: () -> Unit,
 ) {
-    // Prevents the parent BottomSheet from intercepting scrolls when the form is long
     val lockSheetConnection = remember {
         object : NestedScrollConnection {
             override fun onPostScroll(consumed: Offset, available: Offset, source: NestedScrollSource): Offset =
@@ -57,7 +51,26 @@ fun OperationFormContent(
         }
     }
 
+    // --- Configuration & Managers ---
     val isEditMode = state.operationId != null
+    val timeProvider = koinInject<TimeProvider>()
+
+    val nameManager = rememberNameInputManager(
+        initialValue = state.name,
+        onValidChange = { onIntent(OperationIntent.UpdateName(it)) }
+    )
+
+    val amountManager = rememberAmountInputManager(
+        initialValue = state.amount,
+        onValidChange = { onIntent(OperationIntent.UpdateAmount(it)) }
+    )
+
+    val dateManager = rememberDateInputManager(
+        initialDate = state.date,
+        timeProvider = timeProvider,
+        onValidDateDerived = { onIntent(OperationIntent.UpdateDate(it)) }
+    )
+
 
     Column(
         modifier = modifier
@@ -78,8 +91,8 @@ fun OperationFormContent(
 
         // --- Field: Name ---
         AppTextField(
-            value = state.nameBuffer,
-            onValueChange = { onEvent(OperationFormEvent.UpdateName(it)) },
+            value = state.name,
+            onValueChange = { nameManager.onTextChange(it) },
             label = FormLabels.FIELD_NAME,
             placeholder = FormLabels.FIELD_PLACE_HOLDER_NAME,
             keyboardOptions = KeyboardOptions(
@@ -90,15 +103,8 @@ fun OperationFormContent(
 
         // --- Field: Amount ---
         AppTextField(
-            value = state.amountBuffer,
-            onValueChange = { newValue ->
-                val sanitized = newValue.replace(',', '.')
-
-                if (sanitized.length <= 10 &&
-                    (sanitized.isEmpty() || (sanitized.count { it == '.' } <= 1 && sanitized.all { it.isDigit() || it == '.' }))) {
-                    onEvent(OperationFormEvent.UpdateAmount(sanitized))
-                }
-            },
+            value = amountManager.text,
+            onValueChange = { amountManager.onTextChange(it) },
             label = FormLabels.FIELD_AMOUNT,
             placeholder = FormLabels.FIELD_PLACE_HOLDER_AMOUNT,
             keyboardOptions = KeyboardOptions(
@@ -116,12 +122,12 @@ fun OperationFormContent(
 
         // --- Field: Date ---
         FormattedDateInput(
-            value = state.dateBuffer,
-            onValueChange = { onEvent(OperationFormEvent.UpdateDateString(it)) },
-            onDateSelected = { millis -> onEvent(OperationFormEvent.UpdateDateMillis(millis)) },
-            initialDateMillis = state.startDate,
+            value = dateManager.textBuffer,
+            onValueChange = { dateManager.onTextChange(it) },
+            onDateSelected = { dateManager.onExternalDateSelected(it) },
+            initialDateMillis = state.date,
             label = FormLabels.FIELD_DATE_LABEL,
-            isError = state.isDateError,
+            isError = dateManager.isError,
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Number,
                 imeAction = if (isPremium) ImeAction.Next else ImeAction.Done
@@ -130,15 +136,15 @@ fun OperationFormContent(
 
         // --- Field: Recurrence ---
         RecurrenceSelector(
-            selectedRecurrence = state.recurrenceSelection,
-            onRecurrenceChanged = { onEvent(OperationFormEvent.UpdateRecurrence(it)) }
+            selectedRecurrence = state.recurrence,
+            onRecurrenceChanged = { onIntent(OperationIntent.UpdateRecurrence(it)) }
         )
 
         // --- Field: Type (Premium Only) ---
         if (isPremium) {
             OperationTypeSelector(
-                selectedType = state.typeSelection,
-                onTypeChanged = { onEvent(OperationFormEvent.UpdateType(it)) }
+                selectedType = state.type,
+                onTypeChanged = { onIntent(OperationIntent.UpdateType(it)) }
             )
         }
 
@@ -149,7 +155,6 @@ fun OperationFormContent(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Cancel Action
             Box(modifier = Modifier.weight(1f)) {
                 AppTextButton(
                     onClick = onCancel,
@@ -161,11 +166,10 @@ fun OperationFormContent(
 
             Spacer(modifier = Modifier.width(AppTheme.dimens.medium))
 
-            // Save Action
             Box(modifier = Modifier.weight(1f)) {
                 AppButton(
                     onClick = onSave,
-                    enabled = state.isValid,
+                    enabled = state.isFormValid && !dateManager.isError,
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(
@@ -176,7 +180,6 @@ fun OperationFormContent(
             }
         }
 
-        // Safety spacer for bottom navigation bars or keyboards
         Spacer(modifier = Modifier.height(AppTheme.dimens.large))
     }
 }

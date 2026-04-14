@@ -58,6 +58,8 @@ internal class ShellPresenterImpl(
     private fun startGlobalNavigationLogic() {
         viewModelScope.safeLaunch(onError = onCoroutineError) {
             observeWallets().collect { wallets ->
+
+                _state.update { it.copy(activeWalletId = wallets.firstOrNull()?.id) }
                 val currentStep = coordinator.state.value.currentStep
 
                 if (wallets.isEmpty()) {
@@ -75,11 +77,29 @@ internal class ShellPresenterImpl(
 
     override fun onIntent(intent: ShellIntent) {
         when (intent) {
-            is ShellIntent.TriggerAddOperation -> {
-                _state.update { it.copy(showAddOperationTrigger = true) }
+            is ShellIntent.OpenOperationForm -> {
+                _state.update {
+                    it.copy(
+                        isOperationFormVisible = true,
+                        operationIdToEdit = intent.operationId,
+                        initialName = intent.name,
+                        initialAmount = intent.amount,
+                        initialType = intent.type,
+                        initialRecurrence = intent.recurrence,
+                        initialStartDate = intent.startDate,
+                        initialEndDate = intent.endDate
+                    )
+                }
             }
-            is ShellIntent.ConsumeAddOperationTrigger -> {
-                _state.update { it.copy(showAddOperationTrigger = false) }
+            is ShellIntent.CloseOperationForm -> {
+                _state.update { it.copy(
+                    isOperationFormVisible = false,
+                    operationIdToEdit = null,
+                    initialName = "",
+                    initialAmount = "",
+                    initialStartDate = null,
+                    initialEndDate = null
+                ) }
             }
             is ShellIntent.RefreshSync -> handleRefreshSync()
             is ShellIntent.DismissError -> _state.update { it.copy(error = null) }

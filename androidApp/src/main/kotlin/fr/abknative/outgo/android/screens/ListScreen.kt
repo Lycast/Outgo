@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -16,14 +15,12 @@ import fr.abknative.outgo.android.designsystem.components.feedback.AppSnackbar
 import fr.abknative.outgo.android.designsystem.components.selection.MonthTimeSelector
 import fr.abknative.outgo.android.designsystem.foundation.AppTheme
 import fr.abknative.outgo.android.ui.extensions.getMonthName
-import fr.abknative.outgo.android.ui.states.rememberOperationFormState
 import fr.abknative.outgo.android.ui.toUIString
 import fr.abknative.outgo.core.api.TimeProvider
 import fr.abknative.outgo.list.api.ListIntent
 import fr.abknative.outgo.list.api.ListPresenter
-import fr.abknative.outgo.shell.api.ShellState
-import fr.abknative.outgo.wallet.api.model.operation.OperationType
-import fr.abknative.outgo.wallet.api.model.operation.Recurrence
+import fr.abknative.outgo.shell.api.ShellIntent
+import fr.abknative.outgo.shell.api.ShellPresenter
 import fr.abknative.outgo.wallet.api.model.presenter.ProjectedOperation
 import org.koin.compose.koinInject
 
@@ -31,9 +28,7 @@ import org.koin.compose.koinInject
 @Composable
 fun ListScreen(
     presenter: ListPresenter,
-    shellState: ShellState,
-    onConsumeTrigger: () -> Unit,
-    isPremium: Boolean,
+    shellPresenter: ShellPresenter,
     modifier: Modifier = Modifier
 ) {
     val state by presenter.state.collectAsStateWithLifecycle()
@@ -41,22 +36,8 @@ fun ListScreen(
 
     // Local UI states strictly for Dialogs & Sheets
     var operationToDelete by remember { mutableStateOf<ProjectedOperation?>(null) }
-    var showBudgetDialog by remember { mutableStateOf(false) }
-    var showFormSheet by remember { mutableStateOf(false) }
-    var selectedOperation by remember { mutableStateOf<ProjectedOperation?>(null) }
 
     val snackbarHostState = remember { SnackbarHostState() }
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-
-    val formState = rememberOperationFormState(
-        operationId = selectedOperation?.operation?.id,
-        walletId = state.activeWalletId ?: "",
-        timeProvider = timeProvider,
-        initialName = selectedOperation?.operation?.name ?: "",
-        initialAmount = selectedOperation?.operation?.amountInCents?.toBigDecimal()?.movePointLeft(2)?.toPlainString() ?: "",
-        initialType = selectedOperation?.operation?.type ?: OperationType.EXPENSE,
-        initialRecurrence = selectedOperation?.operation?.recurrence ?: Recurrence.MONTHLY,
-    )
 
     val currentError = state.error
     val errorMessage = currentError?.toUIString()
@@ -70,14 +51,6 @@ fun ListScreen(
         }
     }
 
-    LaunchedEffect(shellState.showAddOperationTrigger) {
-        if (shellState.showAddOperationTrigger) {
-            selectedOperation = null
-            showFormSheet = true
-            onConsumeTrigger()
-        }
-    }
-
     Box(
         modifier = modifier.fillMaxSize()
     ) {
@@ -85,8 +58,7 @@ fun ListScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = AppTheme.dimens.medium)
-                .padding(horizontal = AppTheme.dimens.large)
+                .padding(horizontal = AppTheme.dimens.medium)
         ) {
             // 1. Le Sélecteur de temps
             MonthTimeSelector(
@@ -111,8 +83,23 @@ fun ListScreen(
                 currentFilter = state.currentFilter,
                 onDeleteRequest = { projectedOp -> operationToDelete = projectedOp },
                 onEdit = { outgoing ->
-                    selectedOperation = outgoing
-                    showFormSheet = true
+                    val op = outgoing.operation
+                    // Conversion du montant pour l'affichage (centimes -> String "12.50")
+                    val formattedAmount = op.amountInCents.toBigDecimal()
+                        .movePointLeft(2)
+                        .toPlainString()
+
+                    shellPresenter.onIntent(
+                        ShellIntent.OpenOperationForm(
+                            operationId = op.id,
+                            name = op.name,
+                            amount = formattedAmount,
+                            type = op.type,
+                            recurrence = op.recurrence,
+                            startDate = outgoing.projectedDate,
+                            endDate = outgoing.projectedDate,
+                        )
+                    )
                 },
                 modifier = Modifier.weight(1f)
             )
@@ -125,20 +112,8 @@ fun ListScreen(
 
     // --- MODALS ---
     ListScreenModals(
-        state = state,
-        showBudgetDialog = showBudgetDialog,
-        showFormSheet = showFormSheet,
         operationToDelete = operationToDelete,
-        selectedOperation = selectedOperation,
-        formState = formState,
-        sheetState = sheetState,
-        onDismissBudget = { showBudgetDialog = false },
-        onDismissForm = { showFormSheet = false },
         onDismissDelete = { operationToDelete = null },
-        onOperationToDeleteChange = { operationToDelete = it },
-        onSelectedOperationChange = { selectedOperation = it },
         presenter = presenter,
-        timeProvider = timeProvider,
-        isPremium = isPremium
     )
 }

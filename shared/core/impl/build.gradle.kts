@@ -22,11 +22,14 @@ kotlin {
 
             implementation(libs.koin.core)
 
+            implementation(libs.multiplatform.settings)
+
             implementation(libs.androidx.lifecycle.viewmodel)
         }
 
         androidMain.dependencies {
             implementation(libs.ktor.client.okhttp)
+            implementation(libs.androidx.security.crypto)
         }
 
         iosMain.dependencies {

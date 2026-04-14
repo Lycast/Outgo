@@ -1,17 +1,24 @@
 package fr.abknative.outgo.shell.api
 
+import fr.abknative.outgo.core.api.EpochMillis
+import fr.abknative.outgo.wallet.api.model.operation.OperationType
+import fr.abknative.outgo.wallet.api.model.operation.Recurrence
+
 sealed interface ShellIntent {
 
-    /**
-     * Intent to signal that the user wants to add a new operation from a global component.
-     */
-    object TriggerAddOperation : ShellIntent
+    /** Demande l'ouverture du formulaire global. Si null, c'est une création. */
+    data class OpenOperationForm(
+        val operationId: String? = null,
+        val name: String = "",
+        val amount: String = "",
+        val type: OperationType = OperationType.EXPENSE,
+        val recurrence: Recurrence = Recurrence.UNIQUE,
+        val startDate: EpochMillis? = null,
+        val endDate: EpochMillis? = null
+    ) : ShellIntent
 
-    /**
-     * Intent to reset the add operation trigger once it has been handled by the destination screen.
-     * This prevents the modal from re-opening on configuration changes or back navigation.
-     */
-    object ConsumeAddOperationTrigger : ShellIntent
+    /** Ferme le formulaire global */
+    data object CloseOperationForm : ShellIntent
 
     /** Intent to manually trigger a cloud synchronization from the global header. */
     object RefreshSync : ShellIntent

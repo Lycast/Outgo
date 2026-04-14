@@ -1,12 +1,9 @@
 package fr.abknative.outgo.android.components.shell
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -44,12 +41,12 @@ fun BottomNavIconContent(
             // --- Les Lettres (Gauche) ---
             AppStep.Month -> Text(
                 text = CommonLabels.TAB_MONTH_INITIAL,
-                style = AppTheme.typo.title.copy(fontWeight = FontWeight.Medium),
+                style = AppTheme.typo.title.copy(fontWeight = FontWeight.SemiBold),
                 color = tint
             )
             AppStep.Year -> Text(
                 text = CommonLabels.TAB_YEAR_INITIAL,
-                style = AppTheme.typo.title.copy(fontWeight = FontWeight.Medium),
+                style = AppTheme.typo.title.copy(fontWeight = FontWeight.SemiBold),
                 color = tint
             )
             // --- Les Icônes (Droite) ---
@@ -76,15 +73,14 @@ fun BottomNavIconContent(
                     modifier = Modifier
                         .offset(x = 8.dp)
                         .size(14.dp)
-                        .clip(CircleShape)
-                        .background(AppTheme.colors.tertiary.toColor()),
+                        .clip(CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
-                        imageVector = Icons.Default.Lock,
+                        painter = painterResource(id = R.drawable.crown_duotone),
                         contentDescription = null,
-                        tint = AppTheme.colors.textOnBrand.toColor(),
-                        modifier = Modifier.size(8.dp)
+                        tint = AppTheme.colors.tertiary.toColor(),
+                        modifier = Modifier.size(12.dp)
                     )
                 }
             }

@@ -19,7 +19,7 @@ internal class FeatureManagerImpl(
     private val _isPremiumFlow = MutableStateFlow(checkPremiumInternal())
     override val isPremiumFlow: StateFlow<Boolean> = _isPremiumFlow.asStateFlow()
 
-    override fun isPremium(): Boolean = checkPremiumInternal()
+    override fun isPremium(): Boolean = checkPremiumInternal() // todo ici est défini le premium
 
     override fun updatePremiumStatus(untilTimestamp: Long) {
         storage.putLong(KEY_PREMIUM_UNTIL, untilTimestamp)

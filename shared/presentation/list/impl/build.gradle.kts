@@ -13,6 +13,7 @@ kotlin {
             // Dépendances vers les couches inférieures
             implementation(projects.shared.core.api)
             implementation(projects.shared.feature.wallet.api)
+            implementation(projects.shared.feature.subscription.api)
 
 
             // Outils de présentation et d'injection

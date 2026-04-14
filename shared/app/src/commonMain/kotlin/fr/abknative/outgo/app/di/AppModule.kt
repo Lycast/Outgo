@@ -7,6 +7,7 @@ import fr.abknative.outgo.list.impl.di.listPresentationModule
 import fr.abknative.outgo.login.impl.di.loginPresentationModule
 import fr.abknative.outgo.month.impl.di.monthPresentationModule
 import fr.abknative.outgo.onboarding.impl.di.onboardingPresentationModule
+import fr.abknative.outgo.operation.impl.di.operationPresentationModule
 import fr.abknative.outgo.settings.impl.di.settingsPresentationModule
 import fr.abknative.outgo.shell.impl.di.shellPresentationModule
 import fr.abknative.outgo.subscription.impl.di.subscriptionModule
@@ -39,6 +40,7 @@ fun initKoin(appDeclaration: KoinAppDeclaration = {}) {
             monthPresentationModule,
             loginPresentationModule,
             onboardingPresentationModule,
+            operationPresentationModule,
             settingsPresentationModule,
             shellPresentationModule
         )

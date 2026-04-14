@@ -1,0 +1,36 @@
+package fr.abknative.outgo.operation.api
+
+import fr.abknative.outgo.core.api.EpochMillis
+import fr.abknative.outgo.wallet.api.model.operation.OperationType
+import fr.abknative.outgo.wallet.api.model.operation.Recurrence
+
+/**
+ * Represents user actions triggered from the Operation Form UI.
+ */
+sealed interface OperationIntent {
+    /** * Initializes the form. Called when the BottomSheet opens.
+     * Passes existing data if editing, or default data if creating.
+     */
+    data class Init(
+        val walletId: String,
+        val operationId: String? = null,
+        val initialName: String = "",
+        val initialAmount: String = "",
+        val initialType: OperationType = OperationType.EXPENSE,
+        val initialRecurrence: Recurrence = Recurrence.UNIQUE,
+        val initialDate: EpochMillis? = null
+    ) : OperationIntent
+
+    // --- User Inputs ---
+    data class UpdateName(val name: String) : OperationIntent
+    data class UpdateAmount(val amount: String) : OperationIntent
+    data class UpdateType(val type: OperationType) : OperationIntent
+    data class UpdateRecurrence(val recurrence: Recurrence) : OperationIntent
+    data class UpdateDate(val date: EpochMillis) : OperationIntent
+
+    // --- Actions ---
+    /** Triggers the validation and save process. */
+    object Save : OperationIntent
+    /** Clears the current error from the UI. */
+    object DismissError : OperationIntent
+}

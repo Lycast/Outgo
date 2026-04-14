@@ -23,7 +23,7 @@ import fr.abknative.outgo.android.designsystem.foundation.toColor
 import fr.abknative.outgo.android.ui.ListLabels
 import fr.abknative.outgo.android.ui.extensions.getUiColor
 import fr.abknative.outgo.android.ui.extensions.uiAmount
-import fr.abknative.outgo.android.ui.extensions.uiFrequencySummary
+import fr.abknative.outgo.android.ui.extensions.uiLabel
 import fr.abknative.outgo.android.ui.extensions.uiTitle
 import fr.abknative.outgo.core.api.model.SyncStatus
 import fr.abknative.outgo.wallet.api.model.Operation
@@ -105,7 +105,7 @@ fun OperationCard(
                             color = AppTheme.colors.textSecondary.toColor()
                         )
                         Text(
-                            text = operation.uiFrequencySummary,
+                            text = operation.recurrence.uiLabel,
                             style = AppTheme.typo.caption,
                             color = operation.recurrence.getUiColor()
                         )

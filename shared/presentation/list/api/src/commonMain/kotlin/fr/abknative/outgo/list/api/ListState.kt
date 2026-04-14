@@ -21,11 +21,7 @@ import fr.abknative.outgo.wallet.api.model.presenter.ProjectedOperation
  * @property walletCreationMonth The month the active wallet was created, used as a navigation boundary.
  * @property walletCreationYear The year the active wallet was created, used as a navigation boundary.
  * @property monthlyIncomeInCents The total primary income (budget) for the selected period.
- * @property totalOutgoingsInCents The sum of all planned expenses for the selected period.
- * @property disposableIncomeInCents The remaining balance after subtracting [totalOutgoingsInCents] from [monthlyIncomeInCents].
- * @property remainingToPayInCents The sum of expenses not yet marked as paid or occurring after [currentDay].
  * @property error The current application exception to be handled by the UI (e.g., via Snackbar), or null.
- * @property isHeroExpanded Persisted user preference indicating if the top summary section is visible.
  * @property isPremium Whether the user has access to premium features (influences filtering and UI capabilities).
  */
 data class ListState(
@@ -49,13 +45,9 @@ data class ListState(
 
     // --- Calculations & Budget ---
     val monthlyIncomeInCents: Long = 0L,
-    val totalOutgoingsInCents: Long = 0L,
-    val disposableIncomeInCents: Long = 0L,
-    val remainingToPayInCents: Long = 0L,
 
     // --- Global UI State ---
     val error: AppException? = null,
-    val isHeroExpanded: Boolean = true,
     val isPremium: Boolean = false
 )
 

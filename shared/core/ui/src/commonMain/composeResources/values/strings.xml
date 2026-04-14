@@ -95,7 +95,7 @@
     <string name="list_hero_total_income">Budget</string>
     <string name="list_hero_disposable_income">Restant</string>
     <string name="list_hero_missing_income">Manquant</string>
-    <string name="list_hero_total_charges">Total ce mois ci</string>
+    <string name="list_hero_total_charges">Total des dépenses</string>
     <string name="list_hero_remaining_to_pay">Restantes à payer</string>
     <string name="list_tab_all">TOUTES</string>
     <string name="list_tab_paid">PASSÉES</string>

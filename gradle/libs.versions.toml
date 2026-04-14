@@ -33,6 +33,10 @@ postgresql = "42.7.10"
 h2 = "2.4.240"
 flyway = "12.1.1"
 
+# Security
+multiplatform-settings = "1.1.1"
+androidx-security-crypto = "1.1.0-alpha06"
+
 # UI & Server
 logback = "1.5.32"
 skie = "0.10.10"
@@ -128,6 +132,9 @@ ktor-server-status-pages = { module = "io.ktor:ktor-server-status-pages", versio
 # --- FLYWAY (Migrations) ---
 flyway-core = { module = "org.flywaydb:flyway-core", version.ref = "flyway" }
 flyway-database-postgresql = { module = "org.flywaydb:flyway-database-postgresql", version.ref = "flyway" }
+
+multiplatform-settings = { module = "com.russhwolf:multiplatform-settings", version.ref = "multiplatform-settings" }
+androidx-security-crypto = { module = "androidx.security:security-crypto", version.ref = "androidx-security-crypto" }
 
 # --- TESTING ---
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinx-coroutines" }

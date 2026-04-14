@@ -4,7 +4,6 @@ import fr.abknative.outgo.core.api.TimeProvider
 import fr.abknative.outgo.list.api.ListState
 import fr.abknative.outgo.list.api.OperationFilter
 import fr.abknative.outgo.wallet.api.model.operation.OperationType
-import fr.abknative.outgo.wallet.api.model.presenter.PeriodStats
 import fr.abknative.outgo.wallet.api.model.presenter.ProjectedOperation
 
 /**
@@ -18,9 +17,7 @@ internal class ListStateMapper(private val timeProvider: TimeProvider) {
      */
     fun mapToState(
         currentOperations: List<ProjectedOperation>,
-        stats: PeriodStats,
-        input: PipelineInput, // A small helper data class
-        currentHeroExpanded: Boolean
+        input: PipelineInput,
     ): ListState {
         return ListState(
             isLoading = false,
@@ -40,16 +37,12 @@ internal class ListStateMapper(private val timeProvider: TimeProvider) {
             selectedMonth = input.month,
             selectedYear = input.year,
             canGoToPreviousMonth = calculateCanGoBack(input),
-            monthlyIncomeInCents = currentOperations
-                .filter { it.operation.type == OperationType.INCOME }
-                .sumOf { it.operation.amountInCents },
-            totalOutgoingsInCents = stats.totalExpensesInCents,
-            remainingToPayInCents = stats.remainingToPayInCents,
-            disposableIncomeInCents = stats.disposableIncomeInCents,
-            isHeroExpanded = currentHeroExpanded,
             isPremium = input.isPremium,
             currentDay = timeProvider.dayOfMonth(),
-            currentMonth = timeProvider.monthValue()
+            currentMonth = timeProvider.monthValue(),
+            monthlyIncomeInCents = currentOperations
+                .filter { it.operation.type == OperationType.INCOME }
+                .sumOf { it.operation.amountInCents }
         )
     }
 

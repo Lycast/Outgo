@@ -18,7 +18,7 @@ import fr.abknative.outgo.android.designsystem.foundation.toColor
 import fr.abknative.outgo.android.ui.ListLabels
 import fr.abknative.outgo.android.ui.extensions.getUiColor
 import fr.abknative.outgo.android.ui.extensions.uiAmount
-import fr.abknative.outgo.android.ui.extensions.uiFrequencySummary
+import fr.abknative.outgo.android.ui.extensions.uiLabel
 import fr.abknative.outgo.android.ui.extensions.uiTitle
 import fr.abknative.outgo.core.api.model.SyncStatus
 import fr.abknative.outgo.wallet.api.model.Operation
@@ -47,11 +47,11 @@ fun OperationCardSummary(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = AppTheme.dimens.large, vertical = AppTheme.dimens.extraSmall),
+            .padding(horizontal = AppTheme.dimens.extraLarge),
         verticalAlignment = Alignment.CenterVertically
     ) {
 
-        val iconColor = operation.recurrence.getUiColor()
+        val iconColor = operation.recurrence.getUiColor().copy(alpha = 0.5f)
 
         CircleIcon(
             iconRes = R.drawable.credit_card_duotone,
@@ -87,9 +87,9 @@ fun OperationCardSummary(
                         color = AppTheme.colors.textSecondary.toColor()
                     )
                     Text(
-                        text = operation.uiFrequencySummary,
+                        text = operation.recurrence.uiLabel,
                         style = AppTheme.typo.caption,
-                        color = operation.recurrence.getUiColor()
+                        color = operation.recurrence.getUiColor().copy(alpha = 0.8f)
                     )
                 }
 

@@ -18,6 +18,7 @@ internal class MonthStateMapper(private val timeProvider: TimeProvider) {
 
         return MonthState(
             isLoading = false,
+            activeWalletId = input.wallet.id,
             activeWalletName = input.wallet.name,
             selectedMonth = input.month,
             selectedYear = input.year,
@@ -28,15 +29,10 @@ internal class MonthStateMapper(private val timeProvider: TimeProvider) {
             totalOutgoingsInCents = stats.totalExpensesInCents,
             remainingToPayInCents = stats.remainingToPayInCents,
             disposableIncomeInCents = stats.disposableIncomeInCents,
-
-            // 🌟 1. Calcul des totaux par récurrence
             expensesByRecurrence = expensesOnly
                 .groupBy { it.operation.recurrence }
                 .mapValues { (_, ops) -> ops.sumOf { it.operation.amountInCents } },
-
-            // 🌟 2. Récupération des 3 prochaines dépenses
             nextUpcomingExpenses = calculateUpcomingExpenses(expensesOnly, input),
-
             error = null
         )
     }
@@ -53,15 +49,10 @@ internal class MonthStateMapper(private val timeProvider: TimeProvider) {
         val nowAbsolute = nowYear * 12 + nowMonth
 
         return when {
-            // Si on regarde un mois passé : Il n'y a pas de "prochaines" dépenses
             viewAbsolute < nowAbsolute -> emptyList()
-
-            // Si on regarde un mois futur : On prend les 3 premières dépenses du mois
             viewAbsolute > nowAbsolute -> expenses
                 .sortedBy { timeProvider.dayOfMonth(it.projectedDate) }
                 .take(3)
-
-            // Si on regarde le mois actuel : On prend les 3 prochaines à partir d'aujourd'hui
             else -> expenses
                 .filter { timeProvider.dayOfMonth(it.projectedDate) >= currentDay }
                 .sortedBy { timeProvider.dayOfMonth(it.projectedDate) }
@@ -70,7 +61,6 @@ internal class MonthStateMapper(private val timeProvider: TimeProvider) {
     }
 
     private fun calculateCanGoBack(input: MonthPipelineInput): Boolean {
-        if (!input.isPremium) return false
 
         val currentAbsolute = input.year * 12 + input.month
         val creationMonth = timeProvider.monthValue(input.wallet.createdAt)
