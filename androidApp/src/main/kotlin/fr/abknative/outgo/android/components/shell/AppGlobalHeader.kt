@@ -5,10 +5,6 @@ import fr.abknative.outgo.shell.api.ShellIntent
 import fr.abknative.outgo.shell.api.ShellPresenter
 import fr.abknative.outgo.shell.api.ShellState
 
-/**
- * Private component to centralize Header display (Landscape or Portrait).
- * Now focused on global utilities: Sync status and Settings access.
- */
 @Composable
 fun AppGlobalHeader(
     isVertical: Boolean,

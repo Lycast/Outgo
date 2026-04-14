@@ -10,6 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
@@ -57,6 +58,7 @@ fun SettingsRowClickable(
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .clip(AppTheme.shapes.medium)
             .clickable(onClick = onClick, role = Role.Button)
             .padding(AppTheme.dimens.medium),
         verticalAlignment = Alignment.CenterVertically,
@@ -82,6 +84,7 @@ fun SettingsRowToggle(
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .clip(AppTheme.shapes.medium)
             .toggleable(
                 value = isChecked,
                 onValueChange = onCheckedChange,
