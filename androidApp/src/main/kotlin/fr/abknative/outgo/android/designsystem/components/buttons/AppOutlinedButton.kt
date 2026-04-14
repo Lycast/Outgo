@@ -15,10 +15,6 @@ import androidx.compose.ui.unit.dp
 import fr.abknative.outgo.android.designsystem.foundation.AppTheme
 import fr.abknative.outgo.android.designsystem.foundation.toColor
 
-/**
- * An outlined button for secondary actions.
- * Uses the primary color for the border and text.
- */
 @Composable
 fun AppOutlinedButton(
     onClick: () -> Unit,

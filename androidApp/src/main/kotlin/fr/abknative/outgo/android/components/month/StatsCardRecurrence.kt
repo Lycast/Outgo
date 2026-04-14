@@ -12,12 +12,6 @@ import fr.abknative.outgo.android.ui.extensions.uiAmount
 import fr.abknative.outgo.android.ui.extensions.uiLabel
 import fr.abknative.outgo.wallet.api.model.operation.Recurrence
 
-/**
- * Renders a breakdown of expenses categorized by their recurrence type with progress bars.
- *
- * @param breakdown A map linking recurrence types to their total amount in cents.
- * @param monthlyIncome The total income reference to calculate percentages.
- */
 @Composable
 fun StatsCardRecurrence(
     breakdown: Map<Recurrence, Long>,
@@ -27,7 +21,6 @@ fun StatsCardRecurrence(
     Column(modifier = Modifier.padding(horizontal = AppTheme.dimens.extraLarge, vertical = AppTheme.dimens.large)) {
 
         breakdown.forEach { (recurrence, amount) ->
-            // Calculate progress safely
             val progress = if (monthlyIncome > 0) {
                 amount.toFloat() / monthlyIncome.toFloat()
             } else 0f
@@ -50,7 +43,6 @@ fun StatsCardRecurrence(
                     )
                 }
 
-                // Using the progress bar created earlier
                 AppProgressBar(
                     progress = progress,
                     activeColor = recurrence.getUiColor().copy(alpha = 0.5f),

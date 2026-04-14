@@ -15,17 +15,19 @@ internal class MonthStateMapper(private val timeProvider: TimeProvider) {
     ): MonthState {
 
         val expensesOnly = currentOperations.filter { it.operation.type == OperationType.EXPENSE }
+        val incomeOp = currentOperations.firstOrNull { it.operation.type  == OperationType.INCOME }
 
         return MonthState(
             isLoading = false,
             activeWalletId = input.wallet.id,
             activeWalletName = input.wallet.name,
+            incomeOperationId = incomeOp?.operation?.id,
+            incomeOperationName = incomeOp?.operation?.name ?: "revenu",
+            incomeOperationStartDate = incomeOp?.operation?.startDate,
+            monthlyIncomeInCents = incomeOp?.operation?.amountInCents ?: 0L,
             selectedMonth = input.month,
             selectedYear = input.year,
             canGoToPreviousMonth = calculateCanGoBack(input),
-            monthlyIncomeInCents = currentOperations
-                .filter { it.operation.type == OperationType.INCOME }
-                .sumOf { it.operation.amountInCents },
             totalOutgoingsInCents = stats.totalExpensesInCents,
             remainingToPayInCents = stats.remainingToPayInCents,
             disposableIncomeInCents = stats.disposableIncomeInCents,

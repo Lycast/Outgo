@@ -14,13 +14,6 @@ import fr.abknative.outgo.android.designsystem.foundation.AppTheme
 import fr.abknative.outgo.android.designsystem.foundation.toColor
 import fr.abknative.outgo.android.ui.AccessibilityLabels
 
-/**
- * A standardized progress indicator for the application.
- * Centralizes styling, colors, and accessibility for loading states.
- *
- * @param modifier The modifier to be applied to the container.
- * @param strokeCap The shape of the progress bar ends (default is Round for a softer look).
- */
 @Composable
 fun AppLoader(
     modifier: Modifier = Modifier,

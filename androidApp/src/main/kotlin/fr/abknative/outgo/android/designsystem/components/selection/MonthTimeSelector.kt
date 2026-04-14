@@ -16,14 +16,6 @@ import fr.abknative.outgo.android.designsystem.foundation.AppTheme
 import fr.abknative.outgo.android.designsystem.foundation.toColor
 import fr.abknative.outgo.android.ui.AccessibilityLabels
 
-/**
- * Top navigation bar to switch between months.
- *
- * @param formattedMonth The currently selected month formatted as a string.
- * @param canGoBack Whether the previous month button should be enabled.
- * @param onPrevious Callback triggered when navigating to the previous month.
- * @param onNext Callback triggered when navigating to the next month.
- */
 @Composable
 fun MonthTimeSelector(
     formattedMonth: String,
@@ -33,14 +25,14 @@ fun MonthTimeSelector(
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
+        horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically
     ) {
         IconButton(onClick = onPrevious, enabled = canGoBack) {
             Icon(
                 painter = painterResource(R.drawable.caret_left),
                 contentDescription = AccessibilityLabels.PREVIOUS_MONTH,
-                tint = if (canGoBack) AppTheme.colors.primary.toColor() else AppTheme.colors.textSecondary.toColor().copy(alpha = 0.5f)
+                tint = if (canGoBack) AppTheme.colors.primary.toColor() else AppTheme.colors.textSecondary.toColor().copy(alpha = 0.2f)
             )
         }
         Text(

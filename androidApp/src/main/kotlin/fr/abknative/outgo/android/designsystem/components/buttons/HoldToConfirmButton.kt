@@ -27,18 +27,6 @@ import fr.abknative.outgo.android.designsystem.foundation.AppTheme
 import fr.abknative.outgo.android.designsystem.foundation.toColor
 import kotlinx.coroutines.launch
 
-/**
- * A custom button that requires the user to hold it down for a specific duration to trigger the action.
- * Displays a visual progress bar filling up from left to right.
- * * Uses hardware-accelerated graphicsLayer for performance and low-level pointer input
- * to maintain gesture continuity. The button sizes itself according to its content.
- *
- * @param label The text displayed on the button.
- * @param onConfirm The action triggered when the hold duration is successfully reached.
- * @param modifier The modifier to be applied to the button.
- * @param enabled Controls the interactive state of the button. When false, gestures are ignored.
- * @param durationMillis The time in milliseconds the user must hold the button (default is 1500ms).
- */
 @Composable
 fun HoldToConfirmButton(
     label: String,

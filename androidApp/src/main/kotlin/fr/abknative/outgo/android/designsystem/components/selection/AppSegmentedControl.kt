@@ -23,17 +23,6 @@ import androidx.compose.ui.unit.dp
 import fr.abknative.outgo.android.designsystem.foundation.AppTheme
 import fr.abknative.outgo.android.designsystem.foundation.toColor
 
-/**
- * A pill-shaped segmented control for switching between states or filters.
- * Features a sliding animated indicator and follows the design system's spacing and colors.
- *
- * @param items The list of text labels to display.
- * @param selectedIndex The currently active index.
- * @param onItemSelected Callback invoked when a new segment is clicked.
- * @param modifier The modifier to be applied to the container.
- * @param height The height of the control (default is 48.dp).
- * @param activeColor The color of the active text and indicator background.
- */
 @Composable
 fun AppSegmentedControl(
     items: List<String>,
@@ -55,7 +44,6 @@ fun AppSegmentedControl(
 
         val segmentWidth = maxWidth / items.size
 
-        // Indicator Animation
         val indicatorOffset by animateDpAsState(
             targetValue = segmentWidth * selectedIndex,
             animationSpec = spring(
@@ -65,7 +53,6 @@ fun AppSegmentedControl(
             label = "indicatorOffset"
         )
 
-        // Sliding Indicator Layer
         Box(
             modifier = Modifier
                 .fillMaxHeight()
@@ -75,7 +62,6 @@ fun AppSegmentedControl(
                 .background(activeColor.copy(alpha = 0.15f))
         )
 
-        // Text Labels Layer
         Row(modifier = Modifier.fillMaxSize()) {
             items.forEachIndexed { index, label ->
                 val isSelected = index == selectedIndex

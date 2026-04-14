@@ -1,5 +1,6 @@
 package fr.abknative.outgo.android.screens
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,6 +27,10 @@ fun OnboardingScreen(
     val state by presenter.state.collectAsStateWithLifecycle()
     var currentStep by remember { mutableIntStateOf(1) }
 
+    BackHandler(enabled = currentStep == 2) {
+        currentStep = 1
+    }
+
     LaunchedEffect(state.isCompleted) {
         if (state.isCompleted) {
             onOnboardingComplete()
@@ -40,8 +45,13 @@ fun OnboardingScreen(
         AnimatedContent(
             targetState = currentStep,
             transitionSpec = {
-                slideInHorizontally(animationSpec = tween(400)) { fullWidth -> fullWidth } + fadeIn() togetherWith
-                        slideOutHorizontally(animationSpec = tween(400)) { fullWidth -> -fullWidth } + fadeOut()
+                if (targetState > initialState) {
+                    slideInHorizontally(animationSpec = tween(400)) { fullWidth -> fullWidth } + fadeIn() togetherWith
+                            slideOutHorizontally(animationSpec = tween(400)) { fullWidth -> -fullWidth } + fadeOut()
+                } else {
+                    slideInHorizontally(animationSpec = tween(400)) { fullWidth -> -fullWidth } + fadeIn() togetherWith
+                            slideOutHorizontally(animationSpec = tween(400)) { fullWidth -> fullWidth } + fadeOut()
+                }
             },
             label = "OnboardingTransition",
             modifier = Modifier
@@ -60,7 +70,8 @@ fun OnboardingScreen(
                     errorMessage = state.error?.message,
                     onNameChange = { presenter.onIntent(OnboardingIntent.UpdateWalletName(it)) },
                     onAmountChange = { presenter.onIntent(OnboardingIntent.UpdateIncomeAmount(it)) },
-                    onSubmit = { presenter.onIntent(OnboardingIntent.Submit) }
+                    onSubmit = { presenter.onIntent(OnboardingIntent.Submit) },
+                    onBackClicked = { currentStep = 1 }
                 )
             }
         }

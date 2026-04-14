@@ -13,7 +13,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import fr.abknative.outgo.android.R
@@ -24,7 +23,6 @@ import fr.abknative.outgo.android.designsystem.components.feedback.AppSnackbar
 import fr.abknative.outgo.android.designsystem.components.inputs.AppTextField
 import fr.abknative.outgo.android.designsystem.foundation.AppBackground
 import fr.abknative.outgo.android.designsystem.foundation.AppTheme
-import fr.abknative.outgo.android.designsystem.foundation.OutgoTheme
 import fr.abknative.outgo.android.designsystem.foundation.toColor
 import fr.abknative.outgo.android.ui.LoginLabels
 import fr.abknative.outgo.android.ui.states.rememberLoginFormState
@@ -32,9 +30,6 @@ import fr.abknative.outgo.android.ui.toUIString
 import fr.abknative.outgo.login.api.LoginEvent
 import fr.abknative.outgo.login.api.LoginIntent
 import fr.abknative.outgo.login.api.LoginPresenter
-import fr.abknative.outgo.login.api.LoginState
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -46,7 +41,6 @@ fun LoginScreen(
 
     val state by presenter.state.collectAsStateWithLifecycle()
     val formState = rememberLoginFormState()
-
     val snackbarHostState = remember { SnackbarHostState() }
     val errorMessage = state.error?.toUIString()
 
@@ -119,7 +113,7 @@ fun LoginScreen(
                         value = formState.email,
                         onValueChange = { formState.email = it },
                         label = LoginLabels.EMAIL_LABEL,
-                        placeholder = "", // Ajout d'un placeholder vide ou d'un label adéquat
+                        placeholder = "",
                         enabled = !state.isLoading
                     )
 
@@ -175,7 +169,6 @@ fun LoginScreen(
             }
         }
 
-        // --- NOUVEAU : LA POPUP DE RÉSOLUTION DE CONFLIT ---
         if (state.showConflictDialog) {
             ConflictDialog(
                 onConfirm = {
@@ -186,36 +179,5 @@ fun LoginScreen(
                 }
             )
         }
-    }
-}
-
-/**
- * Preview for the LoginScreen.
- */
-@Preview(showBackground = true, name = "Login Screen - Default")
-@Preview(showBackground = true, name = "Login Screen - Default", uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES)
-@Composable
-fun PreviewLoginScreen() {
-    val dummyPresenter = object : LoginPresenter() {
-        override val state = MutableStateFlow(
-            LoginState(
-                isLoading = false,
-                error = null,
-                session = null,
-                showConflictDialog = false
-            )
-        )
-        override val events: Flow<LoginEvent>
-            get() = TODO("Not yet implemented")
-
-        override fun onIntent(intent: LoginIntent) {}
-    }
-
-    OutgoTheme {
-        LoginScreen(
-            presenter = dummyPresenter,
-            onNavigateBack = {},
-            onLoginSuccess = {}
-        )
     }
 }

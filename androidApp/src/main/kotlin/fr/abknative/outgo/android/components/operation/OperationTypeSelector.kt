@@ -11,12 +11,6 @@ import fr.abknative.outgo.android.designsystem.foundation.toColor
 import fr.abknative.outgo.android.ui.FormLabels
 import fr.abknative.outgo.wallet.api.model.operation.OperationType
 
-/**
- * A specialized selector for [OperationType].
- * It wraps the generic [AppSegmentedControl] to provide specific visual feedback:
- * - Expenses (Index 0) use the Primary brand color.
- * - Incomes (Index 1) use the Tertiary color for clear distinction.
- */
 @Composable
 fun OperationTypeSelector(
     selectedType: OperationType,

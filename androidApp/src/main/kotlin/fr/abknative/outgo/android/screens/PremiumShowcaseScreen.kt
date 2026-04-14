@@ -14,6 +14,7 @@ import fr.abknative.outgo.android.designsystem.components.buttons.AppButton
 import fr.abknative.outgo.android.designsystem.components.cards.GlassCard
 import fr.abknative.outgo.android.designsystem.foundation.AppTheme
 import fr.abknative.outgo.android.designsystem.foundation.toColor
+import fr.abknative.outgo.android.ui.PremiumLabels // Ajout de l'import
 
 /**
  * Showcase screen for the Premium offer (Painted Door Test).
@@ -36,13 +37,13 @@ fun PremiumShowcaseScreen(
         // --- Header (Hook Visuel) ---
         Spacer(modifier = Modifier.height(AppTheme.dimens.extraLarge))
         Text(
-            text = "Prenez le contrôle total de votre avenir financier.",
+            text = PremiumLabels.SHOWCASE_TITLE,
             style = AppTheme.typo.title,
             color = AppTheme.colors.primary.toColor(),
             textAlign = TextAlign.Center
         )
         Text(
-            text = "Passez d'une gestion réactive à une gestion prédictive.",
+            text = PremiumLabels.SHOWCASE_SUBTITLE,
             style = AppTheme.typo.body,
             color = AppTheme.colors.textSecondary.toColor(),
             textAlign = TextAlign.Center,
@@ -53,14 +54,10 @@ fun PremiumShowcaseScreen(
 
         // --- Carte Offre Actuelle (Essentiel) ---
         ShowcaseCard(
-            title = "Outgo Essentiel",
-            badge = "VOTRE OFFRE ACTUELLE",
-            description = "Le contrôle de votre mois en cours.",
-            features = listOf(
-                "Enveloppe mensuelle simple",
-                "Suivi instantané des dépenses",
-                "Jauge de survie en temps réel"
-            ),
+            title = PremiumLabels.ESSENTIAL_TITLE,
+            badge = PremiumLabels.ESSENTIAL_BADGE,
+            description = PremiumLabels.ESSENTIAL_DESC,
+            features = PremiumLabels.ESSENTIAL_FEATURES,
             isActive = true
         )
 
@@ -68,15 +65,10 @@ fun PremiumShowcaseScreen(
 
         // --- Carte Futur (Premium) ---
         ShowcaseCard(
-            title = "Outgo Premium",
-            badge = "BIENTÔT DISPONIBLE",
-            description = "Le pilotage de votre trésorerie à long terme.",
-            features = listOf(
-                "💰 Véritable Gestion de Trésorerie",
-                "📂 Portefeuilles Multiples",
-                "🔭 Projections sur 12 Mois",
-                "💳 Synchro Bancaire (V3 ?)"
-            ),
+            title = PremiumLabels.PREMIUM_TITLE,
+            badge = PremiumLabels.PREMIUM_BADGE,
+            description = PremiumLabels.PREMIUM_DESC,
+            features = PremiumLabels.PREMIUM_FEATURES,
             isActive = false
         )
 
@@ -87,7 +79,7 @@ fun PremiumShowcaseScreen(
             onClick = onNotifyMeClick,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text(text = "Prévenez-moi du lancement")
+            Text(text = PremiumLabels.NOTIFY_ME_ACTION)
         }
 
         Spacer(modifier = Modifier.height(80.dp))

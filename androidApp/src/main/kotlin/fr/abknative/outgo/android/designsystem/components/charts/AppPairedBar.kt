@@ -18,22 +18,6 @@ import fr.abknative.outgo.android.designsystem.components.feedback.InfoTooltip
 import fr.abknative.outgo.android.designsystem.foundation.AppTheme
 import fr.abknative.outgo.android.designsystem.foundation.toColor
 
-/**
- * A specialized dual-progress bar component designed as a "sandwich".
- * Displays two metrics (e.g., Total Charges vs Remaining) with mirrored text placement
- * and a shared visual boundary.
- *
- * @param topLabel Label for the upper metric.
- * @param topAmount Formatted amount for the upper metric.
- * @param topProgress Float between 0 and 1 for the upper bar.
- * @param topBarColor Fill color for the upper bar.
- * @param bottomLabel Label for the lower metric.
- * @param bottomAmount Formatted amount for the lower metric.
- * @param bottomProgress Float between 0 and 1 for the lower bar.
- * @param bottomBarColor Fill color for the lower bar.
- * @param bottomTooltipTitle Optional title for the tooltip wrapping the bottom section.
- * @param bottomTooltipDesc Optional description for the tooltip wrapping the bottom section.
- */
 @Composable
 fun AppPairedBar(
     modifier: Modifier = Modifier,

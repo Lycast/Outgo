@@ -8,9 +8,6 @@ import fr.abknative.outgo.android.designsystem.components.feedback.AppEmptyState
 import fr.abknative.outgo.android.ui.ListLabels
 import fr.abknative.outgo.list.api.OperationFilter
 
-/**
- * Specialized empty state for the dashboard, mapping filters to specific messages.
- */
 @Composable
 fun ListEmptyState(
     filter: OperationFilter,

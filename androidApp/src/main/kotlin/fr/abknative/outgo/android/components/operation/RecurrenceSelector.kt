@@ -11,15 +11,6 @@ import fr.abknative.outgo.android.designsystem.foundation.toColor
 import fr.abknative.outgo.android.ui.FormLabels
 import fr.abknative.outgo.wallet.api.model.operation.Recurrence
 
-/**
- * A specialized selector for [Recurrence] cycles.
- * Maps the business logic enum to localized labels and displays them
- * using the design system's [AppSegmentedControl].
- *
- * @param selectedRecurrence The currently active [Recurrence] state.
- * @param onRecurrenceChanged Callback invoked when a new cycle is selected.
- * @param modifier The modifier to be applied to the container.
- */
 @Composable
 fun RecurrenceSelector(
     selectedRecurrence: Recurrence,

@@ -9,11 +9,11 @@ import fr.abknative.outgo.android.R
 import fr.abknative.outgo.core.ui.DesignTypography
 
 data class OutgoTypography(
-    val title: TextStyle,      // EXTRALARGE / Bold
-    val subtitle: TextStyle,   // LARGE / SemiBold
-    val body: TextStyle,       // MEDIUM / Regular
-    val caption: TextStyle,    // SMALL / Regular
-    val label: TextStyle       // EXTRA_SMALL / Medium
+    val title: TextStyle,
+    val subtitle: TextStyle,
+    val body: TextStyle,
+    val caption: TextStyle,
+    val label: TextStyle
 )
 
 val Poppins = FontFamily(

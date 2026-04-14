@@ -4,58 +4,53 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import fr.abknative.outgo.android.components.list.WalletEditDialog
+import fr.abknative.outgo.android.components.month.OperationCardSummary
 import fr.abknative.outgo.android.components.month.StatsCardExpense
 import fr.abknative.outgo.android.components.month.StatsCardRecurrence
 import fr.abknative.outgo.android.components.month.StatsCardWallet
-import fr.abknative.outgo.android.components.operation.OperationCardSummary
 import fr.abknative.outgo.android.designsystem.components.cards.GlassCard
 import fr.abknative.outgo.android.designsystem.components.feedback.AppSnackbar
 import fr.abknative.outgo.android.designsystem.components.selection.MonthTimeSelector
 import fr.abknative.outgo.android.designsystem.foundation.AppTheme
 import fr.abknative.outgo.android.designsystem.foundation.toColor
+import fr.abknative.outgo.android.ui.CommonLabels
+import fr.abknative.outgo.android.ui.MonthLabels
 import fr.abknative.outgo.android.ui.extensions.getMonthName
+import fr.abknative.outgo.core.api.TimeProvider
 import fr.abknative.outgo.month.api.MonthIntent
 import fr.abknative.outgo.month.api.MonthPresenter
+import org.koin.compose.koinInject
 import java.util.Locale.getDefault
 
-/**
- * Main screen for displaying monthly financial summaries.
- * Handles the UI state observation, error feedback, and user navigation intents.
- *
- * @param presenter The presentation layer component managing this screen's state and intents.
- * @param modifier Optional modifier to adjust the layout of the root component.
- */
 @Composable
 fun MonthScreen(
     presenter: MonthPresenter,
     modifier: Modifier = Modifier
 ) {
+
     val state by presenter.state.collectAsStateWithLifecycle()
+    val timeProvider = koinInject<TimeProvider>()
     val formattedSelectedMonth = "${getMonthName(state.selectedMonth)} ${state.selectedYear}".uppercase(getDefault())
     val scrollState = rememberScrollState()
-
-    // State to manage the asynchronous display of Snackbars
+    var showEditDialog by remember { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
+    val defaultErrorMsg = MonthLabels.DEFAULT_ERROR
+    val actionOkLabel = CommonLabels.ACTION_OK
 
-    // React to error state changes
     LaunchedEffect(state.error) {
         state.error?.let { appError ->
-            // Assume appError provides a readable message.
-            val message = appError.message ?: "Une erreur inattendue est survenue"
+            val message = appError.message ?: defaultErrorMsg
             snackbarHostState.showSnackbar(
                 message = message,
-                actionLabel = "OK"
+                actionLabel = actionOkLabel
             )
-            // Once the snackbar is dismissed or expires, clear the error from the state
             presenter.onIntent(MonthIntent.DismissError)
         }
     }
@@ -71,9 +66,8 @@ fun MonthScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(horizontal = AppTheme.dimens.medium)
-                    .padding(top = AppTheme.dimens.extraSmall)
             ) {
-                // 1. Time Selector
+                // Time Selector
                 MonthTimeSelector(
                     formattedMonth = formattedSelectedMonth,
                     canGoBack = state.canGoToPreviousMonth,
@@ -88,10 +82,10 @@ fun MonthScreen(
                         .padding(top = AppTheme.dimens.large, bottom = 100.dp),
                     verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.extraLarge)
                 ) {
-                    // 2. Budget Section
+                    // Budget Section
                     Column {
                         Text(
-                            text = "budget".uppercase(getDefault()),
+                            text = MonthLabels.SECTION_BUDGET.uppercase(getDefault()),
                             style = AppTheme.typo.label,
                             fontWeight = FontWeight.Bold,
                             color = AppTheme.colors.primary.toColor(),
@@ -101,17 +95,16 @@ fun MonthScreen(
                             StatsCardWallet(
                                 activeWalletName = state.activeWalletName,
                                 monthlyIncomeInCents = state.monthlyIncomeInCents,
-                                totalOutgoingsInCents = state.totalOutgoingsInCents,
                                 disposableIncomeInCents = state.disposableIncomeInCents,
-                                onEditBudgetClick = {}
+                                onEditBudgetClick = { showEditDialog = true }
                             )
                         }
                     }
 
-                    // 3. Expenses Section
+                    // Expenses Section
                     Column {
                         Text(
-                            text = "dépenses".uppercase(getDefault()),
+                            text = MonthLabels.SECTION_EXPENSES.uppercase(getDefault()),
                             style = AppTheme.typo.label,
                             fontWeight = FontWeight.Bold,
                             color = AppTheme.colors.primary.toColor(),
@@ -125,11 +118,11 @@ fun MonthScreen(
                         }
                     }
 
-                    // 4. Upcoming Expenses
+                    // Upcoming Expenses
                     if (state.nextUpcomingExpenses.isNotEmpty()) {
                         Column {
                             Text(
-                                text = "Dépenses à venir".uppercase(getDefault()),
+                                text = MonthLabels.SECTION_UPCOMING.uppercase(getDefault()),
                                 style = AppTheme.typo.label,
                                 fontWeight = FontWeight.Bold,
                                 color = AppTheme.colors.primary.toColor(),
@@ -151,7 +144,6 @@ fun MonthScreen(
 
                                         OperationCardSummary(
                                             operation = displayOperation,
-                                            onClick = { /* Read Only */ }
                                         )
 
                                         if (index < state.nextUpcomingExpenses.lastIndex) {
@@ -168,11 +160,11 @@ fun MonthScreen(
                         }
                     }
 
-                    // 5. Recurrence Breakdown
+                    // Recurrence Breakdown
                     if (state.expensesByRecurrence.isNotEmpty()) {
                         Column {
                             Text(
-                                text = "Répartition".uppercase(getDefault()),
+                                text = MonthLabels.SECTION_RECURRENCE.uppercase(getDefault()),
                                 style = AppTheme.typo.label,
                                 fontWeight = FontWeight.Bold,
                                 color = AppTheme.colors.primary.toColor(),
@@ -188,6 +180,26 @@ fun MonthScreen(
                     }
                 }
             }
+        }
+
+        if (showEditDialog) {
+            WalletEditDialog(
+                initialWalletName = state.activeWalletName,
+                currentIncomeInCents = state.monthlyIncomeInCents,
+                onDismiss = { showEditDialog = false },
+                onConfirm = { newName, newIncome ->
+                    presenter.onIntent(MonthIntent.SaveWalletAndIncome(
+                        walletId = state.activeWalletId ?: "",
+                        walletName = newName,
+                        incomeAmountInCents = newIncome,
+                        incomeOperationId = state.incomeOperationId,
+                        incomeOperationName = state.incomeOperationName,
+                        startDate = state.incomeOperationStartDate
+                            ?: timeProvider.startOfMonth(state.selectedMonth, state.selectedYear)
+                    ))
+                    showEditDialog = false
+                }
+            )
         }
 
         SnackbarHost(

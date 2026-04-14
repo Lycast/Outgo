@@ -2,11 +2,6 @@ package fr.abknative.outgo.android.ui.helpers
 
 import androidx.compose.runtime.*
 
-/**
- * Manages the input logic for a name field.
- * Caps the length and can be extended for further formatting (like auto-capitalization).
- */
-
 class NameInputManager(
     initialValue: String,
     private val maxLength: Int = 30,

@@ -8,14 +8,6 @@ import fr.abknative.outgo.android.designsystem.foundation.toColor
 import fr.abknative.outgo.android.ui.CommonLabels
 import fr.abknative.outgo.core.api.EpochMillis
 
-/**
- * A themed date picker dialog that follows the application's design language.
- * Uses [AppTextButton] for actions and consistent color mapping.
- *
- * @param datePickerState The state of the date picker.
- * @param onDateSelected Callback invoked when a date is confirmed.
- * @param onDismissRequest Callback invoked to close the dialog.
- */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppDatePickerDialog(

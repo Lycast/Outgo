@@ -15,30 +15,20 @@ import androidx.compose.ui.unit.dp
 import fr.abknative.outgo.android.designsystem.foundation.AppTheme
 import fr.abknative.outgo.android.designsystem.foundation.toColor
 
-/**
- * A custom glassmorphism card component with precise visual tuning.
- * Uses a multi-layer approach to handle shadows, glass gradient, and content sizing safely.
- * Optimized with [remember] to cache gradient brushes and prevent unnecessary allocations during recomposition.
- *
- * @param modifier The modifier to be applied to the outer boundaries of the card.
- * @param shape The shape of the card's corners.
- * @param backgroundColorA The primary tint color for the glass gradient.
- * @param content The composable content to be displayed inside the glass card.
- */
 @Composable
 fun GlassCard(
     modifier: Modifier = Modifier,
     shape: Shape = AppTheme.shapes.large,
     borderSize: Dp = AppTheme.dimens.small,
     elevation: Dp = 12.dp,
-    backgroundColorA: Color = AppTheme.colors.surface200.toColor(),
+    backgroundColorA: Color = AppTheme.colors.surface100.toColor(),
     content: @Composable () -> Unit
 ) {
+
     val appBackgroundColor = AppTheme.colors.background.toColor()
     val textSecondaryColor = AppTheme.colors.textSecondary.toColor()
     val surface50Color = AppTheme.colors.surface50.toColor()
 
-    // Optimized: Cached Brushes
     val backgroundBrush = remember(backgroundColorA, textSecondaryColor) {
         Brush.horizontalGradient(
             colors = listOf(textSecondaryColor.copy(alpha = 0.05f), backgroundColorA.copy(alpha = 0.8f))

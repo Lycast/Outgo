@@ -13,25 +13,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import fr.abknative.outgo.android.designsystem.foundation.AppTheme
-import fr.abknative.outgo.android.designsystem.foundation.OutgoTheme
 import fr.abknative.outgo.android.designsystem.foundation.toColor
 
-/**
- * A highly customizable, animated Donut Chart.
- * Useful for displaying proportions, progress, or distribution without relying on specific business logic.
- *
- * @param progress The fill percentage of the active arc, between 0.0f and 1.0f.
- * @param activeColor The color of the filled progress arc.
- * @param modifier The layout modifier. The chart will attempt to be perfectly circular.
- * @param trackColor The color of the background ring. Defaults to a subtle version of the active color.
- * @param strokeWidth The thickness of the donut ring.
- * @param centerTitle Optional large text to display in the middle of the donut.
- * @param centerSubtitle Optional smaller text to display below the title.
- */
 @Composable
 fun AppDonutChart(
     modifier: Modifier = Modifier,
@@ -101,35 +87,5 @@ fun AppDonutChart(
                 }
             }
         }
-    }
-}
-
-// --- PREVIEWS ---
-
-@Preview(showBackground = true, name = "Donut - Complete with text")
-@Composable
-fun PreviewDonutChartComplete() {
-    OutgoTheme {
-        AppDonutChart(
-            progress = 0.65f, // 65%
-            activeColor = AppTheme.colors.primary.toColor(),
-            modifier = Modifier.width(200.dp),
-            centerTitle = "65%",
-            centerSubtitle = "Dépensé"
-        )
-    }
-}
-
-@Preview(showBackground = true, name = "Donut - Visual Only (Thin)")
-@Composable
-fun PreviewDonutChartVisualOnly() {
-    OutgoTheme {
-        AppDonutChart(
-            progress = 0.30f, // 30%
-            activeColor = AppTheme.colors.tertiary.toColor(),
-            strokeWidth = 8.dp, // Much thinner ring
-            modifier = Modifier.width(100.dp)
-            // No text parameters passed!
-        )
     }
 }

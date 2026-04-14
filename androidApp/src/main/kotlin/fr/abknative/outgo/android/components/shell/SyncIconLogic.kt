@@ -16,14 +16,6 @@ import fr.abknative.outgo.android.ui.AccessibilityLabels
 import fr.abknative.outgo.android.ui.CommonLabels
 import fr.abknative.outgo.sync.api.model.SyncState
 
-/**
- * Handles the synchronization icon logic, including animations, state-based tints,
- * and a glassmorphism container. Displays an [InfoTooltip] when offline.
- *
- * @param syncState The current [SyncState] of the app.
- * @param onClick Callback invoked when the icon is clicked.
- * @param modifier The modifier to be applied to the container.
- */
 @Composable
 fun SyncIconLogic(
     syncState: SyncState,
@@ -74,7 +66,6 @@ fun SyncIconLogic(
         )
     }
 
-    // Common icon content
     val syncIcon = @Composable {
         Icon(
             painter = painterResource(iconRes),
@@ -95,7 +86,6 @@ fun SyncIconLogic(
             }
         }
     } else {
-        // Normal behavior: Standard Header Button
         AppHeaderButton(
             onClick = onClick,
             enabled = !syncState.isInProgress,

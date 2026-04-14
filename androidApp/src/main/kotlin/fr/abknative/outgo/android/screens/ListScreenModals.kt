@@ -1,4 +1,4 @@
-package fr.abknative.outgo.android.components.list
+package fr.abknative.outgo.android.screens
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -15,9 +15,6 @@ import fr.abknative.outgo.list.api.ListIntent
 import fr.abknative.outgo.list.api.ListPresenter
 import fr.abknative.outgo.wallet.api.model.presenter.ProjectedOperation
 
-/**
- * Handles the display logic for list-specific dialogs (currently only deletion).
- */
 @Composable
 fun ListScreenModals(
     operationToDelete: ProjectedOperation?,

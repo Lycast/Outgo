@@ -13,10 +13,6 @@ import fr.abknative.outgo.android.R
 import fr.abknative.outgo.android.designsystem.foundation.AppTheme
 import fr.abknative.outgo.android.designsystem.foundation.toColor
 
-/**
- * The central action button for the bottom navigation bar.
- * Designed to stand out as the primary "Add" action.
- */
 @Composable
 fun BottomCentralAction() {
     Surface(

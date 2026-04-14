@@ -10,14 +10,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import fr.abknative.outgo.android.designsystem.components.cards.GlassCard
 
-/**
- * A specialized small GlassCard button for header actions.
- *
- * @param onClick Action to perform on click.
- * @param enabled Whether the button is enabled.
- * @param modifier Modifier for the button.
- * @param content Slot for the icon or custom content (like a Badge).
- */
 @Composable
 fun AppHeaderButton(
     onClick: () -> Unit,
@@ -26,7 +18,7 @@ fun AppHeaderButton(
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit
 ) {
-    // We use a specific size for header buttons to keep them elegant
+
     GlassCard(
         modifier = modifier.size(42.dp),
         elevation = elevation

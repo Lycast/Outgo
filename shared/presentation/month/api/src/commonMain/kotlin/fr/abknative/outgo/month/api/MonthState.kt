@@ -1,5 +1,6 @@
 package fr.abknative.outgo.month.api
 
+import fr.abknative.outgo.core.api.EpochMillis
 import fr.abknative.outgo.core.api.logs.AppException
 import fr.abknative.outgo.wallet.api.model.operation.Recurrence
 import fr.abknative.outgo.wallet.api.model.presenter.ProjectedOperation
@@ -11,6 +12,9 @@ import fr.abknative.outgo.wallet.api.model.presenter.ProjectedOperation
 data class MonthState(
     val isLoading: Boolean = false,
     val activeWalletId: String? = null,
+    val incomeOperationId: String? = null,
+    val incomeOperationName: String = "Revenu",
+    val incomeOperationStartDate: EpochMillis? = null,
     val activeWalletName: String = "",
 
     // --- Temporal Logic ---

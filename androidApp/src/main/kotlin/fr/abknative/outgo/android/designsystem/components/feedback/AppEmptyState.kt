@@ -11,14 +11,6 @@ import androidx.compose.ui.text.style.TextAlign
 import fr.abknative.outgo.android.designsystem.foundation.AppTheme
 import fr.abknative.outgo.android.designsystem.foundation.toColor
 
-/**
- * A generic placeholder for empty states, errors, or info screens.
- *
- * @param icon The icon to display above the text.
- * @param title The main message or title.
- * @param description An optional secondary message for more context.
- * @param modifier The modifier to be applied to the layout.
- */
 @Composable
 fun AppEmptyState(
     icon: ImageVector,

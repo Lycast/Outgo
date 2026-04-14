@@ -9,10 +9,9 @@ import fr.abknative.outgo.month.api.MonthIntent
 import fr.abknative.outgo.month.api.MonthPresenter
 import fr.abknative.outgo.month.api.MonthState
 import fr.abknative.outgo.subscription.api.FeatureManager
-import fr.abknative.outgo.wallet.api.usecase.CalculateDashboardDataUseCase
-import fr.abknative.outgo.wallet.api.usecase.ObserveActiveOperationsUseCase
-import fr.abknative.outgo.wallet.api.usecase.ObserveWalletsUseCase
-import fr.abknative.outgo.wallet.api.usecase.SaveWalletUseCase
+import fr.abknative.outgo.wallet.api.model.operation.OperationType
+import fr.abknative.outgo.wallet.api.model.operation.Recurrence
+import fr.abknative.outgo.wallet.api.usecase.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 
@@ -21,6 +20,7 @@ internal class MonthPresenterImpl(
     private val observeWallets: ObserveWalletsUseCase,
     private val calculateDashboardData: CalculateDashboardDataUseCase,
     private val saveWallet: SaveWalletUseCase,
+    private val saveOperation: SaveOperationUseCase,
     private val featureManager: FeatureManager,
     private val mapper: MonthStateMapper,
     private val timeProvider: TimeProvider
@@ -81,9 +81,30 @@ internal class MonthPresenterImpl(
 
     override fun onIntent(intent: MonthIntent) {
         when (intent) {
+            is MonthIntent.SaveWalletAndIncome -> handleSaveWalletAndIncome(intent)
             is MonthIntent.RenameWallet -> handleRenameWallet(intent)
             is MonthIntent.NavigateMonth -> handleNavigateMonth(intent.isNext)
             is MonthIntent.DismissError -> _state.update { it.copy(error = null) }
+        }
+    }
+
+    private fun handleSaveWalletAndIncome(intent: MonthIntent.SaveWalletAndIncome) {
+        viewModelScope.safeLaunch(onError = onCoroutineError) {
+            _state.update { it.copy(isLoading = true) }
+
+            saveWallet(id = intent.walletId, name = intent.walletName)
+
+            val result = saveOperation(
+                id = intent.incomeOperationId,
+                walletId = intent.walletId,
+                name = intent.incomeOperationName,
+                amountInCents = intent.incomeAmountInCents,
+                type = OperationType.INCOME,
+                recurrence = Recurrence.MONTHLY,
+                startDate = intent.startDate
+            )
+
+            _state.update { it.copy(isLoading = false, error = (result as? Result.Error)?.error) }
         }
     }
 

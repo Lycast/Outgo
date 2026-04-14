@@ -1,14 +1,13 @@
-package fr.abknative.outgo.android.components.operation
+package fr.abknative.outgo.android.components.list
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.semantics.Role
@@ -16,23 +15,12 @@ import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import fr.abknative.outgo.android.designsystem.components.cards.GlassCard
 import fr.abknative.outgo.android.designsystem.foundation.AppTheme
-import fr.abknative.outgo.android.designsystem.foundation.OutgoTheme
 import fr.abknative.outgo.android.designsystem.foundation.toColor
 import fr.abknative.outgo.android.ui.ListLabels
 import fr.abknative.outgo.list.api.OperationFilter
 
-/**
- * A tab-based selector to filter operations on the dashboard.
- * Uses individual [GlassCard] highlights for the selected state.
- *
- * @param selectedFilter The currently active [OperationFilter].
- * @param onFilterSelected Callback triggered when a new filter is tapped.
- * @param modifier The modifier to be applied to the row.
- */
 @Composable
 fun OperationFilterSelector(
     selectedFilter: OperationFilter,
@@ -122,23 +110,6 @@ private fun FilterTabItem(
             }
         } else {
             tabContent()
-        }
-    }
-}
-
-// --- PREVIEWS ---
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewOperationFilterSelector() {
-    var currentFilter by remember { mutableStateOf(OperationFilter.ALL) }
-
-    OutgoTheme {
-        Box(modifier = Modifier.background(Color(0xFFE5E9F0)).padding(16.dp)) {
-            OperationFilterSelector(
-                selectedFilter = currentFilter,
-                onFilterSelected = { currentFilter = it }
-            )
         }
     }
 }

@@ -14,18 +14,6 @@ import androidx.compose.ui.unit.dp
 import fr.abknative.outgo.android.designsystem.foundation.AppTheme
 import fr.abknative.outgo.android.designsystem.foundation.toColor
 
-
-/**
- * The primary filled button for the application.
- * Pre-configured with the brand's primary color and typography.
- *
- * @param onClick Callback to be invoked when the button is clicked.
- * @param modifier The modifier to be applied to the button.
- * @param enabled Whether the button is enabled.
- * @param height The height of the button (default is 56.dp for standard touch targets).
- * @param shape The shape of the button corners.
- * @param content The content to be displayed inside the button.
- */
 @Composable
 fun AppButton(
     onClick: () -> Unit,

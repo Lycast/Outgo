@@ -29,8 +29,11 @@ sealed interface OperationIntent {
     data class UpdateDate(val date: EpochMillis) : OperationIntent
 
     // --- Actions ---
+    data object Delete : OperationIntent
+
     /** Triggers the validation and save process. */
     object Save : OperationIntent
+
     /** Clears the current error from the UI. */
     object DismissError : OperationIntent
 }

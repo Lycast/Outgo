@@ -20,17 +20,12 @@ import fr.abknative.outgo.android.designsystem.foundation.AppTheme
 import fr.abknative.outgo.android.designsystem.foundation.toColor
 import fr.abknative.outgo.core.api.nav.AppStep
 
-/**
- * Premium bottom navigation bar following the Segmented Control pattern.
- * Coordinates navigation destinations and the central action button.
- */
 @Composable
 fun BottomNavBar(
     currentStep: AppStep,
     isPremium: Boolean,
     onNavigate: (AppStep) -> Unit,
     onAddClick: () -> Unit,
-    onTeasingClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
 
@@ -49,7 +44,6 @@ fun BottomNavBar(
         }
     }
 
-    // Le conteneur global doit être assez haut pour le bouton qui dépasse
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -58,7 +52,6 @@ fun BottomNavBar(
         contentAlignment = Alignment.Center
     ) {
 
-        // --- COUCHE 1 : La barre de fond (Pill) ---
         Surface(
             modifier = Modifier
                 .height(42.dp)
@@ -70,7 +63,6 @@ fun BottomNavBar(
             BoxWithConstraints(modifier = Modifier.fillMaxSize().padding(AppTheme.dimens.extraSmall)) {
                 val segmentWidth = maxWidth / navItems.size
 
-                // Indicateur glissant
                 if (selectedIndex != -1) {
                     val indicatorOffset by animateDpAsState(
                         targetValue = segmentWidth * selectedIndex,
@@ -89,7 +81,6 @@ fun BottomNavBar(
                     )
                 }
 
-                // --- COUCHE 2 : Les icônes de navigation ---
                 Row(modifier = Modifier.fillMaxSize()) {
                     navItems.forEachIndexed { index, step ->
                         Box(
@@ -123,7 +114,6 @@ fun BottomNavBar(
             }
         }
 
-        // --- COUCHE 3 : Le bouton central qui déborde ---
         Box(
             modifier = Modifier
                 .size(62.dp)

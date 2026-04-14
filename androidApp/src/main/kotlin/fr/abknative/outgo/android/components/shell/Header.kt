@@ -11,14 +11,6 @@ import fr.abknative.outgo.android.designsystem.foundation.toColor
 import fr.abknative.outgo.android.ui.CommonLabels
 import fr.abknative.outgo.sync.api.model.SyncState
 
-/**
- * Global Header component.
- * Displays the app title, sync status, and settings access.
- *
- * @param syncState Current synchronization state.
- * @param isVertical Whether the header should be rendered as a side rail (vertical).
- * @param onSyncIconClick Action when sync icon is clicked.
- */
 @Composable
 fun Header(
     modifier: Modifier = Modifier,

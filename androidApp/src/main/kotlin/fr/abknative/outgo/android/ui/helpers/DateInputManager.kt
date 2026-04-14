@@ -20,7 +20,6 @@ class DateInputManager(
         get() {
             if (textBuffer.isEmpty()) return false
 
-            // --- Vérification incrémentale (comme tu l'avais fait) ---
             if (textBuffer.isNotEmpty()) {
                 val firstDigit = textBuffer[0].digitToIntOrNull() ?: return true
                 if (firstDigit > 3) return true
@@ -42,7 +41,6 @@ class DateInputManager(
                 if (fifthDigit != 2) return true
             }
 
-            // Vérification stricte finale
             if (textBuffer.length == 8) {
                 return !isDateValid(textBuffer)
             }
@@ -50,7 +48,6 @@ class DateInputManager(
         }
 
     fun onTextChange(newText: String) {
-        // N'accepte que les chiffres et limite à 8 caractères
         if (newText.length <= 8 && newText.all { it.isDigit() }) {
             textBuffer = newText
 
@@ -62,7 +59,6 @@ class DateInputManager(
         }
     }
 
-    // Utilisé quand on sélectionne une date via un DatePicker natif
     fun onExternalDateSelected(millis: EpochMillis) {
         textBuffer = formatMillisToDateString(millis)
         onValidDateDerived(millis)

@@ -10,24 +10,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.window.Dialog
 import fr.abknative.outgo.android.designsystem.components.buttons.AppButton
 import fr.abknative.outgo.android.designsystem.components.buttons.AppTextButton
 import fr.abknative.outgo.android.designsystem.components.cards.GlassCard
 import fr.abknative.outgo.android.designsystem.components.inputs.AppTextField
-import fr.abknative.outgo.android.designsystem.foundation.AppBackground
 import fr.abknative.outgo.android.designsystem.foundation.AppTheme
-import fr.abknative.outgo.android.designsystem.foundation.OutgoTheme
 import fr.abknative.outgo.android.designsystem.foundation.toColor
 import fr.abknative.outgo.android.ui.CommonLabels
 import fr.abknative.outgo.android.ui.DialogLabels
 import fr.abknative.outgo.android.ui.FormLabels
 
-/**
- * A dialog allowing the user to edit their wallet's name and monthly income.
- * Styled with [GlassCard] to maintain the application's visual identity.
- */
 @Composable
 fun WalletEditDialog(
     initialWalletName: String,
@@ -150,23 +143,6 @@ fun WalletEditDialog(
                     }
                 }
             }
-        }
-    }
-}
-
-// --- PREVIEWS ---
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewBudgetEditDialog_Standard() {
-    OutgoTheme {
-        AppBackground {
-            WalletEditDialog(
-                initialWalletName = "Compte Courant",
-                currentIncomeInCents = 150000L,
-                onDismiss = {},
-                onConfirm = { _, _ -> }
-            )
         }
     }
 }

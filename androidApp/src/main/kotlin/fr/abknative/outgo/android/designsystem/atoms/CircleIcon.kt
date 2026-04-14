@@ -15,17 +15,6 @@ import androidx.compose.ui.unit.dp
 import fr.abknative.outgo.android.designsystem.foundation.AppTheme
 import fr.abknative.outgo.android.designsystem.foundation.toColor
 
-/**
- * A reusable circular icon container.
- * Often used in lists or headers to represent categories or actions.
- *
- * @param iconRes The drawable resource ID for the icon.
- * @param modifier The modifier to be applied to the container.
- * @param size The total size of the circular container.
- * @param iconSize The size of the icon inside the circle.
- * @param tint The color of the icon.
- * @param background The background color of the circle.
- */
 @Composable
 fun CircleIcon(
     iconRes: Int,

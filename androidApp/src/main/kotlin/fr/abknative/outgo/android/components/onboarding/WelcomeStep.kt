@@ -17,13 +17,6 @@ import fr.abknative.outgo.android.designsystem.foundation.AppTheme
 import fr.abknative.outgo.android.designsystem.foundation.toColor
 import fr.abknative.outgo.android.ui.OnboardingLabels
 
-/**
- * The first screen of the onboarding flow.
- * Introduces the brand and provides entry points for new and existing users.
- *
- * @param onLoginClicked Callback to navigate to the authentication screen.
- * @param onStartClicked Callback to start the local wallet configuration.
- */
 @Composable
 fun WelcomeStep(
     onLoginClicked: () -> Unit,
@@ -36,7 +29,6 @@ fun WelcomeStep(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        // Flexible space to push content to the center
         Spacer(modifier = Modifier.weight(1f))
 
         // --- Logo ---
@@ -84,8 +76,7 @@ fun WelcomeStep(
             )
         }
 
-        // Pushes the secondary action towards the bottom
-        Spacer(modifier = Modifier.weight(1f))
+        Spacer(modifier = Modifier.height(AppTheme.dimens.medium))
 
         // --- Secondary Action: Login for existing users ---
         AppOutlinedButton(
@@ -98,7 +89,6 @@ fun WelcomeStep(
             )
         }
 
-        // Margin at the very bottom
-        Spacer(modifier = Modifier.height(AppTheme.dimens.big))
+        Spacer(modifier = Modifier.weight(1f))
     }
 }

@@ -8,26 +8,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import fr.abknative.outgo.android.R
 import fr.abknative.outgo.android.designsystem.components.buttons.AppOutlinedButton
 import fr.abknative.outgo.android.designsystem.components.buttons.AppTextButton
 import fr.abknative.outgo.android.designsystem.components.cards.GlassCard
-import fr.abknative.outgo.android.designsystem.foundation.AppBackground
 import fr.abknative.outgo.android.designsystem.foundation.AppTheme
-import fr.abknative.outgo.android.designsystem.foundation.OutgoTheme
 import fr.abknative.outgo.android.designsystem.foundation.toColor
 import fr.abknative.outgo.android.ui.HeaderLabels
 
-/**
- * Displays a promotional modal encouraging the offline user to create an account
- * and sync their data to the cloud.
- *
- * @param onDismiss Callback invoked when the user dismisses the dialog.
- * @param onNavigateToLogin Callback invoked when the user agrees to log in or sign up.
- */
 @Composable
 fun SyncPromotionModal(
     onDismiss: () -> Unit,
@@ -71,7 +61,6 @@ fun SyncPromotionModal(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // Dismiss Action
                     Box(modifier = Modifier.weight(0.75f)) {
                         AppTextButton(
                             onClick = onDismiss,
@@ -83,7 +72,6 @@ fun SyncPromotionModal(
 
                     Spacer(modifier = Modifier.width(AppTheme.dimens.medium))
 
-                    // Primary Action (Login/Signup)
                     Box(modifier = Modifier.weight(1f)) {
                         AppOutlinedButton(
                             onClick = {
@@ -97,21 +85,6 @@ fun SyncPromotionModal(
                     }
                 }
             }
-        }
-    }
-}
-
-// --- PREVIEWS ---
-
-@Preview(showBackground = true, name = "Sync Promo Modal - Refactored")
-@Composable
-fun PreviewSyncPromotionModal() {
-    OutgoTheme {
-        AppBackground {
-            SyncPromotionModal(
-                onDismiss = {},
-                onNavigateToLogin = {}
-            )
         }
     }
 }

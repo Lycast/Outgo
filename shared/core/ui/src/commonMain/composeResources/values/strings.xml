@@ -2,18 +2,15 @@
 
     <string name="error_wallet_empty_name">Le nom du compte ne peut pas être vide.</string>
     <string name="error_wallet_not_found">Le compte avec l'identifiant %s n'a pas été trouvé.</string>
-
     <string name="error_operation_empty_name">L'intitulé de l'opération ne peut pas être vide.</string>
     <string name="error_operation_invalid_amount">Le montant doit être strictement supérieur à 0.</string>
     <string name="error_operation_not_found">L'opération avec l'identifiant %s n'a pas été trouvée.</string>
     <string name="error_operation_invalid_date_order">La date de fin ne peut pas être antérieure à la date de début.</string>
     <string name="error_operation_wallet_not_found">Le compte associé à cette opération est introuvable.</string>
     <string name="error_operation_unknow_cycle">Le cycle de récurrence choisi n'est pas supporté.</string>
-
     <string name="error_auth_invalid_credentials">L'email ou le mot de passe est incorrect.</string>
     <string name="error_auth_user_not_found">Aucun compte n'est associé à cet email.</string>
     <string name="error_auth_session_expired">Votre session a expiré. Veuillez vous reconnecter.</string>
-
     <string name="error_global_network">Impossible de se connecter. Vérifiez votre connexion internet et réessayez.</string>
     <string name="error_global_server">Le serveur est actuellement indisponible. Veuillez réessayer plus tard.</string>
     <string name="error_global_unauthorized">Accès refusé. Veuillez vérifier vos identifiants.</string>
@@ -21,33 +18,43 @@
     <string name="error_global_unknown">Oups ! Quelque chose s'est mal passé. Nous faisons de notre mieux pour corriger ça.</string>
 
     <string name="app_name">Outgo</string>
+    <string name="common_currency_symbol">€</string>
     <string name="common_action_save">Enregistrer</string>
     <string name="common_action_cancel">Annuler</string>
     <string name="common_action_delete">Supprimer</string>
     <string name="common_action_edit">Modifier</string>
     <string name="common_action_duplicate">Dupliquer</string>
     <string name="common_action_close">Fermer</string>
-
+    <string name="common_action_ok">OK</string>
+    <string name="common_action_back">Retour</string>
     <string name="nav_tab_month_initial">M</string>
     <string name="nav_tab_year_initial">A</string>
     <string name="nav_tab_list">Liste</string>
     <string name="nav_tab_settings">Paramètres</string>
+    <string name="common_sync_offline_title">Réseau indisponible</string>
+    <string name="common_sync_offline_desc">Vérifiez votre connexion internet. L'application fonctionne normalement hors-ligne, la synchronisation reprendra plus tard.</string>
 
     <string name="dialog_delete_operation_title">Supprimer l'opération</string>
     <string name="dialog_delete_operation_desc">Êtes-vous sûr de vouloir supprimer définitivement cette dépense ? Cette action est irréversible.</string>
     <string name="dialog_logout_title">Se déconnecter ?</string>
-    <string name="dialog_logout_desc">Vous devrez vous reconnecter pour synchroniser vos prochaines modifications avec le cloud.</string>
-    <string name="dialog_logout_confirm">Déconnexion</string>
     <string name="dialog_purge_title">Vider les données locales</string>
     <string name="dialog_purge_desc">Cela supprimera toutes les données Outgo présentes sur cet appareil.</string>
     <string name="dialog_purge_confirm">Vider le cache</string>
     <string name="dialog_delete_account_title">Supprimer vos données</string>
-    <string name="dialog_delete_account_desc">Cette action est définitive. Toutes vos données seront effacées de nos serveurs de manière irréversible.</string>
-
     <string name="budget_dialog_title">Mon budget mensuel</string>
     <string name="budget_dialog_desc">Entrez votre budget total par mois.</string>
     <string name="budget_dialog_info">Le montant de votre budget permettra ensuite de calculer ce qu'il vous restera en fonction de vos dépenses.</string>
     <string name="budget_dialog_field">Montant du budget</string>
+    <string name="dialog_delete_account_choice_desc">Choisissez ce que vous souhaitez effacer. Cette action est irréversible.</string>
+    <string name="dialog_delete_account_local_title">Vider cet appareil</string>
+    <string name="dialog_delete_account_local_desc">Supprime vos données de cet appareil.</string>
+    <string name="dialog_delete_account_server_title">Effacer mon Cloud</string>
+    <string name="dialog_delete_account_server_desc">Supprime vos données des serveurs Outgo.</string>
+    <string name="dialog_delete_account_auth_title">Supprimer mon profil</string>
+    <string name="dialog_delete_account_auth_desc">Révoque l'accès et détruit vos données personnelles.</string>
+    <string name="dialog_logout_data_question">Que souhaitez-vous faire de vos données actuelles ?</string>
+    <string name="dialog_logout_action_keep_budget">Conserver ce budget</string>
+    <string name="dialog_logout_action_return_local">Retrouver mon budget local</string>
 
     <string name="form_sheet_title_add">Nouvelle opération</string>
     <string name="form_sheet_title_edit">Modifier l'opération</string>
@@ -55,58 +62,64 @@
     <string name="form_field_place_holder_name">Ex: Loyer, Netflix...</string>
     <string name="form_field_amount">Entrez le montant</string>
     <string name="form_field_place_holder_amount">0.00</string>
-    <string name="form_field_date_desc">Sélectionnez la récurrence et entrez la date de votre dépense.</string>
     <string name="form_cycle_unique">Unique</string>
     <string name="form_cycle_weekly">Hebdo</string>
     <string name="form_cycle_monthly">Mensuel</string>
     <string name="form_cycle_yearly">Annuel</string>
+    <string name="form_field_recurrence_desc">Sélectionnez la récurrence</string>
+    <string name="form_field_type_desc">Sélectionnez le type d'opération</string>
+    <string name="form_type_expense">Dépense</string>
+    <string name="form_type_income">Revenu</string>
+    <string name="form_field_date_label">Date de l'opération</string>
 
     <string name="a11y_loading">Chargement en cours</string>
-    <string name="a11y_sync_error">Synchronisation échouée</string>
     <string name="a11y_synced">Synchronisé avec le serveur</string>
     <string name="a11y_not_synced">Non synchronisé, appuyez pour configurer</string>
     <string name="a11y_delete_expense">Supprimer cette dépense</string>
-    <string name="a11y_edit_expense">Modifier cette dépense</string>
     <string name="a11y_duplicate_expense">Dupliquer cette dépense</string>
-    <string name="a11y_edit_budget">Modifier le budget</string>
-    <string name="a11y_navigate_home">Retour au Dashboard</string>
     <string name="a11y_navigate_settings">Paramètres</string>
     <string name="a11y_previous_month">Mois précédent</string>
     <string name="a11y_next_month">Mois suivant</string>
-    <string name="a11y_expand_hero">Développer les détails</string>
-    <string name="a11y_collapse_hero">Réduire les détails</string>
-    <string name="a11y_expand_hero_desc">Déplié</string>
-    <string name="a11y_collapse_hero_desc">Replié</string>
-    <string name="a11y_add_expense">Ajouter une nouvelle dépense</string>
     <string name="a11y_info_tooltip">Afficher les détails</string>
-    <string name="a11y_info_empty_state">Information : liste vide</string>
-    <string name="a11y_day_selector">Selection de jour</string>
-    <string name="a11y_month_selector">Selection de mois</string>
+    <string name="a11y_day_selector">Sélection de jour</string>
+    <string name="a11y_sync_error">Synchronisation échouée</string>
+    <string name="a11y_navigate_list">Liste</string>
 
+    <string name="shell_copy_subname">(copie)</string>
     <string name="header_sync_promo_title">Persistance de vos données</string>
     <string name="header_sync_promo_desc">Vous pouvez synchroniser gratuitement vos données sur le serveur pour ne jamais les perdre et les rendre accessibles depuis n'importe quel téléphone.</string>
     <string name="header_sync_promo_action_login">Synchronisation</string>
     <string name="header_sync_promo_action_later">Plus tard</string>
+    <string name="operation_placeholder_date_format">JJ/MM/AAAA</string>
 
-    <string name="list_tooltip_balance_title">Votre reste à vivre</string>
-    <string name="list_tooltip_balance_desc">C'est le montant final dont vous disposez (ou qu'il vous manque) après avoir soustrait l'ensemble de vos dépenses.</string>
-    <string name="list_tooltip_balance_due_title">Votre reste à payer</string>
-    <string name="list_tooltip_balance_due_desc">C'est le montant de vos dépenses prévisibles qu'il vous reste à payer pour ce mois-ci.</string>
-    <string name="list_hero_total_income">Budget</string>
-    <string name="list_hero_disposable_income">Restant</string>
-    <string name="list_hero_missing_income">Manquant</string>
+    <string name="onboarding_config_title">Créons votre espace</string>
+    <string name="onboarding_wallet_name_label">Nom de votre portefeuille</string>
+    <string name="onboarding_wallet_name_placeholder">Ex: Mon Budget, Compte Courant...</string>
+    <string name="onboarding_income_amount_label">Revenu mensuel principal (€)</string>
+    <string name="onboarding_income_amount_placeholder">Ex: 1500</string>
+    <string name="onboarding_submit">Générer mon tableau de bord</string>
+    <string name="onboarding_welcome_title">Reprenez le contrôle\nde votre budget.</string>
+    <string name="onboarding_welcome_subtitle">Sans friction. Sans connexion obligatoire. Vos données restent sur votre appareil.</string>
+    <string name="onboarding_welcome_action_start">Commencer</string>
+    <string name="onboarding_welcome_action_login">Vous avez déjà un compte? Connectez vous</string>
+
+    <string name="month_default_error">Une erreur inattendue est survenue</string>
+    <string name="month_section_budget">Budget</string>
+    <string name="month_section_expenses">Dépenses</string>
+    <string name="month_section_upcoming">Dépenses à venir</string>
+    <string name="month_section_recurrence">Répartition</string>
+
     <string name="list_hero_total_charges">Total des dépenses</string>
     <string name="list_hero_remaining_to_pay">Restantes à payer</string>
     <string name="list_tab_all">TOUTES</string>
     <string name="list_tab_paid">PASSÉES</string>
     <string name="list_tab_remaining">À VENIR</string>
     <string name="list_empty_all">Aucune dépense.</string>
-    <string name="list_empty_paid">Aucune opération n'a été passée ce mois-ci.</string>
-    <string name="list_empty_remaining">Il n'y a pas d'autre opération de prévu ce mois-ci !</string>
+    <string name="list_empty_paid">Aucune opération n\'a été passée ce mois-ci.</string>
+    <string name="list_empty_remaining">Il n'y a pas d\'autre opération de prévue ce mois-ci !</string>
     <string name="list_empty_state_desc">Appuyez sur + pour ajouter votre premier abonnement ou dépense récurrente.</string>
     <string name="list_default_name">Sans nom</string>
     <string name="list_due_prefix">Le</string>
-    <string name="list_month_all">Tous les mois</string>
     <string name="list_month_1">Janvier</string>
     <string name="list_month_2">Février</string>
     <string name="list_month_3">Mars</string>
@@ -122,7 +135,6 @@
 
     <string name="settings_section_appearance">Apparence</string>
     <string name="settings_section_support">Soutenir le projet</string>
-    <string name="settings_section_data">Données</string>
     <string name="settings_section_account">Compte</string>
     <string name="settings_dark_mode_title">Mode sombre</string>
     <string name="settings_dark_mode_subtitle">Réduire la fatigue visuelle</string>
@@ -139,6 +151,9 @@
     <string name="settings_local_purge_title">Supprimer les données</string>
     <string name="settings_local_purge_subtitle">Réinitialise l'application sur cet appareil.</string>
     <string name="settings_app_version_prefix">Outgo v1.0.0</string>
+    <string name="settings_url_site">https://abknative.fr</string>
+    <string name="settings_url_contact">https://abknative.fr/contact</string>
+    <string name="settings_section_data_account">Données &amp; Compte</string>
 
     <string name="login_title">Bienvenue sur Outgo</string>
     <string name="login_email_label">Email</string>
@@ -146,5 +161,51 @@
     <string name="login_submit_button">Se connecter</string>
     <string name="login_back_title">Retour</string>
     <string name="login_error_message">Erreur de connexion</string>
+    <string name="login_register_action"> Pas encore de compte ? S'inscrire</string>
+    <string name="login_conflict_title">Sauvegarde existante</string>
+    <string name="login_conflict_desc">Ce compte contient déjà des données sur nos serveurs. En vous connectant, vos données actuelles seront mises de côté pour afficher celles de votre compte en ligne.</string>
+    <string name="login_conflict_question">Que voulez-vous faire ?</string>
+    <string name="login_conflict_confirm">Télécharger le Cloud</string>
+    <string name="login_conflict_cancel">Annuler la connexion</string>
+
+    <string name="premium_showcase_title">Prenez le contrôle total de votre avenir financier.</string>
+    <string name="premium_showcase_subtitle">Passez d'une gestion réactive à une gestion prédictive.</string>
+    <string name="premium_essential_title">Outgo Essentiel</string>
+    <string name="premium_essential_badge">VOTRE OFFRE ACTUELLE</string>
+    <string name="premium_essential_desc">Le contrôle de votre mois en cours.</string>
+    <string name="premium_essential_feature_1">Enveloppe mensuelle simple</string>
+    <string name="premium_essential_feature_2">Suivi instantané des dépenses</string>
+    <string name="premium_essential_feature_3">Jauge de survie en temps réel</string>
+    <string name="premium_premium_title">Outgo Premium</string>
+    <string name="premium_premium_badge">BIENTÔT DISPONIBLE</string>
+    <string name="premium_premium_desc">Le pilotage de votre trésorerie à long terme.</string>
+    <string name="premium_premium_feature_1">Véritable Gestion de Trésorerie</string>
+    <string name="premium_premium_feature_2">Portefeuilles Multiples</string>
+    <string name="premium_premium_feature_3">Projections sur 12 Mois</string>
+    <string name="premium_premium_feature_4">Synchro Bancaire (V3 ?)</string>
+    <string name="premium_notify_me_action">Prévenez-moi du lancement</string>
+
+    <string name="dialog_logout_desc">Vous devrez vous reconnecter pour synchroniser vos prochaines modifications avec le cloud.</string>
+    <string name="dialog_logout_confirm">Déconnexion</string>
+    <string name="form_field_date_desc">Sélectionnez la récurrence et entrez la date de votre dépense.</string>
+    <string name="a11y_edit_expense">Modifier cette dépense</string>
+    <string name="a11y_edit_budget">Modifier le budget</string>
+    <string name="a11y_navigate_home">Retour au Dashboard</string>
+    <string name="a11y_expand_hero">Développer les détails</string>
+    <string name="a11y_collapse_hero">Réduire les détails</string>
+    <string name="a11y_expand_hero_desc">Déplié</string>
+    <string name="a11y_collapse_hero_desc">Replié</string>
+    <string name="a11y_add_expense">Ajouter une nouvelle dépense</string>
+    <string name="a11y_info_empty_state">Information : liste vide</string>
+    <string name="a11y_month_selector">Selection de mois</string>
+    <string name="list_tooltip_balance_title">Votre reste à vivre</string>
+    <string name="list_tooltip_balance_desc">C'est le montant final dont vous disposez (ou qu'il vous manque) après avoir soustrait l'ensemble de vos dépenses.</string>
+    <string name="list_tooltip_balance_due_title">Votre reste à payer</string>
+    <string name="list_tooltip_balance_due_desc">C'est le montant de vos dépenses prévisibles qu'il vous reste à payer pour ce mois-ci.</string>
+    <string name="list_hero_total_income">Budget</string>
+    <string name="list_hero_disposable_income">Restant</string>
+    <string name="list_hero_missing_income">Manquant</string>
+    <string name="list_month_all">Tous les mois</string>
+    <string name="settings_section_data">Données</string>
 
 </resources>

@@ -18,14 +18,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import fr.abknative.outgo.android.components.sheet.OperationFormSheet
+import fr.abknative.outgo.android.components.operation.OperationFormSheet
 import fr.abknative.outgo.android.components.shell.AppGlobalHeader
-import fr.abknative.outgo.android.components.shell.AppGlobalModals
 import fr.abknative.outgo.android.components.shell.BottomNavBar
+import fr.abknative.outgo.android.components.shell.ShellModals
 import fr.abknative.outgo.android.designsystem.foundation.AppBackground
 import fr.abknative.outgo.android.designsystem.foundation.AppTheme
 import fr.abknative.outgo.android.designsystem.foundation.toColor
-import fr.abknative.outgo.core.api.TimeProvider
+import fr.abknative.outgo.android.ui.ShellLabels
 import fr.abknative.outgo.core.api.nav.AppStep
 import fr.abknative.outgo.core.api.nav.NavCoordinator
 import fr.abknative.outgo.login.api.LoginPresenter
@@ -34,7 +34,6 @@ import fr.abknative.outgo.operation.api.OperationPresenter
 import fr.abknative.outgo.shell.api.ShellIntent
 import fr.abknative.outgo.shell.api.ShellPresenter
 import org.koin.androidx.compose.koinViewModel
-import org.koin.compose.koinInject
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -46,16 +45,13 @@ fun ShellScreen(
 ) {
     val shellState by shellPresenter.state.collectAsStateWithLifecycle()
     val navState by coordinator.state.collectAsState()
-
-    // --- Modales ---
     var showPremiumTeasingModal by remember { mutableStateOf(false) }
     var showSyncModal by remember { mutableStateOf(false) }
-
-    // --- Configuration ---
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
     val currentStep = navState.currentStep
     val shouldShowHeader = currentStep != AppStep.Login && currentStep != AppStep.Splash && currentStep != AppStep.Onboarding
+    val copySubname = ShellLabels.COPY_SUBNAME
 
     BackHandler(enabled = navState.canGoBack) {
         coordinator.handleBack()
@@ -99,7 +95,9 @@ fun ShellScreen(
                     }
                 ) { innerPadding ->
 
-                    Box(modifier = Modifier.padding(innerPadding).fillMaxSize()) {
+                    Box(modifier = Modifier
+                        .padding(innerPadding)
+                        .fillMaxSize()) {
 
                         // --- Router Central ---
                         AnimatedContent(
@@ -149,7 +147,6 @@ fun ShellScreen(
                                 currentStep = currentStep,
                                 isPremium = shellState.isPremium,
                                 onNavigate = { step -> coordinator.navigateTo(step) },
-                                onTeasingClick = { showPremiumTeasingModal = true },
                                 onAddClick = {
                                     shellPresenter.onIntent(ShellIntent.OpenOperationForm(operationId = null))
                                 }
@@ -161,11 +158,10 @@ fun ShellScreen(
         }
 
         // --- Modales Globales (Sync, Premium) ---
-        AppGlobalModals(
+        ShellModals(
             showSyncModal = showSyncModal,
             showPremiumTeasingModal = showPremiumTeasingModal,
             onDismissSync = { showSyncModal = false },
-            onDismissPremium = { showPremiumTeasingModal = false },
             onNavigateToLogin = {
                 showSyncModal = false
                 coordinator.navigateTo(AppStep.Login)
@@ -176,7 +172,6 @@ fun ShellScreen(
         if (shellState.isOperationFormVisible) {
             val operationPresenter = koinViewModel<OperationPresenter>()
             val operationState by operationPresenter.state.collectAsStateWithLifecycle()
-            val timeProvider = koinInject<TimeProvider>()
             val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
             LaunchedEffect(shellState.operationIdToEdit) {
@@ -205,8 +200,23 @@ fun ShellScreen(
                 sheetState = sheetState,
                 isPremium = shellState.isPremium,
                 onDismiss = { shellPresenter.onIntent(ShellIntent.CloseOperationForm) },
-                onDeleteRequest = { /* À gérer si besoin depuis le formulaire */ },
-                onDuplicateRequest = { /* À gérer si besoin */ }
+                onDeleteRequest = {
+                    operationPresenter.onIntent(OperationIntent.Delete)
+                },
+
+                onDuplicateRequest = {
+                    operationPresenter.onIntent(
+                        OperationIntent.Init(
+                            walletId = operationState.walletId,
+                            operationId = null,
+                            initialName = "${operationState.name} $copySubname",
+                            initialAmount = operationState.amount,
+                            initialType = operationState.type,
+                            initialRecurrence = operationState.recurrence,
+                            initialDate = operationState.date
+                        )
+                    )
+                }
             )
         }
     }

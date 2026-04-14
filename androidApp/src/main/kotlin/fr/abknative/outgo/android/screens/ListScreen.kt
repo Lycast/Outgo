@@ -8,21 +8,18 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import fr.abknative.outgo.android.components.list.ListScreenModals
+import fr.abknative.outgo.android.components.list.OperationFilterSelector
 import fr.abknative.outgo.android.components.list.OperationListContainer
-import fr.abknative.outgo.android.components.operation.OperationFilterSelector
 import fr.abknative.outgo.android.designsystem.components.feedback.AppSnackbar
 import fr.abknative.outgo.android.designsystem.components.selection.MonthTimeSelector
 import fr.abknative.outgo.android.designsystem.foundation.AppTheme
 import fr.abknative.outgo.android.ui.extensions.getMonthName
 import fr.abknative.outgo.android.ui.toUIString
-import fr.abknative.outgo.core.api.TimeProvider
 import fr.abknative.outgo.list.api.ListIntent
 import fr.abknative.outgo.list.api.ListPresenter
 import fr.abknative.outgo.shell.api.ShellIntent
 import fr.abknative.outgo.shell.api.ShellPresenter
 import fr.abknative.outgo.wallet.api.model.presenter.ProjectedOperation
-import org.koin.compose.koinInject
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -31,17 +28,12 @@ fun ListScreen(
     shellPresenter: ShellPresenter,
     modifier: Modifier = Modifier
 ) {
+
     val state by presenter.state.collectAsStateWithLifecycle()
-    val timeProvider = koinInject<TimeProvider>()
-
-    // Local UI states strictly for Dialogs & Sheets
     var operationToDelete by remember { mutableStateOf<ProjectedOperation?>(null) }
-
     val snackbarHostState = remember { SnackbarHostState() }
-
     val currentError = state.error
     val errorMessage = currentError?.toUIString()
-
     val formattedSelectedMonth = "${getMonthName(state.selectedMonth)} ${state.selectedYear}".uppercase()
 
     LaunchedEffect(currentError) {
@@ -60,7 +52,6 @@ fun ListScreen(
                 .fillMaxSize()
                 .padding(horizontal = AppTheme.dimens.medium)
         ) {
-            // 1. Le Sélecteur de temps
             MonthTimeSelector(
                 formattedMonth = formattedSelectedMonth,
                 canGoBack = state.canGoToPreviousMonth,
@@ -75,8 +66,6 @@ fun ListScreen(
                 onFilterSelected = { presenter.onIntent(ListIntent.UpdateFilter(it)) }
             )
 
-            Spacer(modifier = Modifier.height(AppTheme.dimens.small))
-
             OperationListContainer(
                 isLoading = state.isLoading,
                 filteredList = state.filteredOperations,
@@ -84,7 +73,6 @@ fun ListScreen(
                 onDeleteRequest = { projectedOp -> operationToDelete = projectedOp },
                 onEdit = { outgoing ->
                     val op = outgoing.operation
-                    // Conversion du montant pour l'affichage (centimes -> String "12.50")
                     val formattedAmount = op.amountInCents.toBigDecimal()
                         .movePointLeft(2)
                         .toPlainString()
@@ -100,8 +88,7 @@ fun ListScreen(
                             endDate = outgoing.projectedDate,
                         )
                     )
-                },
-                modifier = Modifier.weight(1f)
+                }
             )
         }
         SnackbarHost(

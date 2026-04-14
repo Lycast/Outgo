@@ -21,13 +21,6 @@ import fr.abknative.outgo.android.ui.AccessibilityLabels
 import fr.abknative.outgo.android.ui.CommonLabels
 import fr.abknative.outgo.core.api.nav.AppStep
 
-/**
- * Renders the icon content for a navigation step, handling selection colors and badges.
- *
- * @param step The navigation step to represent.
- * @param isSelected Whether this step is the currently active one.
- * @param isLocked Whether the step should display a premium lock badge.
- */
 @Composable
 fun BottomNavIconContent(
     step: AppStep,
@@ -38,7 +31,7 @@ fun BottomNavIconContent(
 
     val iconContent = @Composable {
         when (step) {
-            // --- Les Lettres (Gauche) ---
+
             AppStep.Month -> Text(
                 text = CommonLabels.TAB_MONTH_INITIAL,
                 style = AppTheme.typo.title.copy(fontWeight = FontWeight.SemiBold),
@@ -49,7 +42,7 @@ fun BottomNavIconContent(
                 style = AppTheme.typo.title.copy(fontWeight = FontWeight.SemiBold),
                 color = tint
             )
-            // --- Les Icônes (Droite) ---
+
             AppStep.List -> Icon(
                 painter = painterResource(id = R.drawable.list_bullets),
                 contentDescription = AccessibilityLabels.NAVIGATE_LIST,

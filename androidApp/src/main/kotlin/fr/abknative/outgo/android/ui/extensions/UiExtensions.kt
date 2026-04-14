@@ -17,7 +17,7 @@ import kotlin.math.absoluteValue
  * Formats a Long value representing cents into a readable currency string.
  */
 val Long.uiAmount: String
-    get() {
+    @Composable get() {
         val isNegative = this < 0
         val absoluteValue = this.absoluteValue
 
@@ -26,11 +26,7 @@ val Long.uiAmount: String
 
         val formattedCents = cents.toString().padStart(2, '0')
 
-        val eurosString = euros.toString()
-            .reversed()
-            .chunked(3)
-            .joinToString(" ")
-            .reversed()
+        val eurosString = euros.toString().reversed().chunked(3).joinToString(" ").reversed()
 
         val prefix = if (isNegative) "-" else ""
 
@@ -76,9 +72,9 @@ val Recurrence.uiLabel: String
  */
 @Composable
 fun getMonthName(month: Int): String = when (month) {
-    1 -> ListLabels.MONTH_1 ; 2 -> ListLabels.MONTH_2 ; 3 -> ListLabels.MONTH_3
-    4 -> ListLabels.MONTH_4 ; 5 -> ListLabels.MONTH_5 ; 6 -> ListLabels.MONTH_6
-    7 -> ListLabels.MONTH_7 ; 8 -> ListLabels.MONTH_8 ; 9 -> ListLabels.MONTH_9
+    1 -> ListLabels.MONTH_1; 2 -> ListLabels.MONTH_2; 3 -> ListLabels.MONTH_3
+    4 -> ListLabels.MONTH_4; 5 -> ListLabels.MONTH_5; 6 -> ListLabels.MONTH_6
+    7 -> ListLabels.MONTH_7; 8 -> ListLabels.MONTH_8; 9 -> ListLabels.MONTH_9
     10 -> ListLabels.MONTH_10; 11 -> ListLabels.MONTH_11; 12 -> ListLabels.MONTH_12
     else -> ""
 }

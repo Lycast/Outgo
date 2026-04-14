@@ -13,7 +13,6 @@ import androidx.compose.ui.unit.dp
 import fr.abknative.outgo.android.designsystem.foundation.AppTheme
 import fr.abknative.outgo.android.designsystem.foundation.toColor
 
-// designsystem/components/feedback/AppSnackbar.kt
 @Composable
 fun AppSnackbar(
     snackbarData: SnackbarData,
@@ -26,7 +25,7 @@ fun AppSnackbar(
         contentAlignment = Alignment.Center
     ) {
         Surface(
-            shape = AppTheme.shapes.large, // Consistance avec tes cartes
+            shape = AppTheme.shapes.medium,
             color = AppTheme.colors.surface200.toColor().copy(alpha = 0.9f),
             tonalElevation = 6.dp,
             shadowElevation = 12.dp,

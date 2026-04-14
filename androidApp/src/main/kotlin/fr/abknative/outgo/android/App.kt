@@ -12,11 +12,11 @@ import org.koin.compose.koinInject
 
 @Composable
 fun App() {
+
     val coordinator: NavCoordinator = koinInject()
     val storage: KeyValueStorage = koinInject()
     val shellPresenter: ShellPresenter = koinViewModel()
 
-    // --- Gestion du Thème (Persistance) ---
     val systemTheme = isSystemInDarkTheme()
     val themeKey = "app_is_dark_mode"
     var isDarkMode by remember {

@@ -8,6 +8,7 @@ import fr.abknative.outgo.core.api.logs.Result
 import fr.abknative.outgo.operation.api.OperationIntent
 import fr.abknative.outgo.operation.api.OperationPresenter
 import fr.abknative.outgo.operation.api.OperationState
+import fr.abknative.outgo.wallet.api.usecase.DeleteOperationUseCase
 import fr.abknative.outgo.wallet.api.usecase.SaveOperationUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,6 +18,7 @@ import kotlin.math.roundToLong
 
 internal class OperationPresenterImpl(
     private val saveOperation: SaveOperationUseCase,
+    private val deleteOperation: DeleteOperationUseCase,
     private val timeProvider: TimeProvider
 ) : OperationPresenter() {
 
@@ -35,6 +37,7 @@ internal class OperationPresenterImpl(
             is OperationIntent.UpdateType -> _state.update { it.copy(type = intent.type) }
             is OperationIntent.UpdateRecurrence -> _state.update { it.copy(recurrence = intent.recurrence) }
             is OperationIntent.UpdateDate -> _state.update { it.copy(date = intent.date) }
+            is OperationIntent.Delete -> handleDelete()
             is OperationIntent.Save -> handleSave()
             is OperationIntent.DismissError -> _state.update { it.copy(error = null) }
         }
@@ -52,6 +55,25 @@ internal class OperationPresenterImpl(
                 date = intent.initialDate ?: timeProvider.now(),
                 isSavedSuccessfully = false // Reset success flag on open
             )
+        }
+    }
+
+    private fun handleDelete() {
+        val id = _state.value.operationId ?: return
+
+        viewModelScope.safeLaunch(onError = onCoroutineError) {
+            _state.update { it.copy(isSaving = true) }
+            val result = deleteOperation(id)
+
+            when (result) {
+                is Result.Success -> {
+                    // On réutilise le flag de succès pour fermer la modale
+                    _state.update { it.copy(isSaving = false, isSavedSuccessfully = true) }
+                }
+                is Result.Error -> {
+                    _state.update { it.copy(isSaving = false, error = result.error) }
+                }
+            }
         }
     }
 

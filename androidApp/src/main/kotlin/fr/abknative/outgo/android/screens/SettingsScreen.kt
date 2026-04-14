@@ -14,7 +14,6 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.style.TextAlign
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import fr.abknative.outgo.android.R
-import fr.abknative.outgo.android.components.settings.SettingsModals
 import fr.abknative.outgo.android.components.settings.SettingsRowClickable
 import fr.abknative.outgo.android.components.settings.SettingsRowToggle
 import fr.abknative.outgo.android.components.settings.SettingsSection
@@ -34,18 +33,17 @@ fun SettingsScreen(
     onToggleDarkMode: (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
+
     val state by presenter.state.collectAsStateWithLifecycle()
     val scrollState = rememberScrollState()
     val uriHandler = LocalUriHandler.current
-
     val snackbarHostState = remember { SnackbarHostState() }
-
-    // Dialog States
     var showLogoutOptions by remember { mutableStateOf(false) }
     var showDeleteAccountConfirm by remember { mutableStateOf(false) }
     var showPurgeConfirm by remember { mutableStateOf(false) }
-
     val errorMessage = state.error?.toUIString()
+    val siteUrl = SettingsLabels.URL_SITE
+    val contactUrl = SettingsLabels.URL_CONTACT
 
     LaunchedEffect(state.error) {
         if (state.error != null && errorMessage != null) {
@@ -81,24 +79,24 @@ fun SettingsScreen(
                 )
             }
 
-            // --- SECTION Soutien & Communauté ---
+            // --- SECTION helpers & Community ---
             SettingsSection(title = SettingsLabels.SECTION_SUPPORT) {
                 SettingsRowClickable(
                     icon = R.drawable.lightbulb_duotone,
                     title = SettingsLabels.TIPS_TITLE,
                     subtitle = SettingsLabels.TIPS_SUBTITLE,
-                    onClick = { uriHandler.openUri(SettingsLabels.URL_SITE) }
+                    onClick = { uriHandler.openUri(siteUrl) }
                 )
                 HorizontalDivider(color = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.1f))
                 SettingsRowClickable(
                     icon = R.drawable.envelope_duotone,
                     title = SettingsLabels.CONTACT_TITLE,
                     subtitle = SettingsLabels.CONTACT_SUBTITLE,
-                    onClick = { uriHandler.openUri(SettingsLabels.URL_CONTACT) }
+                    onClick = { uriHandler.openUri(contactUrl) }
                 )
             }
 
-            // --- SECTION Données & Compte ---
+            // --- SECTION Data & Account ---
             if (state.session == null) {
                 SettingsSection(title = SettingsLabels.SECTION_DATA_AND_ACCOUNT) {
                     SettingsRowClickable(
@@ -145,13 +143,11 @@ fun SettingsScreen(
             )
         }
 
-        // --- Intégration de ton AppSnackbar ---
         SnackbarHost(
             hostState = snackbarHostState,
             modifier = Modifier.align(Alignment.TopCenter)
         ) { data -> AppSnackbar(data) }
 
-        // --- Modales ---
         SettingsModals(
             showLogoutOptions = showLogoutOptions,
             showDeleteAccountConfirm = showDeleteAccountConfirm,

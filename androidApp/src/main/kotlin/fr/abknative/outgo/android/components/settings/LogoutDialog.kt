@@ -3,10 +3,13 @@ package fr.abknative.outgo.android.components.settings
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.*
-import androidx.compose.material3.ButtonDefaults.outlinedButtonBorder
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import fr.abknative.outgo.android.designsystem.components.buttons.AppButton
+import fr.abknative.outgo.android.designsystem.components.buttons.AppOutlinedButton
+import fr.abknative.outgo.android.designsystem.components.buttons.AppTextButton
 import fr.abknative.outgo.android.designsystem.foundation.AppTheme
 import fr.abknative.outgo.android.designsystem.foundation.toColor
 import fr.abknative.outgo.android.ui.CommonLabels
@@ -42,41 +45,18 @@ fun LogoutDialog(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.small)
             ) {
-
-                Button(
+                AppButton(
                     onClick = onKeepOffline,
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = AppTheme.colors.primary.toColor()
-                    )
-                ) {
-                    Text(DialogLabels.LOGOUT_ACTION_KEEP_BUDGET, style = AppTheme.typo.label)
-                }
-
-                OutlinedButton(
+                    modifier = Modifier.fillMaxWidth()
+                ) { Text(text = DialogLabels.LOGOUT_ACTION_KEEP_BUDGET) }
+                AppOutlinedButton(
                     onClick = onReturnToLocal,
-                    modifier = Modifier.fillMaxWidth(),
-                    border = outlinedButtonBorder.copy(
-                        brush = androidx.compose.ui.graphics.SolidColor(AppTheme.colors.primary.toColor())
-                    )
-                ) {
-                    Text(
-                        DialogLabels.LOGOUT_ACTION_RETURN_LOCAL,
-                        style = AppTheme.typo.label,
-                        color = AppTheme.colors.primary.toColor()
-                    )
-                }
-
-                TextButton(
+                    modifier = Modifier.fillMaxWidth()
+                ) { Text(text = DialogLabels.LOGOUT_ACTION_RETURN_LOCAL) }
+                AppTextButton(
                     onClick = onCancel,
                     modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(
-                        CommonLabels.ACTION_CANCEL,
-                        style = AppTheme.typo.label,
-                        color = AppTheme.colors.textSecondary.toColor()
-                    )
-                }
+                ) { Text(text = CommonLabels.ACTION_CANCEL) }
             }
         }
     )

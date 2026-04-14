@@ -7,25 +7,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.window.Dialog
 import fr.abknative.outgo.android.designsystem.components.buttons.AppButton
 import fr.abknative.outgo.android.designsystem.components.buttons.AppTextButton
 import fr.abknative.outgo.android.designsystem.components.cards.GlassCard
-import fr.abknative.outgo.android.designsystem.foundation.AppBackground
 import fr.abknative.outgo.android.designsystem.foundation.AppTheme
-import fr.abknative.outgo.android.designsystem.foundation.OutgoTheme
 import fr.abknative.outgo.android.designsystem.foundation.toColor
 import fr.abknative.outgo.android.ui.LoginLabels
 
-/**
- * A specialized dialog shown when a data conflict is detected between
- * the local database and the cloud storage.
- * It uses the [GlassCard] container to maintain UI consistency.
- *
- * @param onConfirm Callback invoked when the user chooses to resolve the conflict (e.g., download cloud data).
- * @param onCancel Callback invoked to dismiss the dialog or keep local state.
- */
 @Composable
 fun ConflictDialog(
     onConfirm: () -> Unit,
@@ -89,22 +78,6 @@ fun ConflictDialog(
                     Text(text = LoginLabels.CONFLICT_CANCEL)
                 }
             }
-        }
-    }
-}
-
-// --- PREVIEWS ---
-
-@Preview(showBackground = true, name = "Conflict Dialog - Refactored")
-@Composable
-fun PreviewConflictDialog() {
-    OutgoTheme {
-        // Adding the background to better visualize the Glassmorphism
-        AppBackground {
-            ConflictDialog(
-                onConfirm = {},
-                onCancel = {}
-            )
         }
     }
 }

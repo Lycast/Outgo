@@ -1,4 +1,4 @@
-package fr.abknative.outgo.android.components.sheet
+package fr.abknative.outgo.android.components.operation
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -17,8 +17,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
-import fr.abknative.outgo.android.components.operation.OperationTypeSelector
-import fr.abknative.outgo.android.components.operation.RecurrenceSelector
 import fr.abknative.outgo.android.designsystem.components.buttons.AppButton
 import fr.abknative.outgo.android.designsystem.components.buttons.AppTextButton
 import fr.abknative.outgo.android.designsystem.components.feedback.FormattedDateInput
@@ -44,6 +42,7 @@ fun OperationFormContent(
     onCancel: () -> Unit,
     onSave: () -> Unit,
 ) {
+
     val lockSheetConnection = remember {
         object : NestedScrollConnection {
             override fun onPostScroll(consumed: Offset, available: Offset, source: NestedScrollSource): Offset =
@@ -51,7 +50,6 @@ fun OperationFormContent(
         }
     }
 
-    // --- Configuration & Managers ---
     val isEditMode = state.operationId != null
     val timeProvider = koinInject<TimeProvider>()
 
@@ -70,7 +68,6 @@ fun OperationFormContent(
         timeProvider = timeProvider,
         onValidDateDerived = { onIntent(OperationIntent.UpdateDate(it)) }
     )
-
 
     Column(
         modifier = modifier

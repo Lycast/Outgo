@@ -15,13 +15,6 @@ import fr.abknative.outgo.android.designsystem.foundation.toColor
 import fr.abknative.outgo.android.ui.ListLabels
 import fr.abknative.outgo.android.ui.extensions.uiAmount
 
-/**
- * A carousel page focused on expenses visualization using a donut chart.
- * Shows the ratio between total outgoings and what's left to pay.
- *
- * @param totalOutgoingsInCents The total expenses planned for the month.
- * @param remainingToPayInCents The amount left to pay.
- */
 @Composable
 fun StatsCardExpense(
     totalOutgoingsInCents: Long,

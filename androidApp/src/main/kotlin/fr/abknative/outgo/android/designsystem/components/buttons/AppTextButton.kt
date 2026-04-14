@@ -13,9 +13,6 @@ import androidx.compose.ui.unit.dp
 import fr.abknative.outgo.android.designsystem.foundation.AppTheme
 import fr.abknative.outgo.android.designsystem.foundation.toColor
 
-/**
- * A simple text button for less prominent actions or cancel buttons.
- */
 @Composable
 fun AppTextButton(
     onClick: () -> Unit,
