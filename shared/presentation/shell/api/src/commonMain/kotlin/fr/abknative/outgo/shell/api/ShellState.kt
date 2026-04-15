@@ -14,7 +14,6 @@ data class ShellState(
     val activeWalletId: String? = null,
     val isOperationFormVisible: Boolean = false,
 
-    // Données de l'opération en cours d'édition
     val operationIdToEdit: String? = null,
     val initialName: String = "",
     val initialAmount: String = "",
@@ -22,6 +21,12 @@ data class ShellState(
     val initialRecurrence: Recurrence = Recurrence.UNIQUE,
     val initialStartDate: EpochMillis? = null,
     val initialEndDate: EpochMillis? = null,
+
+    // --- Theme State ---
+    /** Indicates whether the theme preference has been loaded from local storage. */
+    val isThemeInitialized: Boolean = false,
+    /** Indicates whether the dark mode is currently active. */
+    val isDarkMode: Boolean = false,
 
     val isPremium: Boolean = false,
     val error: AppException? = null,

@@ -1,6 +1,7 @@
 package fr.abknative.outgo.shell.impl
 
 import androidx.lifecycle.viewModelScope
+import fr.abknative.outgo.core.api.KeyValueStorage
 import fr.abknative.outgo.core.api.extensions.safeLaunch
 import fr.abknative.outgo.core.api.logs.AppException
 import fr.abknative.outgo.core.api.logs.Result
@@ -23,8 +24,11 @@ internal class ShellPresenterImpl(
     private val syncManager: SyncManager,
     private val featureManager: FeatureManager,
     private val observeWallets: ObserveWalletsUseCase,
-    private val coordinator: NavCoordinator
+    private val coordinator: NavCoordinator,
+    private val storage: KeyValueStorage
 ) : ShellPresenter() {
+
+    private val themeKey = "app_is_dark_mode"
 
     private val _state = MutableStateFlow(ShellState())
     override val state: StateFlow<ShellState> = _state.asStateFlow()
@@ -103,6 +107,8 @@ internal class ShellPresenterImpl(
             }
             is ShellIntent.RefreshSync -> handleRefreshSync()
             is ShellIntent.DismissError -> _state.update { it.copy(error = null) }
+            is ShellIntent.InitTheme -> handleInitTheme(intent.systemDefaultIsDark)
+            is ShellIntent.UpdateDarkMode -> handleUpdateTheme(intent.isDarkMode)
         }
     }
 
@@ -115,5 +121,22 @@ internal class ShellPresenterImpl(
                 _state.update { it.copy(error = result.error) }
             }
         }
+    }
+
+    private fun handleInitTheme(systemDefaultIsDark: Boolean) {
+        if (!_state.value.isThemeInitialized) {
+            val savedTheme = storage.getBoolean(themeKey, systemDefaultIsDark)
+            _state.update {
+                it.copy(
+                    isDarkMode = savedTheme,
+                    isThemeInitialized = true
+                )
+            }
+        }
+    }
+
+    private fun handleUpdateTheme(isDarkMode: Boolean) {
+        storage.putBoolean(themeKey, isDarkMode)
+        _state.update { it.copy(isDarkMode = isDarkMode) }
     }
 }

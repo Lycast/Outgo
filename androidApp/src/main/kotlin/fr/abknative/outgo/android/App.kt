@@ -1,11 +1,14 @@
 package fr.abknative.outgo.android
 
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import fr.abknative.outgo.android.designsystem.foundation.OutgoTheme
 import fr.abknative.outgo.android.screens.ShellScreen
-import fr.abknative.outgo.core.api.KeyValueStorage
 import fr.abknative.outgo.core.api.nav.NavCoordinator
+import fr.abknative.outgo.shell.api.ShellIntent
 import fr.abknative.outgo.shell.api.ShellPresenter
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
@@ -14,14 +17,16 @@ import org.koin.compose.koinInject
 fun App() {
 
     val coordinator: NavCoordinator = koinInject()
-    val storage: KeyValueStorage = koinInject()
     val shellPresenter: ShellPresenter = koinViewModel()
 
+    val shellState by shellPresenter.state.collectAsStateWithLifecycle()
     val systemTheme = isSystemInDarkTheme()
-    val themeKey = "app_is_dark_mode"
-    var isDarkMode by remember {
-        mutableStateOf(storage.getBoolean(themeKey, systemTheme))
+
+    LaunchedEffect(Unit) {
+        shellPresenter.onIntent(ShellIntent.InitTheme(systemTheme))
     }
+
+    val isDarkMode = if (shellState.isThemeInitialized) shellState.isDarkMode else systemTheme
 
     OutgoTheme(darkTheme = isDarkMode) {
         ShellScreen(
@@ -29,8 +34,7 @@ fun App() {
             coordinator = coordinator,
             isDarkMode = isDarkMode,
             onToggleDarkMode = { newThemeValue ->
-                isDarkMode = newThemeValue
-                storage.putBoolean(themeKey, newThemeValue)
+                shellPresenter.onIntent(ShellIntent.UpdateDarkMode(newThemeValue))
             }
         )
     }
