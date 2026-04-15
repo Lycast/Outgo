@@ -27,6 +27,11 @@ sealed interface OperationIntent {
     data class UpdateType(val type: OperationType) : OperationIntent
     data class UpdateRecurrence(val recurrence: Recurrence) : OperationIntent
 
+    /** * Transforms the currently edited operation into a new creation
+     * by clearing its ID and appending a suffix to its name.
+     */
+    data class Duplicate(val copySuffix: String) : OperationIntent
+
     /** Called when the user types in the date text field (e.g., "1404") */
     data class UpdateDateInput(val text: String) : OperationIntent
 

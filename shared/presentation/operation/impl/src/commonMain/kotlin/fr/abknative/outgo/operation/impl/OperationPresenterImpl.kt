@@ -51,6 +51,7 @@ internal class OperationPresenterImpl(
             is OperationIntent.SelectDateFromPicker -> handleDateSelection(intent.millis)
             is OperationIntent.UpdateType -> _state.update { it.copy(type = intent.type) }
             is OperationIntent.UpdateRecurrence -> _state.update { it.copy(recurrence = intent.recurrence) }
+            is OperationIntent.Duplicate -> handleDuplicate(intent.copySuffix)
             is OperationIntent.Delete -> handleDelete()
             is OperationIntent.Save -> handleSave()
             is OperationIntent.DismissError -> _state.update { it.copy(error = null) }
@@ -108,14 +109,21 @@ internal class OperationPresenterImpl(
         }
     }
 
+    private fun handleDuplicate(copySuffix: String) {
+        _state.update { currentState ->
+            currentState.copy(
+                operationId = null,
+                name = "${currentState.name} $copySuffix".trim()
+            )
+        }
+    }
+
     private fun handleDelete() {
         val id = _state.value.operationId ?: return
 
         viewModelScope.safeLaunch(onError = onCoroutineError) {
             _state.update { it.copy(isSaving = true) }
-            val result = deleteOperation(id)
-
-            when (result) {
+            when (val result = deleteOperation(id)) {
                 is Result.Success -> {
                     _state.update { it.copy(isSaving = false, isSavedSuccessfully = true) }
                 }

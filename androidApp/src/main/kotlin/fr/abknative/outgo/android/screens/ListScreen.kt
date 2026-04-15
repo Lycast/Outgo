@@ -15,6 +15,7 @@ import fr.abknative.outgo.android.designsystem.components.selection.MonthTimeSel
 import fr.abknative.outgo.android.designsystem.foundation.AppTheme
 import fr.abknative.outgo.android.ui.extensions.getMonthName
 import fr.abknative.outgo.android.ui.toUIString
+import fr.abknative.outgo.core.api.formatters.formatForInput
 import fr.abknative.outgo.list.api.ListIntent
 import fr.abknative.outgo.list.api.ListPresenter
 import fr.abknative.outgo.shell.api.ShellIntent
@@ -74,9 +75,7 @@ fun ListScreen(
                 onDeleteRequest = { projectedOp -> operationToDelete = projectedOp },
                 onEdit = { projectedOp ->
                     val op = projectedOp.operation
-                    val formattedAmount = op.amountInCents.toBigDecimal()
-                        .movePointLeft(2)
-                        .toPlainString()
+                    val formattedAmount = op.amountInCents.formatForInput()
 
                     shellPresenter.onIntent(
                         ShellIntent.OpenOperationForm(

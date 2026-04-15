@@ -201,23 +201,8 @@ fun ShellScreen(
                 sheetState = sheetState,
                 isPremium = shellState.isPremium,
                 onDismiss = { shellPresenter.onIntent(ShellIntent.CloseOperationForm) },
-                onDeleteRequest = {
-                    operationPresenter.onIntent(OperationIntent.Delete)
-                },
-
-                onDuplicateRequest = {
-                    operationPresenter.onIntent(
-                        OperationIntent.Init(
-                            walletId = operationState.walletId,
-                            operationId = null,
-                            initialName = "${operationState.name} $copySubname",
-                            initialAmount = operationState.amount,
-                            initialType = operationState.type,
-                            initialRecurrence = operationState.recurrence,
-                            initialDate = operationState.date
-                        )
-                    )
-                }
+                onDeleteRequest = { operationPresenter.onIntent(OperationIntent.Delete) },
+                onDuplicateRequest = {operationPresenter.onIntent(OperationIntent.Duplicate(copySubname)) }
             )
         }
     }

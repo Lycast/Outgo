@@ -18,10 +18,22 @@ fun Long.formatAsCurrency(currencySymbol: String): String {
 
     val formattedCents = cents.toString().padStart(2, '0')
 
-    // Ajoute un espace tous les 3 chiffres pour les milliers
     val eurosString = euros.toString().reversed().chunked(3).joinToString(" ").reversed()
 
     val prefix = if (isNegative) "-" else ""
 
     return "$prefix$eurosString,$formattedCents $currencySymbol"
+}
+
+/**
+ * Formats a Long value representing cents into a raw string suitable for text inputs.
+ * e.g., 1450 -> "14.5" or "14.50"
+ */
+fun Long.formatForInput(): String {
+    val decimalAmount = this / 100.0
+    return if (decimalAmount % 1 == 0.0) {
+        decimalAmount.toInt().toString()
+    } else {
+        decimalAmount.toString()
+    }
 }
