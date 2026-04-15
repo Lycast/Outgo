@@ -4,24 +4,11 @@ import SharedApp
 // --- Formatage de la Monnaie ---
 extension Int64 {
     var uiAmount: String {
-        let isNegative = self < 0
-        let absoluteValue = abs(self)
-
-        let euros = absoluteValue / 100
-        let cents = absoluteValue % 100
-
-        let formattedCents = String(format: "%02d", cents)
-
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .decimal
-        formatter.groupingSeparator = " "
-        let eurosString = formatter.string(from: NSNumber(value: euros)) ?? String(euros)
-
-        let prefix = isNegative ? "-" : ""
-
-        return "\(prefix)\(eurosString),\(formattedCents) \(CommonLabels.shared.CURRENCY_SYMBOL)"
+        return self.formatAsCurrency(currencySymbol: CommonLabels.shared.CURRENCY_SYMBOL)
     }
 }
+
+
 
 extension Recurrence {
     var uiRecurrenceColor: Color {

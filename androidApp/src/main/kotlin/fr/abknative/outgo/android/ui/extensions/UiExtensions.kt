@@ -7,31 +7,18 @@ import fr.abknative.outgo.android.designsystem.foundation.toColor
 import fr.abknative.outgo.android.ui.CommonLabels
 import fr.abknative.outgo.android.ui.FormLabels
 import fr.abknative.outgo.android.ui.ListLabels
+import fr.abknative.outgo.core.api.formatters.formatAsCurrency
 import fr.abknative.outgo.wallet.api.model.Operation
 import fr.abknative.outgo.wallet.api.model.operation.Recurrence
-import kotlin.math.absoluteValue
 
 // --- Currency Formatting ---
 
 /**
- * Formats a Long value representing cents into a readable currency string.
+ * Helper Compose extension to quickly format a Long (cents) into a UI-ready string
+ * using the shared KMP formatter and the Compose string resources.
  */
 val Long.uiAmount: String
-    @Composable get() {
-        val isNegative = this < 0
-        val absoluteValue = this.absoluteValue
-
-        val euros = absoluteValue / 100
-        val cents = absoluteValue % 100
-
-        val formattedCents = cents.toString().padStart(2, '0')
-
-        val eurosString = euros.toString().reversed().chunked(3).joinToString(" ").reversed()
-
-        val prefix = if (isNegative) "-" else ""
-
-        return "$prefix$eurosString,$formattedCents ${CommonLabels.CURRENCY_SYMBOL}"
-    }
+    @Composable get() = this.formatAsCurrency(CommonLabels.CURRENCY_SYMBOL)
 
 /**
  * Maps a [Recurrence] to its corresponding UI Color using the AppTheme.
