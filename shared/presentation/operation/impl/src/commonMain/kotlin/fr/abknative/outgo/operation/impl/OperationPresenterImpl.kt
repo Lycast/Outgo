@@ -1,10 +1,14 @@
 package fr.abknative.outgo.operation.impl
 
 import androidx.lifecycle.viewModelScope
+import fr.abknative.outgo.core.api.EpochMillis
 import fr.abknative.outgo.core.api.TimeProvider
 import fr.abknative.outgo.core.api.extensions.safeLaunch
 import fr.abknative.outgo.core.api.logs.AppException
 import fr.abknative.outgo.core.api.logs.Result
+import fr.abknative.outgo.core.api.validators.AmountValidator
+import fr.abknative.outgo.core.api.validators.DateValidator
+import fr.abknative.outgo.core.api.validators.NameValidator
 import fr.abknative.outgo.operation.api.OperationIntent
 import fr.abknative.outgo.operation.api.OperationPresenter
 import fr.abknative.outgo.operation.api.OperationState
@@ -22,6 +26,8 @@ internal class OperationPresenterImpl(
     private val timeProvider: TimeProvider
 ) : OperationPresenter() {
 
+    private val dateValidator = DateValidator(timeProvider)
+
     private val _state = MutableStateFlow(OperationState(date = timeProvider.now()))
     override val state: StateFlow<OperationState> = _state.asStateFlow()
 
@@ -32,11 +38,19 @@ internal class OperationPresenterImpl(
     override fun onIntent(intent: OperationIntent) {
         when (intent) {
             is OperationIntent.Init -> handleInit(intent)
-            is OperationIntent.UpdateName -> _state.update { it.copy(name = intent.name) }
-            is OperationIntent.UpdateAmount -> _state.update { it.copy(amount = intent.amount) }
+            is OperationIntent.UpdateName -> {
+                val validName = NameValidator.validate(intent.name)
+                _state.update { it.copy(name = validName) }
+            }
+            is OperationIntent.UpdateAmount -> {
+                AmountValidator.validate(intent.amount)?.let { validAmount ->
+                    _state.update { it.copy(amount = validAmount) }
+                }
+            }
+            is OperationIntent.UpdateDateInput -> handleDateInput(intent.text)
+            is OperationIntent.SelectDateFromPicker -> handleDateSelection(intent.millis)
             is OperationIntent.UpdateType -> _state.update { it.copy(type = intent.type) }
             is OperationIntent.UpdateRecurrence -> _state.update { it.copy(recurrence = intent.recurrence) }
-            is OperationIntent.UpdateDate -> _state.update { it.copy(date = intent.date) }
             is OperationIntent.Delete -> handleDelete()
             is OperationIntent.Save -> handleSave()
             is OperationIntent.DismissError -> _state.update { it.copy(error = null) }
@@ -44,6 +58,9 @@ internal class OperationPresenterImpl(
     }
 
     private fun handleInit(intent: OperationIntent.Init) {
+        val initialDate = intent.initialDate ?: timeProvider.now()
+        val initialDateBuffer = dateValidator.formatMillis(initialDate)
+
         _state.update {
             it.copy(
                 walletId = intent.walletId,
@@ -52,8 +69,41 @@ internal class OperationPresenterImpl(
                 amount = intent.initialAmount,
                 type = intent.initialType,
                 recurrence = intent.initialRecurrence,
-                date = intent.initialDate ?: timeProvider.now(),
-                isSavedSuccessfully = false // Reset success flag on open
+                date = initialDate,
+                dateInputBuffer = initialDateBuffer,
+                isDateError = false,
+                isSavedSuccessfully = false
+            )
+        }
+    }
+
+    private fun handleDateInput(newText: String) {
+        if (newText.length > 8 || !newText.all { it.isDigit() }) return
+
+        val isPartialValid = dateValidator.isPartialInputValid(newText)
+
+        _state.update { currentState ->
+            var updatedState = currentState.copy(
+                dateInputBuffer = newText,
+                isDateError = !isPartialValid
+            )
+
+            if (newText.length == 8 && isPartialValid) {
+                val newMillis = dateValidator.deriveMillis(newText)
+                updatedState = updatedState.copy(date = newMillis)
+            }
+
+            updatedState
+        }
+    }
+
+    private fun handleDateSelection(millis: EpochMillis) {
+        val formattedString = dateValidator.formatMillis(millis)
+        _state.update {
+            it.copy(
+                date = millis,
+                dateInputBuffer = formattedString,
+                isDateError = false
             )
         }
     }
@@ -67,7 +117,6 @@ internal class OperationPresenterImpl(
 
             when (result) {
                 is Result.Success -> {
-                    // On réutilise le flag de succès pour fermer la modale
                     _state.update { it.copy(isSaving = false, isSavedSuccessfully = true) }
                 }
                 is Result.Error -> {

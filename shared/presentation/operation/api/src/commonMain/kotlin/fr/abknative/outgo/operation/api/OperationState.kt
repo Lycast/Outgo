@@ -13,10 +13,13 @@ data class OperationState(
     val operationId: String? = null,
     val walletId: String = "",
     val name: String = "",
-    val amount: String = "", // Kept as String to handle raw user input seamlessly
+    val amount: String = "",
     val type: OperationType = OperationType.EXPENSE,
     val recurrence: Recurrence = Recurrence.UNIQUE,
+
     val date: EpochMillis = 0L,
+    val dateInputBuffer: String = "",
+    val isDateError: Boolean = false,
 
     // Form Status
     val isSaving: Boolean = false,
@@ -25,7 +28,12 @@ data class OperationState(
 ) {
     /**
      * Determines if the form has valid data and can be submitted.
+     * Note: Since the Presenter will block invalid amount strings via the AmountValidator,
+     * we just need to check if it's not blank.
      */
     val isFormValid: Boolean
-        get() = name.isNotBlank() && amount.isNotBlank() && amount.replace(",", ".").toDoubleOrNull() != null
+        get() = name.isNotBlank()
+                && amount.isNotBlank()
+                && !isDateError
+                && dateInputBuffer.length == 8
 }

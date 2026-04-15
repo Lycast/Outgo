@@ -26,7 +26,12 @@ sealed interface OperationIntent {
     data class UpdateAmount(val amount: String) : OperationIntent
     data class UpdateType(val type: OperationType) : OperationIntent
     data class UpdateRecurrence(val recurrence: Recurrence) : OperationIntent
-    data class UpdateDate(val date: EpochMillis) : OperationIntent
+
+    /** Called when the user types in the date text field (e.g., "1404") */
+    data class UpdateDateInput(val text: String) : OperationIntent
+
+    /** Called when the user selects a date from the visual DatePicker */
+    data class SelectDateFromPicker(val millis: EpochMillis) : OperationIntent
 
     // --- Actions ---
     data object Delete : OperationIntent

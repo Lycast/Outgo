@@ -4,17 +4,16 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import fr.abknative.outgo.android.components.list.WalletEditDialog
-import fr.abknative.outgo.android.components.month.OperationCardSummary
-import fr.abknative.outgo.android.components.month.StatsCardExpense
-import fr.abknative.outgo.android.components.month.StatsCardRecurrence
-import fr.abknative.outgo.android.components.month.StatsCardWallet
+import fr.abknative.outgo.android.components.month.*
 import fr.abknative.outgo.android.designsystem.components.cards.GlassCard
 import fr.abknative.outgo.android.designsystem.components.feedback.AppSnackbar
 import fr.abknative.outgo.android.designsystem.components.selection.MonthTimeSelector
@@ -23,10 +22,8 @@ import fr.abknative.outgo.android.designsystem.foundation.toColor
 import fr.abknative.outgo.android.ui.CommonLabels
 import fr.abknative.outgo.android.ui.MonthLabels
 import fr.abknative.outgo.android.ui.extensions.getMonthName
-import fr.abknative.outgo.core.api.TimeProvider
 import fr.abknative.outgo.month.api.MonthIntent
 import fr.abknative.outgo.month.api.MonthPresenter
-import org.koin.compose.koinInject
 import java.util.Locale.getDefault
 
 @Composable
@@ -36,10 +33,8 @@ fun MonthScreen(
 ) {
 
     val state by presenter.state.collectAsStateWithLifecycle()
-    val timeProvider = koinInject<TimeProvider>()
     val formattedSelectedMonth = "${getMonthName(state.selectedMonth)} ${state.selectedYear}".uppercase(getDefault())
     val scrollState = rememberScrollState()
-    var showEditDialog by remember { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
     val defaultErrorMsg = MonthLabels.DEFAULT_ERROR
     val actionOkLabel = CommonLabels.ACTION_OK
@@ -96,7 +91,7 @@ fun MonthScreen(
                                 activeWalletName = state.activeWalletName,
                                 monthlyIncomeInCents = state.monthlyIncomeInCents,
                                 disposableIncomeInCents = state.disposableIncomeInCents,
-                                onEditBudgetClick = { showEditDialog = true }
+                                onEditBudgetClick = { presenter.onIntent(MonthIntent.OpenEditWalletDialog) }
                             )
                         }
                     }
@@ -182,23 +177,15 @@ fun MonthScreen(
             }
         }
 
-        if (showEditDialog) {
+        if (state.isEditWalletDialogVisible) {
             WalletEditDialog(
-                initialWalletName = state.activeWalletName,
-                currentIncomeInCents = state.monthlyIncomeInCents,
-                onDismiss = { showEditDialog = false },
-                onConfirm = { newName, newIncome ->
-                    presenter.onIntent(MonthIntent.SaveWalletAndIncome(
-                        walletId = state.activeWalletId ?: "",
-                        walletName = newName,
-                        incomeAmountInCents = newIncome,
-                        incomeOperationId = state.incomeOperationId,
-                        incomeOperationName = state.incomeOperationName,
-                        startDate = state.incomeOperationStartDate
-                            ?: timeProvider.startOfMonth(state.selectedMonth, state.selectedYear)
-                    ))
-                    showEditDialog = false
-                }
+                nameBuffer = state.editWalletNameBuffer,
+                amountBuffer = state.editWalletAmountBuffer,
+                isValid = state.isEditWalletFormValid,
+                onNameChange = { presenter.onIntent(MonthIntent.UpdateEditWalletName(it)) },
+                onAmountChange = { presenter.onIntent(MonthIntent.UpdateEditWalletAmount(it)) },
+                onDismiss = { presenter.onIntent(MonthIntent.CloseEditWalletDialog) },
+                onConfirm = { presenter.onIntent(MonthIntent.SubmitWalletAndIncome) }
             )
         }
 

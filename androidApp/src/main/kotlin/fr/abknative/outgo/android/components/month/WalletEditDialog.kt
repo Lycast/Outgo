@@ -1,9 +1,9 @@
-package fr.abknative.outgo.android.components.list
+package fr.abknative.outgo.android.components.month
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -23,27 +23,14 @@ import fr.abknative.outgo.android.ui.FormLabels
 
 @Composable
 fun WalletEditDialog(
-    initialWalletName: String,
-    currentIncomeInCents: Long,
+    nameBuffer: String,
+    amountBuffer: String,
+    isValid: Boolean,
+    onNameChange: (String) -> Unit,
+    onAmountChange: (String) -> Unit,
     onDismiss: () -> Unit,
-    onConfirm: (newName: String, newIncomeInCents: Long) -> Unit
+    onConfirm: () -> Unit
 ) {
-    var nameValue by remember { mutableStateOf(initialWalletName) }
-    var amountValue by remember {
-        mutableStateOf(
-            if (currentIncomeInCents > 0) {
-                currentIncomeInCents.toBigDecimal()
-                    .movePointLeft(2)
-                    .toPlainString()
-            } else ""
-        )
-    }
-
-    val parsedAmount = remember(amountValue) {
-        amountValue.toBigDecimalOrNull()?.movePointRight(2)?.toLong()
-    }
-
-    val isValidInput = parsedAmount != null && amountValue.isNotBlank() && nameValue.isNotBlank()
 
     Dialog(onDismissRequest = onDismiss) {
         GlassCard {
@@ -71,8 +58,8 @@ fun WalletEditDialog(
 
                 // --- Field: Wallet Name ---
                 AppTextField(
-                    value = nameValue,
-                    onValueChange = { nameValue = it },
+                    value = nameBuffer,
+                    onValueChange = onNameChange,
                     label = FormLabels.FIELD_NAME,
                     placeholder = "Mon Compte Principal",
                     keyboardOptions = KeyboardOptions(
@@ -85,14 +72,8 @@ fun WalletEditDialog(
 
                 // --- Field: Budget Amount ---
                 AppTextField(
-                    value = amountValue,
-                    onValueChange = { newValue ->
-                        val sanitized = newValue.replace(',', '.')
-                        if (sanitized.length <= 10 &&
-                            (sanitized.isEmpty() || (sanitized.count { it == '.' } <= 1 && sanitized.all { it.isDigit() || it == '.' }))) {
-                            amountValue = sanitized
-                        }
-                    },
+                    value = amountBuffer,
+                    onValueChange = onAmountChange,
                     label = DialogLabels.DIALOG_BUDGET_FIELD,
                     placeholder = FormLabels.FIELD_PLACE_HOLDER_AMOUNT,
                     suffix = {
@@ -134,8 +115,8 @@ fun WalletEditDialog(
 
                     Box(modifier = Modifier.weight(1f)) {
                         AppButton(
-                            onClick = { if (isValidInput) onConfirm(nameValue, parsedAmount) },
-                            enabled = isValidInput,
+                            onClick = onConfirm,
+                            enabled = isValid,
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             Text(text = CommonLabels.ACTION_SAVE)

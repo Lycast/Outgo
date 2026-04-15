@@ -5,11 +5,9 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.text.TextRange
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import fr.abknative.outgo.android.designsystem.foundation.AppTheme
 import fr.abknative.outgo.android.designsystem.foundation.toColor
@@ -32,19 +30,6 @@ fun AppTextField(
     shape: Shape = AppTheme.shapes.medium
 ) {
 
-    var textFieldValueState by remember {
-        mutableStateOf(TextFieldValue(text = value, selection = TextRange(value.length)))
-    }
-
-    LaunchedEffect(value) {
-        if (value != textFieldValueState.text) {
-            textFieldValueState = textFieldValueState.copy(
-                text = value,
-                selection = TextRange(value.length)
-            )
-        }
-    }
-
     val textFieldColors = OutlinedTextFieldDefaults.colors(
         unfocusedContainerColor = AppTheme.colors.surface50.toColor().copy(alpha = 0.2f),
         focusedContainerColor = AppTheme.colors.surface50.toColor().copy(alpha = 0.3f),
@@ -61,11 +46,8 @@ fun AppTextField(
     )
 
     OutlinedTextField(
-        value = textFieldValueState,
-        onValueChange = { newValue ->
-            textFieldValueState = newValue
-            onValueChange(newValue.text)
-        },
+        value = value,
+        onValueChange = onValueChange,
         label = { Text(text = label, style = AppTheme.typo.caption) },
         placeholder = { Text(text = placeholder, style = AppTheme.typo.body) },
         isError = isError,

@@ -25,13 +25,8 @@ import fr.abknative.outgo.android.designsystem.foundation.AppTheme
 import fr.abknative.outgo.android.designsystem.foundation.toColor
 import fr.abknative.outgo.android.ui.CommonLabels
 import fr.abknative.outgo.android.ui.FormLabels
-import fr.abknative.outgo.android.ui.helpers.rememberAmountInputManager
-import fr.abknative.outgo.android.ui.helpers.rememberDateInputManager
-import fr.abknative.outgo.android.ui.helpers.rememberNameInputManager
-import fr.abknative.outgo.core.api.TimeProvider
 import fr.abknative.outgo.operation.api.OperationIntent
 import fr.abknative.outgo.operation.api.OperationState
-import org.koin.compose.koinInject
 
 @Composable
 fun OperationFormContent(
@@ -51,23 +46,6 @@ fun OperationFormContent(
     }
 
     val isEditMode = state.operationId != null
-    val timeProvider = koinInject<TimeProvider>()
-
-    val nameManager = rememberNameInputManager(
-        initialValue = state.name,
-        onValidChange = { onIntent(OperationIntent.UpdateName(it)) }
-    )
-
-    val amountManager = rememberAmountInputManager(
-        initialValue = state.amount,
-        onValidChange = { onIntent(OperationIntent.UpdateAmount(it)) }
-    )
-
-    val dateManager = rememberDateInputManager(
-        initialDate = state.date,
-        timeProvider = timeProvider,
-        onValidDateDerived = { onIntent(OperationIntent.UpdateDate(it)) }
-    )
 
     Column(
         modifier = modifier
@@ -89,7 +67,7 @@ fun OperationFormContent(
         // --- Field: Name ---
         AppTextField(
             value = state.name,
-            onValueChange = { nameManager.onTextChange(it) },
+            onValueChange = { onIntent(OperationIntent.UpdateName(it)) },
             label = FormLabels.FIELD_NAME,
             placeholder = FormLabels.FIELD_PLACE_HOLDER_NAME,
             keyboardOptions = KeyboardOptions(
@@ -100,8 +78,8 @@ fun OperationFormContent(
 
         // --- Field: Amount ---
         AppTextField(
-            value = amountManager.text,
-            onValueChange = { amountManager.onTextChange(it) },
+            value = state.amount,
+            onValueChange = { onIntent(OperationIntent.UpdateAmount(it)) },
             label = FormLabels.FIELD_AMOUNT,
             placeholder = FormLabels.FIELD_PLACE_HOLDER_AMOUNT,
             keyboardOptions = KeyboardOptions(
@@ -119,12 +97,12 @@ fun OperationFormContent(
 
         // --- Field: Date ---
         FormattedDateInput(
-            value = dateManager.textBuffer,
-            onValueChange = { dateManager.onTextChange(it) },
-            onDateSelected = { dateManager.onExternalDateSelected(it) },
+            value = state.dateInputBuffer,
+            onValueChange = { onIntent(OperationIntent.UpdateDateInput(it)) },
+            onDateSelected = { onIntent(OperationIntent.SelectDateFromPicker(it)) },
             initialDateMillis = state.date,
             label = FormLabels.FIELD_DATE_LABEL,
-            isError = dateManager.isError,
+            isError = state.isDateError,
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Number,
                 imeAction = if (isPremium) ImeAction.Next else ImeAction.Done
@@ -166,7 +144,7 @@ fun OperationFormContent(
             Box(modifier = Modifier.weight(1f)) {
                 AppButton(
                     onClick = onSave,
-                    enabled = state.isFormValid && !dateManager.isError,
+                    enabled = state.isFormValid,
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(

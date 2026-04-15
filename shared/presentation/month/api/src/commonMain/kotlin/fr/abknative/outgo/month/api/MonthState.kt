@@ -28,10 +28,22 @@ data class MonthState(
     val disposableIncomeInCents: Long = 0L,
     val remainingToPayInCents: Long = 0L,
 
-    // Analyse détaillée
+    // --- Analyze ---
     val expensesByRecurrence: Map<Recurrence, Long> = emptyMap(),
     val nextUpcomingExpenses: List<ProjectedOperation> = emptyList(),
 
+    // --- Edit state ---
+    val isEditWalletDialogVisible: Boolean = false,
+    val editWalletNameBuffer: String = "",
+    val editWalletAmountBuffer: String = "",
+
     // --- Global UI State ---
     val error: AppException? = null
-)
+) {
+    /**
+     * Determines if the wallet edit form has valid data and can be submitted.
+     * Note: The amount validation (regex) is handled by the Presenter before updating the buffer.
+     */
+    val isEditWalletFormValid: Boolean
+        get() = editWalletNameBuffer.isNotBlank() && editWalletAmountBuffer.isNotBlank()
+}

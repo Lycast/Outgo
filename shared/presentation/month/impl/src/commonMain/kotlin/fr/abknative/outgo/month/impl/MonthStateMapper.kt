@@ -9,20 +9,21 @@ import fr.abknative.outgo.wallet.api.model.presenter.ProjectedOperation
 internal class MonthStateMapper(private val timeProvider: TimeProvider) {
 
     fun mapToState(
+        currentState: MonthState,
         currentOperations: List<ProjectedOperation>,
         stats: PeriodStats,
         input: MonthPipelineInput
     ): MonthState {
 
         val expensesOnly = currentOperations.filter { it.operation.type == OperationType.EXPENSE }
-        val incomeOp = currentOperations.firstOrNull { it.operation.type  == OperationType.INCOME }
+        val incomeOp = currentOperations.firstOrNull { it.operation.type == OperationType.INCOME }
 
-        return MonthState(
+        return currentState.copy(
             isLoading = false,
             activeWalletId = input.wallet.id,
             activeWalletName = input.wallet.name,
             incomeOperationId = incomeOp?.operation?.id,
-            incomeOperationName = incomeOp?.operation?.name ?: "revenu",
+            incomeOperationName = incomeOp?.operation?.name ?: "Revenu",
             incomeOperationStartDate = incomeOp?.operation?.startDate,
             monthlyIncomeInCents = incomeOp?.operation?.amountInCents ?: 0L,
             selectedMonth = input.month,
