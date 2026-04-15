@@ -14,6 +14,7 @@ import fr.abknative.outgo.android.designsystem.foundation.AppTheme
 import fr.abknative.outgo.android.designsystem.foundation.toColor
 import fr.abknative.outgo.android.ui.AccessibilityLabels
 import fr.abknative.outgo.android.ui.CommonLabels
+import fr.abknative.outgo.core.ui.DesignAnimations
 import fr.abknative.outgo.sync.api.model.SyncState
 
 @Composable
@@ -27,7 +28,7 @@ fun SyncIconLogic(
         initialValue = 0f,
         targetValue = if (syncState.isInProgress) 360f else 0f,
         animationSpec = infiniteRepeatable(
-            animation = tween(1000, easing = LinearEasing),
+            animation = tween(durationMillis = DesignAnimations.SLOW, easing = LinearEasing),
             repeatMode = RepeatMode.Restart
         ),
         label = "SyncRotation"

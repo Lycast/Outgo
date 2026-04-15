@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import fr.abknative.outgo.android.designsystem.foundation.AppTheme
 import fr.abknative.outgo.android.designsystem.foundation.toColor
+import fr.abknative.outgo.core.ui.DesignAnimations
 
 @Composable
 fun AppDonutChart(
@@ -34,7 +35,7 @@ fun AppDonutChart(
 
     val animatedProgress by animateFloatAsState(
         targetValue = progress.coerceIn(0f, 1f),
-        animationSpec = tween(durationMillis = 1000),
+        animationSpec = tween(durationMillis = DesignAnimations.NORMAL),
         label = "donutProgress"
     )
 

@@ -25,6 +25,7 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
 import fr.abknative.outgo.android.designsystem.foundation.AppTheme
 import fr.abknative.outgo.android.designsystem.foundation.toColor
+import fr.abknative.outgo.core.ui.DesignAnimations
 import kotlinx.coroutines.launch
 
 @Composable
@@ -33,7 +34,7 @@ fun HoldToConfirmButton(
     onConfirm: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    durationMillis: Int = 1500
+    durationMillis: Int = DesignAnimations.HOLD_TO_CONFIRM
 ) {
     val coroutineScope = rememberCoroutineScope()
     val progress = remember { Animatable(0f) }
