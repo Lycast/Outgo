@@ -71,7 +71,7 @@ internal class OperationRepositoryImpl(
     override suspend fun save(operation: Operation): Result<Unit, AppException> = withContext(dispatchers.io) {
         asResult(
             onError = { e ->
-                AppLogger.get()?.e(tag, "Failed to save operation: ${operation.id}", e) // ✅ Log restauré
+                AppLogger.get()?.e(tag, "Failed to save operation: ${operation.id}", e)
                 CommonError.DatabaseError(e)
             }
         ) {
@@ -153,15 +153,22 @@ internal class OperationRepositoryImpl(
                 operations.forEach { remote ->
                     val local = queries.getOperationById(remote.id, uid).executeAsOneOrNull()
 
-                    if (local == null) {
-                        queries.insertFromDomain(remote, uid, SyncStatus.SYNCED, remote.createdAt, remote.updatedAt, idProvider)
-                    } else {
-                        val isServerNewer = remote.updatedAt > local.updatedAt
-                        val isSynced = SyncStatus.fromString(local.syncStatus) == SyncStatus.SYNCED
+                    try {
+                        if (local == null) {
+                            AppLogger.get()?.d(tag, "-> Trying insert (ID: ${remote.id}) for active user: $uid")
+                            queries.insertFromDomain(remote, uid, SyncStatus.SYNCED, remote.createdAt, remote.updatedAt, idProvider)
+                        } else {
+                            val isServerNewer = remote.updatedAt > local.updatedAt
+                            val isSynced = SyncStatus.fromString(local.syncStatus) == SyncStatus.SYNCED
 
-                        if (isSynced || isServerNewer) {
-                            queries.updateFromDomain(remote, uid, SyncStatus.SYNCED, remote.updatedAt, remote.deletedAt)
+                            if (isSynced || isServerNewer) {
+                                AppLogger.get()?.d(tag, "-> Trying update (ID: ${remote.id}) pour l'utilisateur Actif: $uid")
+                                queries.updateFromDomain(remote, uid, SyncStatus.SYNCED, remote.updatedAt, remote.deletedAt)
+                            }
                         }
+                    } catch (e: Exception) {
+                        AppLogger.get()?.e(tag, "Sync operation failed : ${remote.id} | name: ${remote.name} | User target: $uid", e)
+                        throw e
                     }
                 }
             }

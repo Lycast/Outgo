@@ -16,7 +16,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import fr.abknative.outgo.android.R
-import fr.abknative.outgo.android.components.login.ConflictDialog
+import fr.abknative.outgo.android.components.login.PostLoginDialog
 import fr.abknative.outgo.android.designsystem.components.buttons.AppButton
 import fr.abknative.outgo.android.designsystem.components.buttons.AppOutlinedButton
 import fr.abknative.outgo.android.designsystem.components.feedback.AppSnackbar
@@ -66,11 +66,13 @@ fun LoginScreen(
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text(
-                        text = LoginLabels.BACK_TITLE,
-                        style = AppTheme.typo.title.copy(fontWeight = FontWeight.Medium),
-                        color = AppTheme.colors.textSecondary.toColor()
-                    ) },
+                    title = {
+                        Text(
+                            text = LoginLabels.BACK_TITLE,
+                            style = AppTheme.typo.title.copy(fontWeight = FontWeight.Medium),
+                            color = AppTheme.colors.textSecondary.toColor()
+                        )
+                    },
                     navigationIcon = {
                         IconButton(
                             enabled = !state.isLoading,
@@ -90,7 +92,9 @@ fun LoginScreen(
             },
             containerColor = Color.Transparent
         ) { paddingValues ->
-            Box(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
+            Box(modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)) {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
@@ -162,16 +166,12 @@ fun LoginScreen(
                 }
             }
         }
-
-        if (state.showConflictDialog) {
-            ConflictDialog(
-                onConfirm = {
-                    presenter.onIntent(LoginIntent.ResolveConflict)
-                },
-                onCancel = {
-                    presenter.onIntent(LoginIntent.CancelConflict)
-                }
-            )
-        }
+        PostLoginDialog(
+            step = state.postLoginStep,
+            errorMessage = state.syncErrorMessage,
+            onResolveConflict = { presenter.onIntent(LoginIntent.ResolveConflict) },
+            onCancel = { presenter.onIntent(LoginIntent.CancelConflict) },
+            onRetry = { presenter.onIntent(LoginIntent.RetrySync) }
+        )
     }
 }

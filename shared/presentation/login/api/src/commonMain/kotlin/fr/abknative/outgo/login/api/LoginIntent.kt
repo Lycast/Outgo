@@ -16,12 +16,11 @@ sealed interface LoginIntent {
     object SubmitLogin : LoginIntent
     /** Submits the register request using the current state values. */
     object SubmitRegister : LoginIntent
-
     object LoginWithGoogle : LoginIntent
     object LoginWithApple : LoginIntent
     object Logout : LoginIntent
     object DismissError : LoginIntent
-
     object ResolveConflict : LoginIntent
     object CancelConflict : LoginIntent
+    object RetrySync : LoginIntent
 }

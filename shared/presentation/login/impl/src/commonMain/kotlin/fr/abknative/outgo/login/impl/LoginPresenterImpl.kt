@@ -9,10 +9,8 @@ import fr.abknative.outgo.auth.api.usecase.RegisterUseCase
 import fr.abknative.outgo.core.api.extensions.safeLaunch
 import fr.abknative.outgo.core.api.logs.AppException
 import fr.abknative.outgo.core.api.logs.Result
-import fr.abknative.outgo.login.api.LoginEvent
-import fr.abknative.outgo.login.api.LoginIntent
-import fr.abknative.outgo.login.api.LoginPresenter
-import fr.abknative.outgo.login.api.LoginState
+import fr.abknative.outgo.login.api.*
+import fr.abknative.outgo.sync.api.SyncManager
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 
@@ -20,7 +18,8 @@ internal class LoginPresenterImpl(
     private val registerUseCase: RegisterUseCase,
     private val loginUseCase: LoginUseCase,
     private val logoutUseCase: LogoutUseCase,
-    private val observeUserSession: ObserveUserSessionUseCase
+    private val observeUserSession: ObserveUserSessionUseCase,
+    private val syncManager: SyncManager
 ) : LoginPresenter() {
 
     private val _state = MutableStateFlow(LoginState(isLoading = false))
@@ -53,7 +52,8 @@ internal class LoginPresenterImpl(
             is LoginIntent.Logout -> handleLogout()
             is LoginIntent.DismissError -> _state.update { it.copy(error = null) }
             is LoginIntent.ResolveConflict -> handleResolveConflict()
-            is LoginIntent.CancelConflict -> _state.update { it.copy(showConflictDialog = false) }
+            is LoginIntent.CancelConflict -> handleCancelConflict()
+            is LoginIntent.RetrySync -> handleStartSync()
         }
     }
 
@@ -86,12 +86,12 @@ internal class LoginPresenterImpl(
         when (result) {
             is Result.Success -> {
                 _state.update { it.copy(isLoading = false, error = null, passwordInput = "") }
-                _events.trySend(LoginEvent.NavigateBack)
+                handleStartSync()
             }
             is Result.Error -> {
                 if (result.error is AuthError.DataConflict) {
                     pendingIsRegister = isRegister
-                    _state.update { it.copy(isLoading = false, showConflictDialog = true) }
+                    _state.update { it.copy(isLoading = false, postLoginStep = PostLoginStep.CONFLICT) }
                 } else {
                     _state.update { it.copy(isLoading = false, error = result.error) }
                 }
@@ -104,7 +104,7 @@ internal class LoginPresenterImpl(
         if (!currentState.isFormValid) return
 
         viewModelScope.safeLaunch(onError = onCoroutineError) {
-            _state.update { it.copy(isLoading = true, showConflictDialog = false) }
+            _state.update { it.copy(isLoading = true, postLoginStep = PostLoginStep.NONE) }
 
             val result = if (pendingIsRegister) {
                 registerUseCase(currentState.emailInput, currentState.passwordInput, forceSwitch = true)
@@ -116,9 +116,39 @@ internal class LoginPresenterImpl(
         }
     }
 
+    private fun handleCancelConflict() {
+        val wasInError = _state.value.postLoginStep == PostLoginStep.ERROR
+
+        _state.update { it.copy(postLoginStep = PostLoginStep.NONE) }
+
+        if (wasInError) { handleLogout() }
+    }
+
+    private fun handleStartSync() {
+        viewModelScope.safeLaunch(onError = onCoroutineError) {
+            _state.update { it.copy(postLoginStep = PostLoginStep.SYNCING, syncErrorMessage = null) }
+
+            when (val syncResult = syncManager.syncAll()) {
+                is Result.Success -> {
+                    _state.update { it.copy(postLoginStep = PostLoginStep.NONE) }
+                    _events.trySend(LoginEvent.NavigateBack)
+                }
+                is Result.Error -> {
+                    _state.update {
+                        it.copy(
+                            postLoginStep = PostLoginStep.ERROR,
+                            syncErrorMessage = syncResult.error.message ?: "Impossible de récupérer vos données."
+                        )
+                    }
+                }
+            }
+        }
+    }
+
     private fun handleLogout() {
         viewModelScope.safeLaunch(onError = onCoroutineError) {
             logoutUseCase(displayLocalData = false)
+            syncManager.clearSyncState()
         }
     }
 }

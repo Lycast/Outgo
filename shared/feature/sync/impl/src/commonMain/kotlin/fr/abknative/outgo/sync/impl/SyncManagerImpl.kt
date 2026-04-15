@@ -70,13 +70,17 @@ internal class SyncManagerImpl(
     }
 
     override suspend fun syncOut(): Result<Unit, AppException> {
-        _isSyncing.value = true
-        try { return doSyncOut() } finally { _isSyncing.value = false }
+        return syncMutex.withLock {
+            _isSyncing.value = true
+            try { doSyncOut() } finally { _isSyncing.value = false }
+        }
     }
 
     override suspend fun syncIn(): Result<Unit, AppException> {
-        _isSyncing.value = true
-        try { return doSyncIn() } finally { _isSyncing.value = false }
+        return syncMutex.withLock {
+            _isSyncing.value = true
+            try { doSyncIn() } finally { _isSyncing.value = false }
+        }
     }
 
     private suspend fun doSyncOut(): Result<Unit, AppException> {

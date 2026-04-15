@@ -29,7 +29,7 @@ inline fun <T> asResult(
     } catch (e: CancellationException) {
         throw e
     } catch (e: Exception) {
-        AppLogger.get()?.e(tag, "Operation failed", e)
+        AppLogger.get()?.e(tag, "Operation failed: ${e.message} (${e::class.simpleName})", e)
         Result.Error(onError(e))
     }
 }
