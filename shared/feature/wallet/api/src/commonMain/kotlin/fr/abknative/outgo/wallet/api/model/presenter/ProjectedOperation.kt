@@ -9,5 +9,6 @@ import fr.abknative.outgo.wallet.api.model.Operation
  */
 data class ProjectedOperation(
     val operation: Operation,
-    val projectedDate: EpochMillis
+    val projectedDate: EpochMillis,
+    val formattedDate: String = ""
 )

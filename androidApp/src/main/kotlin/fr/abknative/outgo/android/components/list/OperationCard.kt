@@ -8,7 +8,6 @@ import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -25,20 +24,16 @@ import fr.abknative.outgo.android.ui.extensions.uiLabel
 import fr.abknative.outgo.android.ui.extensions.uiTitle
 import fr.abknative.outgo.wallet.api.model.Operation
 import fr.abknative.outgo.wallet.api.model.operation.OperationType
-import java.text.SimpleDateFormat
-import java.util.*
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun OperationCard(
     operation: Operation,
+    formattedDate: String,
     onEdit: () -> Unit,
     onDeleteRequest: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-
-    val dateFormatter = remember { SimpleDateFormat("dd MMM", Locale.getDefault()) }
-    val formattedDate = remember(operation.startDate) { dateFormatter.format(Date(operation.startDate)) }
 
     Column(
         modifier = modifier

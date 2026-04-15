@@ -45,9 +45,9 @@ fun OperationListContainer(
 
                         OperationCard(
                             operation = displayOperation,
+                            formattedDate = projectedOp.formattedDate,
                             onEdit = { onEdit(projectedOp) },
                             onDeleteRequest = { onDeleteRequest(projectedOp) }
-
                         )
                     }
                 }

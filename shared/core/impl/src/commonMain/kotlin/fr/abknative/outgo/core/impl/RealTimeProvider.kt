@@ -93,4 +93,7 @@ class RealTimeProvider : TimeProvider {
             .toInstant(timeZone)
             .toEpochMilliseconds()
     }
+    override fun formatShortDate(millis: EpochMillis): String {
+        return formatToShortDate(millis)
+    }
 }

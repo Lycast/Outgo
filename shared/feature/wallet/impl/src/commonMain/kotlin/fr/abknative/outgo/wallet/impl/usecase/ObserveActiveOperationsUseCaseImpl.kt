@@ -52,7 +52,7 @@ internal class ObserveActiveOperationsUseCaseImpl(
         return when (op.recurrence) {
             Recurrence.UNIQUE -> {
                 if (opMonth == targetMonth && opYear == targetYear) {
-                    listOf(ProjectedOperation(operation = op, projectedDate = op.startDate))
+                    listOf(ProjectedOperation(operation = op, projectedDate = op.startDate, formattedDate = timeProvider.formatShortDate(op.startDate)))
                 } else emptyList()
             }
 
@@ -103,7 +103,8 @@ internal class ObserveActiveOperationsUseCaseImpl(
             occurrences.add(
                 ProjectedOperation(
                     operation = op,
-                    projectedDate = finalDate
+                    projectedDate = finalDate,
+                    formattedDate = timeProvider.formatShortDate(op.startDate)
                 )
             )
 
@@ -133,6 +134,6 @@ internal class ObserveActiveOperationsUseCaseImpl(
         val projected = timeProvider.plusDays(targetStartOfMonth, safeDay - 1)
         val finalDate = timeProvider.combineDateAndTime(projected, 0, 0)
 
-        return listOf(ProjectedOperation(operation = op, projectedDate = finalDate))
+        return listOf(ProjectedOperation(operation = op, projectedDate = finalDate, formattedDate = timeProvider.formatShortDate(op.startDate)))
     }
 }

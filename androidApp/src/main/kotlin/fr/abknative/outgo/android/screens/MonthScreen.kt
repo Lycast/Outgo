@@ -139,6 +139,7 @@ fun MonthScreen(
 
                                         OperationCardSummary(
                                             operation = displayOperation,
+                                            formattedDate = projectedOp.formattedDate
                                         )
 
                                         if (index < state.nextUpcomingExpenses.lastIndex) {
