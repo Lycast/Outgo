@@ -104,7 +104,7 @@ internal class ObserveActiveOperationsUseCaseImpl(
                 ProjectedOperation(
                     operation = op,
                     projectedDate = finalDate,
-                    formattedDate = timeProvider.formatShortDate(op.startDate)
+                    formattedDate = timeProvider.formatShortDate(finalDate)
                 )
             )
 
@@ -134,6 +134,6 @@ internal class ObserveActiveOperationsUseCaseImpl(
         val projected = timeProvider.plusDays(targetStartOfMonth, safeDay - 1)
         val finalDate = timeProvider.combineDateAndTime(projected, 0, 0)
 
-        return listOf(ProjectedOperation(operation = op, projectedDate = finalDate, formattedDate = timeProvider.formatShortDate(op.startDate)))
+        return listOf(ProjectedOperation(operation = op, projectedDate = finalDate, formattedDate = timeProvider.formatShortDate(finalDate)))
     }
 }
