@@ -5,6 +5,11 @@ import fr.abknative.outgo.core.api.logs.AppException
 import fr.abknative.outgo.wallet.api.model.operation.Recurrence
 import fr.abknative.outgo.wallet.api.model.presenter.ProjectedOperation
 
+data class RecurrenceStat(
+    val amountInCents: Long,
+    val progress: Float
+)
+
 /**
  * Represents the UI state for the Month summary screen.
  * Provides a read-only snapshot of the user's financial health for a specific period.
@@ -28,8 +33,10 @@ data class MonthState(
     val disposableIncomeInCents: Long = 0L,
     val remainingToPayInCents: Long = 0L,
 
+    val outgoingsProgress: Float = 0f,
+
     // --- Analyze ---
-    val expensesByRecurrence: Map<Recurrence, Long> = emptyMap(),
+    val expensesByRecurrence: Map<Recurrence, RecurrenceStat> = emptyMap(),
     val nextUpcomingExpenses: List<ProjectedOperation> = emptyList(),
 
     // --- Edit state ---

@@ -109,6 +109,7 @@ fun MonthScreen(
                             StatsCardExpense(
                                 totalOutgoingsInCents = state.totalOutgoingsInCents,
                                 remainingToPayInCents = state.remainingToPayInCents,
+                                progress = state.outgoingsProgress
                             )
                         }
                     }
@@ -168,8 +169,7 @@ fun MonthScreen(
                             )
                             GlassCard {
                                 StatsCardRecurrence(
-                                    breakdown = state.expensesByRecurrence,
-                                    monthlyIncome = state.monthlyIncomeInCents
+                                    breakdown = state.expensesByRecurrence
                                 )
                             }
                         }

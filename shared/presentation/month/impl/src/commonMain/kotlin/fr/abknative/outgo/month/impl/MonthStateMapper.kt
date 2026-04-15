@@ -2,6 +2,7 @@ package fr.abknative.outgo.month.impl
 
 import fr.abknative.outgo.core.api.TimeProvider
 import fr.abknative.outgo.month.api.MonthState
+import fr.abknative.outgo.month.api.RecurrenceStat
 import fr.abknative.outgo.wallet.api.model.operation.OperationType
 import fr.abknative.outgo.wallet.api.model.presenter.PeriodStats
 import fr.abknative.outgo.wallet.api.model.presenter.ProjectedOperation
@@ -17,6 +18,19 @@ internal class MonthStateMapper(private val timeProvider: TimeProvider) {
 
         val expensesOnly = currentOperations.filter { it.operation.type == OperationType.EXPENSE }
         val incomeOp = currentOperations.firstOrNull { it.operation.type == OperationType.INCOME }
+        val monthlyIncome = incomeOp?.operation?.amountInCents ?: 0L
+
+        val outgoingsProgress = if (stats.totalExpensesInCents > 0) {
+            stats.remainingToPayInCents.toFloat() / stats.totalExpensesInCents.toFloat()
+        } else 0f
+
+        val recurrenceStats = expensesOnly
+            .groupBy { it.operation.recurrence }
+            .mapValues { (_, ops) ->
+                val amount = ops.sumOf { it.operation.amountInCents }
+                val progress = if (monthlyIncome > 0) amount.toFloat() / monthlyIncome.toFloat() else 0f
+                RecurrenceStat(amountInCents = amount, progress = progress)
+            }
 
         return currentState.copy(
             isLoading = false,
@@ -25,16 +39,15 @@ internal class MonthStateMapper(private val timeProvider: TimeProvider) {
             incomeOperationId = incomeOp?.operation?.id,
             incomeOperationName = incomeOp?.operation?.name ?: "Revenu",
             incomeOperationStartDate = incomeOp?.operation?.startDate,
-            monthlyIncomeInCents = incomeOp?.operation?.amountInCents ?: 0L,
+            monthlyIncomeInCents = monthlyIncome,
             selectedMonth = input.month,
             selectedYear = input.year,
             canGoToPreviousMonth = calculateCanGoBack(input),
             totalOutgoingsInCents = stats.totalExpensesInCents,
             remainingToPayInCents = stats.remainingToPayInCents,
             disposableIncomeInCents = stats.disposableIncomeInCents,
-            expensesByRecurrence = expensesOnly
-                .groupBy { it.operation.recurrence }
-                .mapValues { (_, ops) -> ops.sumOf { it.operation.amountInCents } },
+            outgoingsProgress = outgoingsProgress,
+            expensesByRecurrence = recurrenceStats,
             nextUpcomingExpenses = calculateUpcomingExpenses(expensesOnly, input),
             error = null
         )

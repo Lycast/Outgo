@@ -10,20 +10,17 @@ import fr.abknative.outgo.android.designsystem.foundation.toColor
 import fr.abknative.outgo.android.ui.extensions.getUiColor
 import fr.abknative.outgo.android.ui.extensions.uiAmount
 import fr.abknative.outgo.android.ui.extensions.uiLabel
+import fr.abknative.outgo.month.api.RecurrenceStat
 import fr.abknative.outgo.wallet.api.model.operation.Recurrence
 
 @Composable
 fun StatsCardRecurrence(
-    breakdown: Map<Recurrence, Long>,
-    monthlyIncome: Long
+    breakdown: Map<Recurrence, RecurrenceStat>,
 ) {
 
     Column(modifier = Modifier.padding(horizontal = AppTheme.dimens.extraLarge, vertical = AppTheme.dimens.large)) {
 
-        breakdown.forEach { (recurrence, amount) ->
-            val progress = if (monthlyIncome > 0) {
-                amount.toFloat() / monthlyIncome.toFloat()
-            } else 0f
+        breakdown.forEach { (recurrence, stat) ->
 
             Column(
                 modifier = Modifier.padding(vertical = AppTheme.dimens.small)
@@ -37,14 +34,14 @@ fun StatsCardRecurrence(
                         style = AppTheme.typo.caption,
                     )
                     Text(
-                        text = amount.uiAmount,
+                        text = stat.amountInCents.uiAmount,
                         style = AppTheme.typo.body,
                         color = AppTheme.colors.textPrimary.toColor()
                     )
                 }
 
                 AppProgressBar(
-                    progress = progress,
+                    progress = stat.progress,
                     activeColor = recurrence.getUiColor().copy(alpha = 0.5f),
                     isVertical = false,
                     modifier = Modifier.fillMaxWidth(),

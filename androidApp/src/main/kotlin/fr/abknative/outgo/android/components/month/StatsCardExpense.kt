@@ -19,10 +19,8 @@ import fr.abknative.outgo.android.ui.extensions.uiAmount
 fun StatsCardExpense(
     totalOutgoingsInCents: Long,
     remainingToPayInCents: Long,
+    progress: Float
 ) {
-    val progress = if (totalOutgoingsInCents > 0) {
-        remainingToPayInCents.toFloat() / totalOutgoingsInCents.toFloat()
-    } else 0f
 
     Column(
         modifier = Modifier.padding(AppTheme.dimens.large),
