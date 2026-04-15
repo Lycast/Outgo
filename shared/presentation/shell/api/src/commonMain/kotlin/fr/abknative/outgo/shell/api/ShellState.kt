@@ -1,10 +1,8 @@
 package fr.abknative.outgo.shell.api
 
-import fr.abknative.outgo.core.api.EpochMillis
 import fr.abknative.outgo.core.api.logs.AppException
+import fr.abknative.outgo.shell.api.payload.OperationPayload
 import fr.abknative.outgo.sync.api.model.SyncState
-import fr.abknative.outgo.wallet.api.model.operation.OperationType
-import fr.abknative.outgo.wallet.api.model.operation.Recurrence
 
 /**
  * Global application state held by the Shell.
@@ -12,15 +10,9 @@ import fr.abknative.outgo.wallet.api.model.operation.Recurrence
  */
 data class ShellState(
     val activeWalletId: String? = null,
-    val isOperationFormVisible: Boolean = false,
+    val operationPayload: OperationPayload? = null,
 
-    val operationIdToEdit: String? = null,
-    val initialName: String = "",
-    val initialAmount: String = "",
-    val initialType: OperationType = OperationType.EXPENSE,
-    val initialRecurrence: Recurrence = Recurrence.UNIQUE,
-    val initialStartDate: EpochMillis? = null,
-    val initialEndDate: EpochMillis? = null,
+    val isOperationFormVisible: Boolean = false,
 
     // --- Theme State ---
     /** Indicates whether the theme preference has been loaded from local storage. */

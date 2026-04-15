@@ -19,6 +19,7 @@ import fr.abknative.outgo.list.api.ListIntent
 import fr.abknative.outgo.list.api.ListPresenter
 import fr.abknative.outgo.shell.api.ShellIntent
 import fr.abknative.outgo.shell.api.ShellPresenter
+import fr.abknative.outgo.shell.api.payload.OperationPayload
 import fr.abknative.outgo.wallet.api.model.presenter.ProjectedOperation
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -71,21 +72,23 @@ fun ListScreen(
                 filteredList = state.filteredOperations,
                 currentFilter = state.currentFilter,
                 onDeleteRequest = { projectedOp -> operationToDelete = projectedOp },
-                onEdit = { outgoing ->
-                    val op = outgoing.operation
+                onEdit = { projectedOp ->
+                    val op = projectedOp.operation
                     val formattedAmount = op.amountInCents.toBigDecimal()
                         .movePointLeft(2)
                         .toPlainString()
 
                     shellPresenter.onIntent(
                         ShellIntent.OpenOperationForm(
-                            operationId = op.id,
-                            name = op.name,
-                            amount = formattedAmount,
-                            type = op.type,
-                            recurrence = op.recurrence,
-                            startDate = outgoing.projectedDate,
-                            endDate = outgoing.projectedDate,
+                            payload = OperationPayload(
+                                id = op.id,
+                                name = op.name,
+                                amount = formattedAmount,
+                                type = op.type,
+                                recurrence = op.recurrence,
+                                startDate = projectedOp.projectedDate,
+                                endDate = projectedOp.projectedDate
+                            )
                         )
                     )
                 }

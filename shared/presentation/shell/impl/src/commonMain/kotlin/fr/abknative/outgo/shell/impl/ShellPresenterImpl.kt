@@ -82,28 +82,10 @@ internal class ShellPresenterImpl(
     override fun onIntent(intent: ShellIntent) {
         when (intent) {
             is ShellIntent.OpenOperationForm -> {
-                _state.update {
-                    it.copy(
-                        isOperationFormVisible = true,
-                        operationIdToEdit = intent.operationId,
-                        initialName = intent.name,
-                        initialAmount = intent.amount,
-                        initialType = intent.type,
-                        initialRecurrence = intent.recurrence,
-                        initialStartDate = intent.startDate,
-                        initialEndDate = intent.endDate
-                    )
-                }
+                _state.update { it.copy(operationPayload = intent.payload) }
             }
             is ShellIntent.CloseOperationForm -> {
-                _state.update { it.copy(
-                    isOperationFormVisible = false,
-                    operationIdToEdit = null,
-                    initialName = "",
-                    initialAmount = "",
-                    initialStartDate = null,
-                    initialEndDate = null
-                ) }
+                _state.update { it.copy(operationPayload = null) }
             }
             is ShellIntent.RefreshSync -> handleRefreshSync()
             is ShellIntent.DismissError -> _state.update { it.copy(error = null) }

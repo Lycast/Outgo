@@ -33,6 +33,7 @@ import fr.abknative.outgo.operation.api.OperationIntent
 import fr.abknative.outgo.operation.api.OperationPresenter
 import fr.abknative.outgo.shell.api.ShellIntent
 import fr.abknative.outgo.shell.api.ShellPresenter
+import fr.abknative.outgo.shell.api.payload.OperationPayload
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -148,7 +149,7 @@ fun ShellScreen(
                                 isPremium = shellState.isPremium,
                                 onNavigate = { step -> coordinator.navigateTo(step) },
                                 onAddClick = {
-                                    shellPresenter.onIntent(ShellIntent.OpenOperationForm(operationId = null))
+                                    shellPresenter.onIntent(ShellIntent.OpenOperationForm(payload = OperationPayload()))
                                 }
                             )
                         }
@@ -169,21 +170,21 @@ fun ShellScreen(
         )
 
         // --- LE FORMULAIRE GLOBAL D'OPÉRATION ---
-        if (shellState.isOperationFormVisible) {
+        shellState.operationPayload?.let { payload ->
             val operationPresenter = koinViewModel<OperationPresenter>()
             val operationState by operationPresenter.state.collectAsStateWithLifecycle()
             val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
-            LaunchedEffect(shellState.operationIdToEdit) {
+            LaunchedEffect(payload) {
                 operationPresenter.onIntent(
                     OperationIntent.Init(
                         walletId = shellState.activeWalletId ?: "",
-                        operationId = shellState.operationIdToEdit,
-                        initialName = shellState.initialName,
-                        initialAmount = shellState.initialAmount,
-                        initialType = shellState.initialType,
-                        initialRecurrence = shellState.initialRecurrence,
-                        initialDate = shellState.initialStartDate
+                        operationId = payload.id,
+                        initialName = payload.name,
+                        initialAmount = payload.amount,
+                        initialType = payload.type,
+                        initialRecurrence = payload.recurrence,
+                        initialDate = payload.startDate
                     )
                 )
             }
