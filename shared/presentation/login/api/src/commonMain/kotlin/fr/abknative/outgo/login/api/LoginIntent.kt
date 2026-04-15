@@ -1,8 +1,22 @@
 package fr.abknative.outgo.login.api
 
+/**
+ * Represents user actions triggered from the Login UI.
+ */
 sealed interface LoginIntent {
-    data class SubmitRegister(val email: String, val password: String) : LoginIntent
-    data class SubmitLogin(val email: String, val password: String) : LoginIntent
+
+    // --- User Inputs ---
+    /** Triggered when the user types in the email field. */
+    data class UpdateEmail(val email: String) : LoginIntent
+    /** Triggered when the user types in the password field. */
+    data class UpdatePassword(val password: String) : LoginIntent
+
+    // --- Actions ---
+    /** Submits the login request using the current state values. */
+    object SubmitLogin : LoginIntent
+    /** Submits the register request using the current state values. */
+    object SubmitRegister : LoginIntent
+
     object LoginWithGoogle : LoginIntent
     object LoginWithApple : LoginIntent
     object Logout : LoginIntent

@@ -29,9 +29,6 @@ internal class LoginPresenterImpl(
     private val _events = Channel<LoginEvent>(Channel.BUFFERED)
     override val events = _events.receiveAsFlow()
 
-    // PRIVATES VARIABLES FOR RETRY LOGIN AFTER CONFLICT
-    private var pendingEmail = ""
-    private var pendingPassword = ""
     private var pendingIsRegister = false
 
     private val onCoroutineError: (AppException) -> Unit = { error ->
@@ -48,60 +45,51 @@ internal class LoginPresenterImpl(
 
     override fun onIntent(intent: LoginIntent) {
         when (intent) {
-            is LoginIntent.SubmitRegister -> handleRegister(intent.email, intent.password)
-            is LoginIntent.SubmitLogin -> handleLogin(intent.email, intent.password)
-            is LoginIntent.LoginWithGoogle, LoginIntent.LoginWithApple -> { /* Rien pour l'instant */ }
+            is LoginIntent.UpdateEmail -> _state.update { it.copy(emailInput = intent.email) }
+            is LoginIntent.UpdatePassword -> _state.update { it.copy(passwordInput = intent.password) }
+            is LoginIntent.SubmitRegister -> handleRegister()
+            is LoginIntent.SubmitLogin -> handleLogin()
+            is LoginIntent.LoginWithGoogle, LoginIntent.LoginWithApple -> { /* Nothing yet */ }
             is LoginIntent.Logout -> handleLogout()
             is LoginIntent.DismissError -> _state.update { it.copy(error = null) }
             is LoginIntent.ResolveConflict -> handleResolveConflict()
-            is LoginIntent.CancelConflict -> handleCancelConflict()
+            is LoginIntent.CancelConflict -> _state.update { it.copy(showConflictDialog = false) }
         }
     }
 
-    private fun handleRegister(email: String, password: String) {
+    private fun handleRegister() {
+        val currentState = _state.value
+        if (!currentState.isFormValid) return
+
         viewModelScope.safeLaunch(onError = onCoroutineError) {
-            try {
-                _state.update { it.copy(isLoading = true, error = null, showConflictDialog = false) }
-                val result = registerUseCase(email, password)
-                processAuthResult(result, email, password, isRegister = true)
-            } finally {
-                _state.update { it.copy(isLoading = false) }
-            }
+            _state.update { it.copy(isLoading = true, error = null, showConflictDialog = false) }
+            val result = registerUseCase(currentState.emailInput, currentState.passwordInput)
+            processAuthResult(result, isRegister = true)
         }
     }
 
-    private fun handleLogin(email: String, password: String) {
+    private fun handleLogin() {
+        val currentState = _state.value
+        if (!currentState.isFormValid) return
+
         viewModelScope.safeLaunch(onError = onCoroutineError) {
-            try {
-                _state.update { it.copy(isLoading = true, error = null, showConflictDialog = false) }
-                val result = loginUseCase(email, password)
-                processAuthResult(result, email, password, isRegister = false)
-            } finally {
-                _state.update { it.copy(isLoading = false) }
-            }
+            _state.update { it.copy(isLoading = true, error = null, showConflictDialog = false) }
+            val result = loginUseCase(currentState.emailInput, currentState.passwordInput)
+            processAuthResult(result, isRegister = false)
         }
     }
 
-    /**
-     * Processes the UseCase return. If a conflict is detected, the action is paused
-     * by saving the credentials, and a flag is raised to trigger the popup.
-     */
     private fun processAuthResult(
         result: Result<Unit, AppException>,
-        email: String,
-        password: String,
         isRegister: Boolean
     ) {
         when (result) {
             is Result.Success -> {
-                clearPendingAuth()
-                _state.update { it.copy(isLoading = false, error = null) }
+                _state.update { it.copy(isLoading = false, error = null, passwordInput = "") }
                 _events.trySend(LoginEvent.NavigateBack)
             }
             is Result.Error -> {
                 if (result.error is AuthError.DataConflict) {
-                    pendingEmail = email
-                    pendingPassword = password
                     pendingIsRegister = isRegister
                     _state.update { it.copy(isLoading = false, showConflictDialog = true) }
                 } else {
@@ -112,35 +100,25 @@ internal class LoginPresenterImpl(
     }
 
     private fun handleResolveConflict() {
-        if (pendingEmail.isBlank()) return
+        val currentState = _state.value
+        if (!currentState.isFormValid) return
 
         viewModelScope.safeLaunch(onError = onCoroutineError) {
             _state.update { it.copy(isLoading = true, showConflictDialog = false) }
 
-            // On relance avec forceSwitch = true
             val result = if (pendingIsRegister) {
-                registerUseCase(pendingEmail, pendingPassword, forceSwitch = true)
+                registerUseCase(currentState.emailInput, currentState.passwordInput, forceSwitch = true)
             } else {
-                loginUseCase(pendingEmail, pendingPassword, forceSwitch = true)
+                loginUseCase(currentState.emailInput, currentState.passwordInput, forceSwitch = true)
             }
 
-            processAuthResult(result, pendingEmail, pendingPassword, pendingIsRegister)
+            processAuthResult(result, pendingIsRegister)
         }
-    }
-
-    private fun handleCancelConflict() {
-        clearPendingAuth()
-        _state.update { it.copy(showConflictDialog = false) }
     }
 
     private fun handleLogout() {
         viewModelScope.safeLaunch(onError = onCoroutineError) {
             logoutUseCase(displayLocalData = false)
         }
-    }
-
-    private fun clearPendingAuth() {
-        pendingEmail = ""
-        pendingPassword = ""
     }
 }

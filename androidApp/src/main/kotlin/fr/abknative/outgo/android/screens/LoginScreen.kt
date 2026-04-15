@@ -25,7 +25,6 @@ import fr.abknative.outgo.android.designsystem.foundation.AppBackground
 import fr.abknative.outgo.android.designsystem.foundation.AppTheme
 import fr.abknative.outgo.android.designsystem.foundation.toColor
 import fr.abknative.outgo.android.ui.LoginLabels
-import fr.abknative.outgo.android.ui.states.rememberLoginFormState
 import fr.abknative.outgo.android.ui.toUIString
 import fr.abknative.outgo.login.api.LoginEvent
 import fr.abknative.outgo.login.api.LoginIntent
@@ -40,7 +39,6 @@ fun LoginScreen(
 ) {
 
     val state by presenter.state.collectAsStateWithLifecycle()
-    val formState = rememberLoginFormState()
     val snackbarHostState = remember { SnackbarHostState() }
     val errorMessage = state.error?.toUIString()
 
@@ -110,8 +108,8 @@ fun LoginScreen(
                     Spacer(modifier = Modifier.height(AppTheme.dimens.large))
 
                     AppTextField(
-                        value = formState.email,
-                        onValueChange = { formState.email = it },
+                        value = state.emailInput,
+                        onValueChange = { presenter.onIntent(LoginIntent.UpdateEmail(it)) },
                         label = LoginLabels.EMAIL_LABEL,
                         placeholder = "",
                         enabled = !state.isLoading
@@ -120,8 +118,8 @@ fun LoginScreen(
                     Spacer(modifier = Modifier.height(AppTheme.dimens.small))
 
                     AppTextField(
-                        value = formState.password,
-                        onValueChange = { formState.password = it },
+                        value = state.passwordInput,
+                        onValueChange = { presenter.onIntent(LoginIntent.UpdatePassword(it)) },
                         label = LoginLabels.PASSWORD_LABEL,
                         placeholder = "",
                         visualTransformation = PasswordVisualTransformation(),
@@ -131,10 +129,8 @@ fun LoginScreen(
                     Spacer(modifier = Modifier.height(AppTheme.dimens.extraLarge))
 
                     AppButton(
-                        onClick = {
-                            presenter.onIntent(LoginIntent.SubmitLogin(formState.email, formState.password))
-                        },
-                        enabled = formState.isValid && !state.isLoading,
+                        onClick = { presenter.onIntent(LoginIntent.SubmitLogin) },
+                        enabled = state.isFormValid && !state.isLoading,
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         if (state.isLoading) {
@@ -151,10 +147,8 @@ fun LoginScreen(
                     Spacer(modifier = Modifier.height(AppTheme.dimens.medium))
 
                     AppOutlinedButton(
-                        onClick = {
-                            presenter.onIntent(LoginIntent.SubmitRegister(formState.email, formState.password))
-                        },
-                        enabled = formState.isValid && !state.isLoading,
+                        onClick = { presenter.onIntent(LoginIntent.SubmitRegister) },
+                        enabled = state.isFormValid && !state.isLoading,
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Text(text = LoginLabels.REGISTER_ACTION)
