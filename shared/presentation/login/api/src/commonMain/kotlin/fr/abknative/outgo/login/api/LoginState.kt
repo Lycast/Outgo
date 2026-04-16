@@ -11,7 +11,7 @@ data class LoginState(
     val error: AppException? = null,
     val showConflictDialog: Boolean = false,
     val postLoginStep: PostLoginStep = PostLoginStep.NONE,
-    val syncErrorMessage: String? = null
+    val syncError: AppException? = null
 ){
     /**
      * Indicates whether the login form contains valid data to be submitted.

@@ -1,7 +1,7 @@
 package fr.abknative.outgo.android.components.login
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -14,15 +14,17 @@ import fr.abknative.outgo.android.designsystem.components.buttons.AppTextButton
 import fr.abknative.outgo.android.designsystem.components.cards.GlassCard
 import fr.abknative.outgo.android.designsystem.foundation.AppTheme
 import fr.abknative.outgo.android.designsystem.foundation.toColor
+import fr.abknative.outgo.android.ui.CommonLabels
+import fr.abknative.outgo.android.ui.LoginLabels
 import fr.abknative.outgo.login.api.PostLoginStep
 
 @Composable
 fun PostLoginDialog(
     step: PostLoginStep,
+    errorMessage: String? = null,
     onResolveConflict: () -> Unit,
     onCancel: () -> Unit,
-    onRetry: () -> Unit,
-    errorMessage: String? = null
+    onRetry: () -> Unit
 ) {
     if (step == PostLoginStep.NONE) return
 
@@ -38,16 +40,16 @@ fun PostLoginDialog(
                     }
                     PostLoginStep.SYNCING -> {
                         Text(
-                            text = "Synchronisation...",
+                            text = LoginLabels.POST_LOGIN_SYNC_TITLE,
                             style = AppTheme.typo.title,
                             color = AppTheme.colors.primary.toColor(),
                             fontWeight = FontWeight.Bold
                         )
                         Spacer(Modifier.height(AppTheme.dimens.large))
-                        CircularProgressIndicator(color = AppTheme.colors.primary.toColor())
+                        LinearProgressIndicator(color = AppTheme.colors.primary.toColor())
                         Spacer(Modifier.height(AppTheme.dimens.large))
                         Text(
-                            text = "Nous préparons votre budget sécurisé...",
+                            text = LoginLabels.POST_LOGIN_SYNC_MESSAGE,
                             style = AppTheme.typo.body,
                             color = AppTheme.colors.textSecondary.toColor(),
                             textAlign = TextAlign.Center
@@ -55,25 +57,25 @@ fun PostLoginDialog(
                     }
                     PostLoginStep.ERROR -> {
                         Text(
-                            text = "Oups !",
+                            text = LoginLabels.POST_LOGIN_ERROR_TITLE,
                             style = AppTheme.typo.title,
-                            color = AppTheme.colors.error.toColor(),
+                            color = AppTheme.colors.error.toColor().copy(alpha = 0.8f),
                             fontWeight = FontWeight.Bold
                         )
                         Spacer(Modifier.height(AppTheme.dimens.medium))
                         Text(
-                            text = errorMessage ?: "Impossible de récupérer vos données.",
+                            text = errorMessage ?: CommonLabels.GLOBAL_UNKNOWN_ERROR,
                             style = AppTheme.typo.body,
                             color = AppTheme.colors.textSecondary.toColor(),
                             textAlign = TextAlign.Center
                         )
                         Spacer(Modifier.height(AppTheme.dimens.extraLarge))
                         AppButton(onClick = onRetry, modifier = Modifier.fillMaxWidth()) {
-                            Text("Réessayer")
+                            Text(CommonLabels.ACTION_RETRY)
                         }
                         Spacer(Modifier.height(AppTheme.dimens.small))
                         AppTextButton(onClick = onCancel, modifier = Modifier.fillMaxWidth()) {
-                            Text("Annuler")
+                            Text(CommonLabels.ACTION_CANCEL)
                         }
                     }
                 }

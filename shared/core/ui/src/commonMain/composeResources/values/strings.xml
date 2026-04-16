@@ -30,6 +30,7 @@
     <string name="common_action_close">Fermer</string>
     <string name="common_action_ok">OK</string>
     <string name="common_action_back">Retour</string>
+    <string name="common_action_retry">Réessayer</string>
     <string name="nav_tab_month_initial">M</string>
     <string name="nav_tab_year_initial">A</string>
     <string name="nav_tab_list">Liste</string>
@@ -170,6 +171,9 @@
     <string name="login_conflict_question">Que voulez-vous faire ?</string>
     <string name="login_conflict_confirm">Télécharger le Cloud</string>
     <string name="login_conflict_cancel">Annuler la connexion</string>
+    <string name="login_dialog_sync_title">Synchronisation</string>
+    <string name="login_dialog_sync_message">Récupération de vos données en cours...</string>
+    <string name="login_dialog_error_title">Oups !</string>
 
     <string name="premium_showcase_title">Prenez le contrôle total de votre avenir financier.</string>
     <string name="premium_showcase_subtitle">Passez d'une gestion réactive à une gestion prédictive.</string>

@@ -7,21 +7,23 @@ import org.jetbrains.compose.resources.stringResource
 object CommonLabels {
     val APP_NAME @Composable get() = stringResource(Res.string.app_name)
     val CURRENCY_SYMBOL @Composable get() = stringResource(Res.string.common_currency_symbol)
+    val ACTION_OK @Composable get() = stringResource(Res.string.common_action_ok)
+    val ACTION_BACK @Composable get() = stringResource(Res.string.common_action_back)
     val ACTION_SAVE @Composable get() = stringResource(Res.string.common_action_save)
     val ACTION_CANCEL @Composable get() = stringResource(Res.string.common_action_cancel)
     val ACTION_DELETE @Composable get() = stringResource(Res.string.common_action_delete)
     val ACTION_EDIT @Composable get() = stringResource(Res.string.common_action_edit)
     val ACTION_DUPLICATE @Composable get() = stringResource(Res.string.common_action_duplicate)
     val ACTION_CLOSE @Composable get() = stringResource(Res.string.common_action_close)
+    val ACTION_RETRY @Composable get() = stringResource(Res.string.common_action_retry)
     val TAB_MONTH_INITIAL @Composable get() = stringResource(Res.string.nav_tab_month_initial)
     val TAB_YEAR_INITIAL @Composable get() = stringResource(Res.string.nav_tab_year_initial)
     val TAB_LIST @Composable get() = stringResource(Res.string.nav_tab_list)
     val TAB_SETTINGS @Composable get() = stringResource(Res.string.nav_tab_settings)
 
-    val ACTION_OK @Composable get() = stringResource(Res.string.common_action_ok)
-    val ACTION_BACK @Composable get() = stringResource(Res.string.common_action_back)
     val SYNC_OFFLINE_TITLE @Composable get() = stringResource(Res.string.common_sync_offline_title)
     val SYNC_OFFLINE_DESC @Composable get() = stringResource(Res.string.common_sync_offline_desc)
+    val GLOBAL_UNKNOWN_ERROR @Composable get() = stringResource(Res.string.error_global_unknown)
 }
 
 object DialogLabels {
@@ -32,6 +34,7 @@ object DialogLabels {
     val PURGE_DESC @Composable get() = stringResource(Res.string.dialog_purge_desc)
     val PURGE_CONFIRM @Composable get() = stringResource(Res.string.dialog_purge_confirm)
     val DELETE_ACCOUNT_TITLE @Composable get() = stringResource(Res.string.dialog_delete_account_title)
+
     val DIALOG_BUDGET_TITLE @Composable get() = stringResource(Res.string.budget_dialog_title)
     val DIALOG_BUDGET_DESC @Composable get() = stringResource(Res.string.budget_dialog_desc)
     val DIALOG_BUDGET_INFO @Composable get() = stringResource(Res.string.budget_dialog_info)
@@ -44,6 +47,7 @@ object DialogLabels {
     val DELETE_ACCOUNT_SERVER_DESC @Composable get() = stringResource(Res.string.dialog_delete_account_server_desc)
     val DELETE_ACCOUNT_AUTH_TITLE @Composable get() = stringResource(Res.string.dialog_delete_account_auth_title)
     val DELETE_ACCOUNT_AUTH_DESC @Composable get() = stringResource(Res.string.dialog_delete_account_auth_desc)
+
     val LOGOUT_DATA_QUESTION @Composable get() = stringResource(Res.string.dialog_logout_data_question)
     val LOGOUT_ACTION_KEEP_BUDGET @Composable get() = stringResource(Res.string.dialog_logout_action_keep_budget)
     val LOGOUT_ACTION_RETURN_LOCAL @Composable get() = stringResource(Res.string.dialog_logout_action_return_local)
@@ -184,6 +188,10 @@ object LoginLabels {
     val CONFLICT_QUESTION @Composable get() = stringResource(Res.string.login_conflict_question)
     val CONFLICT_CONFIRM @Composable get() = stringResource(Res.string.login_conflict_confirm)
     val CONFLICT_CANCEL @Composable get() = stringResource(Res.string.login_conflict_cancel)
+
+    val POST_LOGIN_SYNC_TITLE @Composable get() = stringResource(Res.string.login_dialog_sync_title)
+    val POST_LOGIN_SYNC_MESSAGE @Composable get() = stringResource(Res.string.login_dialog_sync_message)
+    val POST_LOGIN_ERROR_TITLE @Composable get() = stringResource(Res.string.login_dialog_error_title)
 }
 
 object PremiumLabels {

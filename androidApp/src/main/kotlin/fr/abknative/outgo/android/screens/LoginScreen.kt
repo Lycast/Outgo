@@ -168,7 +168,7 @@ fun LoginScreen(
         }
         PostLoginDialog(
             step = state.postLoginStep,
-            errorMessage = state.syncErrorMessage,
+            errorMessage = state.syncError?.toUIString(),
             onResolveConflict = { presenter.onIntent(LoginIntent.ResolveConflict) },
             onCancel = { presenter.onIntent(LoginIntent.CancelConflict) },
             onRetry = { presenter.onIntent(LoginIntent.RetrySync) }

@@ -126,7 +126,7 @@ internal class LoginPresenterImpl(
 
     private fun handleStartSync() {
         viewModelScope.safeLaunch(onError = onCoroutineError) {
-            _state.update { it.copy(postLoginStep = PostLoginStep.SYNCING, syncErrorMessage = null) }
+            _state.update { it.copy(postLoginStep = PostLoginStep.SYNCING, syncError = null) }
 
             when (val syncResult = syncManager.syncAll()) {
                 is Result.Success -> {
@@ -137,7 +137,7 @@ internal class LoginPresenterImpl(
                     _state.update {
                         it.copy(
                             postLoginStep = PostLoginStep.ERROR,
-                            syncErrorMessage = syncResult.error.message ?: "Impossible de récupérer vos données."
+                            syncError = syncResult.error
                         )
                     }
                 }
