@@ -51,8 +51,8 @@ fun ShellScreen(
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
     val currentStep = navState.currentStep
-    val shouldShowHeader = currentStep != AppStep.Login && currentStep != AppStep.Splash && currentStep != AppStep.Onboarding
-    val copySubname = ShellLabels.COPY_SUBNAME
+    val shouldShowScaffoldComponents = currentStep != AppStep.Login && currentStep != AppStep.Splash && currentStep != AppStep.Onboarding
+   val copySubname = ShellLabels.COPY_SUBNAME
 
     BackHandler(enabled = navState.canGoBack) {
         coordinator.handleBack()
@@ -66,7 +66,7 @@ fun ShellScreen(
             Row(modifier = Modifier.fillMaxSize()) {
 
                 // --- Header en mode Paysage ---
-                if (isLandscape && shouldShowHeader) {
+                if (isLandscape && shouldShowScaffoldComponents) {
                     AppGlobalHeader(
                         isVertical = true,
                         shellPresenter = shellPresenter,
@@ -85,7 +85,7 @@ fun ShellScreen(
                     containerColor = Color.Transparent,
                     topBar = {
                         // --- Header en mode Portrait ---
-                        if (!isLandscape && shouldShowHeader) {
+                        if (!isLandscape && shouldShowScaffoldComponents) {
                             AppGlobalHeader(
                                 isVertical = false,
                                 shellPresenter = shellPresenter,
@@ -143,15 +143,17 @@ fun ShellScreen(
                         }
 
                         // --- Bottom Navigation Bar ---
-                        Box(modifier = Modifier.align(Alignment.BottomCenter)) {
-                            BottomNavBar(
-                                currentStep = currentStep,
-                                isPremium = shellState.isPremium,
-                                onNavigate = { step -> coordinator.navigateTo(step) },
-                                onAddClick = {
-                                    shellPresenter.onIntent(ShellIntent.OpenOperationForm(payload = OperationPayload()))
-                                }
-                            )
+                        if (shouldShowScaffoldComponents) {
+                            Box(modifier = Modifier.align(Alignment.BottomCenter)) {
+                                BottomNavBar(
+                                    currentStep = currentStep,
+                                    isPremium = shellState.isPremium,
+                                    onNavigate = { step -> coordinator.navigateTo(step) },
+                                    onAddClick = {
+                                        shellPresenter.onIntent(ShellIntent.OpenOperationForm(payload = OperationPayload()))
+                                    }
+                                )
+                            }
                         }
                     }
                 }

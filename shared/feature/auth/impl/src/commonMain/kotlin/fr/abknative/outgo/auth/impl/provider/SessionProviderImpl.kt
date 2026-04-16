@@ -49,6 +49,8 @@ internal class SessionProviderImpl(
         val lastLocal = storage.getString(KEY_LAST_LOCAL_ID)
         if (lastLocal != null) {
             commitPersistentId(lastLocal)
+        } else {
+            commitPersistentId("local_${Uuid.random()}")
         }
     }
 
