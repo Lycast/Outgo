@@ -22,6 +22,8 @@ val authModule = module {
     singleOf(::SessionProviderImpl) { bind <SessionProvider>() }
 
     factoryOf(::LoginUseCaseImpl) { bind<LoginUseCase>() }
+    factoryOf(::LoginWithGoogleUseCaseImpl) { bind<LoginWithGoogleUseCase>() }
+    factoryOf(::LoginWithAppleUseCaseImpl) { bind<LoginWithAppleUseCase>() }
     factoryOf(::LogoutUseCaseImpl) { bind<LogoutUseCase>() }
     factoryOf(::ObserveUserSessionUseCaseImpl) { bind<ObserveUserSessionUseCase>() }
     factoryOf(::RegisterUseCaseImpl) { bind<RegisterUseCase>() }

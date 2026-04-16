@@ -3,24 +3,20 @@ package fr.abknative.outgo.android.screens
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.text.style.TextAlign
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import fr.abknative.outgo.android.R
+import fr.abknative.outgo.android.components.login.EmailAuthForm
 import fr.abknative.outgo.android.components.login.PostLoginDialog
-import fr.abknative.outgo.android.designsystem.components.buttons.AppButton
-import fr.abknative.outgo.android.designsystem.components.buttons.AppOutlinedButton
+import fr.abknative.outgo.android.components.login.SocialLoginButton
+import fr.abknative.outgo.android.components.login.SocialProvider
 import fr.abknative.outgo.android.designsystem.components.feedback.AppSnackbar
-import fr.abknative.outgo.android.designsystem.components.inputs.AppTextField
 import fr.abknative.outgo.android.designsystem.foundation.AppBackground
 import fr.abknative.outgo.android.designsystem.foundation.AppTheme
 import fr.abknative.outgo.android.designsystem.foundation.toColor
@@ -37,10 +33,12 @@ fun LoginScreen(
     onNavigateBack: () -> Unit,
     onLoginSuccess: () -> Unit
 ) {
-
     val state by presenter.state.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
     val errorMessage = state.error?.toUIString()
+
+    // 👈 Gestion de l'état local pour la bascule de formulaire
+    var isLoginMode by remember { mutableStateOf(true) }
 
     BackHandler(enabled = state.isLoading) {}
 
@@ -48,7 +46,6 @@ fun LoginScreen(
         presenter.events.collect { event ->
             when (event) {
                 is LoginEvent.NavigateBack -> {
-                    println("🚦 [DEBUG] Événement NavigateBack reçu !")
                     onLoginSuccess()
                 }
             }
@@ -70,7 +67,7 @@ fun LoginScreen(
                         Text(
                             text = LoginLabels.BACK_TITLE,
                             style = AppTheme.typo.title.copy(fontWeight = FontWeight.Medium),
-                            color = AppTheme.colors.textSecondary.toColor()
+                            color = AppTheme.colors.textSecondary.toColor(),
                         )
                     },
                     navigationIcon = {
@@ -92,72 +89,75 @@ fun LoginScreen(
             },
             containerColor = Color.Transparent
         ) { paddingValues ->
-            Box(modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+            ) {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(paddingValues)
-                        .padding(AppTheme.dimens.large),
+                        .padding(horizontal = AppTheme.dimens.large),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
                         text = LoginLabels.TITLE,
-                        style = AppTheme.typo.title,
-                        color = AppTheme.colors.primary.toColor()
+                        style = AppTheme.typo.subtitle.copy(fontWeight = FontWeight.Medium),
+                        color = AppTheme.colors.primary.toColor(),
+                        textAlign = TextAlign.Center
                     )
 
-                    Spacer(modifier = Modifier.height(AppTheme.dimens.large))
+                    Spacer(modifier = Modifier.height(AppTheme.dimens.big))
 
-                    AppTextField(
-                        value = state.emailInput,
-                        onValueChange = { presenter.onIntent(LoginIntent.UpdateEmail(it)) },
-                        label = LoginLabels.EMAIL_LABEL,
-                        placeholder = "",
-                        enabled = !state.isLoading
+                    // --- Zone des Boutons Sociaux ---
+                    SocialLoginButton(
+                        provider = SocialProvider.GOOGLE,
+                        onClick = { /* TODO: Implémenter Credential Manager */ }
                     )
 
                     Spacer(modifier = Modifier.height(AppTheme.dimens.small))
 
-                    AppTextField(
-                        value = state.passwordInput,
-                        onValueChange = { presenter.onIntent(LoginIntent.UpdatePassword(it)) },
-                        label = LoginLabels.PASSWORD_LABEL,
-                        placeholder = "",
-                        visualTransformation = PasswordVisualTransformation(),
-                        enabled = !state.isLoading
+                    SocialLoginButton(
+                        provider = SocialProvider.APPLE,
+                        onClick = { /* TODO: Implémenter Apple Login */ }
                     )
 
-                    Spacer(modifier = Modifier.height(AppTheme.dimens.extraLarge))
+                    Spacer(modifier = Modifier.height(AppTheme.dimens.large))
 
-                    AppButton(
-                        onClick = { presenter.onIntent(LoginIntent.SubmitLogin) },
-                        enabled = state.isFormValid && !state.isLoading,
+                    // --- Séparateur visuel ---
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        if (state.isLoading) {
-                            CircularProgressIndicator(
-                                modifier = Modifier.size(24.dp),
-                                color = AppTheme.colors.textOnBrand.toColor(),
-                                strokeWidth = 2.dp
-                            )
-                        } else {
-                            Text(LoginLabels.SUBMIT_BUTTON)
-                        }
+                        HorizontalDivider(modifier = Modifier.weight(1f), color = AppTheme.colors.textSecondary.toColor())
+                        Text(
+                            text = LoginLabels.OR_LABEL,
+                            color = AppTheme.colors.textSecondary.toColor(),
+                            modifier = Modifier.padding(horizontal = AppTheme.dimens.small)
+                        )
+                        HorizontalDivider(modifier = Modifier.weight(1f), color = AppTheme.colors.textSecondary.toColor())
                     }
 
-                    Spacer(modifier = Modifier.height(AppTheme.dimens.medium))
+                    Spacer(modifier = Modifier.height(AppTheme.dimens.large))
 
-                    AppOutlinedButton(
-                        onClick = { presenter.onIntent(LoginIntent.SubmitRegister) },
-                        enabled = state.isFormValid && !state.isLoading,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text(text = LoginLabels.REGISTER_ACTION)
-                    }
+                    // --- Zone Formulaire Email ---
+                    EmailAuthForm(
+                        emailInput = state.emailInput,
+                        passwordInput = state.passwordInput,
+                        isFormValid = state.isFormValid,
+                        isLoading = state.isLoading,
+                        isLoginMode = isLoginMode,
+                        onEmailChange = { presenter.onIntent(LoginIntent.UpdateEmail(it)) },
+                        onPasswordChange = { presenter.onIntent(LoginIntent.UpdatePassword(it)) },
+                        onSubmit = {
+                            if (isLoginMode) presenter.onIntent(LoginIntent.SubmitLogin)
+                            else presenter.onIntent(LoginIntent.SubmitRegister)
+                        },
+                        onToggleMode = { isLoginMode = !isLoginMode }
+                    )
                 }
+
                 SnackbarHost(
                     hostState = snackbarHostState,
                     modifier = Modifier.align(Alignment.TopCenter)
@@ -166,6 +166,7 @@ fun LoginScreen(
                 }
             }
         }
+
         PostLoginDialog(
             step = state.postLoginStep,
             errorMessage = state.syncError?.toUIString(),

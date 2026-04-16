@@ -2,6 +2,8 @@ package fr.abknative.outgo.auth.impl.repository
 
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.FirebaseUser
+import dev.gitlive.firebase.auth.GoogleAuthProvider
+import dev.gitlive.firebase.auth.OAuthProvider
 import dev.gitlive.firebase.auth.auth
 import fr.abknative.outgo.auth.api.AuthError
 import fr.abknative.outgo.auth.api.model.UserSession
@@ -95,6 +97,27 @@ internal class AuthRepositoryImpl(
 
         val authResult = firebaseAuth.signInWithEmailAndPassword(email, password)
         createAndSaveSession(authResult.user, email)
+    }
+
+    override suspend fun loginWithGoogle(idToken: String): Result<Unit, AppException> = asResult(
+        onError = { it.toAuthAppException(TAG) }
+    ) {
+        val credential = GoogleAuthProvider.credential(idToken = idToken, accessToken = null)
+        val authResult = firebaseAuth.signInWithCredential(credential)
+        createAndSaveSession(authResult.user, authResult.user?.email ?: "")
+    }
+
+    override suspend fun loginWithApple(idToken: String): Result<Unit, AppException> = asResult(
+        onError = { it.toAuthAppException(TAG) }
+    ) {
+        val credential = OAuthProvider.credential(
+            providerId = "apple.com",
+            idToken = idToken,
+            accessToken = null
+        )
+
+        val authResult = firebaseAuth.signInWithCredential(credential)
+        createAndSaveSession(authResult.user, authResult.user?.email ?: "")
     }
 
     override suspend fun logout(): Result<Unit, AppException> = asResult(

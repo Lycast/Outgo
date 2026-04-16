@@ -8,10 +8,10 @@ import kotlinx.coroutines.flow.StateFlow
 interface AuthRepository {
     fun observeSession(): StateFlow<UserSession?>
     suspend fun getSession(): UserSession?
-
     suspend fun register(email: String, password: String): Result<Unit, AppException>
-
     suspend fun login(email: String, password: String): Result<Unit, AppException>
+    suspend fun loginWithGoogle(idToken: String): Result<Unit, AppException>
+    suspend fun loginWithApple(idToken: String): Result<Unit, AppException>
     suspend fun logout(): Result<Unit, AppException>
     suspend fun deleteAccount(): Result<Unit, AppException>
 }

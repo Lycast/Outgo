@@ -179,10 +179,17 @@ object LoginLabels {
     val TITLE @Composable get() = stringResource(Res.string.login_title)
     val EMAIL_LABEL @Composable get() = stringResource(Res.string.login_email_label)
     val PASSWORD_LABEL @Composable get() = stringResource(Res.string.login_password_label)
+
+    val GOOGLE_BUTTON @Composable get() = stringResource(Res.string.login_google_button)
+    val APPLE_BUTTON @Composable get() = stringResource(Res.string.login_apple_button)
     val SUBMIT_BUTTON @Composable get() = stringResource(Res.string.login_submit_button)
+    val REGISTER_BUTTON @Composable get() = stringResource(Res.string.login_register_button)
+    val SUBMIT_ACTION @Composable get() = stringResource(Res.string.login_submit_action)
+    val REGISTER_ACTION @Composable get() = stringResource(Res.string.login_register_action)
+    val OR_LABEL @Composable get() = stringResource(Res.string.login_or_label)
+
     val BACK_TITLE @Composable get() = stringResource(Res.string.login_back_title)
 
-    val REGISTER_ACTION @Composable get() = stringResource(Res.string.login_register_action)
     val CONFLICT_TITLE @Composable get() = stringResource(Res.string.login_conflict_title)
     val CONFLICT_DESC @Composable get() = stringResource(Res.string.login_conflict_desc)
     val CONFLICT_QUESTION @Composable get() = stringResource(Res.string.login_conflict_question)

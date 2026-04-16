@@ -159,13 +159,18 @@
     <string name="settings_url_contact">https://abknative.fr/contact</string>
     <string name="settings_section_data_account">Données &amp; Compte</string>
 
-    <string name="login_title">Bienvenue sur Outgo</string>
+    <string name="login_title">Synchronisez vos données de façon sécurisée. Les serveurs Outgo sont hébergés en France</string>
     <string name="login_email_label">Email</string>
     <string name="login_password_label">Mot de passe</string>
+    <string name="login_google_button">Continuer avec Google</string>
+    <string name="login_apple_button">Continuer avec Apple</string>
     <string name="login_submit_button">Se connecter</string>
+    <string name="login_register_button">S'inscrire</string>
+    <string name="login_submit_action">Pas encore de compte ? S'inscrire</string>
+    <string name="login_register_action">Déjà un compte ? Se connecter</string>
+    <string name="login_or_label"> ou </string>
     <string name="login_back_title">Retour</string>
     <string name="login_error_message">Erreur de connexion</string>
-    <string name="login_register_action"> Pas encore de compte ? S'inscrire</string>
     <string name="login_conflict_title">Sauvegarde existante</string>
     <string name="login_conflict_desc">Ce compte contient déjà des données sur nos serveurs. En vous connectant, vos données actuelles seront mises de côté pour afficher celles de votre compte en ligne.</string>
     <string name="login_conflict_question">Que voulez-vous faire ?</string>
