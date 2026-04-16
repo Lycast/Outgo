@@ -14,10 +14,7 @@ import fr.abknative.outgo.subscription.api.FeatureManager
 import fr.abknative.outgo.sync.api.SyncManager
 import fr.abknative.outgo.sync.api.usecase.ObserveSyncStateUseCase
 import fr.abknative.outgo.wallet.api.usecase.ObserveWalletsUseCase
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.*
 
 internal class ShellPresenterImpl(
     private val observeSyncState: ObserveSyncStateUseCase,
@@ -61,17 +58,22 @@ internal class ShellPresenterImpl(
 
     private fun startGlobalNavigationLogic() {
         viewModelScope.safeLaunch(onError = onCoroutineError) {
-            observeWallets().collect { wallets ->
+
+            combine(
+                observeWallets(),
+                coordinator.state.map { it.currentStep }.distinctUntilChanged()
+            ) { wallets, currentStep ->
+                Pair(wallets, currentStep)
+            }.collect { (wallets, currentStep) ->
 
                 _state.update { it.copy(activeWalletId = wallets.firstOrNull()?.id) }
-                val currentStep = coordinator.state.value.currentStep
 
                 if (wallets.isEmpty()) {
-                    if (currentStep != AppStep.Onboarding && currentStep != AppStep.Login) {
+                    if (currentStep == AppStep.Month || currentStep == AppStep.Splash) {
                         coordinator.replaceRoot(AppStep.Onboarding)
                     }
                 } else {
-                    if (currentStep == AppStep.Splash || currentStep == AppStep.Onboarding) {
+                    if (currentStep == AppStep.Onboarding || currentStep == AppStep.Splash) {
                         coordinator.replaceRoot(AppStep.Month)
                     }
                 }
