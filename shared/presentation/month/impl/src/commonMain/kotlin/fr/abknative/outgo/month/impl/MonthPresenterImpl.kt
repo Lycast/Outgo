@@ -54,18 +54,28 @@ internal class MonthPresenterImpl(
     private fun startObservingData() {
         viewModelScope.safeLaunch(onError = onCoroutineError) {
             observeWallets()
-                .filter { it.isNotEmpty() }
                 .flatMapLatest { wallets ->
-                    combine(selectedMonthFlow, selectedYearFlow, isPremiumFlow) { m, y, p ->
-                        MonthPipelineInput(wallet = wallets.first(), month = m, year = y, isPremium = p)
-                    }
-                }
-                .flatMapLatest { input ->
-                    observeActiveOperations(input.wallet.id, input.month, input.year)
-                        .map { ops ->
-                            val stats = calculateDashboardData(ops, input.month, input.year)
-                            Triple(ops, stats, input)
+                    if (wallets.isEmpty()) {
+                        _state.update {
+                            MonthState(
+                                isLoading = false,
+                                selectedMonth = timeProvider.monthValue(),
+                                selectedYear = timeProvider.yearValue()
+                            )
                         }
+                        emptyFlow()
+                    } else {
+                        combine(selectedMonthFlow, selectedYearFlow, isPremiumFlow) { m, y, p ->
+                            MonthPipelineInput(wallet = wallets.first(), month = m, year = y, isPremium = p)
+                        }
+                            .flatMapLatest { input ->
+                                observeActiveOperations(input.wallet.id, input.month, input.year)
+                                    .map { ops ->
+                                        val stats = calculateDashboardData(ops, input.month, input.year)
+                                        Triple(ops, stats, input)
+                                    }
+                            }
+                    }
                 }
                 .collect { (ops, stats, input) ->
                     _state.update { currentState ->
