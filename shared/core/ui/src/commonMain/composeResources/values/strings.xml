@@ -19,6 +19,9 @@
     <string name="error_global_database">Un problème technique empêche l'enregistrement de vos données. Si le problème persiste, redémarrez l'application.</string>
     <string name="error_global_unknown">Oups ! Quelque chose s'est mal passé. Nous faisons de notre mieux pour corriger ça.</string>
     <string name="error_global_timeout">Le serveur met trop de temps à répondre. Vérifiez votre connexion et réessayez.</string>
+    <string name="error_credential_invalid_token">Le format du jeton de connexion n\'est pas reconnu.</string>
+    <string name="error_credential_no_account">Aucun compte n'est configuré sur cet appareil. Veuillez ajouter un compte dans les paramètres de votre téléphone.</string>
+    <string name="error_credential_system">Une erreur système est survenue lors de la connexion. Veuillez réessayer.</string>
 
     <string name="app_name">Outgo</string>
     <string name="common_currency_symbol">€</string>

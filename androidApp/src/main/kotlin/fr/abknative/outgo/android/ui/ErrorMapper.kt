@@ -1,12 +1,14 @@
 package fr.abknative.outgo.android.ui
 
 import androidx.compose.runtime.Composable
+import fr.abknative.outgo.android.ui.auth.CredentialErrorType
 import fr.abknative.outgo.auth.api.AuthError
 import fr.abknative.outgo.core.api.logs.AppException
 import fr.abknative.outgo.core.api.logs.CommonError
 import fr.abknative.outgo.shared.core.ui.resources.*
 import fr.abknative.outgo.wallet.api.logs.OperationError
 import fr.abknative.outgo.wallet.api.logs.WalletError
+import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -42,5 +44,14 @@ fun AppException.toUIString(): String {
 
         // --- Sécurité (Fallback) ---
         else -> stringResource(Res.string.error_global_unknown)
+    }
+}
+
+suspend fun CredentialErrorType.toUIString(): String {
+    return when (this) {
+        CredentialErrorType.INVALID_TOKEN -> getString(Res.string.error_credential_invalid_token)
+        CredentialErrorType.NO_ACCOUNT_FOUND -> getString(Res.string.error_credential_no_account)
+        CredentialErrorType.SYSTEM_ERROR -> getString(Res.string.error_credential_system)
+        CredentialErrorType.UNKNOWN -> getString(Res.string.error_global_unknown)
     }
 }

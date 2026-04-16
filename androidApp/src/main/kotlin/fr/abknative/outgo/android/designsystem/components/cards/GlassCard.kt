@@ -21,7 +21,7 @@ fun GlassCard(
     shape: Shape = AppTheme.shapes.large,
     borderSize: Dp = AppTheme.dimens.small,
     elevation: Dp = 12.dp,
-    backgroundColorA: Color = AppTheme.colors.surface100.toColor(),
+    backgroundColorA: Color = AppTheme.colors.surface100.toColor().copy(alpha = 0.8f),
     content: @Composable () -> Unit
 ) {
 
@@ -31,7 +31,7 @@ fun GlassCard(
 
     val backgroundBrush = remember(backgroundColorA, textSecondaryColor) {
         Brush.horizontalGradient(
-            colors = listOf(textSecondaryColor.copy(alpha = 0.05f), backgroundColorA.copy(alpha = 0.8f))
+            colors = listOf(textSecondaryColor.copy(alpha = 0.05f), backgroundColorA)
         )
     }
 

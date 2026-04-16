@@ -60,6 +60,10 @@ dependencies {
     implementation(libs.koin.compose)
     implementation(libs.koin.androidx.compose)
 
+    implementation(libs.androidx.credentials)
+    implementation(libs.androidx.credentials.play.auth)
+    implementation(libs.googleid)
+
     implementation(libs.sqldelight.driver.android)
 
     // 5. TESTS

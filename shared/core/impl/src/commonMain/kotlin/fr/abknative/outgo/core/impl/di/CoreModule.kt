@@ -1,10 +1,7 @@
 package fr.abknative.outgo.core.impl.di
 
 import fr.abknative.outgo.auth.api.repository.AuthRepository
-import fr.abknative.outgo.core.api.AppDispatchers
-import fr.abknative.outgo.core.api.DataPurger
-import fr.abknative.outgo.core.api.IdProvider
-import fr.abknative.outgo.core.api.TimeProvider
+import fr.abknative.outgo.core.api.*
 import fr.abknative.outgo.core.api.logs.ExceptionMapper
 import fr.abknative.outgo.core.api.nav.NavCoordinator
 import fr.abknative.outgo.core.api.usecase.ClearLocalDataUseCase

@@ -7,6 +7,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -21,10 +22,14 @@ import fr.abknative.outgo.android.designsystem.foundation.AppBackground
 import fr.abknative.outgo.android.designsystem.foundation.AppTheme
 import fr.abknative.outgo.android.designsystem.foundation.toColor
 import fr.abknative.outgo.android.ui.LoginLabels
+import fr.abknative.outgo.android.ui.auth.CredentialResult
+import fr.abknative.outgo.android.ui.auth.launchGoogleSignIn
 import fr.abknative.outgo.android.ui.toUIString
+import fr.abknative.outgo.core.api.SecretConfig
 import fr.abknative.outgo.login.api.LoginEvent
 import fr.abknative.outgo.login.api.LoginIntent
 import fr.abknative.outgo.login.api.LoginPresenter
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -33,12 +38,16 @@ fun LoginScreen(
     onNavigateBack: () -> Unit,
     onLoginSuccess: () -> Unit
 ) {
+
     val state by presenter.state.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
     val errorMessage = state.error?.toUIString()
 
-    // 👈 Gestion de l'état local pour la bascule de formulaire
     var isLoginMode by remember { mutableStateOf(true) }
+
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+    val webClientId = SecretConfig.DEFAULT_WEB_CLIENT_ID
 
     BackHandler(enabled = state.isLoading) {}
 
@@ -113,7 +122,16 @@ fun LoginScreen(
                     // --- Zone des Boutons Sociaux ---
                     SocialLoginButton(
                         provider = SocialProvider.GOOGLE,
-                        onClick = { /* TODO: Implémenter Credential Manager */ }
+                        onClick = {
+                            coroutineScope.launch {
+                                when (val result = launchGoogleSignIn(context, webClientId)) {
+
+                                    is CredentialResult.Success -> { presenter.onIntent(LoginIntent.LoginWithGoogle(result.idToken)) }
+                                    is CredentialResult.Error -> { snackbarHostState.showSnackbar(result.type.toUIString()) } // @Composable invocations can only happen from the context of a @Composable function
+                                    is CredentialResult.Cancelled -> { /* Silencieux */ }
+                                }
+                            }
+                        }
                     )
 
                     Spacer(modifier = Modifier.height(AppTheme.dimens.small))
@@ -130,13 +148,19 @@ fun LoginScreen(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        HorizontalDivider(modifier = Modifier.weight(1f), color = AppTheme.colors.textSecondary.toColor())
+                        HorizontalDivider(
+                            modifier = Modifier.weight(1f),
+                            color = AppTheme.colors.textSecondary.toColor()
+                        )
                         Text(
                             text = LoginLabels.OR_LABEL,
                             color = AppTheme.colors.textSecondary.toColor(),
                             modifier = Modifier.padding(horizontal = AppTheme.dimens.small)
                         )
-                        HorizontalDivider(modifier = Modifier.weight(1f), color = AppTheme.colors.textSecondary.toColor())
+                        HorizontalDivider(
+                            modifier = Modifier.weight(1f),
+                            color = AppTheme.colors.textSecondary.toColor()
+                        )
                     }
 
                     Spacer(modifier = Modifier.height(AppTheme.dimens.large))
