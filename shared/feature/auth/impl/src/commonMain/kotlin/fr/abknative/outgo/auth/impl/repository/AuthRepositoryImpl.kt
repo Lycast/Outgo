@@ -1,10 +1,12 @@
 package fr.abknative.outgo.auth.impl.repository
 
 import dev.gitlive.firebase.Firebase
-import dev.gitlive.firebase.auth.*
+import dev.gitlive.firebase.auth.FirebaseUser
+import dev.gitlive.firebase.auth.auth
 import fr.abknative.outgo.auth.api.AuthError
 import fr.abknative.outgo.auth.api.model.UserSession
 import fr.abknative.outgo.auth.api.repository.AuthRepository
+import fr.abknative.outgo.auth.impl.toAuthAppException
 import fr.abknative.outgo.core.api.AppDispatchers
 import fr.abknative.outgo.core.api.KeyValueStorage
 import fr.abknative.outgo.core.api.logs.*
@@ -78,7 +80,7 @@ internal class AuthRepositoryImpl(
     }
 
     override suspend fun register(email: String, password: String): Result<Unit, AppException> = asResult(
-        onError = ::mapFirebaseError
+        onError = { it.toAuthAppException(TAG) }
     ) {
         if (email.isBlank() || password.isBlank()) throw AuthError.InvalidCredentials()
 
@@ -87,7 +89,7 @@ internal class AuthRepositoryImpl(
     }
 
     override suspend fun login(email: String, password: String): Result<Unit, AppException> = asResult(
-        onError = ::mapFirebaseError
+        onError = { it.toAuthAppException(TAG) }
     ) {
         if (email.isBlank() || password.isBlank()) throw AuthError.InvalidCredentials()
 
@@ -96,14 +98,14 @@ internal class AuthRepositoryImpl(
     }
 
     override suspend fun logout(): Result<Unit, AppException> = asResult(
-        onError = ::mapFirebaseError
+        onError = { it.toAuthAppException(TAG) }
     ) {
         firebaseAuth.signOut()
         clearLocalSession()
     }
 
     override suspend fun deleteAccount(): Result<Unit, AppException> = asResult(
-        onError = ::mapFirebaseError
+        onError = { it.toAuthAppException(TAG) }
     ) {
         val user = firebaseAuth.currentUser ?: throw AuthError.UserNotFound()
         user.delete()
@@ -111,21 +113,6 @@ internal class AuthRepositoryImpl(
     }
 
     // --- Private Helpers ---
-
-    /**
-     * Maps Firebase-specific exceptions to our domain-specific [AppException].
-     */
-    private fun mapFirebaseError(e: Exception): AppException {
-        AppLogger.get()?.e(TAG, "Firebase operation failed", e)
-        return when (e) {
-            is FirebaseAuthRecentLoginRequiredException -> AuthError.NeedsReauthentication()
-            is FirebaseAuthInvalidCredentialsException -> AuthError.InvalidCredentials()
-            is FirebaseAuthInvalidUserException -> AuthError.UserNotFound()
-            is FirebaseAuthException -> CommonError.Unauthorized(e)
-            is AppException -> e
-            else -> CommonError.UnknownError(e)
-        }
-    }
 
     /**
      * Extracts the token, creates the UserSession, and saves it locally.

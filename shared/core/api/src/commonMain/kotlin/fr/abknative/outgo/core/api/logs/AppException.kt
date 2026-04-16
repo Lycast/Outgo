@@ -14,6 +14,7 @@ abstract class AppException(
  */
 sealed class CommonError(cause: Throwable? = null) : AppException(cause) {
     class NetworkError(cause: Throwable? = null) : CommonError(cause)
+    class Timeout(cause: Throwable? = null) : CommonError(cause)
     class ServerError(cause: Throwable? = null) : CommonError(cause)
     class Unauthorized(cause: Throwable? = null) : CommonError(cause)
     class DatabaseError(cause: Throwable? = null) : CommonError(cause)

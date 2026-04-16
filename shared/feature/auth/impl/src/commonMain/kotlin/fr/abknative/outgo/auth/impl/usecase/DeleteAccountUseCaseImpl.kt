@@ -4,7 +4,6 @@ import fr.abknative.outgo.auth.api.provider.SessionProvider
 import fr.abknative.outgo.auth.api.repository.AuthRepository
 import fr.abknative.outgo.auth.api.usecase.DeleteAccountUseCase
 import fr.abknative.outgo.core.api.DataPurger
-import fr.abknative.outgo.core.api.KeyValueStorage
 import fr.abknative.outgo.core.api.LocalDataDowngrader
 import fr.abknative.outgo.core.api.TimeProvider
 import fr.abknative.outgo.core.api.logs.AppException
@@ -20,7 +19,6 @@ import kotlin.uuid.Uuid
 internal class DeleteAccountUseCaseImpl(
     private val authRepository: AuthRepository,
     private val sessionProvider: SessionProvider,
-    private val storage: KeyValueStorage,
     private val timeProvider: TimeProvider,
     private val httpClient: HttpClient,
     private val localDataPurgers: List<DataPurger>,

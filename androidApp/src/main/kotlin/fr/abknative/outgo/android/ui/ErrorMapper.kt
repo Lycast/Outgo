@@ -13,11 +13,11 @@ import org.jetbrains.compose.resources.stringResource
 fun AppException.toUIString(): String {
     return when (this) {
 
-        // Domaine : Portefeuille (Wallet)
+        // --- Domaine : Portefeuille (Wallet) ---
         is WalletError.EmptyName -> stringResource(Res.string.error_wallet_empty_name)
         is WalletError.NotFound -> stringResource(Res.string.error_wallet_not_found, id)
 
-        // Domaine : Opération (Operation)
+        // --- Domaine : Opération (Operation) ---
         is OperationError.EmptyName -> stringResource(Res.string.error_operation_empty_name)
         is OperationError.InvalidAmount -> stringResource(Res.string.error_operation_invalid_amount)
         is OperationError.NotFound -> stringResource(Res.string.error_operation_not_found, id)
@@ -25,18 +25,22 @@ fun AppException.toUIString(): String {
         is OperationError.WalletNotFound -> stringResource(Res.string.error_operation_wallet_not_found, walletId)
         is OperationError.UnknownCycle -> stringResource(Res.string.error_operation_unknow_cycle)
 
-        // Domaine : Authentification
+        // --- Domaine : Authentification ---
         is AuthError.InvalidCredentials -> stringResource(Res.string.error_auth_invalid_credentials)
         is AuthError.UserNotFound -> stringResource(Res.string.error_auth_user_not_found)
         is AuthError.SessionExpired -> stringResource(Res.string.error_auth_session_expired)
+        is AuthError.NeedsReauthentication -> stringResource(Res.string.error_auth_needs_reauth)
+        is AuthError.DataConflict -> stringResource(Res.string.error_auth_data_conflict)
 
-        // Domaine : Global / Technique
+        // --- Domaine : Global / Technique ---
         is CommonError.NetworkError -> stringResource(Res.string.error_global_network)
+        is CommonError.Timeout -> stringResource(Res.string.error_global_timeout)
         is CommonError.ServerError -> stringResource(Res.string.error_global_server)
         is CommonError.Unauthorized -> stringResource(Res.string.error_global_unauthorized)
         is CommonError.DatabaseError -> stringResource(Res.string.error_global_database)
         is CommonError.UnknownError -> stringResource(Res.string.error_global_unknown)
 
+        // --- Sécurité (Fallback) ---
         else -> stringResource(Res.string.error_global_unknown)
     }
 }

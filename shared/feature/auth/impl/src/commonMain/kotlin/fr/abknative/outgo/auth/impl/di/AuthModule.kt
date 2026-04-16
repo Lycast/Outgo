@@ -30,7 +30,6 @@ val authModule = module {
         DeleteAccountUseCaseImpl(
             authRepository = get(),
             sessionProvider = get(),
-            storage = get(),
             timeProvider = get(),
             httpClient = get(),
             localDataPurgers = getAll<DataPurger>(),

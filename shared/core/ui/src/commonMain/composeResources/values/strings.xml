@@ -11,11 +11,14 @@
     <string name="error_auth_invalid_credentials">L'email ou le mot de passe est incorrect.</string>
     <string name="error_auth_user_not_found">Aucun compte n'est associé à cet email.</string>
     <string name="error_auth_session_expired">Votre session a expiré. Veuillez vous reconnecter.</string>
+    <string name="error_auth_needs_reauth">Par mesure de sécurité, veuillez vous reconnecter pour effectuer cette action.</string>
+    <string name="error_auth_data_conflict">Ce compte Cloud contient déjà des données. Souhaitez-vous les fusionner avec vos données actuelles ?</string>
     <string name="error_global_network">Impossible de se connecter. Vérifiez votre connexion internet et réessayez.</string>
     <string name="error_global_server">Le serveur est actuellement indisponible. Veuillez réessayer plus tard.</string>
     <string name="error_global_unauthorized">Accès refusé. Veuillez vérifier vos identifiants.</string>
     <string name="error_global_database">Un problème technique empêche l'enregistrement de vos données. Si le problème persiste, redémarrez l'application.</string>
     <string name="error_global_unknown">Oups ! Quelque chose s'est mal passé. Nous faisons de notre mieux pour corriger ça.</string>
+    <string name="error_global_timeout">Le serveur met trop de temps à répondre. Vérifiez votre connexion et réessayez.</string>
 
     <string name="app_name">Outgo</string>
     <string name="common_currency_symbol">€</string>
