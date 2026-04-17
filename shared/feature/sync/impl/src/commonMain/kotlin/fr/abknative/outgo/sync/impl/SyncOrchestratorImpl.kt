@@ -42,6 +42,7 @@ internal class SyncOrchestratorImpl(
         AppLogger.get()?.i(TAG, "Sync Orchestrator Startup")
         checkStartupSync()
         startObservingPendingData()
+        startObservingLogins()
     }
 
     private fun checkStartupSync() {
@@ -97,5 +98,25 @@ internal class SyncOrchestratorImpl(
                 syncManager.syncOut()
             }
             .launchIn(scope)
+    }
+
+    private fun startObservingLogins() {
+        scope.launch {
+            sessionProvider.observeUserId()
+                .drop(1)
+                .distinctUntilChanged()
+                .collect { userId ->
+                    if (!userId.startsWith("local_")) {
+                        AppLogger.get()?.i(TAG, "New connection detected. Starting initial sync.")
+                        val result = syncManager.syncAll()
+
+                        if (result is Result.Success) {
+                            storage.putLong(LAST_SYNC_KEY, timeProvider.now())
+                        } else {
+                            AppLogger.get()?.e(TAG, "Post-login sync failed.")
+                        }
+                    }
+                }
+        }
     }
 }

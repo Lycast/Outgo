@@ -21,10 +21,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import fr.abknative.outgo.android.components.operation.OperationFormSheet
 import fr.abknative.outgo.android.components.shell.AppGlobalHeader
 import fr.abknative.outgo.android.components.shell.BottomNavBar
+import fr.abknative.outgo.android.designsystem.components.feedback.AppSnackbar
 import fr.abknative.outgo.android.designsystem.foundation.AppBackground
 import fr.abknative.outgo.android.designsystem.foundation.AppTheme
 import fr.abknative.outgo.android.designsystem.foundation.toColor
 import fr.abknative.outgo.android.ui.ShellLabels
+import fr.abknative.outgo.android.ui.toUIString
 import fr.abknative.outgo.core.api.nav.AppStep
 import fr.abknative.outgo.core.api.nav.NavCoordinator
 import fr.abknative.outgo.login.api.LoginPresenter
@@ -55,8 +57,19 @@ fun ShellScreen(
     val isInitialSyncInProgress = shellState.syncState.isInProgress &&
             (currentStep == AppStep.Onboarding || currentStep == AppStep.Splash || currentStep == AppStep.Login)
 
+    val shellSnackbarHostState = remember { SnackbarHostState() }
+    val currentError = shellState.error
+    val errorMessage = currentError?.toUIString()
+
     BackHandler(enabled = navState.canGoBack) {
         coordinator.handleBack()
+    }
+
+    LaunchedEffect(currentError) {
+        if (currentError != null && errorMessage != null) {
+            shellSnackbarHostState.showSnackbar(message = errorMessage, withDismissAction = true)
+            shellPresenter.onIntent(ShellIntent.DismissError)
+        }
     }
 
     Surface(
@@ -156,6 +169,11 @@ fun ShellScreen(
                                 )
                             }
                         }
+
+                        SnackbarHost(
+                            hostState = shellSnackbarHostState,
+                            modifier = Modifier.align(Alignment.TopCenter)
+                        ) { data -> AppSnackbar(data) }
                     }
                 }
             }

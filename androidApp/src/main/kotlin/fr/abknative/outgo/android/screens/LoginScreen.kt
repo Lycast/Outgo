@@ -14,7 +14,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import fr.abknative.outgo.android.R
 import fr.abknative.outgo.android.components.login.EmailAuthForm
-import fr.abknative.outgo.android.components.login.PostLoginDialog
 import fr.abknative.outgo.android.components.login.SocialLoginButton
 import fr.abknative.outgo.android.components.login.SocialProvider
 import fr.abknative.outgo.android.designsystem.components.feedback.AppSnackbar
@@ -205,12 +204,9 @@ fun LoginScreen(
             }
         }
 
-        PostLoginDialog(
-            step = state.postLoginStep,
-            errorMessage = state.syncError?.toUIString(),
-            onResolveConflict = { presenter.onIntent(LoginIntent.ResolveConflict) },
-            onCancel = { presenter.onIntent(LoginIntent.CancelConflict) },
-            onRetry = { presenter.onIntent(LoginIntent.RetrySync) }
+        LoginScreenModals(
+            showConflictDialog = state.showConflictDialog,
+            presenter = presenter
         )
     }
 }
