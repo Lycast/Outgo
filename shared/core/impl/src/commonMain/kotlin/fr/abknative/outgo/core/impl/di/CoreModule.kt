@@ -7,6 +7,7 @@ import fr.abknative.outgo.core.api.nav.NavCoordinator
 import fr.abknative.outgo.core.api.usecase.ClearLocalDataUseCase
 import fr.abknative.outgo.core.impl.RealIdProvider
 import fr.abknative.outgo.core.impl.RealTimeProvider
+import fr.abknative.outgo.core.impl.SecretConfigImpl
 import fr.abknative.outgo.core.impl.StandardDispatchers
 import fr.abknative.outgo.core.impl.logs.KtorExceptionMapper
 import fr.abknative.outgo.core.impl.nav.NavCoordinatorImpl
@@ -28,6 +29,8 @@ import org.koin.dsl.module
 
 fun commonCoreModule() = module {
 
+    singleOf(::SecretConfigImpl) { bind<SecretConfig>() }
+
     singleOf(::RealTimeProvider) { bind<TimeProvider>() }
     singleOf(::StandardDispatchers) { bind<AppDispatchers>() }
     singleOf(::RealIdProvider) { bind<IdProvider>() }
@@ -41,6 +44,8 @@ fun commonCoreModule() = module {
     single {
         val authRepository: AuthRepository = get()
         val engine: HttpClientEngine = get()
+
+        val secretConfig: SecretConfig = get()
 
         /**
          * Configures the Ktor HttpClient.
@@ -56,7 +61,7 @@ fun commonCoreModule() = module {
                 })
             }
             defaultRequest {
-                url(SecretConfig.BASE_URL) // todo url non dynamique nécessite le swap dans secret config
+                url(secretConfig.baseUrl)
                 header(HttpHeaders.ContentType, ContentType.Application.Json)
             }
         }

@@ -1,6 +1,31 @@
+import com.codingfeline.buildkonfig.compiler.FieldSpec
+import java.io.FileInputStream
+import java.util.*
+
 plugins {
     alias(libs.plugins.kotlin.serialization)
     id("outgo.kmp.library")
+    alias(libs.plugins.buildkonfig)
+}
+
+val envProperties = Properties().apply {
+    val envFile = rootProject.file(".env")
+    if (envFile.exists()) {
+        load(FileInputStream(envFile))
+    }
+}
+
+buildkonfig {
+    packageName = "fr.abknative.outgo.core.impl.secret"
+    objectName = "OutgoConfig"
+
+    defaultConfigs {
+        val baseUrl = envProperties.getProperty("BASE_URL") ?: "https://api.outgo.app"
+        buildConfigField(FieldSpec.Type.STRING, "BASE_URL", baseUrl)
+
+        val webClientId = envProperties.getProperty("DEFAULT_WEB_CLIENT_ID") ?: ""
+        buildConfigField(FieldSpec.Type.STRING, "WEB_CLIENT_ID", webClientId)
+    }
 }
 
 kotlin {

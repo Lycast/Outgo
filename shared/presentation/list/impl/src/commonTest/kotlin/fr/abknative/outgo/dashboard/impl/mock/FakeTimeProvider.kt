@@ -28,4 +28,7 @@ class FakeTimeProvider : TimeProvider {
     override fun isSameDay(ts1: EpochMillis, ts2: EpochMillis): Boolean = ts1 == ts2
     override fun isWeekend(ts: EpochMillis): Boolean = false
     override fun combineDateAndTime(dateEpochMillis: EpochMillis, hour: Int, minute: Int): EpochMillis = 0L
+    override fun formatShortDate(millis: EpochMillis): String {
+        TODO("Not yet implemented")
+    }
 }

@@ -22,14 +22,17 @@ import fr.abknative.outgo.android.designsystem.foundation.AppBackground
 import fr.abknative.outgo.android.designsystem.foundation.AppTheme
 import fr.abknative.outgo.android.designsystem.foundation.toColor
 import fr.abknative.outgo.android.ui.LoginLabels
+import fr.abknative.outgo.android.ui.auth.CredentialErrorType
 import fr.abknative.outgo.android.ui.auth.CredentialResult
 import fr.abknative.outgo.android.ui.auth.launchGoogleSignIn
+import fr.abknative.outgo.android.ui.resolveUIString
 import fr.abknative.outgo.android.ui.toUIString
 import fr.abknative.outgo.core.api.SecretConfig
 import fr.abknative.outgo.login.api.LoginEvent
 import fr.abknative.outgo.login.api.LoginIntent
 import fr.abknative.outgo.login.api.LoginPresenter
 import kotlinx.coroutines.launch
+import org.koin.compose.koinInject
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -41,13 +44,11 @@ fun LoginScreen(
 
     val state by presenter.state.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
-    val errorMessage = state.error?.toUIString()
-
+    val secretConfig = koinInject<SecretConfig>()
     var isLoginMode by remember { mutableStateOf(true) }
-
+    var googleAuthError by remember { mutableStateOf<CredentialErrorType?>(null) }
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
-    val webClientId = SecretConfig.DEFAULT_WEB_CLIENT_ID
 
     BackHandler(enabled = state.isLoading) {}
 
@@ -61,10 +62,22 @@ fun LoginScreen(
         }
     }
 
-    LaunchedEffect(state.error) {
-        if (state.error != null && errorMessage != null) {
-            snackbarHostState.showSnackbar(message = errorMessage, withDismissAction = true)
+    val presenterError = state.error
+    val presenterErrorMessage = presenterError?.toUIString()
+
+    LaunchedEffect(presenterError) {
+        if (presenterError != null && presenterErrorMessage != null) {
+            snackbarHostState.showSnackbar(message = presenterErrorMessage, withDismissAction = true)
             presenter.onIntent(LoginIntent.DismissError)
+        }
+    }
+
+    LaunchedEffect(googleAuthError) {
+        val currentError = googleAuthError
+        if (currentError != null) {
+            val message = currentError.resolveUIString()
+            snackbarHostState.showSnackbar(message = message, withDismissAction = true)
+            googleAuthError = null
         }
     }
 
@@ -124,11 +137,12 @@ fun LoginScreen(
                         provider = SocialProvider.GOOGLE,
                         onClick = {
                             coroutineScope.launch {
-                                when (val result = launchGoogleSignIn(context, webClientId)) {
-
-                                    is CredentialResult.Success -> { presenter.onIntent(LoginIntent.LoginWithGoogle(result.idToken)) }
-                                    is CredentialResult.Error -> { snackbarHostState.showSnackbar(result.type.toUIString()) } // @Composable invocations can only happen from the context of a @Composable function
-                                    is CredentialResult.Cancelled -> { /* Silencieux */ }
+                                when (val result = launchGoogleSignIn(context, secretConfig.webClientId)) {
+                                    is CredentialResult.Success -> {
+                                        presenter.onIntent(LoginIntent.LoginWithGoogle(result.idToken))
+                                    }
+                                    is CredentialResult.Error -> { googleAuthError = result.type }
+                                    is CredentialResult.Cancelled -> { /* silencieux */ }
                                 }
                             }
                         }

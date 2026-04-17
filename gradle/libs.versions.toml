@@ -21,6 +21,7 @@ androidx-activity = "1.12.2"
 androidx-appcompat = "1.7.1"
 androidx-core = "1.17.0"
 androidx-lifecycle = "2.9.6"
+buildkonfig = "0.15.2"
 
 # Architecture & Logic
 koin = "4.1.1"
@@ -160,3 +161,4 @@ google-android-secrets = { id = "com.google.android.libraries.mapsplatform.secre
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
 skie = { id = "co.touchlab.skie", version.ref = "skie" }
 google-services = { id = "com.google.gms.google-services", version.ref = "google-services" }
+buildkonfig = { id = "com.codingfeline.buildkonfig", version.ref = "buildkonfig" }

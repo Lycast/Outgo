@@ -47,7 +47,7 @@ fun AppException.toUIString(): String {
     }
 }
 
-suspend fun CredentialErrorType.toUIString(): String {
+suspend fun CredentialErrorType.resolveUIString(): String {
     return when (this) {
         CredentialErrorType.INVALID_TOKEN -> getString(Res.string.error_credential_invalid_token)
         CredentialErrorType.NO_ACCOUNT_FOUND -> getString(Res.string.error_credential_no_account)

@@ -20,6 +20,8 @@ plugins {
     alias(libs.plugins.ktor) apply false
     alias(libs.plugins.sqldelight) apply false
     alias(libs.plugins.kotlin.serialization) apply false
+
+    alias(libs.plugins.buildkonfig) apply false
 }
 
 /**
