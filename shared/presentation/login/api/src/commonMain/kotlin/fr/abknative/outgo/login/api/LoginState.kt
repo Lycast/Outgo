@@ -10,19 +10,10 @@ data class LoginState(
     val isLoading: Boolean = false,
     val error: AppException? = null,
     val showConflictDialog: Boolean = false,
-    val postLoginStep: PostLoginStep = PostLoginStep.NONE,
-    val syncError: AppException? = null
 ){
     /**
      * Indicates whether the login form contains valid data to be submitted.
      */
     val isFormValid: Boolean
         get() = emailInput.isNotBlank() && passwordInput.isNotBlank()
-}
-
-enum class PostLoginStep {
-    NONE,
-    CONFLICT,
-    SYNCING,
-    ERROR
 }

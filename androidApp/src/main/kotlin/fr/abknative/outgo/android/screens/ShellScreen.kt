@@ -21,7 +21,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import fr.abknative.outgo.android.components.operation.OperationFormSheet
 import fr.abknative.outgo.android.components.shell.AppGlobalHeader
 import fr.abknative.outgo.android.components.shell.BottomNavBar
-import fr.abknative.outgo.android.components.shell.ShellModals
 import fr.abknative.outgo.android.designsystem.foundation.AppBackground
 import fr.abknative.outgo.android.designsystem.foundation.AppTheme
 import fr.abknative.outgo.android.designsystem.foundation.toColor
@@ -52,7 +51,9 @@ fun ShellScreen(
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
     val currentStep = navState.currentStep
     val shouldShowScaffoldComponents = currentStep != AppStep.Login && currentStep != AppStep.Splash && currentStep != AppStep.Onboarding
-   val copySubname = ShellLabels.COPY_SUBNAME
+    val copySubname = ShellLabels.COPY_SUBNAME
+    val isInitialSyncInProgress = shellState.syncState.isInProgress &&
+            (currentStep == AppStep.Onboarding || currentStep == AppStep.Splash || currentStep == AppStep.Login)
 
     BackHandler(enabled = navState.canGoBack) {
         coordinator.handleBack()
@@ -164,6 +165,7 @@ fun ShellScreen(
         ShellModals(
             showSyncModal = showSyncModal,
             showPremiumTeasingModal = showPremiumTeasingModal,
+            showLoadingOverlay = isInitialSyncInProgress,
             onDismissSync = { showSyncModal = false },
             onNavigateToLogin = {
                 showSyncModal = false

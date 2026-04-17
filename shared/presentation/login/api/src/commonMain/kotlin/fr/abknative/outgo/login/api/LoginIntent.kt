@@ -23,5 +23,4 @@ sealed interface LoginIntent {
     object DismissError : LoginIntent
     object ResolveConflict : LoginIntent
     object CancelConflict : LoginIntent
-    object RetrySync : LoginIntent
 }

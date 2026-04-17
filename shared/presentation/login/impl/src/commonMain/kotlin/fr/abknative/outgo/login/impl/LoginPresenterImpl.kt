@@ -6,8 +6,10 @@ import fr.abknative.outgo.auth.api.usecase.*
 import fr.abknative.outgo.core.api.extensions.safeLaunch
 import fr.abknative.outgo.core.api.logs.AppException
 import fr.abknative.outgo.core.api.logs.Result
-import fr.abknative.outgo.login.api.*
-import fr.abknative.outgo.sync.api.SyncManager
+import fr.abknative.outgo.login.api.LoginEvent
+import fr.abknative.outgo.login.api.LoginIntent
+import fr.abknative.outgo.login.api.LoginPresenter
+import fr.abknative.outgo.login.api.LoginState
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 
@@ -17,8 +19,7 @@ internal class LoginPresenterImpl(
     private val loginWithGoogleUseCase: LoginWithGoogleUseCase,
     private val loginWithAppleUseCase: LoginWithAppleUseCase,
     private val logoutUseCase: LogoutUseCase,
-    private val observeUserSession: ObserveUserSessionUseCase,
-    private val syncManager: SyncManager
+    private val observeUserSession: ObserveUserSessionUseCase
 ) : LoginPresenter() {
 
     private sealed interface PendingAuth {
@@ -59,8 +60,7 @@ internal class LoginPresenterImpl(
             is LoginIntent.Logout -> handleLogout()
             is LoginIntent.DismissError -> _state.update { it.copy(error = null) }
             is LoginIntent.ResolveConflict -> handleResolveConflict()
-            is LoginIntent.CancelConflict -> handleCancelConflict()
-            is LoginIntent.RetrySync -> handleStartSync()
+            is LoginIntent.CancelConflict -> _state.update { it.copy(showConflictDialog = false) }
         }
     }
 
@@ -111,13 +111,13 @@ internal class LoginPresenterImpl(
         when (result) {
             is Result.Success -> {
                 _state.update { it.copy(isLoading = false, error = null, passwordInput = "") }
-                pendingAuthAction = null // On nettoie
-                handleStartSync()
+                pendingAuthAction = null
+                _events.trySend(LoginEvent.NavigateBack)
             }
             is Result.Error -> {
                 if (result.error is AuthError.DataConflict) {
                     pendingAuthAction = currentAuthAction
-                    _state.update { it.copy(isLoading = false, postLoginStep = PostLoginStep.CONFLICT) }
+                    _state.update { it.copy(isLoading = false, showConflictDialog = true) }
                 } else {
                     _state.update { it.copy(isLoading = false, error = result.error) }
                 }
@@ -130,9 +130,8 @@ internal class LoginPresenterImpl(
         val currentState = _state.value
 
         viewModelScope.safeLaunch(onError = onCoroutineError) {
-            _state.update { it.copy(isLoading = true, postLoginStep = PostLoginStep.NONE) }
+            _state.update { it.copy(isLoading = true, showConflictDialog = false) }
 
-            // 👈 On relance la bonne action avec forceSwitch = true
             val result = when (actionToRetry) {
                 is PendingAuth.Register -> registerUseCase(currentState.emailInput, currentState.passwordInput, forceSwitch = true)
                 is PendingAuth.Login -> loginUseCase(currentState.emailInput, currentState.passwordInput, forceSwitch = true)
@@ -144,39 +143,9 @@ internal class LoginPresenterImpl(
         }
     }
 
-    private fun handleCancelConflict() {
-        val wasInError = _state.value.postLoginStep == PostLoginStep.ERROR
-
-        _state.update { it.copy(postLoginStep = PostLoginStep.NONE) }
-
-        if (wasInError) { handleLogout() }
-    }
-
-    private fun handleStartSync() {
-        viewModelScope.safeLaunch(onError = onCoroutineError) {
-            _state.update { it.copy(postLoginStep = PostLoginStep.SYNCING, syncError = null) }
-
-            when (val syncResult = syncManager.syncAll()) {
-                is Result.Success -> {
-                    _state.update { it.copy(postLoginStep = PostLoginStep.NONE) }
-                    _events.trySend(LoginEvent.NavigateBack)
-                }
-                is Result.Error -> {
-                    _state.update {
-                        it.copy(
-                            postLoginStep = PostLoginStep.ERROR,
-                            syncError = syncResult.error
-                        )
-                    }
-                }
-            }
-        }
-    }
-
     private fun handleLogout() {
         viewModelScope.safeLaunch(onError = onCoroutineError) {
             logoutUseCase(displayLocalData = false)
-            syncManager.clearSyncState()
         }
     }
 }
