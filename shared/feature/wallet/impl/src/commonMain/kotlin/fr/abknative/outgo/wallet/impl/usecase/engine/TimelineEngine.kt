@@ -58,6 +58,7 @@ internal class TimelineEngine(
 
         return PeriodStats(
             currentBalanceInCents = disposableIncome,
+            totalIncomesInCents = totalIncome,
             totalExpensesInCents = totalExpenses,
             remainingToPayInCents = remainingToPay,
             disposableIncomeInCents = disposableIncome

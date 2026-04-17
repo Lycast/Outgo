@@ -5,6 +5,7 @@ package fr.abknative.outgo.wallet.api.model.presenter
  */
 data class PeriodStats(
     val currentBalanceInCents: Long,
+    val totalIncomesInCents: Long,
     val totalExpensesInCents: Long,
     val remainingToPayInCents: Long,
     val disposableIncomeInCents: Long

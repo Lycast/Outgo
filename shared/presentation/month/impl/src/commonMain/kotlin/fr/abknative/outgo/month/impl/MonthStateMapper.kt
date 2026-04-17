@@ -18,7 +18,7 @@ internal class MonthStateMapper(private val timeProvider: TimeProvider) {
 
         val expensesOnly = currentOperations.filter { it.operation.type == OperationType.EXPENSE }
         val incomeOp = currentOperations.firstOrNull { it.operation.type == OperationType.INCOME }
-        val monthlyIncome = incomeOp?.operation?.amountInCents ?: 0L
+        val monthlyIncome = stats.totalIncomesInCents
 
         val outgoingsProgress = if (stats.totalExpensesInCents > 0) {
             stats.remainingToPayInCents.toFloat() / stats.totalExpensesInCents.toFloat()
