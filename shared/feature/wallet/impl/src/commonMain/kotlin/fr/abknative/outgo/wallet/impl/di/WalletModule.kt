@@ -12,8 +12,8 @@ import fr.abknative.outgo.wallet.impl.migration.LocalDataMigratorImpl
 import fr.abknative.outgo.wallet.impl.repository.OperationRepositoryImpl
 import fr.abknative.outgo.wallet.impl.repository.WalletRepositoryImpl
 import fr.abknative.outgo.wallet.impl.usecase.*
-import fr.abknative.outgo.wallet.impl.usecase.engine.SimpleSumEngine
-import fr.abknative.outgo.wallet.impl.usecase.engine.TimelineEngine
+import fr.abknative.outgo.wallet.impl.usecase.engine.SimplePeriodStatsCalculation
+import fr.abknative.outgo.wallet.impl.usecase.engine.TimelinePeriodStatsCalculation
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
@@ -28,8 +28,8 @@ val walletModule = module {
     singleOf(::WalletRepositoryImpl) { bind<WalletRepository>() }
 
     // --- Engines (Stratégies) ---
-    factoryOf(::SimpleSumEngine)
-    factoryOf(::TimelineEngine)
+    factoryOf(::SimplePeriodStatsCalculation)
+    factoryOf(::TimelinePeriodStatsCalculation)
 
     // --- UseCases Wallet ---
     factoryOf(::SaveWalletUseCaseImpl) { bind<SaveWalletUseCase>() }
@@ -45,7 +45,7 @@ val walletModule = module {
     factoryOf(::InitializeBudgetUseCaseImpl) { bind<InitializeBudgetUseCase>() }
 
     // --- Dashboard Engine Rooter ---
-    factoryOf(::CalculateDashboardDataUseCaseImpl) { bind<CalculateDashboardDataUseCase>() }
+    factoryOf(::CalculatePeriodStatsUseCaseImpl) { bind<CalculatePeriodStatsUseCase>() }
 
     single(named("WalletDataPurger")) { WalletDataPurger(get(), get()) } bind DataPurger::class
     singleOf(::WalletDataDowngrader) { bind<LocalDataDowngrader>() }

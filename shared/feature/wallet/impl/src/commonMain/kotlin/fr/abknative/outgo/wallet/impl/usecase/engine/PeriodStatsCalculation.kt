@@ -3,7 +3,7 @@ package fr.abknative.outgo.wallet.impl.usecase.engine
 import fr.abknative.outgo.wallet.api.model.presenter.PeriodStats
 import fr.abknative.outgo.wallet.api.model.presenter.ProjectedOperation
 
-internal interface DashboardCalculationEngine {
+internal interface PeriodStatsCalculation {
     /**
      * Calculates the dashboard metrics using projected occurrences
      * instead of raw rules to ensure temporal accuracy.

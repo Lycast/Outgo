@@ -5,9 +5,9 @@ import fr.abknative.outgo.wallet.api.model.operation.OperationType
 import fr.abknative.outgo.wallet.api.model.presenter.PeriodStats
 import fr.abknative.outgo.wallet.api.model.presenter.ProjectedOperation
 
-internal class SimpleSumEngine(
+internal class SimplePeriodStatsCalculation(
     private val timeProvider: TimeProvider
-) : DashboardCalculationEngine {
+) : PeriodStatsCalculation {
 
     override fun calculate(
         operations: List<ProjectedOperation>,
@@ -45,7 +45,7 @@ internal class SimpleSumEngine(
                         else -> {
                             val projectedDay = timeProvider.dayOfMonth(projected.projectedDate)
 
-                            if (projectedDay >= today) {
+                            if (projectedDay > today) {
                                 remainingToPay += amount
                             }
                         }

@@ -21,7 +21,7 @@ import kotlin.math.roundToLong
 internal class MonthPresenterImpl(
     private val observeActiveOperations: ObserveActiveOperationsUseCase,
     private val observeWallets: ObserveWalletsUseCase,
-    private val calculateDashboardData: CalculateDashboardDataUseCase,
+    private val calculateDashboardData: CalculatePeriodStatsUseCase,
     private val saveWallet: SaveWalletUseCase,
     private val saveOperation: SaveOperationUseCase,
     private val featureManager: FeatureManager,

@@ -44,9 +44,9 @@ class FakeDeleteOperationUseCase : DeleteOperationUseCase {
 }
 
 /**
- * Fake implementation of [CalculateDashboardDataUseCase] for testing purposes.
+ * Fake implementation of [CalculatePeriodStatsUseCase] for testing purposes.
  */
-class FakeCalculateDashboardDataUseCase : CalculateDashboardDataUseCase {
+class FakeCalculatePeriodStatsUseCase : CalculatePeriodStatsUseCase {
     var dataToReturn = PeriodStats(0L, 0L,0L, 0L, 0L)
 
     override fun invoke(operations: List<ProjectedOperation>, currentMonth: Int, currentYear: Int): PeriodStats {

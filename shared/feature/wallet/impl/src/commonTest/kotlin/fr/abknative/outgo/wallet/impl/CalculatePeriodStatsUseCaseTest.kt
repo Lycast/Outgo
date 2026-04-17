@@ -5,9 +5,9 @@ import fr.abknative.outgo.wallet.api.model.Operation
 import fr.abknative.outgo.wallet.api.model.presenter.ProjectedOperation
 import fr.abknative.outgo.wallet.impl.mock.FakeTimeProvider
 import fr.abknative.outgo.wallet.impl.mock.createOp
-import fr.abknative.outgo.wallet.impl.usecase.CalculateDashboardDataUseCaseImpl
-import fr.abknative.outgo.wallet.impl.usecase.engine.SimpleSumEngine
-import fr.abknative.outgo.wallet.impl.usecase.engine.TimelineEngine
+import fr.abknative.outgo.wallet.impl.usecase.CalculatePeriodStatsUseCaseImpl
+import fr.abknative.outgo.wallet.impl.usecase.engine.SimplePeriodStatsCalculation
+import fr.abknative.outgo.wallet.impl.usecase.engine.TimelinePeriodStatsCalculation
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -28,14 +28,14 @@ class FakeFeatureManager(var isPremiumMock: Boolean = false) : FeatureManager {
 class CalculatePeriodStatsUseCaseTest {
 
     private val timeProvider = FakeTimeProvider()
-    private val simpleSumEngine = SimpleSumEngine(timeProvider)
-    private val timelineEngine = TimelineEngine(timeProvider)
+    private val simplePeriodStatsCalculationEngine = SimplePeriodStatsCalculation(timeProvider)
+    private val timelinePeriodStatsCalculationEngine = TimelinePeriodStatsCalculation(timeProvider)
     private val fakeFeatureManager = FakeFeatureManager(isPremiumMock = false)
 
-    private val useCase = CalculateDashboardDataUseCaseImpl(
+    private val useCase = CalculatePeriodStatsUseCaseImpl(
         featureManager = fakeFeatureManager,
-        simpleSumEngine = simpleSumEngine,
-        timelineEngine = timelineEngine
+        simplePeriodStatsCalculationEngine = simplePeriodStatsCalculationEngine,
+        timelinePeriodStatsCalculationEngine = timelinePeriodStatsCalculationEngine
     )
 
     @Test

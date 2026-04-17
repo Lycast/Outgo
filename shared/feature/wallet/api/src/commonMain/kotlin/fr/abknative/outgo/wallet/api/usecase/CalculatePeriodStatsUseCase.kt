@@ -7,7 +7,7 @@ import fr.abknative.outgo.wallet.api.model.presenter.ProjectedOperation
  * Encapsulates the core financial algorithms.
  * Processes projected operations into unified [PeriodStats].
  */
-interface CalculateDashboardDataUseCase {
+interface CalculatePeriodStatsUseCase {
     /**
      * Computes the financial metrics for the requested period based on occurrences.
      *
