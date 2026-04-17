@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -13,7 +12,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
@@ -21,6 +19,7 @@ import fr.abknative.outgo.android.designsystem.components.buttons.AppButton
 import fr.abknative.outgo.android.designsystem.components.buttons.AppTextButton
 import fr.abknative.outgo.android.designsystem.components.feedback.FormattedDateInput
 import fr.abknative.outgo.android.designsystem.components.inputs.AppTextField
+import fr.abknative.outgo.android.designsystem.foundation.AppText
 import fr.abknative.outgo.android.designsystem.foundation.AppTheme
 import fr.abknative.outgo.android.designsystem.foundation.toColor
 import fr.abknative.outgo.android.ui.CommonLabels
@@ -57,10 +56,9 @@ fun OperationFormContent(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // --- Header Title ---
-        Text(
+        AppText(
             text = if (isEditMode) FormLabels.SHEET_TITLE_EDIT else FormLabels.SHEET_TITLE_ADD,
             style = AppTheme.typo.subtitle,
-            color = AppTheme.colors.textPrimary.toColor(),
             modifier = Modifier.padding(top = AppTheme.dimens.medium)
         )
 
@@ -87,9 +85,8 @@ fun OperationFormContent(
                 imeAction = ImeAction.Next
             ),
             suffix = {
-                Text(
+                AppText(
                     text = CommonLabels.CURRENCY_SYMBOL,
-                    style = AppTheme.typo.body,
                     color = AppTheme.colors.textSecondary.toColor()
                 )
             }
@@ -135,7 +132,7 @@ fun OperationFormContent(
                     onClick = onCancel,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text(text = CommonLabels.ACTION_CANCEL)
+                    AppText(text = CommonLabels.ACTION_CANCEL)
                 }
             }
 
@@ -147,9 +144,8 @@ fun OperationFormContent(
                     enabled = state.isFormValid,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text(
-                        text = CommonLabels.ACTION_SAVE,
-                        fontWeight = FontWeight.Bold
+                    AppText(
+                        text = CommonLabels.ACTION_SAVE
                     )
                 }
             }

@@ -35,17 +35,17 @@ val OutgoTypographyInstance = OutgoTypography(
     ),
     body = TextStyle(
         fontFamily = Poppins,
-        fontWeight = FontWeight.Normal,
+        fontWeight = FontWeight.Medium,
         fontSize = DesignTypography.MEDIUM.sp
     ),
     caption = TextStyle(
         fontFamily = Poppins,
         fontWeight = FontWeight.Normal,
-        fontSize = DesignTypography.SMALL.sp
+        fontSize = DesignTypography.MEDIUM.sp
     ),
     label = TextStyle(
         fontFamily = Poppins,
         fontWeight = FontWeight.Medium,
-        fontSize = DesignTypography.EXTRA_SMALL.sp
+        fontSize = DesignTypography.SMALL.sp
     )
 )

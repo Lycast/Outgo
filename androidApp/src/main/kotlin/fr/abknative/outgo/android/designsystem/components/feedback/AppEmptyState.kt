@@ -2,12 +2,12 @@ package fr.abknative.outgo.android.designsystem.components.feedback
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
+import fr.abknative.outgo.android.designsystem.foundation.AppText
 import fr.abknative.outgo.android.designsystem.foundation.AppTheme
 import fr.abknative.outgo.android.designsystem.foundation.toColor
 
@@ -34,18 +34,16 @@ fun AppEmptyState(
 
         Spacer(modifier = Modifier.height(AppTheme.dimens.large))
 
-        Text(
+        AppText(
             text = title,
             style = AppTheme.typo.subtitle,
-            color = AppTheme.colors.textPrimary.toColor(),
             textAlign = TextAlign.Center
         )
 
         if (description != null) {
             Spacer(modifier = Modifier.height(AppTheme.dimens.medium))
-            Text(
+            AppText(
                 text = description,
-                style = AppTheme.typo.body,
                 color = AppTheme.colors.textSecondary.toColor(),
                 textAlign = TextAlign.Center
             )

@@ -18,6 +18,7 @@ import fr.abknative.outgo.android.components.login.SocialLoginButton
 import fr.abknative.outgo.android.components.login.SocialProvider
 import fr.abknative.outgo.android.designsystem.components.feedback.AppSnackbar
 import fr.abknative.outgo.android.designsystem.foundation.AppBackground
+import fr.abknative.outgo.android.designsystem.foundation.AppText
 import fr.abknative.outgo.android.designsystem.foundation.AppTheme
 import fr.abknative.outgo.android.designsystem.foundation.toColor
 import fr.abknative.outgo.android.ui.LoginLabels
@@ -85,7 +86,7 @@ fun LoginScreen(
             topBar = {
                 TopAppBar(
                     title = {
-                        Text(
+                        AppText(
                             text = LoginLabels.BACK_TITLE,
                             style = AppTheme.typo.title.copy(fontWeight = FontWeight.Medium),
                             color = AppTheme.colors.textSecondary.toColor(),
@@ -122,9 +123,9 @@ fun LoginScreen(
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text(
+                    AppText(
                         text = LoginLabels.TITLE,
-                        style = AppTheme.typo.subtitle.copy(fontWeight = FontWeight.Medium),
+                        style = AppTheme.typo.subtitle.copy(fontWeight = FontWeight.SemiBold),
                         color = AppTheme.colors.primary.toColor(),
                         textAlign = TextAlign.Center
                     )
@@ -165,7 +166,7 @@ fun LoginScreen(
                             modifier = Modifier.weight(1f),
                             color = AppTheme.colors.textSecondary.toColor()
                         )
-                        Text(
+                        AppText(
                             text = LoginLabels.OR_LABEL,
                             color = AppTheme.colors.textSecondary.toColor(),
                             modifier = Modifier.padding(horizontal = AppTheme.dimens.small)

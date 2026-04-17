@@ -2,12 +2,12 @@ package fr.abknative.outgo.android.screens
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import fr.abknative.outgo.android.designsystem.components.buttons.AppButton
 import fr.abknative.outgo.android.designsystem.components.buttons.AppOutlinedButton
 import fr.abknative.outgo.android.designsystem.components.feedback.ConfirmationDialog
+import fr.abknative.outgo.android.designsystem.foundation.AppText
 import fr.abknative.outgo.android.designsystem.foundation.AppTheme
 import fr.abknative.outgo.android.ui.CommonLabels
 import fr.abknative.outgo.android.ui.DialogLabels
@@ -35,7 +35,7 @@ fun ListScreenModals(
                     },
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text(text = CommonLabels.ACTION_DELETE)
+                    AppText(text = CommonLabels.ACTION_DELETE)
                 }
             },
 
@@ -44,7 +44,7 @@ fun ListScreenModals(
                     onClick = onDismissDelete,
                     modifier = Modifier.padding(end = AppTheme.dimens.medium).fillMaxWidth()
                 ) {
-                    Text(text = CommonLabels.ACTION_CANCEL)
+                    AppText(text = CommonLabels.ACTION_CANCEL)
                 }
             }
         )

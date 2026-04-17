@@ -2,7 +2,6 @@ package fr.abknative.outgo.android.components.login
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -11,6 +10,7 @@ import androidx.compose.ui.unit.dp
 import fr.abknative.outgo.android.designsystem.components.buttons.AppButton
 import fr.abknative.outgo.android.designsystem.components.buttons.AppTextButton
 import fr.abknative.outgo.android.designsystem.components.inputs.AppTextField
+import fr.abknative.outgo.android.designsystem.foundation.AppText
 import fr.abknative.outgo.android.designsystem.foundation.AppTheme
 import fr.abknative.outgo.android.designsystem.foundation.toColor
 import fr.abknative.outgo.android.ui.LoginLabels
@@ -61,7 +61,7 @@ fun EmailAuthForm(
                     strokeWidth = 2.dp
                 )
             } else {
-                Text(if (isLoginMode) LoginLabels.SUBMIT_BUTTON else LoginLabels.REGISTER_BUTTON)
+                AppText(if (isLoginMode) LoginLabels.SUBMIT_BUTTON else LoginLabels.REGISTER_BUTTON)
             }
         }
 
@@ -72,7 +72,7 @@ fun EmailAuthForm(
             onClick = onToggleMode,
             enabled = !isLoading
         ) {
-            Text(
+            AppText(
                 text = if (isLoginMode) LoginLabels.SUBMIT_ACTION else LoginLabels.REGISTER_ACTION,
                 color = AppTheme.colors.textSecondary.toColor()
             )

@@ -1,12 +1,12 @@
 package fr.abknative.outgo.android.components.month
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import fr.abknative.outgo.android.designsystem.components.charts.AppProgressBar
+import fr.abknative.outgo.android.designsystem.foundation.AppText
 import fr.abknative.outgo.android.designsystem.foundation.AppTheme
-import fr.abknative.outgo.android.designsystem.foundation.toColor
 import fr.abknative.outgo.android.ui.extensions.getUiColor
 import fr.abknative.outgo.android.ui.extensions.uiAmount
 import fr.abknative.outgo.android.ui.extensions.uiLabel
@@ -29,14 +29,13 @@ fun StatsCardRecurrence(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text(
+                    AppText(
                         text = recurrence.uiLabel,
                         style = AppTheme.typo.caption,
                     )
-                    Text(
+                    AppText(
                         text = stat.amountInCents.uiAmount,
-                        style = AppTheme.typo.body,
-                        color = AppTheme.colors.textPrimary.toColor()
+                        style = AppTheme.typo.subtitle.copy(fontWeight = FontWeight.Medium),
                     )
                 }
 

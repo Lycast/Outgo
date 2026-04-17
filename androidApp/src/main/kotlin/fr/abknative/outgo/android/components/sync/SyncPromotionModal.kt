@@ -2,7 +2,6 @@ package fr.abknative.outgo.android.components.sync
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -14,6 +13,7 @@ import fr.abknative.outgo.android.R
 import fr.abknative.outgo.android.designsystem.components.buttons.AppOutlinedButton
 import fr.abknative.outgo.android.designsystem.components.buttons.AppTextButton
 import fr.abknative.outgo.android.designsystem.components.cards.GlassCard
+import fr.abknative.outgo.android.designsystem.foundation.AppText
 import fr.abknative.outgo.android.designsystem.foundation.AppTheme
 import fr.abknative.outgo.android.designsystem.foundation.toColor
 import fr.abknative.outgo.android.ui.HeaderLabels
@@ -38,7 +38,7 @@ fun SyncPromotionModal(
 
                 Spacer(modifier = Modifier.height(AppTheme.dimens.medium))
 
-                Text(
+                AppText(
                     text = HeaderLabels.SYNC_PROMO_TITLE,
                     style = AppTheme.typo.subtitle,
                     color = AppTheme.colors.primary.toColor(),
@@ -48,10 +48,8 @@ fun SyncPromotionModal(
 
                 Spacer(modifier = Modifier.height(AppTheme.dimens.medium))
 
-                Text(
+                AppText(
                     text = HeaderLabels.SYNC_PROMO_DESC,
-                    style = AppTheme.typo.label,
-                    color = AppTheme.colors.textPrimary.toColor(),
                     textAlign = TextAlign.Center
                 )
 
@@ -61,12 +59,12 @@ fun SyncPromotionModal(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Box(modifier = Modifier.weight(0.75f)) {
+                    Box(modifier = Modifier.weight(0.7f)) {
                         AppTextButton(
                             onClick = onDismiss,
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            Text(text = HeaderLabels.SYNC_PROMO_ACTION_LATER)
+                            AppText(text = HeaderLabels.SYNC_PROMO_ACTION_LATER)
                         }
                     }
 
@@ -80,7 +78,7 @@ fun SyncPromotionModal(
                             },
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            Text(text = HeaderLabels.SYNC_PROMO_ACTION_LOGIN)
+                            AppText(text = HeaderLabels.SYNC_PROMO_ACTION_LOGIN)
                         }
                     }
                 }

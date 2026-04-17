@@ -5,12 +5,10 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
@@ -18,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import fr.abknative.outgo.android.R
 import fr.abknative.outgo.android.designsystem.components.buttons.AppButton
 import fr.abknative.outgo.android.designsystem.components.inputs.AppTextField
+import fr.abknative.outgo.android.designsystem.foundation.AppText
 import fr.abknative.outgo.android.designsystem.foundation.AppTheme
 import fr.abknative.outgo.android.designsystem.foundation.toColor
 import fr.abknative.outgo.android.ui.CommonLabels
@@ -52,10 +51,8 @@ fun ConfigurationStep(
                     tint = AppTheme.colors.textPrimary.toColor()
                 )
             }
-            Text(
-                text = CommonLabels.ACTION_BACK,
-                style = AppTheme.typo.body,
-                color = AppTheme.colors.textPrimary.toColor()
+            AppText(
+                text = CommonLabels.ACTION_BACK
             )
         }
 
@@ -77,11 +74,10 @@ fun ConfigurationStep(
             Spacer(Modifier.height(AppTheme.dimens.medium))
 
             // --- Title ---
-            Text(
+            AppText(
                 text = OnboardingLabels.CONFIG_TITLE,
-                style = AppTheme.typo.subtitle,
-                color = AppTheme.colors.primary.toColor(),
-                fontWeight = FontWeight.Bold
+                style = AppTheme.typo.title,
+                color = AppTheme.colors.primary.toColor()
             )
 
             Spacer(modifier = Modifier.height(AppTheme.dimens.extraLarge))
@@ -119,7 +115,7 @@ fun ConfigurationStep(
             // --- Error Feedback ---
             if (errorMessage != null) {
                 Spacer(modifier = Modifier.height(AppTheme.dimens.medium))
-                Text(
+                AppText(
                     text = errorMessage,
                     color = AppTheme.colors.error.toColor(),
                     style = AppTheme.typo.caption,
@@ -142,9 +138,8 @@ fun ConfigurationStep(
                         strokeWidth = 2.dp
                     )
                 } else {
-                    Text(
+                    AppText(
                         text = OnboardingLabels.SUBMIT_ONBOARDING,
-                        fontWeight = FontWeight.Bold
                     )
                 }
             }

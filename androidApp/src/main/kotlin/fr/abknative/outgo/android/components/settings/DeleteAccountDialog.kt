@@ -3,18 +3,17 @@ package fr.abknative.outgo.android.components.settings
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
-import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import fr.abknative.outgo.android.designsystem.components.buttons.AppTextButton
 import fr.abknative.outgo.android.designsystem.components.buttons.HoldToConfirmButton
 import fr.abknative.outgo.android.designsystem.components.cards.GlassCard
+import fr.abknative.outgo.android.designsystem.foundation.AppText
 import fr.abknative.outgo.android.designsystem.foundation.AppTheme
 import fr.abknative.outgo.android.designsystem.foundation.toColor
 import fr.abknative.outgo.android.ui.CommonLabels
@@ -44,21 +43,18 @@ fun DeleteAccountDialog(
                 modifier = Modifier.padding(24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(
+                AppText(
                     text = DialogLabels.DELETE_ACCOUNT_TITLE,
                     style = AppTheme.typo.title,
                     color = AppTheme.colors.primary.toColor(),
-                    fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth()
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                Text(
+                AppText(
                     text = DialogLabels.DELETE_ACCOUNT_CHOICE_DESC,
-                    style = AppTheme.typo.body,
-                    color = AppTheme.colors.textPrimary.toColor(),
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -99,7 +95,7 @@ fun DeleteAccountDialog(
                     AppTextButton(
                         onClick = onDismiss,
                         modifier = Modifier.weight(0.7f).fillMaxWidth()
-                    ) { Text(text = CommonLabels.ACTION_CANCEL) }
+                    ) { AppText(text = CommonLabels.ACTION_CANCEL) }
 
                     Spacer(modifier = Modifier.width(AppTheme.dimens.small))
 
@@ -134,13 +130,10 @@ private fun DialogSwitchRow(
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Column(modifier = Modifier.weight(1f).padding(end = AppTheme.dimens.small)) {
-            Text(
-                text = title,
-                style = AppTheme.typo.body,
-                fontWeight = FontWeight.Medium,
-                color = AppTheme.colors.textPrimary.toColor()
+            AppText(
+                text = title
             )
-            Text(
+            AppText(
                 text = subtitle,
                 style = AppTheme.typo.label,
                 color = AppTheme.colors.textSecondary.toColor()

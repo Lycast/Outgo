@@ -1,11 +1,11 @@
 package fr.abknative.outgo.android.components.operation
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import fr.abknative.outgo.android.designsystem.components.selection.AppSegmentedControl
+import fr.abknative.outgo.android.designsystem.foundation.AppText
 import fr.abknative.outgo.android.designsystem.foundation.AppTheme
 import fr.abknative.outgo.android.designsystem.foundation.toColor
 import fr.abknative.outgo.android.ui.FormLabels
@@ -39,7 +39,7 @@ fun RecurrenceSelector(
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
+        AppText(
             text = FormLabels.FIELD_RECURRENCE_DESC,
             style = AppTheme.typo.caption,
             color = AppTheme.colors.textSecondary.toColor(),

@@ -5,13 +5,13 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import fr.abknative.outgo.android.R
+import fr.abknative.outgo.android.designsystem.foundation.AppText
 import fr.abknative.outgo.android.designsystem.foundation.AppTheme
 import fr.abknative.outgo.android.designsystem.foundation.toColor
 import fr.abknative.outgo.android.ui.AccessibilityLabels
@@ -35,10 +35,9 @@ fun MonthTimeSelector(
                 tint = if (canGoBack) AppTheme.colors.primary.toColor() else AppTheme.colors.textSecondary.toColor().copy(alpha = 0.2f)
             )
         }
-        Text(
+        AppText(
             text = formattedMonth,
             style = AppTheme.typo.title.copy(fontWeight = FontWeight.Bold),
-            color = AppTheme.colors.textPrimary.toColor()
         )
         IconButton(onClick = onNext) {
             Icon(

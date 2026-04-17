@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import fr.abknative.outgo.android.designsystem.components.buttons.AppOutlinedButton
+import fr.abknative.outgo.android.designsystem.foundation.AppText
 import fr.abknative.outgo.android.designsystem.foundation.AppTheme
 import fr.abknative.outgo.android.designsystem.foundation.toColor
 import fr.abknative.outgo.android.ui.AccessibilityLabels
@@ -47,14 +48,12 @@ fun InfoTooltip(
                     actionContentColor = AppTheme.colors.primary.toColor()
                 ),
                 title = {
-                    Text(
-                        text = title,
-                        style = AppTheme.typo.body,
-                        color = AppTheme.colors.textPrimary.toColor()
+                    AppText(
+                        text = title
                     )
                 },
                 text = {
-                    Text(
+                    AppText(
                         text = description,
                         style = AppTheme.typo.caption,
                         color = AppTheme.colors.textSecondary.toColor()
@@ -65,7 +64,7 @@ fun InfoTooltip(
                         onClick = { scope.launch { tooltipState.dismiss() } },
                         height = AppTheme.dimens.big,
                         color = AppTheme.colors.textSecondary.toColor(),
-                    ) { Text(text = CommonLabels.ACTION_CLOSE) }
+                    ) { AppText(text = CommonLabels.ACTION_CLOSE) }
                 }
             )
         },

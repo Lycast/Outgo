@@ -1,7 +1,6 @@
 package fr.abknative.outgo.android.components.month
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -9,6 +8,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import fr.abknative.outgo.android.R
 import fr.abknative.outgo.android.designsystem.atoms.CircleIcon
+import fr.abknative.outgo.android.designsystem.foundation.AppText
 import fr.abknative.outgo.android.designsystem.foundation.AppTheme
 import fr.abknative.outgo.android.designsystem.foundation.toColor
 import fr.abknative.outgo.android.ui.ListLabels
@@ -46,10 +46,8 @@ fun OperationCardSummary(
             Row( modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
+                AppText(
                     text = operation.uiTitle,
-                    style = AppTheme.typo.body,
-                    color = AppTheme.colors.textPrimary.toColor(),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -62,12 +60,12 @@ fun OperationCardSummary(
 
                 // Date et récurrence
                 Row(horizontalArrangement = Arrangement.End) {
-                    Text(
+                    AppText(
                         text = "${ListLabels.DUE_PREFIX} $formattedDate • ",
                         style = AppTheme.typo.caption,
                         color = AppTheme.colors.textSecondary.toColor()
                     )
-                    Text(
+                    AppText(
                         text = operation.recurrence.uiLabel,
                         style = AppTheme.typo.caption,
                         color = operation.recurrence.getUiColor().copy(alpha = 0.8f)
@@ -76,9 +74,8 @@ fun OperationCardSummary(
 
                 Spacer(modifier = Modifier.width(AppTheme.dimens.medium))
 
-                Text(
+                AppText(
                     text = if(operation.type == OperationType.INCOME) "+ ${operation.amountInCents.uiAmount}" else operation.amountInCents.uiAmount,
-                    style = AppTheme.typo.body,
                     color = if(operation.type == OperationType.INCOME) AppTheme.colors.primary.toColor() else AppTheme.colors.secondary.toColor(),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,

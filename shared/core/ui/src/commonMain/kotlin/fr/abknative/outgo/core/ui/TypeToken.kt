@@ -5,8 +5,8 @@ package fr.abknative.outgo.core.ui
  */
 object DesignTypography {
     const val EXTRALARGE = 20
-    const val LARGE = 18
-    const val MEDIUM = 16
-    const val SMALL = 14
-    const val EXTRA_SMALL = 12
+    const val LARGE = 16
+    const val MEDIUM = 14
+    const val SMALL = 12
+    const val EXTRA_SMALL = 10
 }

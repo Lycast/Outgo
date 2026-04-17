@@ -74,7 +74,7 @@ fun StatsCardWallet(
                     iconRes = R.drawable.piggy_bank_duotone,
                     amount = disposableIncomeInCents.uiAmount,
                     liveColor = liveColor,
-                    fontWeight = if (isNegativeLive) FontWeight.SemiBold else FontWeight.Bold,
+                    fontWeight = if (isNegativeLive) FontWeight.Medium else FontWeight.Bold,
                 )
             }
         )

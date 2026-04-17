@@ -3,7 +3,10 @@ package fr.abknative.outgo.android.screens
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.*
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -17,6 +20,7 @@ import fr.abknative.outgo.android.components.month.*
 import fr.abknative.outgo.android.designsystem.components.cards.GlassCard
 import fr.abknative.outgo.android.designsystem.components.feedback.AppSnackbar
 import fr.abknative.outgo.android.designsystem.components.selection.MonthTimeSelector
+import fr.abknative.outgo.android.designsystem.foundation.AppText
 import fr.abknative.outgo.android.designsystem.foundation.AppTheme
 import fr.abknative.outgo.android.designsystem.foundation.toColor
 import fr.abknative.outgo.android.ui.CommonLabels
@@ -79,10 +83,9 @@ fun MonthScreen(
                 ) {
                     // Budget Section
                     Column {
-                        Text(
+                        AppText(
                             text = MonthLabels.SECTION_BUDGET.uppercase(getDefault()),
-                            style = AppTheme.typo.label,
-                            fontWeight = FontWeight.Bold,
+                            style = AppTheme.typo.label.copy(fontWeight = FontWeight.Bold),
                             color = AppTheme.colors.primary.toColor(),
                             modifier = Modifier.padding(bottom = AppTheme.dimens.small, start = AppTheme.dimens.medium)
                         )
@@ -98,10 +101,9 @@ fun MonthScreen(
 
                     // Expenses Section
                     Column {
-                        Text(
+                        AppText(
                             text = MonthLabels.SECTION_EXPENSES.uppercase(getDefault()),
-                            style = AppTheme.typo.label,
-                            fontWeight = FontWeight.Bold,
+                            style = AppTheme.typo.label.copy(fontWeight = FontWeight.Bold),
                             color = AppTheme.colors.primary.toColor(),
                             modifier = Modifier.padding(bottom = AppTheme.dimens.small, start = AppTheme.dimens.medium)
                         )
@@ -117,10 +119,9 @@ fun MonthScreen(
                     // Upcoming Expenses
                     if (state.nextUpcomingExpenses.isNotEmpty()) {
                         Column {
-                            Text(
+                            AppText(
                                 text = MonthLabels.SECTION_UPCOMING.uppercase(getDefault()),
-                                style = AppTheme.typo.label,
-                                fontWeight = FontWeight.Bold,
+                                style = AppTheme.typo.label.copy(fontWeight = FontWeight.Bold),
                                 color = AppTheme.colors.primary.toColor(),
                                 modifier = Modifier.padding(
                                     bottom = AppTheme.dimens.small,
@@ -131,7 +132,7 @@ fun MonthScreen(
                                 Column(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .padding(vertical = AppTheme.dimens.medium)
+                                        .padding(vertical = AppTheme.dimens.large)
                                 ) {
                                     state.nextUpcomingExpenses.forEachIndexed { index, projectedOp ->
                                         val displayOperation = projectedOp.operation.copy(
@@ -144,12 +145,11 @@ fun MonthScreen(
                                         )
 
                                         if (index < state.nextUpcomingExpenses.lastIndex) {
-                                            Spacer(modifier = Modifier.height(AppTheme.dimens.small))
+                                            Spacer(modifier = Modifier.height(AppTheme.dimens.medium))
                                             HorizontalDivider(
                                                 color = AppTheme.colors.surface100.toColor(),
-                                                modifier = Modifier.padding(horizontal = AppTheme.dimens.small)
                                             )
-                                            Spacer(modifier = Modifier.height(AppTheme.dimens.small))
+                                            Spacer(modifier = Modifier.height(AppTheme.dimens.medium))
                                         }
                                     }
                                 }
@@ -160,10 +160,9 @@ fun MonthScreen(
                     // Recurrence Breakdown
                     if (state.expensesByRecurrence.isNotEmpty()) {
                         Column {
-                            Text(
+                            AppText(
                                 text = MonthLabels.SECTION_RECURRENCE.uppercase(getDefault()),
-                                style = AppTheme.typo.label,
-                                fontWeight = FontWeight.Bold,
+                                style = AppTheme.typo.label.copy(fontWeight = FontWeight.Bold),
                                 color = AppTheme.colors.primary.toColor(),
                                 modifier = Modifier.padding(bottom = AppTheme.dimens.small, start = AppTheme.dimens.medium)
                             )

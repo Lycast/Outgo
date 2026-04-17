@@ -1,7 +1,6 @@
 package fr.abknative.outgo.android.screens
 
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import fr.abknative.outgo.android.components.settings.DeleteAccountDialog
@@ -9,6 +8,7 @@ import fr.abknative.outgo.android.components.settings.LogoutDialog
 import fr.abknative.outgo.android.designsystem.components.buttons.AppOutlinedButton
 import fr.abknative.outgo.android.designsystem.components.buttons.HoldToConfirmButton
 import fr.abknative.outgo.android.designsystem.components.feedback.ConfirmationDialog
+import fr.abknative.outgo.android.designsystem.foundation.AppText
 import fr.abknative.outgo.android.designsystem.foundation.AppTheme
 import fr.abknative.outgo.android.ui.CommonLabels
 import fr.abknative.outgo.android.ui.DialogLabels
@@ -67,7 +67,7 @@ fun SettingsModals(
                 AppOutlinedButton(
                     onClick = onDismissPurge,
                     modifier = Modifier.padding(end = AppTheme.dimens.medium)
-                ) { Text(text = CommonLabels.ACTION_CANCEL) }
+                ) { AppText(text = CommonLabels.ACTION_CANCEL) }
             }
         )
     }

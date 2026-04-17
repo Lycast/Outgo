@@ -10,7 +10,6 @@ import androidx.compose.foundation.gestures.waitForUpOrCancellation
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -23,6 +22,7 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
+import fr.abknative.outgo.android.designsystem.foundation.AppText
 import fr.abknative.outgo.android.designsystem.foundation.AppTheme
 import fr.abknative.outgo.android.designsystem.foundation.toColor
 import fr.abknative.outgo.core.ui.DesignAnimations
@@ -85,7 +85,7 @@ fun HoldToConfirmButton(
                 .background(progressColor)
         )
 
-        Text(
+        AppText(
             text = label,
             style = AppTheme.typo.label,
             color = if (enabled) AppTheme.colors.error.toColor() else AppTheme.colors.textSecondary.toColor().copy(alpha = 0.5f),

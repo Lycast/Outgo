@@ -4,7 +4,6 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -12,9 +11,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import fr.abknative.outgo.android.designsystem.foundation.AppText
 import fr.abknative.outgo.android.designsystem.foundation.AppTheme
 import fr.abknative.outgo.android.designsystem.foundation.toColor
 import fr.abknative.outgo.core.ui.DesignAnimations
@@ -72,15 +71,13 @@ fun AppDonutChart(
         if (centerTitle != null || centerSubtitle != null) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 if (centerTitle != null) {
-                    Text(
+                    AppText(
                         text = centerTitle,
-                        style = AppTheme.typo.subtitle,
-                        fontWeight = FontWeight.Medium,
-                        color = AppTheme.colors.textPrimary.toColor()
+                        style = AppTheme.typo.subtitle
                     )
                 }
                 if (centerSubtitle != null) {
-                    Text(
+                    AppText(
                         text = centerSubtitle,
                         style = AppTheme.typo.caption,
                         color = AppTheme.colors.textSecondary.toColor()

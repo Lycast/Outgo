@@ -1,11 +1,11 @@
 package fr.abknative.outgo.android.components.shell
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
+import fr.abknative.outgo.android.designsystem.foundation.AppText
 import fr.abknative.outgo.android.designsystem.foundation.AppTheme
 import fr.abknative.outgo.android.designsystem.foundation.toColor
 import fr.abknative.outgo.android.ui.CommonLabels
@@ -46,7 +46,7 @@ fun Header(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(
+            AppText(
                 text = CommonLabels.APP_NAME,
                 style = AppTheme.typo.title,
                 color = AppTheme.colors.primary.toColor(),
@@ -70,7 +70,7 @@ fun Header(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
+            AppText(
                 text = CommonLabels.APP_NAME,
                 style = AppTheme.typo.title,
                 color = AppTheme.colors.primary.toColor()

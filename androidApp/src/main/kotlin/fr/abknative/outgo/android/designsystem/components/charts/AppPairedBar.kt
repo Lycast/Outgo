@@ -5,16 +5,15 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import fr.abknative.outgo.android.designsystem.components.feedback.InfoTooltip
+import fr.abknative.outgo.android.designsystem.foundation.AppText
 import fr.abknative.outgo.android.designsystem.foundation.AppTheme
 import fr.abknative.outgo.android.designsystem.foundation.toColor
 
@@ -43,15 +42,13 @@ fun AppPairedBar(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.Bottom
         ) {
-            Text(
+            AppText(
                 text = topLabel,
                 style = AppTheme.typo.caption,
                 color = AppTheme.colors.textSecondary.toColor()
             )
-            Text(
-                text = topAmount,
-                style = AppTheme.typo.body,
-                color = AppTheme.colors.textPrimary.toColor()
+            AppText(
+                text = topAmount
             )
         }
 
@@ -84,16 +81,13 @@ fun AppPairedBar(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.Top
             ) {
-                Text(
+                AppText(
                     text = bottomLabel,
                     style = AppTheme.typo.caption,
                     color = AppTheme.colors.textSecondary.toColor()
                 )
-                Text(
+                AppText(
                     text = bottomAmount,
-                    style = AppTheme.typo.body,
-                    fontWeight = FontWeight.Medium,
-                    color = AppTheme.colors.textPrimary.toColor()
                 )
             }
         }

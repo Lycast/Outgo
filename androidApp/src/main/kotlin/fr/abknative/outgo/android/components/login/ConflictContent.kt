@@ -10,6 +10,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import fr.abknative.outgo.android.designsystem.components.buttons.AppButton
 import fr.abknative.outgo.android.designsystem.components.buttons.AppTextButton
+import fr.abknative.outgo.android.designsystem.foundation.AppText
 import fr.abknative.outgo.android.designsystem.foundation.AppTheme
 import fr.abknative.outgo.android.designsystem.foundation.toColor
 import fr.abknative.outgo.android.ui.LoginLabels
@@ -28,9 +29,8 @@ fun ConflictContent(onConfirm: () -> Unit, onCancel: () -> Unit) {
     Spacer(modifier = Modifier.height(AppTheme.dimens.large))
 
     // --- Main Explanation ---
-    Text(
+    AppText(
         text = LoginLabels.CONFLICT_DESC,
-        style = AppTheme.typo.body,
         color = AppTheme.colors.textSecondary.toColor(),
         textAlign = TextAlign.Center
     )
@@ -38,10 +38,9 @@ fun ConflictContent(onConfirm: () -> Unit, onCancel: () -> Unit) {
     Spacer(modifier = Modifier.height(AppTheme.dimens.large))
 
     // --- The "Question" ---
-    Text(
+    AppText(
         text = LoginLabels.CONFLICT_QUESTION,
         style = AppTheme.typo.caption,
-        color = AppTheme.colors.textPrimary.toColor(),
         textAlign = TextAlign.Center,
         modifier = Modifier.fillMaxWidth(),
     )
@@ -53,7 +52,7 @@ fun ConflictContent(onConfirm: () -> Unit, onCancel: () -> Unit) {
         onClick = onConfirm,
         modifier = Modifier.fillMaxWidth()
     ) {
-        Text(text = LoginLabels.CONFLICT_CONFIRM)
+        AppText(text = LoginLabels.CONFLICT_CONFIRM)
     }
 
     Spacer(modifier = Modifier.height(AppTheme.dimens.small))
@@ -63,6 +62,6 @@ fun ConflictContent(onConfirm: () -> Unit, onCancel: () -> Unit) {
         onClick = onCancel,
         modifier = Modifier.fillMaxWidth()
     ) {
-        Text(text = LoginLabels.CONFLICT_CANCEL)
+        AppText(text = LoginLabels.CONFLICT_CANCEL)
     }
 }

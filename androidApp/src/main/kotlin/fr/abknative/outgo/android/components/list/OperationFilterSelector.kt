@@ -2,7 +2,6 @@ package fr.abknative.outgo.android.components.list
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -14,8 +13,8 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.font.FontWeight
 import fr.abknative.outgo.android.designsystem.components.cards.GlassCard
+import fr.abknative.outgo.android.designsystem.foundation.AppText
 import fr.abknative.outgo.android.designsystem.foundation.AppTheme
 import fr.abknative.outgo.android.designsystem.foundation.toColor
 import fr.abknative.outgo.android.ui.ListLabels
@@ -81,15 +80,14 @@ private fun FilterTabItem(
                 .padding(vertical = AppTheme.dimens.medium),
             contentAlignment = Alignment.Center
         ) {
-            Text(
+            AppText(
                 text = label.uppercase(),
-                style = AppTheme.typo.body,
                 color = if (isSelected) {
                     AppTheme.colors.primary.toColor()
                 } else {
                     AppTheme.colors.textSecondary.toColor()
                 },
-                fontWeight = if (isSelected) FontWeight.Medium else FontWeight.Normal
+                style = if (isSelected) AppTheme.typo.body else AppTheme.typo.caption
             )
         }
     }

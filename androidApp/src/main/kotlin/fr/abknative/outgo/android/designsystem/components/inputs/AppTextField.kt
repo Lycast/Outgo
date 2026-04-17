@@ -4,11 +4,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.input.VisualTransformation
+import fr.abknative.outgo.android.designsystem.foundation.AppText
 import fr.abknative.outgo.android.designsystem.foundation.AppTheme
 import fr.abknative.outgo.android.designsystem.foundation.toColor
 
@@ -48,8 +48,8 @@ fun AppTextField(
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
-        label = { Text(text = label, style = AppTheme.typo.caption) },
-        placeholder = { Text(text = placeholder, style = AppTheme.typo.body) },
+        label = { AppText(text = label, style = AppTheme.typo.caption) },
+        placeholder = { AppText(text = placeholder) },
         isError = isError,
         enabled = enabled,
         singleLine = singleLine,

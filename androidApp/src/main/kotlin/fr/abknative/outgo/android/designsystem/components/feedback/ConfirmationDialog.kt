@@ -1,15 +1,14 @@
 package fr.abknative.outgo.android.designsystem.components.feedback
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.window.Dialog
 import fr.abknative.outgo.android.designsystem.components.cards.GlassCard
+import fr.abknative.outgo.android.designsystem.foundation.AppText
 import fr.abknative.outgo.android.designsystem.foundation.AppTheme
-import fr.abknative.outgo.android.designsystem.foundation.toColor
 
 @Composable
 fun ConfirmationDialog(
@@ -25,20 +24,18 @@ fun ConfirmationDialog(
                 modifier = Modifier.padding(AppTheme.dimens.large),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(
+                AppText(
                     text = title,
                     style = AppTheme.typo.subtitle,
-                    color = AppTheme.colors.primary.toColor(),
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth()
                 )
 
                 Spacer(modifier = Modifier.height(AppTheme.dimens.large))
 
-                Text(
+                AppText(
                     text = description,
                     style = AppTheme.typo.caption,
-                    color = AppTheme.colors.textPrimary.toColor(),
                     modifier = Modifier.fillMaxWidth()
                 )
 

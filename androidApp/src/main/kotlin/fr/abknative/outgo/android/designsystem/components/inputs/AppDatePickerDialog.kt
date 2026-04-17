@@ -3,6 +3,7 @@ package fr.abknative.outgo.android.designsystem.components.inputs
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import fr.abknative.outgo.android.designsystem.components.buttons.AppTextButton
+import fr.abknative.outgo.android.designsystem.foundation.AppText
 import fr.abknative.outgo.android.designsystem.foundation.AppTheme
 import fr.abknative.outgo.android.designsystem.foundation.toColor
 import fr.abknative.outgo.android.ui.CommonLabels
@@ -25,18 +26,16 @@ fun AppDatePickerDialog(
                         onDateSelected(millis)
                     }
                     onDismissRequest()
-                },
-                height = AppTheme.dimens.big
+                }
             ) {
-                Text(CommonLabels.ACTION_OK)
+                AppText(CommonLabels.ACTION_OK)
             }
         },
         dismissButton = {
             AppTextButton(
-                onClick = onDismissRequest,
-                height = AppTheme.dimens.big
+                onClick = onDismissRequest
             ) {
-                Text(CommonLabels.ACTION_CANCEL)
+                AppText(CommonLabels.ACTION_CANCEL)
             }
         },
         colors = DatePickerDefaults.colors(

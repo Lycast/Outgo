@@ -6,7 +6,6 @@ import androidx.compose.foundation.selection.toggleable
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -15,10 +14,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
-import androidx.compose.ui.text.font.FontWeight
 import fr.abknative.outgo.android.R
 import fr.abknative.outgo.android.designsystem.atoms.CircleIcon
 import fr.abknative.outgo.android.designsystem.components.cards.GlassCard
+import fr.abknative.outgo.android.designsystem.foundation.AppText
 import fr.abknative.outgo.android.designsystem.foundation.AppTheme
 import fr.abknative.outgo.android.designsystem.foundation.toColor
 
@@ -29,11 +28,10 @@ fun SettingsSection(
 ) {
 
     Column(verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.small)) {
-        Text(
+        AppText(
             text = title.uppercase(),
             style = AppTheme.typo.label,
             color = AppTheme.colors.primary.toColor(),
-            fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(start = AppTheme.dimens.medium)
         )
         GlassCard {
@@ -122,13 +120,10 @@ fun SettingsRowContent(
         CircleIcon(icon)
         Spacer(modifier = Modifier.width(AppTheme.dimens.medium))
         Column {
-            Text(
-                text = title,
-                style = AppTheme.typo.body,
-                fontWeight = FontWeight.Medium,
-                color = AppTheme.colors.textPrimary.toColor()
+            AppText(
+                text = title
             )
-            Text(
+            AppText(
                 text = subtitle,
                 style = AppTheme.typo.label,
                 color = AppTheme.colors.textSecondary.toColor()
