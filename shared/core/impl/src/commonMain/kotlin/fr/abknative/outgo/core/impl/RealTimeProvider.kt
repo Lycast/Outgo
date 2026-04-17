@@ -50,29 +50,22 @@ class RealTimeProvider : TimeProvider {
             .toEpochMilliseconds()
     }
     override fun endOfMonth(ts: EpochMillis): EpochMillis {
-        val local = Instant.fromEpochMilliseconds(ts).toLocal()
-        val lastDay = lastDayOfMonth(ts)
-        return LocalDateTime(local.year, local.month, lastDay, 23, 59, 59)
-            .toInstant(timeZone)
-            .toEpochMilliseconds()
+        val localDate = Instant.fromEpochMilliseconds(ts).toLocal().date
+        val nextMonth = localDate.plus(1, DateTimeUnit.MONTH)
+        val firstOfNextMonth = LocalDate(nextMonth.year, nextMonth.month, 1)
+        return firstOfNextMonth.atStartOfDayIn(timeZone).toEpochMilliseconds() - 1L
     }
+
     override fun startOfMonth(month: Int, year: Int): EpochMillis {
         return LocalDate(year, month, 1)
             .atStartOfDayIn(timeZone)
             .toEpochMilliseconds()
     }
-
     override fun endOfMonth(month: Int, year: Int): EpochMillis {
         val startOfNextMonth = if (month == 12) {
             LocalDate(year + 1, 1, 1)
-        } else {
-            LocalDate(year, month + 1, 1)
-        }
-        val lastDayDate = startOfNextMonth.minus(1, DateTimeUnit.DAY)
-
-        return LocalDateTime(year, month, lastDayDate.day, 23, 59, 59)
-            .toInstant(timeZone)
-            .toEpochMilliseconds()
+        } else { LocalDate(year, month + 1, 1) }
+        return startOfNextMonth.atStartOfDayIn(timeZone).toEpochMilliseconds() - 1L
     }
 
     // --- Helpers UI ---
