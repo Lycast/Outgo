@@ -2,14 +2,18 @@ package fr.abknative.outgo.app.di
 
 import fr.abknative.outgo.core.api.KeyValueStorage
 import fr.abknative.outgo.core.api.nav.NavCoordinator
-import fr.abknative.outgo.dashboard.api.DashboardPresenter
 import fr.abknative.outgo.login.api.LoginPresenter
+import fr.abknative.outgo.month.api.MonthPresenter
+import fr.abknative.outgo.shell.api.ShellPresenter
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 
 object IosDependencyProvider : KoinComponent {
 
-    val dashboardPresenter: DashboardPresenter
+    val monthPresenter: MonthPresenter
+        get() = get()
+
+    val shellPresenter: ShellPresenter
         get() = get()
 
     val loginPresenter: LoginPresenter
