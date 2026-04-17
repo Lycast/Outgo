@@ -7,6 +7,7 @@ import fr.abknative.outgo.core.api.NetworkMonitor
 import fr.abknative.outgo.core.api.TimeProvider
 import fr.abknative.outgo.core.api.logs.AppLogger
 import fr.abknative.outgo.core.api.logs.Result
+import fr.abknative.outgo.sync.api.SyncEvent
 import fr.abknative.outgo.sync.api.SyncManager
 import fr.abknative.outgo.sync.api.SyncOrchestrator
 import fr.abknative.outgo.wallet.api.repository.OperationRepository
@@ -30,6 +31,9 @@ internal class SyncOrchestratorImpl(
     private val timeProvider: TimeProvider,
     private val scope: CoroutineScope
 ) : SyncOrchestrator {
+
+    private val _syncEvents = MutableSharedFlow<SyncEvent>()
+    override val syncEvents = _syncEvents.asSharedFlow()
 
     companion object {
         private const val LAST_SYNC_KEY = "last_sync_timestamp"
@@ -108,12 +112,14 @@ internal class SyncOrchestratorImpl(
                 .collect { userId ->
                     if (!userId.startsWith("local_")) {
                         AppLogger.get()?.i(TAG, "New connection detected. Starting initial sync.")
-                        val result = syncManager.syncAll()
-
-                        if (result is Result.Success) {
-                            storage.putLong(LAST_SYNC_KEY, timeProvider.now())
-                        } else {
-                            AppLogger.get()?.e(TAG, "Post-login sync failed.")
+                        when (val result = syncManager.syncAll()) {
+                            is Result.Success -> {
+                                storage.putLong(LAST_SYNC_KEY, timeProvider.now())
+                            }
+                            is Result.Error -> {
+                                AppLogger.get()?.e(TAG, "Post-login sync failed.")
+                                _syncEvents.emit(SyncEvent.Error(result.error))
+                            }
                         }
                     }
                 }

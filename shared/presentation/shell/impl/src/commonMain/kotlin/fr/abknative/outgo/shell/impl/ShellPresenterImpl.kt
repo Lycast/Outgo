@@ -11,7 +11,9 @@ import fr.abknative.outgo.shell.api.ShellIntent
 import fr.abknative.outgo.shell.api.ShellPresenter
 import fr.abknative.outgo.shell.api.ShellState
 import fr.abknative.outgo.subscription.api.FeatureManager
+import fr.abknative.outgo.sync.api.SyncEvent
 import fr.abknative.outgo.sync.api.SyncManager
+import fr.abknative.outgo.sync.api.SyncOrchestrator
 import fr.abknative.outgo.sync.api.usecase.ObserveSyncStateUseCase
 import fr.abknative.outgo.wallet.api.usecase.ObserveWalletsUseCase
 import kotlinx.coroutines.flow.*
@@ -19,6 +21,7 @@ import kotlinx.coroutines.flow.*
 internal class ShellPresenterImpl(
     private val observeSyncState: ObserveSyncStateUseCase,
     private val syncManager: SyncManager,
+    private val syncOrchestrator: SyncOrchestrator,
     private val featureManager: FeatureManager,
     private val observeWallets: ObserveWalletsUseCase,
     private val coordinator: NavCoordinator,
@@ -38,6 +41,7 @@ internal class ShellPresenterImpl(
         startObservingSyncState()
         startObservingPremiumStatus()
         startGlobalNavigationLogic()
+        startObservingCriticalSyncErrors()
     }
 
     private fun startObservingSyncState() {
@@ -75,6 +79,18 @@ internal class ShellPresenterImpl(
                 } else {
                     if (currentStep == AppStep.Onboarding || currentStep == AppStep.Splash) {
                         coordinator.replaceRoot(AppStep.Month)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun startObservingCriticalSyncErrors() {
+        viewModelScope.safeLaunch(onError = onCoroutineError) {
+            syncOrchestrator.syncEvents.collect { event ->
+                when (event) {
+                    is SyncEvent.Error -> {
+                        _state.update { it.copy(error = event.exception) }
                     }
                 }
             }

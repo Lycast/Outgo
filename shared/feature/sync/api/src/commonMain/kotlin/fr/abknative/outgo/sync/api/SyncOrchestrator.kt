@@ -1,5 +1,8 @@
 package fr.abknative.outgo.sync.api
 
+import fr.abknative.outgo.core.api.logs.AppException
+import kotlinx.coroutines.flow.SharedFlow
+
 /**
  * Orchestrates the background and foreground synchronization processes.
  * Acts as the global "Control Tower", combining local database states and network availability
@@ -7,12 +10,11 @@ package fr.abknative.outgo.sync.api
  */
 interface SyncOrchestrator {
 
-    /**
-     * Initializes the orchestrator's observation loops.
-     * Should be called exactly once during the application's lifecycle (e.g., at startup).
-     * * This method performs two primary tasks:
-     * 1. Checks if a full remote sync (Pull) is required due to a prolonged offline period.
-     * 2. Starts observing local databases for pending changes to trigger a debounced push.
-     */
+    val syncEvents: SharedFlow<SyncEvent>
+
     fun start()
+}
+
+sealed interface SyncEvent {
+    data class Error(val exception: AppException) : SyncEvent
 }

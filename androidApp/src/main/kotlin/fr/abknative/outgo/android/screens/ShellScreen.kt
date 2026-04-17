@@ -25,6 +25,7 @@ import fr.abknative.outgo.android.designsystem.components.feedback.AppSnackbar
 import fr.abknative.outgo.android.designsystem.foundation.AppBackground
 import fr.abknative.outgo.android.designsystem.foundation.AppTheme
 import fr.abknative.outgo.android.designsystem.foundation.toColor
+import fr.abknative.outgo.android.ui.CommonLabels
 import fr.abknative.outgo.android.ui.ShellLabels
 import fr.abknative.outgo.android.ui.toUIString
 import fr.abknative.outgo.core.api.nav.AppStep
@@ -54,8 +55,8 @@ fun ShellScreen(
     val currentStep = navState.currentStep
     val shouldShowScaffoldComponents = currentStep != AppStep.Login && currentStep != AppStep.Splash && currentStep != AppStep.Onboarding
     val copySubname = ShellLabels.COPY_SUBNAME
-    val isInitialSyncInProgress = shellState.syncState.isInProgress &&
-            (currentStep == AppStep.Onboarding || currentStep == AppStep.Splash || currentStep == AppStep.Login)
+    val textRetry = CommonLabels.ACTION_RETRY
+    val isInitialSyncInProgress = shellState.syncState.isInProgress && currentStep == AppStep.Onboarding
 
     val shellSnackbarHostState = remember { SnackbarHostState() }
     val currentError = shellState.error
@@ -67,8 +68,16 @@ fun ShellScreen(
 
     LaunchedEffect(currentError) {
         if (currentError != null && errorMessage != null) {
-            shellSnackbarHostState.showSnackbar(message = errorMessage, withDismissAction = true)
+            val snackbarResult = shellSnackbarHostState.showSnackbar(
+                message = errorMessage,
+                actionLabel = textRetry,
+                withDismissAction = true,
+                duration = SnackbarDuration.Long
+            )
             shellPresenter.onIntent(ShellIntent.DismissError)
+            if (snackbarResult == SnackbarResult.ActionPerformed) {
+                shellPresenter.onIntent(ShellIntent.RefreshSync)
+            }
         }
     }
 
@@ -172,7 +181,7 @@ fun ShellScreen(
 
                         SnackbarHost(
                             hostState = shellSnackbarHostState,
-                            modifier = Modifier.align(Alignment.TopCenter)
+                            modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = AppTheme.dimens.big)
                         ) { data -> AppSnackbar(data) }
                     }
                 }
