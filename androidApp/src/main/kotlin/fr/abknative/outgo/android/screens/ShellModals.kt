@@ -1,8 +1,8 @@
 package fr.abknative.outgo.android.screens
 
 import androidx.compose.runtime.Composable
-import fr.abknative.outgo.android.components.sync.LoadingOverlay
-import fr.abknative.outgo.android.components.sync.SyncPromotionModal
+import fr.abknative.outgo.android.components.shell.LoadingOverlay
+import fr.abknative.outgo.android.components.shell.SyncPromotionModal
 
 @Composable
 fun ShellModals(

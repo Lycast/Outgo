@@ -1,4 +1,4 @@
-package fr.abknative.outgo.android.components.sync
+package fr.abknative.outgo.android.components.shell
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Icon

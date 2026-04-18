@@ -1,4 +1,4 @@
-package fr.abknative.outgo.android.components.sync
+package fr.abknative.outgo.android.components.shell
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -12,6 +12,7 @@ import fr.abknative.outgo.android.designsystem.components.cards.GlassCard
 import fr.abknative.outgo.android.designsystem.foundation.AppText
 import fr.abknative.outgo.android.designsystem.foundation.AppTheme
 import fr.abknative.outgo.android.designsystem.foundation.toColor
+import fr.abknative.outgo.android.ui.LoginLabels
 
 // TODO Nettoyer le code de ce composant
 @Composable
@@ -32,13 +33,13 @@ fun LoadingOverlay() {
                 CircularProgressIndicator(color = AppTheme.colors.primary.toColor())
                 Spacer(modifier = Modifier.height(AppTheme.dimens.large))
                 AppText(
-                    text = "Recherche de vos données...",
+                    text = LoginLabels.POST_LOGIN_SYNC_TITLE,
                     style = AppTheme.typo.subtitle,
                     textAlign = TextAlign.Center
                 )
-                Spacer(modifier = Modifier.height(AppTheme.dimens.small))
+                Spacer(modifier = Modifier.height(AppTheme.dimens.medium))
                 AppText(
-                    text = "Veuillez patienter quelques instants.",
+                    text = LoginLabels.POST_LOGIN_SYNC_MESSAGE,
                     color = AppTheme.colors.textSecondary.toColor(),
                     textAlign = TextAlign.Center
                 )
