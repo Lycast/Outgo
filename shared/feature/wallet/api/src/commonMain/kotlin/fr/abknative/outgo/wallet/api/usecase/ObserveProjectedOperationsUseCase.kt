@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
  * Provides a continuous, reactive stream of active operations for a given timeframe.
  * "Active" implies that softly deleted records are filtered out at the database level.
  */
-interface ObserveActiveOperationsUseCase {
+interface ObserveProjectedOperationsUseCase {
 
     /**
      * Observes all active operations for a specific wallet and projects them

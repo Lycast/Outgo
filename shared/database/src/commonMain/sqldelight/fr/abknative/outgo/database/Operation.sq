@@ -37,6 +37,13 @@ WHERE deletedAt IS NULL
   AND (endDate IS NULL OR endDate >= :from)
 ORDER BY startDate ASC;
 
+getAllActiveOperations:
+SELECT * FROM OperationEntity
+WHERE deletedAt IS NULL
+  AND userId = :userId
+  AND walletId = :walletId
+ORDER BY startDate DESC;
+
 getOperationById:
 SELECT * FROM OperationEntity
 WHERE id = ? AND userId = ?;

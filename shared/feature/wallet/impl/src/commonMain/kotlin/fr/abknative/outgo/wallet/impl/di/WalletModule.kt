@@ -39,7 +39,8 @@ val walletModule = module {
     // --- UseCases Operation ---
     factoryOf(::SaveOperationUseCaseImpl) { bind<SaveOperationUseCase>() }
     factoryOf(::DeleteOperationUseCaseImpl) { bind<DeleteOperationUseCase>() }
-    factoryOf(::ObserveActiveOperationsUseCaseImpl) { bind<ObserveActiveOperationsUseCase>() }
+    factoryOf(::ObserveProjectedOperationsUseCaseImpl) { bind<ObserveProjectedOperationsUseCase>() }
+    factoryOf(::ObserveStandardOperationsUseCaseImpl) { bind<ObserveStandardOperationsUseCase>() }
 
     // --- UseCases Dashboard ---
     factoryOf(::InitializeBudgetUseCaseImpl) { bind<InitializeBudgetUseCase>() }

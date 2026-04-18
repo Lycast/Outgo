@@ -19,7 +19,7 @@ import kotlinx.coroutines.flow.*
 import kotlin.math.roundToLong
 
 internal class MonthPresenterImpl(
-    private val observeActiveOperations: ObserveActiveOperationsUseCase,
+    private val observeActiveOperations: ObserveProjectedOperationsUseCase,
     private val observeWallets: ObserveWalletsUseCase,
     private val calculateDashboardData: CalculatePeriodStatsUseCase,
     private val saveWallet: SaveWalletUseCase,

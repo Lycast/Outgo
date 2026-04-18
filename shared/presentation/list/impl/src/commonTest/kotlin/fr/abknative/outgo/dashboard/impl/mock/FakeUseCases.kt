@@ -13,9 +13,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 
 /**
- * Fake implementation of [ObserveActiveOperationsUseCase] for testing purposes.
+ * Fake implementation of [ObserveProjectedOperationsUseCase] for testing purposes.
  */
-class FakeObserveActiveOperationsUseCase : ObserveActiveOperationsUseCase {
+class FakeObserveProjectedOperationsUseCase : ObserveProjectedOperationsUseCase {
     val outgoingsFlow = MutableStateFlow<List<ProjectedOperation>>(emptyList())
 
     override fun invoke(walletId: String, month: Int, year: Int): Flow<List<ProjectedOperation>> = outgoingsFlow

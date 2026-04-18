@@ -5,14 +5,14 @@ import fr.abknative.outgo.wallet.api.model.Operation
 import fr.abknative.outgo.wallet.api.model.operation.Recurrence
 import fr.abknative.outgo.wallet.api.model.presenter.ProjectedOperation
 import fr.abknative.outgo.wallet.api.repository.OperationRepository
-import fr.abknative.outgo.wallet.api.usecase.ObserveActiveOperationsUseCase
+import fr.abknative.outgo.wallet.api.usecase.ObserveProjectedOperationsUseCase
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-internal class ObserveActiveOperationsUseCaseImpl(
+internal class ObserveProjectedOperationsUseCaseImpl(
     private val repository: OperationRepository,
     private val timeProvider: TimeProvider
-) : ObserveActiveOperationsUseCase {
+) : ObserveProjectedOperationsUseCase {
 
     //
     override fun invoke(walletId: String, month: Int, year: Int): Flow<List<ProjectedOperation>> {
@@ -24,7 +24,6 @@ internal class ObserveActiveOperationsUseCaseImpl(
                 .flatMap { op ->
                     projectOperation(op, month, year, startOfMonth, endOfMonth)
                 }
-                // Tri chronologique sur la date projetée, pas sur la date d'origine !
                 .sortedBy { projectedOp -> projectedOp.projectedDate }
         }
     }

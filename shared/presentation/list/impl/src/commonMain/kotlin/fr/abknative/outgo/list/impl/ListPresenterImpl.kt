@@ -11,13 +11,13 @@ import fr.abknative.outgo.list.api.ListState
 import fr.abknative.outgo.list.api.OperationFilter
 import fr.abknative.outgo.subscription.api.FeatureManager
 import fr.abknative.outgo.wallet.api.usecase.DeleteOperationUseCase
-import fr.abknative.outgo.wallet.api.usecase.ObserveActiveOperationsUseCase
+import fr.abknative.outgo.wallet.api.usecase.ObserveProjectedOperationsUseCase
 import fr.abknative.outgo.wallet.api.usecase.ObserveWalletsUseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 
 internal class ListPresenterImpl(
-    private val observeActiveOperations: ObserveActiveOperationsUseCase,
+    private val observeActiveOperations: ObserveProjectedOperationsUseCase,
     private val observeWallets: ObserveWalletsUseCase,
     private val deleteOperation: DeleteOperationUseCase,
     private val mapper: ListStateMapper,

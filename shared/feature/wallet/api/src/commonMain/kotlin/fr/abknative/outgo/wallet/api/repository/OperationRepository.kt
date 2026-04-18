@@ -26,6 +26,16 @@ interface OperationRepository {
     fun observeOperationsByPeriod(walletId: String, from: EpochMillis, to: EpochMillis): Flow<List<Operation>>
 
     /**
+     * Provides a reactive stream of all active operations (rules) for a specific wallet,
+     * regardless of their start or end dates. Excludes records marked as deleted.
+     * Used primarily for the "Standard/Global" view of the user's financial rules.
+     *
+     * @param walletId The unique identifier of the wallet.
+     * @return A [Flow] emitting the complete list of active [Operation]s.
+     */
+    fun observeAllOperations(walletId: String): Flow<List<Operation>>
+
+    /**
      * Observes all operations that have local modifications waiting to be pushed to the remote server.
      * Returns a continuous flow that emits a new list whenever a pending operation is created, updated, or successfully synced.
      *

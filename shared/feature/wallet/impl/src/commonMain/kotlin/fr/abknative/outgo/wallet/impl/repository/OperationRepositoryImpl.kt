@@ -54,6 +54,18 @@ internal class OperationRepositoryImpl(
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
+    override fun observeAllOperations(walletId: String): Flow<List<Operation>> {
+        return sessionProvider.observeUserId()
+            .flatMapLatest { uid ->
+                queries.getAllActiveOperations(walletId = walletId, userId = uid)
+                    .asFlow()
+                    .mapToList(dispatchers.io)
+                    .map { entities -> entities.map { it.toDomain() } }
+                    .distinctUntilChanged()
+            }
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
     override fun observePendingOperations(): Flow<List<Operation>> {
         return sessionProvider.observeUserId()
             .flatMapLatest { uid ->
