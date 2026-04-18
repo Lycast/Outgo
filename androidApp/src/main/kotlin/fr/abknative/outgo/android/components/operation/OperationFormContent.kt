@@ -145,7 +145,8 @@ fun OperationFormContent(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     AppText(
-                        text = CommonLabels.ACTION_SAVE
+                        text = CommonLabels.ACTION_SAVE,
+                        color = AppTheme.colors.textOnBrand.toColor()
                     )
                 }
             }

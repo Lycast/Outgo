@@ -52,7 +52,10 @@ fun ConflictContent(onConfirm: () -> Unit, onCancel: () -> Unit) {
         onClick = onConfirm,
         modifier = Modifier.fillMaxWidth()
     ) {
-        AppText(text = LoginLabels.CONFLICT_CONFIRM)
+        AppText(
+            text = LoginLabels.CONFLICT_CONFIRM,
+            color = AppTheme.colors.textOnBrand.toColor()
+        )
     }
 
     Spacer(modifier = Modifier.height(AppTheme.dimens.small))

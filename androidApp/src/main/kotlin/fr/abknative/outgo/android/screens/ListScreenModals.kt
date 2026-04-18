@@ -9,6 +9,7 @@ import fr.abknative.outgo.android.designsystem.components.buttons.AppOutlinedBut
 import fr.abknative.outgo.android.designsystem.components.feedback.ConfirmationDialog
 import fr.abknative.outgo.android.designsystem.foundation.AppText
 import fr.abknative.outgo.android.designsystem.foundation.AppTheme
+import fr.abknative.outgo.android.designsystem.foundation.toColor
 import fr.abknative.outgo.android.ui.CommonLabels
 import fr.abknative.outgo.android.ui.DialogLabels
 import fr.abknative.outgo.list.api.ListIntent
@@ -35,7 +36,10 @@ fun ListScreenModals(
                     },
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    AppText(text = CommonLabels.ACTION_DELETE)
+                    AppText(
+                        text = CommonLabels.ACTION_DELETE,
+                        color = AppTheme.colors.textOnBrand.toColor()
+                    )
                 }
             },
 

@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -37,8 +36,6 @@ fun AppButton(
             disabledContentColor = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.5f)
         )
     ) {
-        ProvideTextStyle(value = AppTheme.typo.label) {
-            content()
-        }
+        content()
     }
 }

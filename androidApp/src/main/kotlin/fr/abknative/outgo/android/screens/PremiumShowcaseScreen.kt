@@ -79,7 +79,7 @@ fun PremiumShowcaseScreen(
         ) {
             AppText(
                 text = PremiumLabels.NOTIFY_ME_ACTION,
-                color = AppTheme.colors.textOnBrand.toColor(),
+                color = AppTheme.colors.textOnBrand.toColor()
             )
         }
 

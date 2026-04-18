@@ -119,7 +119,7 @@ fun WalletEditDialog(
                             enabled = isValid,
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            Text(text = CommonLabels.ACTION_SAVE)
+                            Text(text = CommonLabels.ACTION_SAVE, color = AppTheme.colors.textOnBrand.toColor())
                         }
                     }
                 }

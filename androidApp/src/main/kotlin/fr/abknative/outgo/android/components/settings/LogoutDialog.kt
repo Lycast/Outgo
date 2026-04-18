@@ -48,7 +48,7 @@ fun LogoutDialog(
                     modifier = Modifier.fillMaxWidth()
                 ) { AppText(
                     text = DialogLabels.LOGOUT_ACTION_KEEP_BUDGET,
-                    color = AppTheme.colors.textOnBrand.toColor(),
+                    color = AppTheme.colors.textOnBrand.toColor()
                 ) }
                 AppOutlinedButton(
                     onClick = onReturnToLocal,

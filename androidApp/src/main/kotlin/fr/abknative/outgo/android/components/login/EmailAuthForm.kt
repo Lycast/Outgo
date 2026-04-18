@@ -61,7 +61,10 @@ fun EmailAuthForm(
                     strokeWidth = 2.dp
                 )
             } else {
-                AppText(if (isLoginMode) LoginLabels.SUBMIT_BUTTON else LoginLabels.REGISTER_BUTTON)
+                AppText(
+                    text = if (isLoginMode) LoginLabels.SUBMIT_BUTTON else LoginLabels.REGISTER_BUTTON,
+                    color = AppTheme.colors.textOnBrand.toColor()
+                )
             }
         }
 

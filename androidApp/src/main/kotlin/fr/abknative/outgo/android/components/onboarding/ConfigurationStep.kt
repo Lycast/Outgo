@@ -140,6 +140,7 @@ fun ConfigurationStep(
                 } else {
                     AppText(
                         text = OnboardingLabels.SUBMIT_ONBOARDING,
+                        color = AppTheme.colors.textOnBrand.toColor()
                     )
                 }
             }

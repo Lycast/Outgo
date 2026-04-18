@@ -69,7 +69,8 @@ fun WelcomeStep(
             modifier = Modifier.fillMaxWidth()
         ) {
             AppText(
-                text = OnboardingLabels.WELCOME_ACTION_START
+                text = OnboardingLabels.WELCOME_ACTION_START,
+                color = AppTheme.colors.textOnBrand.toColor()
             )
         }
 
