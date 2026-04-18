@@ -151,7 +151,7 @@ fun MonthScreen(
                                             subtitle = "${ListLabels.DUE_PREFIX} ${projectedOp.formattedDate} • ${displayOperation.recurrence.uiLabel}",
                                             amountText = displayOperation.amountInCents.uiAmount,
                                             amountColor = AppTheme.colors.textPrimary.toColor(),
-                                            iconColor = displayOperation.recurrence.getUiColor()
+                                            iconColor = displayOperation.recurrence.getUiColor().copy(alpha = 0.7f),
                                         )
 
                                         if (index < state.nextUpcomingExpenses.lastIndex) {

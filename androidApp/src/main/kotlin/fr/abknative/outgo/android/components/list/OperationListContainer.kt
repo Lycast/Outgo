@@ -118,7 +118,7 @@ fun OperationListContainer(
                         subtitle = subtitleText,
                         amountText = op.amountInCents.uiAmount,
                         amountColor = if(op.type == OperationType.INCOME) AppTheme.colors.primary.toColor() else AppTheme.colors.secondary.toColor(),
-                        iconColor = op.recurrence.getUiColor().copy(alpha = 0.5f),
+                        iconColor = op.recurrence.getUiColor().copy(alpha = 0.7f),
                         onEdit = { onEdit(projectedOp) },
                         onDeleteRequest = { onDeleteRequest(projectedOp) }
                     )
