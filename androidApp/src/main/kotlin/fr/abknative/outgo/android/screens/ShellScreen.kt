@@ -138,7 +138,10 @@ fun ShellScreen(
                                     onOnboardingComplete = { coordinator.replaceRoot(AppStep.Month) }
                                 )
 
-                                AppStep.Month -> MonthScreen(presenter = koinViewModel())
+                                AppStep.Month -> MonthScreen(
+                                    presenter = koinViewModel(),
+                                    onNavigateToList = { coordinator.navigateTo(AppStep.List) }
+                                )
 
                                 AppStep.Year -> {
                                     if (shellState.isPremium) YearScreen()

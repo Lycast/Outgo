@@ -1,5 +1,6 @@
 package fr.abknative.outgo.android.screens
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -41,6 +42,7 @@ import java.util.Locale.getDefault
 @Composable
 fun MonthScreen(
     presenter: MonthPresenter,
+    onNavigateToList: () -> Unit,
     modifier: Modifier = Modifier
 ) {
 
@@ -140,6 +142,7 @@ fun MonthScreen(
                                 Column(
                                     modifier = Modifier
                                         .fillMaxWidth()
+                                        .clickable(onClick = onNavigateToList)
                                 ) {
                                     state.nextUpcomingExpenses.forEachIndexed { index, projectedOp ->
                                         val displayOperation = projectedOp.operation.copy(
