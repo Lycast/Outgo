@@ -92,12 +92,12 @@ fun OperationFormContent(
             }
         )
 
-        // --- Field: Date ---
+        // --- Field: StartDate ---
         FormattedDateInput(
             value = state.dateInputBuffer,
             onValueChange = { onIntent(OperationIntent.UpdateDateInput(it)) },
             onDateSelected = { onIntent(OperationIntent.SelectDateFromPicker(it)) },
-            initialDateMillis = state.date,
+            initialDateMillis = state.startDate,
             label = FormLabels.FIELD_DATE_LABEL,
             isError = state.isDateError,
             keyboardOptions = KeyboardOptions(

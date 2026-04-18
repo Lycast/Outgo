@@ -17,7 +17,9 @@ data class OperationState(
     val type: OperationType = OperationType.EXPENSE,
     val recurrence: Recurrence = Recurrence.UNIQUE,
 
-    val date: EpochMillis = 0L,
+    val startDate: EpochMillis = 0L,
+    val endDate: EpochMillis? = null,
+
     val dateInputBuffer: String = "",
     val isDateError: Boolean = false,
 

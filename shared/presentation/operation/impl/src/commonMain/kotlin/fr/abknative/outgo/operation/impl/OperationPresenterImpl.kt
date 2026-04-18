@@ -28,7 +28,7 @@ internal class OperationPresenterImpl(
 
     private val dateValidator = DateValidator(timeProvider)
 
-    private val _state = MutableStateFlow(OperationState(date = timeProvider.now()))
+    private val _state = MutableStateFlow(OperationState(startDate = timeProvider.now()))
     override val state: StateFlow<OperationState> = _state.asStateFlow()
 
     private val onCoroutineError: (AppException) -> Unit = { error ->
@@ -59,8 +59,8 @@ internal class OperationPresenterImpl(
     }
 
     private fun handleInit(intent: OperationIntent.Init) {
-        val initialDate = intent.initialDate ?: timeProvider.now()
-        val initialDateBuffer = dateValidator.formatMillis(initialDate)
+        val initialStartDate = intent.initialDate ?: timeProvider.now()
+        val initialDateBuffer = dateValidator.formatMillis(initialStartDate)
 
         _state.update {
             it.copy(
@@ -70,7 +70,8 @@ internal class OperationPresenterImpl(
                 amount = intent.initialAmount,
                 type = intent.initialType,
                 recurrence = intent.initialRecurrence,
-                date = initialDate,
+                startDate = initialStartDate,
+                endDate = intent.initialEndDate,
                 dateInputBuffer = initialDateBuffer,
                 isDateError = false,
                 isSavedSuccessfully = false
@@ -91,7 +92,7 @@ internal class OperationPresenterImpl(
 
             if (newText.length == 8 && isPartialValid) {
                 val newMillis = dateValidator.deriveMillis(newText)
-                updatedState = updatedState.copy(date = newMillis)
+                updatedState = updatedState.copy(startDate = newMillis)
             }
 
             updatedState
@@ -102,7 +103,7 @@ internal class OperationPresenterImpl(
         val formattedString = dateValidator.formatMillis(millis)
         _state.update {
             it.copy(
-                date = millis,
+                startDate = millis,
                 dateInputBuffer = formattedString,
                 isDateError = false
             )
@@ -150,8 +151,8 @@ internal class OperationPresenterImpl(
                 amountInCents = amountInCents,
                 type = currentState.type,
                 recurrence = currentState.recurrence,
-                startDate = currentState.date,
-                endDate = null
+                startDate = currentState.startDate,
+                endDate = currentState.endDate
             )
 
             when (result) {

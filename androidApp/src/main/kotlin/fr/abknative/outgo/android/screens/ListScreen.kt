@@ -85,8 +85,8 @@ fun ListScreen(
                                 amount = formattedAmount,
                                 type = op.type,
                                 recurrence = op.recurrence,
-                                startDate = projectedOp.projectedDate,
-                                endDate = projectedOp.projectedDate
+                                startDate = op.startDate,
+                                endDate = op.endDate
                             )
                         )
                     )

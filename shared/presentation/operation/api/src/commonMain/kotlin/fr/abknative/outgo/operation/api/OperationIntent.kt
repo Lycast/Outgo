@@ -18,7 +18,8 @@ sealed interface OperationIntent {
         val initialAmount: String = "",
         val initialType: OperationType = OperationType.EXPENSE,
         val initialRecurrence: Recurrence = Recurrence.UNIQUE,
-        val initialDate: EpochMillis? = null
+        val initialDate: EpochMillis? = null,
+        val initialEndDate: EpochMillis? = null
     ) : OperationIntent
 
     // --- User Inputs ---
