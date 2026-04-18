@@ -108,7 +108,7 @@
     <string name="onboarding_welcome_title">Reprenez le contrôle\nde votre budget.</string>
     <string name="onboarding_welcome_subtitle">Sans friction. Sans connexion obligatoire. Vos données restent sur votre appareil.</string>
     <string name="onboarding_welcome_action_start">Commencer</string>
-    <string name="onboarding_welcome_action_login">Vous avez déjà un compte? Connectez vous</string>
+    <string name="onboarding_welcome_action_login">Déjà un compte? Connectez vous</string>
 
     <string name="month_default_error">Une erreur inattendue est survenue</string>
     <string name="month_section_budget">Budget</string>
@@ -146,7 +146,7 @@
     <string name="settings_dark_mode_title">Mode sombre</string>
     <string name="settings_dark_mode_subtitle">Réduire la fatigue visuelle</string>
     <string name="settings_tips_title">Découvrir Outgo</string>
-    <string name="settings_tips_subtitle">Présentation du projet, aide et astuces</string>
+    <string name="settings_tips_subtitle">Présentation du projet et de son créateur</string>
     <string name="settings_contact_title">Me contacter</string>
     <string name="settings_contact_subtitle">Une question, une idée ou un bug ?</string>
     <string name="settings_sync_title">Synchronisation cloud</string>
@@ -197,7 +197,7 @@
     <string name="premium_premium_feature_1">Véritable Gestion de Trésorerie</string>
     <string name="premium_premium_feature_2">Portefeuilles Multiples</string>
     <string name="premium_premium_feature_3">Projections sur 12 Mois</string>
-    <string name="premium_premium_feature_4">Synchro Bancaire (V3 ?)</string>
+    <string name="premium_premium_feature_4">Synchro avec le compte Bancaire ?</string>
     <string name="premium_notify_me_action">Prévenez-moi du lancement</string>
 
     <string name="dialog_logout_desc">Vous devrez vous reconnecter pour synchroniser vos prochaines modifications avec le cloud.</string>

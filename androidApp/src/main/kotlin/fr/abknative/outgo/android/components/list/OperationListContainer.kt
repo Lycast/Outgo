@@ -33,7 +33,7 @@ fun OperationListContainer(
             else -> {
                 items(items = filteredList, key = { "${it.operation.id}_${it.projectedDate}" }) { projectedOp ->
 
-                    Spacer(modifier = Modifier.height(AppTheme.dimens.large))
+                    Spacer(modifier = Modifier.height(AppTheme.dimens.medium))
 
                     GlassCard(
                         modifier = Modifier.fillMaxWidth()

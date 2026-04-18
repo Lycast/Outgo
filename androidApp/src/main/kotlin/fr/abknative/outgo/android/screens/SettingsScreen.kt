@@ -45,6 +45,11 @@ fun SettingsScreen(
     val siteUrl = SettingsLabels.URL_SITE
     val contactUrl = SettingsLabels.URL_CONTACT
 
+    val userEmail = state.session?.email
+    val logoutSubtitle = if (!userEmail.isNullOrBlank()) { userEmail } else {
+        SettingsLabels.LOGOUT_SUBTITLE
+    }
+
     LaunchedEffect(state.error) {
         if (state.error != null && errorMessage != null) {
             snackbarHostState.showSnackbar(message = errorMessage, withDismissAction = true)
@@ -118,7 +123,7 @@ fun SettingsScreen(
                     SettingsRowClickable(
                         icon = R.drawable.sign_out_duotone,
                         title = SettingsLabels.LOGOUT_TITLE,
-                        subtitle = SettingsLabels.LOGOUT_SUBTITLE,
+                        subtitle = logoutSubtitle,
                         onClick = { showLogoutOptions = true }
                     )
                     HorizontalDivider(color = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.1f))

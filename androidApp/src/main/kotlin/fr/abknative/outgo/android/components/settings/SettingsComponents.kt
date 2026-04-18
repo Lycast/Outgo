@@ -120,9 +120,8 @@ fun SettingsRowContent(
         CircleIcon(icon)
         Spacer(modifier = Modifier.width(AppTheme.dimens.medium))
         Column {
-            AppText(
-                text = title
-            )
+            AppText(text = title)
+            Spacer(modifier = Modifier.width(AppTheme.dimens.extraSmall))
             AppText(
                 text = subtitle,
                 style = AppTheme.typo.label,

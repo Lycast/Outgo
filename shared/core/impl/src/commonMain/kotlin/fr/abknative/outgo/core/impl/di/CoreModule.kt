@@ -2,6 +2,7 @@ package fr.abknative.outgo.core.impl.di
 
 import fr.abknative.outgo.auth.api.repository.AuthRepository
 import fr.abknative.outgo.core.api.*
+import fr.abknative.outgo.core.api.logs.AppLogger
 import fr.abknative.outgo.core.api.logs.ExceptionMapper
 import fr.abknative.outgo.core.api.nav.NavCoordinator
 import fr.abknative.outgo.core.api.usecase.ClearLocalDataUseCase
@@ -16,6 +17,7 @@ import io.ktor.client.*
 import io.ktor.client.engine.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.client.plugins.logging.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
@@ -60,6 +62,17 @@ fun commonCoreModule() = module {
                     ignoreUnknownKeys = true
                 })
             }
+
+            install(Logging) {
+                logger = object : Logger {
+                    override fun log(message: String) {
+                        AppLogger.get()?.i("KtorClient", message)
+                    }
+                }
+                level = LogLevel.INFO
+            }
+
+
             defaultRequest {
                 url(secretConfig.baseUrl)
                 header(HttpHeaders.ContentType, ContentType.Application.Json)
