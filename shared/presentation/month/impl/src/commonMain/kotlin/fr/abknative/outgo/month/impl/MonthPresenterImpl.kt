@@ -1,10 +1,10 @@
 package fr.abknative.outgo.month.impl
 
 import androidx.lifecycle.viewModelScope
-import fr.abknative.outgo.core.api.TimeProvider
 import fr.abknative.outgo.core.api.extensions.safeLaunch
 import fr.abknative.outgo.core.api.logs.AppException
 import fr.abknative.outgo.core.api.logs.Result
+import fr.abknative.outgo.core.api.time.TimeProvider
 import fr.abknative.outgo.core.api.validators.AmountValidator
 import fr.abknative.outgo.core.api.validators.NameValidator
 import fr.abknative.outgo.month.api.MonthIntent

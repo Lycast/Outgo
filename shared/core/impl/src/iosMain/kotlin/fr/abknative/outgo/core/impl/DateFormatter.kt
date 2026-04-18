@@ -1,6 +1,6 @@
 package fr.abknative.outgo.core.impl
 
-import fr.abknative.outgo.core.api.EpochMillis
+import fr.abknative.outgo.core.api.time.EpochMillis
 import platform.Foundation.NSDate
 import platform.Foundation.NSDateFormatter
 import platform.Foundation.dateWithTimeIntervalSince1970

@@ -2,10 +2,10 @@ package fr.abknative.outgo.list.impl
 
 import androidx.lifecycle.viewModelScope
 import fr.abknative.outgo.core.api.KeyValueStorage
-import fr.abknative.outgo.core.api.TimeProvider
 import fr.abknative.outgo.core.api.extensions.safeLaunch
 import fr.abknative.outgo.core.api.logs.AppException
 import fr.abknative.outgo.core.api.logs.Result
+import fr.abknative.outgo.core.api.time.TimeProvider
 import fr.abknative.outgo.list.api.*
 import fr.abknative.outgo.subscription.api.FeatureManager
 import fr.abknative.outgo.wallet.api.model.presenter.ProjectedOperation

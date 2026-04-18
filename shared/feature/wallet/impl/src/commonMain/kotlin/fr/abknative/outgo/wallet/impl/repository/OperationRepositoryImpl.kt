@@ -4,11 +4,11 @@ import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import fr.abknative.outgo.auth.api.provider.SessionProvider
 import fr.abknative.outgo.core.api.AppDispatchers
-import fr.abknative.outgo.core.api.EpochMillis
 import fr.abknative.outgo.core.api.IdProvider
-import fr.abknative.outgo.core.api.TimeProvider
 import fr.abknative.outgo.core.api.logs.*
 import fr.abknative.outgo.core.api.model.SyncStatus
+import fr.abknative.outgo.core.api.time.EpochMillis
+import fr.abknative.outgo.core.api.time.TimeProvider
 import fr.abknative.outgo.database.OperationEntity
 import fr.abknative.outgo.database.OutgoDatabase
 import fr.abknative.outgo.wallet.api.model.Operation

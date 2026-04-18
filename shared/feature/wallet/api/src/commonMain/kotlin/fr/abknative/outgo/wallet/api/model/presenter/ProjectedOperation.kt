@@ -1,6 +1,6 @@
 package fr.abknative.outgo.wallet.api.model.presenter
 
-import fr.abknative.outgo.core.api.EpochMillis
+import fr.abknative.outgo.core.api.time.EpochMillis
 import fr.abknative.outgo.wallet.api.model.Operation
 
 /**

@@ -1,7 +1,7 @@
 package fr.abknative.outgo.subscription.impl
 
 import fr.abknative.outgo.core.api.KeyValueStorage
-import fr.abknative.outgo.core.api.TimeProvider
+import fr.abknative.outgo.core.api.time.TimeProvider
 import fr.abknative.outgo.subscription.api.FeatureManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

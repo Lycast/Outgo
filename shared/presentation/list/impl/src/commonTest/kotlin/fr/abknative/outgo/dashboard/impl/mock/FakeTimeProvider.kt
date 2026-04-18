@@ -1,7 +1,7 @@
 package fr.abknative.outgo.dashboard.impl.mock
 
-import fr.abknative.outgo.core.api.EpochMillis
-import fr.abknative.outgo.core.api.TimeProvider
+import fr.abknative.outgo.core.api.time.EpochMillis
+import fr.abknative.outgo.core.api.time.TimeProvider
 
 class FakeTimeProvider : TimeProvider {
     var mockedNow: EpochMillis = 0L

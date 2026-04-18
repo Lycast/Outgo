@@ -1,6 +1,6 @@
 package fr.abknative.outgo.wallet.impl.usecase
 
-import fr.abknative.outgo.core.api.TimeProvider
+import fr.abknative.outgo.core.api.time.TimeProvider
 import fr.abknative.outgo.wallet.api.model.Operation
 import fr.abknative.outgo.wallet.api.model.operation.Recurrence
 import fr.abknative.outgo.wallet.api.model.presenter.ProjectedOperation

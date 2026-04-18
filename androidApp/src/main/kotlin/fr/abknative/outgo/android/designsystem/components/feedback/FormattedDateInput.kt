@@ -17,7 +17,7 @@ import fr.abknative.outgo.android.designsystem.foundation.toColor
 import fr.abknative.outgo.android.ui.AccessibilityLabels
 import fr.abknative.outgo.android.ui.OperationLabels
 import fr.abknative.outgo.android.ui.extensions.DateTransformation
-import fr.abknative.outgo.core.api.EpochMillis
+import fr.abknative.outgo.core.api.time.EpochMillis
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

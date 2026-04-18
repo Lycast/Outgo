@@ -1,6 +1,6 @@
 package fr.abknative.outgo.month.impl
 
-import fr.abknative.outgo.core.api.TimeProvider
+import fr.abknative.outgo.core.api.time.TimeProvider
 import fr.abknative.outgo.month.api.MonthState
 import fr.abknative.outgo.month.api.RecurrenceStat
 import fr.abknative.outgo.wallet.api.model.operation.OperationType

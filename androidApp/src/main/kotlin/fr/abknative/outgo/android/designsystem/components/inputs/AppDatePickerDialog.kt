@@ -7,7 +7,7 @@ import fr.abknative.outgo.android.designsystem.foundation.AppText
 import fr.abknative.outgo.android.designsystem.foundation.AppTheme
 import fr.abknative.outgo.android.designsystem.foundation.toColor
 import fr.abknative.outgo.android.ui.CommonLabels
-import fr.abknative.outgo.core.api.EpochMillis
+import fr.abknative.outgo.core.api.time.EpochMillis
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

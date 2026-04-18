@@ -1,7 +1,7 @@
 package fr.abknative.outgo.month.api
 
-import fr.abknative.outgo.core.api.EpochMillis
 import fr.abknative.outgo.core.api.logs.AppException
+import fr.abknative.outgo.core.api.time.EpochMillis
 import fr.abknative.outgo.wallet.api.model.operation.Recurrence
 import fr.abknative.outgo.wallet.api.model.presenter.ProjectedOperation
 

@@ -1,7 +1,7 @@
 package fr.abknative.outgo.core.impl
 
-import fr.abknative.outgo.core.api.EpochMillis
-import fr.abknative.outgo.core.api.TimeProvider
+import fr.abknative.outgo.core.api.time.EpochMillis
+import fr.abknative.outgo.core.api.time.TimeProvider
 import kotlinx.datetime.*
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime

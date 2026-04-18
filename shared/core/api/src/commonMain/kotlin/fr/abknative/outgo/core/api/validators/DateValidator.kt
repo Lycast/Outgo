@@ -1,7 +1,7 @@
 package fr.abknative.outgo.core.api.validators
 
-import fr.abknative.outgo.core.api.EpochMillis
-import fr.abknative.outgo.core.api.TimeProvider
+import fr.abknative.outgo.core.api.time.EpochMillis
+import fr.abknative.outgo.core.api.time.TimeProvider
 
 /**
  * Helper class to validate partial and complete date inputs formatted as "ddMMyyyy".

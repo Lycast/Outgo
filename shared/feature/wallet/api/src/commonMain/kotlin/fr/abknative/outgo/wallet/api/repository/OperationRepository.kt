@@ -1,9 +1,9 @@
 package fr.abknative.outgo.wallet.api.repository
 
-import fr.abknative.outgo.core.api.EpochMillis
 import fr.abknative.outgo.core.api.logs.AppException
 import fr.abknative.outgo.core.api.logs.Result
 import fr.abknative.outgo.core.api.model.SyncStatus
+import fr.abknative.outgo.core.api.time.EpochMillis
 import fr.abknative.outgo.wallet.api.model.Operation
 import kotlinx.coroutines.flow.Flow
 

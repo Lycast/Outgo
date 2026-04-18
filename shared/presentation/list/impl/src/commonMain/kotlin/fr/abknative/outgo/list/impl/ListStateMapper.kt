@@ -1,6 +1,6 @@
 package fr.abknative.outgo.list.impl
 
-import fr.abknative.outgo.core.api.TimeProvider
+import fr.abknative.outgo.core.api.time.TimeProvider
 import fr.abknative.outgo.list.api.ListState
 import fr.abknative.outgo.list.api.ListViewMode
 import fr.abknative.outgo.list.api.ProjectedFilter

@@ -1,4 +1,4 @@
-package fr.abknative.outgo.core.api
+package fr.abknative.outgo.core.api.time
 
 typealias EpochMillis = Long
 

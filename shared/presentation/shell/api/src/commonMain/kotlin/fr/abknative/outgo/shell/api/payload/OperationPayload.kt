@@ -1,6 +1,6 @@
 package fr.abknative.outgo.shell.api.payload
 
-import fr.abknative.outgo.core.api.EpochMillis
+import fr.abknative.outgo.core.api.time.EpochMillis
 import fr.abknative.outgo.wallet.api.model.operation.OperationType
 import fr.abknative.outgo.wallet.api.model.operation.Recurrence
 

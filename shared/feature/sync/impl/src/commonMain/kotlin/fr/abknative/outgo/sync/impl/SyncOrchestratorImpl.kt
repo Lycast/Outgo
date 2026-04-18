@@ -4,9 +4,9 @@ import fr.abknative.outgo.auth.api.provider.SessionProvider
 import fr.abknative.outgo.auth.api.usecase.ObserveUserSessionUseCase
 import fr.abknative.outgo.core.api.KeyValueStorage
 import fr.abknative.outgo.core.api.NetworkMonitor
-import fr.abknative.outgo.core.api.TimeProvider
 import fr.abknative.outgo.core.api.logs.AppLogger
 import fr.abknative.outgo.core.api.logs.Result
+import fr.abknative.outgo.core.api.time.TimeProvider
 import fr.abknative.outgo.sync.api.SyncEvent
 import fr.abknative.outgo.sync.api.SyncManager
 import fr.abknative.outgo.sync.api.SyncOrchestrator

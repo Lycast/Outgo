@@ -5,10 +5,10 @@ import fr.abknative.outgo.auth.api.repository.AuthRepository
 import fr.abknative.outgo.auth.api.usecase.DeleteAccountUseCase
 import fr.abknative.outgo.core.api.DataPurger
 import fr.abknative.outgo.core.api.LocalDataDowngrader
-import fr.abknative.outgo.core.api.TimeProvider
 import fr.abknative.outgo.core.api.logs.AppException
 import fr.abknative.outgo.core.api.logs.CommonError
 import fr.abknative.outgo.core.api.logs.Result
+import fr.abknative.outgo.core.api.time.TimeProvider
 import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.http.*
