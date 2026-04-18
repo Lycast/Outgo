@@ -82,7 +82,7 @@ fun AppSegmentedControl(
                     AppText(
                         text = label,
                         style = AppTheme.typo.caption.copy(fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium),
-                        color = if (isSelected) activeColor else AppTheme.colors.textSecondary.toColor()
+                        color = if (isSelected) AppTheme.colors.textOnBrand.toColor() else AppTheme.colors.textSecondary.toColor()
                     )
                 }
             }

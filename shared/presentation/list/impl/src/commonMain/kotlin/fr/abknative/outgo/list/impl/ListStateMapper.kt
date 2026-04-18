@@ -1,5 +1,6 @@
 package fr.abknative.outgo.list.impl
 
+import fr.abknative.outgo.core.api.time.DateTimeFormatter
 import fr.abknative.outgo.core.api.time.TimeProvider
 import fr.abknative.outgo.list.api.ListState
 import fr.abknative.outgo.list.api.ListViewMode
@@ -9,7 +10,10 @@ import fr.abknative.outgo.wallet.api.model.operation.OperationType
 import fr.abknative.outgo.wallet.api.model.operation.Recurrence
 import fr.abknative.outgo.wallet.api.model.presenter.ProjectedOperation
 
-internal class ListStateMapper(private val timeProvider: TimeProvider) {
+internal class ListStateMapper(
+    private val dateTimeFormatter: DateTimeFormatter,
+    private val timeProvider: TimeProvider
+) {
 
     fun mapToState(
         currentOperations: List<ProjectedOperation>,
@@ -106,7 +110,9 @@ internal class ListStateMapper(private val timeProvider: TimeProvider) {
 
         return when (mode) {
             ListViewMode.PROJECTED -> {
-                ops.groupBy { it.formattedDate }
+                ops.groupBy { projectedOp ->
+                    dateTimeFormatter.formatLongDate(projectedOp.projectedDate)
+                }
             }
             ListViewMode.STANDARD -> {
                 mapOf("GLOBAL_RULES" to ops)

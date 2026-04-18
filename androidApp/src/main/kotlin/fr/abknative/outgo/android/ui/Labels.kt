@@ -85,6 +85,7 @@ object AccessibilityLabels {
     val DAY_SELECTOR @Composable get() = stringResource(Res.string.a11y_day_selector)
     val SYNC_ERROR @Composable get() = stringResource(Res.string.a11y_sync_error)
     val NAVIGATE_LIST @Composable get() = stringResource(Res.string.a11y_navigate_list)
+    val VIEW_MODE @Composable get() = stringResource(Res.string.a11y_view_mode_selector)
 }
 
 object ShellLabels {
@@ -127,12 +128,10 @@ object ListLabels {
     val HERO_TOTAL_CHARGES_LABEL @Composable get() = stringResource(Res.string.list_hero_total_charges)
     val HERO_REMAINING_TO_PAY_LABEL @Composable get() = stringResource(Res.string.list_hero_remaining_to_pay)
     val EMPTY_ALL @Composable get() = stringResource(Res.string.list_empty_all)
-    val EMPTY_PAID @Composable get() = stringResource(Res.string.list_empty_paid)
-    val EMPTY_REMAINING @Composable get() = stringResource(Res.string.list_empty_remaining)
     val EMPTY_STATE_DESC @Composable get() = stringResource(Res.string.list_empty_state_desc)
     val DEFAULT_NAME @Composable get() = stringResource(Res.string.list_default_name)
-    val DUE_PREFIX @Composable get() = stringResource(Res.string.list_due_prefix)
 
+    val DUE_PREFIX @Composable get() = stringResource(Res.string.list_due_prefix)
     val TAB_PROJECTED @Composable get() = stringResource(Res.string.list_tab_projected)
     val TAB_STANDARD @Composable get() = stringResource(Res.string.list_tab_standard)
     val TAB_REMAINING @Composable get() = stringResource(Res.string.list_tab_remaining)
@@ -151,6 +150,8 @@ object ListLabels {
     val MONTH_10 @Composable get() = stringResource(Res.string.list_month_10)
     val MONTH_11 @Composable get() = stringResource(Res.string.list_month_11)
     val MONTH_12 @Composable get() = stringResource(Res.string.list_month_12)
+    val VIEW_MODE_TOOLTIP_TITLE @Composable get() = stringResource(Res.string.list_tooltip_view_mode_title)
+    val VIEW_MODE_TOOLTIP_DESC @Composable get() = stringResource(Res.string.list_tooltip_view_mode_desc)
 }
 
 object SettingsLabels {

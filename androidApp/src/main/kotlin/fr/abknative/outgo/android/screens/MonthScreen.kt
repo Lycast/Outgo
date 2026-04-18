@@ -16,7 +16,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import fr.abknative.outgo.android.components.month.*
+import fr.abknative.outgo.android.components.list.OperationCard
+import fr.abknative.outgo.android.components.month.StatsCardExpense
+import fr.abknative.outgo.android.components.month.StatsCardRecurrence
+import fr.abknative.outgo.android.components.month.StatsCardWallet
+import fr.abknative.outgo.android.components.month.WalletEditDialog
 import fr.abknative.outgo.android.designsystem.components.cards.GlassCard
 import fr.abknative.outgo.android.designsystem.components.feedback.AppSnackbar
 import fr.abknative.outgo.android.designsystem.components.selection.MonthTimeSelector
@@ -24,8 +28,12 @@ import fr.abknative.outgo.android.designsystem.foundation.AppText
 import fr.abknative.outgo.android.designsystem.foundation.AppTheme
 import fr.abknative.outgo.android.designsystem.foundation.toColor
 import fr.abknative.outgo.android.ui.CommonLabels
+import fr.abknative.outgo.android.ui.ListLabels
 import fr.abknative.outgo.android.ui.MonthLabels
 import fr.abknative.outgo.android.ui.extensions.getMonthName
+import fr.abknative.outgo.android.ui.extensions.getUiColor
+import fr.abknative.outgo.android.ui.extensions.uiAmount
+import fr.abknative.outgo.android.ui.extensions.uiLabel
 import fr.abknative.outgo.month.api.MonthIntent
 import fr.abknative.outgo.month.api.MonthPresenter
 import java.util.Locale.getDefault
@@ -132,24 +140,24 @@ fun MonthScreen(
                                 Column(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .padding(vertical = AppTheme.dimens.large)
                                 ) {
                                     state.nextUpcomingExpenses.forEachIndexed { index, projectedOp ->
                                         val displayOperation = projectedOp.operation.copy(
                                             startDate = projectedOp.projectedDate
                                         )
 
-                                        OperationCardSummary(
-                                            operation = displayOperation,
-                                            formattedDate = projectedOp.formattedDate
+                                        OperationCard(
+                                            title = displayOperation.name,
+                                            subtitle = "${ListLabels.DUE_PREFIX} ${projectedOp.formattedDate} • ${displayOperation.recurrence.uiLabel}",
+                                            amountText = displayOperation.amountInCents.uiAmount,
+                                            amountColor = AppTheme.colors.textPrimary.toColor(),
+                                            iconColor = displayOperation.recurrence.getUiColor()
                                         )
 
                                         if (index < state.nextUpcomingExpenses.lastIndex) {
-                                            Spacer(modifier = Modifier.height(AppTheme.dimens.medium))
                                             HorizontalDivider(
                                                 color = AppTheme.colors.surface100.toColor(),
                                             )
-                                            Spacer(modifier = Modifier.height(AppTheme.dimens.medium))
                                         }
                                     }
                                 }

@@ -91,6 +91,7 @@
     <string name="a11y_day_selector">Sélection de jour</string>
     <string name="a11y_sync_error">Synchronisation échouée</string>
     <string name="a11y_navigate_list">Liste</string>
+    <string name="a11y_view_mode_selector">Changer type de liste affichée.</string>
 
     <string name="shell_copy_subname">(copie)</string>
     <string name="header_sync_promo_title">Persistance de vos données</string>
@@ -123,9 +124,7 @@
     <string name="list_tab_remaining">À venir</string>
     <string name="list_tab_paid">Passées</string>
     <string name="list_tab_all">Toutes</string>
-    <string name="list_empty_all">Aucune dépense.</string>
-    <string name="list_empty_paid">Aucune opération n\'a été passée ce mois-ci.</string>
-    <string name="list_empty_remaining">Il n'y a pas d\'autre opération de prévue ce mois-ci !</string>
+    <string name="list_empty_all">Aucune opération.</string>
     <string name="list_empty_state_desc">Appuyez sur + pour ajouter votre premier abonnement ou dépense récurrente.</string>
     <string name="list_default_name">Sans nom</string>
     <string name="list_due_prefix">Le</string>
@@ -141,6 +140,8 @@
     <string name="list_month_10">Octobre</string>
     <string name="list_month_11">Novembre</string>
     <string name="list_month_12">Décembre</string>
+    <string name="list_tooltip_view_mode_title">C'est quoi la différence ?</string>
+    <string name="list_tooltip_view_mode_desc">• Vue Projetée : C'est le calendrier. Les dépenses projetées à la date exacte où elles vont passer.\n\n• Vue Standard : C'est l'inventaire des abonnements et des frais fixes.</string>
 
     <string name="settings_section_appearance">Apparence</string>
     <string name="settings_section_support">Soutenir le projet</string>
