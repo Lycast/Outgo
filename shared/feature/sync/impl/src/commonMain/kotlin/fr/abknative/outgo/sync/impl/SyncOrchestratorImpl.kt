@@ -12,11 +12,8 @@ import fr.abknative.outgo.sync.api.SyncManager
 import fr.abknative.outgo.sync.api.SyncOrchestrator
 import fr.abknative.outgo.wallet.api.repository.OperationRepository
 import fr.abknative.outgo.wallet.api.repository.WalletRepository
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
@@ -35,6 +32,8 @@ internal class SyncOrchestratorImpl(
     private val _syncEvents = MutableSharedFlow<SyncEvent>()
     override val syncEvents = _syncEvents.asSharedFlow()
 
+    private var activeSyncJob: Job? = null
+
     companion object {
         private const val LAST_SYNC_KEY = "last_sync_timestamp"
         private const val SYNC_THRESHOLD_MS = 12 * 60 * 60 * 1000L
@@ -52,7 +51,6 @@ internal class SyncOrchestratorImpl(
     private fun checkStartupSync() {
         scope.launch {
 
-            val session = observeUserSession().filterNotNull().first()
             val currentUserId = sessionProvider.observeUserId().first()
 
             if (currentUserId.startsWith("local_")) {
@@ -60,19 +58,13 @@ internal class SyncOrchestratorImpl(
                 return@launch
             }
 
+            observeUserSession().filterNotNull().first()
+
             val lastSync = storage.getLong(LAST_SYNC_KEY, 0L)
             val now = timeProvider.now()
 
             if (now - lastSync > SYNC_THRESHOLD_MS) {
-                AppLogger.get()?.i(TAG, "Last sync > 12h. Launching startup Pull.")
-                val result = syncManager.syncAll()
-
-                if (result is Result.Success) {
-                    AppLogger.get()?.i(TAG, "Startup Pull successful. Resetting 12h timer.")
-                    storage.putLong(LAST_SYNC_KEY, timeProvider.now())
-                } else {
-                    AppLogger.get()?.w(TAG, "Startup Pull failed. Will retry later.")
-                }
+                executeSafeFullSync(reason = "Startup > 12h", emitErrorEvent = false)
             }
         }
     }
@@ -111,18 +103,31 @@ internal class SyncOrchestratorImpl(
                 .distinctUntilChanged()
                 .collect { userId ->
                     if (!userId.startsWith("local_")) {
-                        AppLogger.get()?.i(TAG, "New connection detected. Starting initial sync.")
-                        when (val result = syncManager.syncAll()) {
-                            is Result.Success -> {
-                                storage.putLong(LAST_SYNC_KEY, timeProvider.now())
-                            }
-                            is Result.Error -> {
-                                AppLogger.get()?.e(TAG, "Post-login sync failed.")
-                                _syncEvents.emit(SyncEvent.Error(result.error))
-                            }
-                        }
+                        executeSafeFullSync(reason = "New connection detected", emitErrorEvent = true)
                     }
                 }
+        }
+    }
+
+    private fun executeSafeFullSync(reason: String, emitErrorEvent: Boolean = false) {
+        if (activeSyncJob?.isActive == true) {
+            AppLogger.get()?.d(TAG, "Skipping sync ($reason) - A sync is already running.")
+            return
+        }
+
+        activeSyncJob = scope.launch {
+            AppLogger.get()?.i(TAG, "Starting full sync: $reason")
+            val result = syncManager.syncAll()
+
+            if (result is Result.Success) {
+                AppLogger.get()?.i(TAG, "Full sync successful. Resetting timer.")
+                storage.putLong(LAST_SYNC_KEY, timeProvider.now())
+            } else if (result is Result.Error) {
+                AppLogger.get()?.w(TAG, "Full sync failed: $reason")
+                if (emitErrorEvent) {
+                    _syncEvents.emit(SyncEvent.Error(result.error))
+                }
+            }
         }
     }
 }
