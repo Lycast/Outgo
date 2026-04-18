@@ -15,9 +15,14 @@ sealed interface ListIntent {
      */
     data class NavigateMonth(val isNext: Boolean) : ListIntent
 
-    /** * Intent to change the active UI filter for the operation list.
-     */
-    data class UpdateFilter(val filter: OperationFilter) : ListIntent
+    /** Switches between the Projected (Month) and Standard (Rules) views. */
+    data class SwitchViewMode(val mode: ListViewMode) : ListIntent
+
+    /** Updates the filter chip when in Projected Mode. */
+    data class UpdateProjectedFilter(val filter: ProjectedFilter) : ListIntent
+
+    /** Updates the filter chip when in Standard Mode. */
+    data class UpdateStandardFilter(val filter: StandardFilter) : ListIntent
 
     // --- Error Handling ---
     /** * Intent to clear the current error state from the UI.

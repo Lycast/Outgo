@@ -2,77 +2,114 @@ package fr.abknative.outgo.list.impl
 
 import fr.abknative.outgo.core.api.TimeProvider
 import fr.abknative.outgo.list.api.ListState
-import fr.abknative.outgo.list.api.OperationFilter
+import fr.abknative.outgo.list.api.ListViewMode
+import fr.abknative.outgo.list.api.ProjectedFilter
+import fr.abknative.outgo.list.api.StandardFilter
 import fr.abknative.outgo.wallet.api.model.operation.OperationType
+import fr.abknative.outgo.wallet.api.model.operation.Recurrence
 import fr.abknative.outgo.wallet.api.model.presenter.ProjectedOperation
 
-/**
- * Pure logic component responsible for mapping domain data and UI parameters
- * into a final [fr.abknative.outgo.list.api.ListState].
- */
 internal class ListStateMapper(private val timeProvider: TimeProvider) {
 
-    /**
-     * Maps raw inputs into a complete UI state.
-     */
     fun mapToState(
         currentOperations: List<ProjectedOperation>,
         input: PipelineInput,
     ): ListState {
+
+
+        val baseOperations = if (input.isPremium) { currentOperations } else {
+            currentOperations.filter { it.operation.type == OperationType.EXPENSE } }
+
+        val filteredOperations = when (input.viewMode) {
+            ListViewMode.PROJECTED -> applyProjectedFilter(baseOperations, input)
+            ListViewMode.STANDARD -> applyStandardFilter(baseOperations, input.standardFilter)
+        }
+
+        val grouped = groupOperations(filteredOperations, input.viewMode)
+
         return ListState(
             isLoading = false,
             activeWalletId = input.wallet.id,
             activeWalletName = input.wallet.name,
             walletCreationMonth = timeProvider.monthValue(input.wallet.createdAt),
             walletCreationYear = timeProvider.yearValue(input.wallet.createdAt),
+
+            viewMode = input.viewMode,
+            projectedFilter = input.projectedFilter,
+            standardFilter = input.standardFilter,
+
             operations = currentOperations,
-            filteredOperations = filterOperations(
-                ops = currentOperations,
-                filter = input.filter,
-                isPremium = input.isPremium,
-                viewMonth = input.month,
-                viewYear = input.year
-            ),
-            currentFilter = input.filter,
+            groupedOperations = grouped,
+
             selectedMonth = input.month,
             selectedYear = input.year,
             canGoToPreviousMonth = calculateCanGoBack(input),
-            isPremium = input.isPremium,
             currentDay = timeProvider.dayOfMonth(),
             currentMonth = timeProvider.monthValue(),
-            monthlyIncomeInCents = currentOperations
-                .filter { it.operation.type == OperationType.INCOME }
-                .sumOf { it.operation.amountInCents }
+            isPremium = input.isPremium
         )
     }
 
-    private fun filterOperations(
+    private fun applyProjectedFilter(
         ops: List<ProjectedOperation>,
-        filter: OperationFilter,
-        isPremium: Boolean,
-        viewMonth: Int,
-        viewYear: Int
+        input: PipelineInput
     ): List<ProjectedOperation> {
-        val baseList = if (isPremium) ops else ops.filter { it.operation.type == OperationType.EXPENSE }
+        val filter = input.projectedFilter
+        if (filter == ProjectedFilter.ALL) return ops
 
         val currentDay = timeProvider.dayOfMonth()
         val nowMonth = timeProvider.monthValue()
         val nowYear = timeProvider.yearValue()
 
-        val viewAbsolute = viewYear * 12 + viewMonth
+        val viewAbsolute = input.year * 12 + input.month
         val nowAbsolute = nowYear * 12 + nowMonth
 
         return when (filter) {
-            OperationFilter.ALL -> baseList
-            OperationFilter.PAST -> when {
-                viewAbsolute < nowAbsolute -> baseList
+            ProjectedFilter.PAST -> when {
+                viewAbsolute < nowAbsolute -> ops
                 viewAbsolute > nowAbsolute -> emptyList()
-                else -> baseList.filter { timeProvider.dayOfMonth(it.projectedDate) < currentDay }
+                else -> ops.filter { timeProvider.dayOfMonth(it.projectedDate) < currentDay }
             }
-            OperationFilter.REMAINING -> when {
+            ProjectedFilter.REMAINING -> when {
                 viewAbsolute < nowAbsolute -> emptyList()
-                viewAbsolute > nowAbsolute -> baseList
-                else -> baseList.filter { timeProvider.dayOfMonth(it.projectedDate) >= currentDay }
+                viewAbsolute > nowAbsolute -> ops
+                else -> ops.filter { timeProvider.dayOfMonth(it.projectedDate) >= currentDay }
+            }
+            ProjectedFilter.ALL -> ops
+        }
+    }
+
+    private fun applyStandardFilter(
+        ops: List<ProjectedOperation>,
+        filter: StandardFilter
+    ): List<ProjectedOperation> {
+        if (filter == StandardFilter.ALL) return ops
+
+        return ops.filter { projected ->
+            val recurrence = projected.operation.recurrence
+            when (filter) {
+                StandardFilter.UNIQUE -> recurrence == Recurrence.UNIQUE
+                StandardFilter.WEEKLY -> recurrence == Recurrence.WEEKLY
+                StandardFilter.MONTHLY -> recurrence == Recurrence.MONTHLY
+                StandardFilter.YEARLY -> recurrence == Recurrence.YEARLY
+                StandardFilter.ALL -> true
+            }
+        }
+    }
+
+
+    private fun groupOperations(
+        ops: List<ProjectedOperation>,
+        mode: ListViewMode
+    ): Map<String, List<ProjectedOperation>> {
+        if (ops.isEmpty()) return emptyMap()
+
+        return when (mode) {
+            ListViewMode.PROJECTED -> {
+                ops.groupBy { it.formattedDate }
+            }
+            ListViewMode.STANDARD -> {
+                mapOf("GLOBAL_RULES" to ops)
             }
         }
     }

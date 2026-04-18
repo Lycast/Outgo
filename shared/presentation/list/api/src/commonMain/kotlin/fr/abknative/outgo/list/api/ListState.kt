@@ -6,33 +6,26 @@ import fr.abknative.outgo.wallet.api.model.presenter.ProjectedOperation
 /**
  * Represents the complete UI state for the List screen.
  * Acts as the single source of truth (SSOT) for the view, following UDF patterns.
- *
- * @property isLoading Indicates if a background operation (fetch, sync, or save) is in progress.
- * @property activeWalletId The unique identifier of the currently selected wallet.
- * @property activeWalletName The display name of the active wallet.
- * @property operations The raw list of all projected operations for the selected period.
- * @property filteredOperations The processed list of operations to be rendered, based on [currentFilter] and [isPremium] status.
- * @property currentFilter The active UI filter applied to the operation list.
- * @property currentDay The current physical day of the month (system time).
- * @property currentMonth The current physical month (system time).
- * @property selectedMonth The month currently being viewed or navigated by the user (1-12).
- * @property selectedYear The year currently being viewed or navigated by the user.
- * @property canGoToPreviousMonth UI logic flag to enable/disable the "previous" navigation arrow based on wallet history.
- * @property walletCreationMonth The month the active wallet was created, used as a navigation boundary.
- * @property walletCreationYear The year the active wallet was created, used as a navigation boundary.
- * @property monthlyIncomeInCents The total primary income (budget) for the selected period.
- * @property error The current application exception to be handled by the UI (e.g., via Snackbar), or null.
- * @property isPremium Whether the user has access to premium features (influences filtering and UI capabilities).
  */
 data class ListState(
     val isLoading: Boolean = false,
     val activeWalletId: String? = null,
     val activeWalletName: String = "",
 
+    // --- UI Modes & Filters ---
+    val viewMode: ListViewMode = ListViewMode.PROJECTED,
+    val projectedFilter: ProjectedFilter = ProjectedFilter.REMAINING,
+    val standardFilter: StandardFilter = StandardFilter.ALL,
+
     // --- List Data ---
+    /** The raw operations fetched from the UseCase (used for math/stats). */
     val operations: List<ProjectedOperation> = emptyList(),
-    val filteredOperations: List<ProjectedOperation> = emptyList(),
-    val currentFilter: OperationFilter = OperationFilter.ALL,
+
+    /** * The processed and grouped list of operations to be rendered by Compose.
+     * Key = The sticky header title (e.g., "Today", "Monthly")
+     * Value = The operations falling under this category.
+     */
+    val groupedOperations: Map<String, List<ProjectedOperation>> = emptyMap(),
 
     // --- Temporal Logic ---
     val currentDay: Int? = 0,
@@ -43,22 +36,7 @@ data class ListState(
     val walletCreationMonth: Int? = null,
     val walletCreationYear: Int? = null,
 
-    // --- Calculations & Budget ---
-    val monthlyIncomeInCents: Long = 0L,
-
     // --- Global UI State ---
     val error: AppException? = null,
     val isPremium: Boolean = false
 )
-
-/**
- * Defines the available filtering strategies for the dashboard operation list.
- */
-enum class OperationFilter {
-    /** Show all operations for the selected period regardless of their date. */
-    ALL,
-    /** Show only operations that occurred before the current day. */
-    PAST,
-    /** Show only operations that are yet to occur or are scheduled for today. */
-    REMAINING
-}
