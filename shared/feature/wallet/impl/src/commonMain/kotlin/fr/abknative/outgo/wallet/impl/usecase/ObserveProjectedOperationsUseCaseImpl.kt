@@ -1,5 +1,6 @@
 package fr.abknative.outgo.wallet.impl.usecase
 
+import fr.abknative.outgo.core.api.time.DateTimeFormatter
 import fr.abknative.outgo.core.api.time.TimeProvider
 import fr.abknative.outgo.wallet.api.model.Operation
 import fr.abknative.outgo.wallet.api.model.operation.Recurrence
@@ -11,6 +12,7 @@ import kotlinx.coroutines.flow.map
 
 internal class ObserveProjectedOperationsUseCaseImpl(
     private val repository: OperationRepository,
+    private val dateTimeFormatter: DateTimeFormatter,
     private val timeProvider: TimeProvider
 ) : ObserveProjectedOperationsUseCase {
 
@@ -51,7 +53,7 @@ internal class ObserveProjectedOperationsUseCaseImpl(
         return when (op.recurrence) {
             Recurrence.UNIQUE -> {
                 if (opMonth == targetMonth && opYear == targetYear) {
-                    listOf(ProjectedOperation(operation = op, projectedDate = op.startDate, formattedDate = timeProvider.formatShortDate(op.startDate)))
+                    listOf(ProjectedOperation(operation = op, projectedDate = op.startDate, formattedDate = dateTimeFormatter.formatShortDate(op.startDate)))
                 } else emptyList()
             }
 
@@ -103,7 +105,7 @@ internal class ObserveProjectedOperationsUseCaseImpl(
                 ProjectedOperation(
                     operation = op,
                     projectedDate = finalDate,
-                    formattedDate = timeProvider.formatShortDate(finalDate)
+                    formattedDate = dateTimeFormatter.formatShortDate(finalDate)
                 )
             )
 
@@ -133,6 +135,6 @@ internal class ObserveProjectedOperationsUseCaseImpl(
         val projected = timeProvider.plusDays(targetStartOfMonth, safeDay - 1)
         val finalDate = timeProvider.combineDateAndTime(projected, 0, 0)
 
-        return listOf(ProjectedOperation(operation = op, projectedDate = finalDate, formattedDate = timeProvider.formatShortDate(finalDate)))
+        return listOf(ProjectedOperation(operation = op, projectedDate = finalDate, formattedDate = dateTimeFormatter.formatShortDate(finalDate)))
     }
 }

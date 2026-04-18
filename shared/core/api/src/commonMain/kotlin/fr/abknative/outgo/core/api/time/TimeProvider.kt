@@ -53,6 +53,4 @@ interface TimeProvider {
      * Useful for parsing UI DateTimePickers results.
      */
     fun combineDateAndTime(dateEpochMillis: EpochMillis, hour: Int, minute: Int): EpochMillis
-    /** Formats a timestamp into a short localized string (e.g., "12 Apr" or "12 avr."). */
-    fun formatShortDate(millis: EpochMillis): String
 }

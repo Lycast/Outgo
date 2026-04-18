@@ -1,4 +1,4 @@
-package fr.abknative.outgo.core.impl
+package fr.abknative.outgo.core.impl.time
 
 import fr.abknative.outgo.core.api.time.EpochMillis
 import fr.abknative.outgo.core.api.time.TimeProvider
@@ -64,7 +64,9 @@ class RealTimeProvider : TimeProvider {
     override fun endOfMonth(month: Int, year: Int): EpochMillis {
         val startOfNextMonth = if (month == 12) {
             LocalDate(year + 1, 1, 1)
-        } else { LocalDate(year, month + 1, 1) }
+        } else {
+            LocalDate(year, month + 1, 1)
+        }
         return startOfNextMonth.atStartOfDayIn(timeZone).toEpochMilliseconds() - 1L
     }
 
@@ -85,8 +87,5 @@ class RealTimeProvider : TimeProvider {
         return LocalDateTime(date.year, date.month, date.day, hour, minute)
             .toInstant(timeZone)
             .toEpochMilliseconds()
-    }
-    override fun formatShortDate(millis: EpochMillis): String {
-        return formatToShortDate(millis)
     }
 }

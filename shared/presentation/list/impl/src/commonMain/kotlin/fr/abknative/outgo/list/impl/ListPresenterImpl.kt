@@ -5,6 +5,7 @@ import fr.abknative.outgo.core.api.KeyValueStorage
 import fr.abknative.outgo.core.api.extensions.safeLaunch
 import fr.abknative.outgo.core.api.logs.AppException
 import fr.abknative.outgo.core.api.logs.Result
+import fr.abknative.outgo.core.api.time.DateTimeFormatter
 import fr.abknative.outgo.core.api.time.TimeProvider
 import fr.abknative.outgo.list.api.*
 import fr.abknative.outgo.subscription.api.FeatureManager
@@ -22,6 +23,7 @@ internal class ListPresenterImpl(
     private val observeWallets: ObserveWalletsUseCase,
     private val deleteOperation: DeleteOperationUseCase,
     private val mapper: ListStateMapper,
+    private val dateTimeFormatter: DateTimeFormatter,
     private val timeProvider: TimeProvider,
     private val featureManager: FeatureManager,
     private val storage: KeyValueStorage
@@ -99,7 +101,7 @@ internal class ListPresenterImpl(
                                 ProjectedOperation(
                                     operation = op,
                                     projectedDate = op.startDate,
-                                    formattedDate = timeProvider.formatShortDate(op.startDate)
+                                    formattedDate = dateTimeFormatter.formatShortDate(op.startDate)
                                 )
                             }
                         }

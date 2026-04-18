@@ -8,14 +8,16 @@ import fr.abknative.outgo.core.api.SecretConfig
 import fr.abknative.outgo.core.api.logs.AppLogger
 import fr.abknative.outgo.core.api.logs.ExceptionMapper
 import fr.abknative.outgo.core.api.nav.NavCoordinator
+import fr.abknative.outgo.core.api.time.DateTimeFormatter
 import fr.abknative.outgo.core.api.time.TimeProvider
 import fr.abknative.outgo.core.api.usecase.ClearLocalDataUseCase
 import fr.abknative.outgo.core.impl.RealIdProvider
-import fr.abknative.outgo.core.impl.RealTimeProvider
 import fr.abknative.outgo.core.impl.SecretConfigImpl
 import fr.abknative.outgo.core.impl.StandardDispatchers
 import fr.abknative.outgo.core.impl.logs.KtorExceptionMapper
 import fr.abknative.outgo.core.impl.nav.NavCoordinatorImpl
+import fr.abknative.outgo.core.impl.time.DateTimeFormatterImpl
+import fr.abknative.outgo.core.impl.time.RealTimeProvider
 import fr.abknative.outgo.core.impl.usecase.ClearLocalDataUseCaseImpl
 import io.ktor.client.*
 import io.ktor.client.engine.*
@@ -38,6 +40,7 @@ fun commonCoreModule() = module {
     singleOf(::SecretConfigImpl) { bind<SecretConfig>() }
 
     singleOf(::RealTimeProvider) { bind<TimeProvider>() }
+    singleOf(::DateTimeFormatterImpl) { bind<DateTimeFormatter>() }
     singleOf(::StandardDispatchers) { bind<AppDispatchers>() }
     singleOf(::RealIdProvider) { bind<IdProvider>() }
     singleOf(::NavCoordinatorImpl) { bind<NavCoordinator>() }
