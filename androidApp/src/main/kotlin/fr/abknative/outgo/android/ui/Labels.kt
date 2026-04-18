@@ -126,16 +126,19 @@ object MonthLabels {
 object ListLabels {
     val HERO_TOTAL_CHARGES_LABEL @Composable get() = stringResource(Res.string.list_hero_total_charges)
     val HERO_REMAINING_TO_PAY_LABEL @Composable get() = stringResource(Res.string.list_hero_remaining_to_pay)
-    val TAB_ALL @Composable get() = stringResource(Res.string.list_tab_all)
-    val TAB_PAID @Composable get() = stringResource(Res.string.list_tab_paid)
-    val TAB_REMAINING @Composable get() = stringResource(Res.string.list_tab_remaining)
     val EMPTY_ALL @Composable get() = stringResource(Res.string.list_empty_all)
     val EMPTY_PAID @Composable get() = stringResource(Res.string.list_empty_paid)
     val EMPTY_REMAINING @Composable get() = stringResource(Res.string.list_empty_remaining)
     val EMPTY_STATE_DESC @Composable get() = stringResource(Res.string.list_empty_state_desc)
-
     val DEFAULT_NAME @Composable get() = stringResource(Res.string.list_default_name)
     val DUE_PREFIX @Composable get() = stringResource(Res.string.list_due_prefix)
+
+    val TAB_PROJECTED @Composable get() = stringResource(Res.string.list_tab_projected)
+    val TAB_STANDARD @Composable get() = stringResource(Res.string.list_tab_standard)
+    val TAB_REMAINING @Composable get() = stringResource(Res.string.list_tab_remaining)
+    val TAB_PAID @Composable get() = stringResource(Res.string.list_tab_paid)
+    val TAB_ALL @Composable get() = stringResource(Res.string.list_tab_all)
+
     val MONTH_1 @Composable get() = stringResource(Res.string.list_month_1)
     val MONTH_2 @Composable get() = stringResource(Res.string.list_month_2)
     val MONTH_3 @Composable get() = stringResource(Res.string.list_month_3)

@@ -8,6 +8,9 @@ import fr.abknative.outgo.android.ui.CommonLabels
 import fr.abknative.outgo.android.ui.FormLabels
 import fr.abknative.outgo.android.ui.ListLabels
 import fr.abknative.outgo.core.api.formatters.formatAsCurrency
+import fr.abknative.outgo.list.api.ListViewMode
+import fr.abknative.outgo.list.api.ProjectedFilter
+import fr.abknative.outgo.list.api.StandardFilter
 import fr.abknative.outgo.wallet.api.model.Operation
 import fr.abknative.outgo.wallet.api.model.operation.Recurrence
 
@@ -52,6 +55,39 @@ val Recurrence.uiLabel: String
         Recurrence.MONTHLY -> FormLabels.CYCLE_MONTHLY
         Recurrence.YEARLY -> FormLabels.CYCLE_YEARLY
         Recurrence.UNKNOWN -> ""
+    }
+
+// --- List Filters UI Mapping ---
+
+/**
+ * Returns the localized label for a [ListViewMode].
+ */
+val ListViewMode.uiLabel: String
+    @Composable get() = when (this) {
+        ListViewMode.PROJECTED -> ListLabels.TAB_PROJECTED
+        ListViewMode.STANDARD -> ListLabels.TAB_STANDARD
+    }
+
+/**
+ * Returns the localized label for a [ProjectedFilter].
+ */
+val ProjectedFilter.uiLabel: String
+    @Composable get() = when (this) {
+        ProjectedFilter.REMAINING -> ListLabels.TAB_REMAINING
+        ProjectedFilter.PAST -> ListLabels.TAB_PAID
+        ProjectedFilter.ALL -> ListLabels.TAB_ALL
+    }
+
+/**
+ * Returns the localized label for a [StandardFilter].
+ */
+val StandardFilter.uiLabel: String
+    @Composable get() = when (this) {
+        StandardFilter.ALL -> ListLabels.TAB_ALL
+        StandardFilter.UNIQUE -> FormLabels.CYCLE_UNIQUE
+        StandardFilter.WEEKLY -> FormLabels.CYCLE_WEEKLY
+        StandardFilter.MONTHLY -> FormLabels.CYCLE_MONTHLY
+        StandardFilter.YEARLY -> FormLabels.CYCLE_YEARLY
     }
 
 /**

@@ -8,10 +8,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import fr.abknative.outgo.android.components.list.OperationFilterSelector
+import fr.abknative.outgo.android.components.list.ListHeaderAnimatedZone
 import fr.abknative.outgo.android.components.list.OperationListContainer
+import fr.abknative.outgo.android.components.list.ViewModeSelector
 import fr.abknative.outgo.android.designsystem.components.feedback.AppSnackbar
-import fr.abknative.outgo.android.designsystem.components.selection.MonthTimeSelector
 import fr.abknative.outgo.android.designsystem.foundation.AppTheme
 import fr.abknative.outgo.android.ui.extensions.getMonthName
 import fr.abknative.outgo.android.ui.toUIString
@@ -54,24 +54,36 @@ fun ListScreen(
                 .fillMaxSize()
                 .padding(horizontal = AppTheme.dimens.medium)
         ) {
-            MonthTimeSelector(
+            // 1. L'Interrupteur Principal (Fixe)
+            ViewModeSelector(
+                currentMode = state.viewMode,
+                onModeChanged = { presenter.onIntent(ListIntent.SwitchViewMode(it)) },
+                onInfoClicked = {
+                    // TODO: Afficher une modale d'explication pour les modes
+                }
+            )
+
+            Spacer(modifier = Modifier.height(AppTheme.dimens.medium))
+
+            // 2. La Zone Animée (Accordéon fluide)
+            ListHeaderAnimatedZone(
+                viewMode = state.viewMode,
                 formattedMonth = formattedSelectedMonth,
                 canGoBack = state.canGoToPreviousMonth,
-                onPrevious = { presenter.onIntent(ListIntent.NavigateMonth(isNext = false)) },
-                onNext = { presenter.onIntent(ListIntent.NavigateMonth(isNext = true)) }
+                onPreviousMonth = { presenter.onIntent(ListIntent.NavigateMonth(isNext = false)) },
+                onNextMonth = { presenter.onIntent(ListIntent.NavigateMonth(isNext = true)) },
+                projectedFilter = state.projectedFilter,
+                onProjectedFilterChange = { presenter.onIntent(ListIntent.UpdateProjectedFilter(it)) },
+                standardFilter = state.standardFilter,
+                onStandardFilterChange = { presenter.onIntent(ListIntent.UpdateStandardFilter(it)) }
             )
 
-            Spacer(modifier = Modifier.height(AppTheme.dimens.extraLarge))
+            Spacer(modifier = Modifier.height(AppTheme.dimens.medium))
 
-            OperationFilterSelector(
-                selectedFilter = state.currentFilter,
-                onFilterSelected = { presenter.onIntent(ListIntent.UpdateFilter(it)) }
-            )
-
+            // 3. Le Conteneur de Liste (qui prend notre nouvelle Map !)
             OperationListContainer(
                 isLoading = state.isLoading,
-                filteredList = state.filteredOperations,
-                currentFilter = state.currentFilter,
+                groupedOperations = state.groupedOperations,
                 onDeleteRequest = { projectedOp -> operationToDelete = projectedOp },
                 onEdit = { projectedOp ->
                     val op = projectedOp.operation

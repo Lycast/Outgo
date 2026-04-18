@@ -1,25 +1,6 @@
 package fr.abknative.outgo.android.components.list
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.platform.LocalHapticFeedback
-import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.role
-import androidx.compose.ui.semantics.selected
-import androidx.compose.ui.semantics.semantics
-import fr.abknative.outgo.android.designsystem.components.cards.GlassCard
-import fr.abknative.outgo.android.designsystem.foundation.AppText
-import fr.abknative.outgo.android.designsystem.foundation.AppTheme
-import fr.abknative.outgo.android.designsystem.foundation.toColor
-import fr.abknative.outgo.android.ui.ListLabels
-import fr.abknative.outgo.list.api.OperationFilter
-
+/*
 @Composable
 fun OperationFilterSelector(
     selectedFilter: OperationFilter,
@@ -110,4 +91,4 @@ private fun FilterTabItem(
             tabContent()
         }
     }
-}
+}*/
