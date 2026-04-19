@@ -12,6 +12,7 @@ import fr.abknative.outgo.core.api.validators.NameValidator
 import fr.abknative.outgo.operation.api.OperationIntent
 import fr.abknative.outgo.operation.api.OperationPresenter
 import fr.abknative.outgo.operation.api.OperationState
+import fr.abknative.outgo.wallet.api.model.operation.Recurrence
 import fr.abknative.outgo.wallet.api.usecase.DeleteOperationUseCase
 import fr.abknative.outgo.wallet.api.usecase.SaveOperationUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -47,8 +48,12 @@ internal class OperationPresenterImpl(
                     _state.update { it.copy(amount = validAmount) }
                 }
             }
-            is OperationIntent.UpdateDateInput -> handleDateInput(intent.text)
-            is OperationIntent.SelectDateFromPicker -> handleDateSelection(intent.millis)
+            is OperationIntent.UpdateStartDateInput -> handleStartDateInput(intent.text)
+            is OperationIntent.SelectStartDateFromPicker -> handleStartDateSelection(intent.millis)
+            is OperationIntent.UpdateEndDateInput -> handleEndDateInput(intent.text)
+            is OperationIntent.SelectEndDateFromPicker -> handleEndDateSelection(intent.millis)
+            is OperationIntent.EndSubscription -> handleEndSubscription()
+            is OperationIntent.ClearEndDate -> handleClearEndDate()
             is OperationIntent.UpdateType -> _state.update { it.copy(type = intent.type) }
             is OperationIntent.UpdateRecurrence -> _state.update { it.copy(recurrence = intent.recurrence) }
             is OperationIntent.Duplicate -> handleDuplicate(intent.copySuffix)
@@ -59,8 +64,11 @@ internal class OperationPresenterImpl(
     }
 
     private fun handleInit(intent: OperationIntent.Init) {
-        val initialStartDate = intent.initialDate ?: timeProvider.now()
+
+        val initialStartDate = intent.initialStartDate ?: timeProvider.now()
+
         val initialDateBuffer = dateValidator.formatMillis(initialStartDate)
+        val initialEndDateBuffer = intent.initialEndDate?.let { dateValidator.formatMillis(it) } ?: ""
 
         _state.update {
             it.copy(
@@ -72,22 +80,24 @@ internal class OperationPresenterImpl(
                 recurrence = intent.initialRecurrence,
                 startDate = initialStartDate,
                 endDate = intent.initialEndDate,
-                dateInputBuffer = initialDateBuffer,
-                isDateError = false,
+                startDateInputBuffer = initialDateBuffer,
+                endDateInputBuffer = initialEndDateBuffer,
+                isStartDateError = false,
+                isEndDateError = false,
                 isSavedSuccessfully = false
             )
         }
     }
 
-    private fun handleDateInput(newText: String) {
+    private fun handleStartDateInput(newText: String) {
         if (newText.length > 8 || !newText.all { it.isDigit() }) return
 
         val isPartialValid = dateValidator.isPartialInputValid(newText)
 
         _state.update { currentState ->
             var updatedState = currentState.copy(
-                dateInputBuffer = newText,
-                isDateError = !isPartialValid
+                startDateInputBuffer = newText,
+                isStartDateError = !isPartialValid
             )
 
             if (newText.length == 8 && isPartialValid) {
@@ -99,13 +109,64 @@ internal class OperationPresenterImpl(
         }
     }
 
-    private fun handleDateSelection(millis: EpochMillis) {
+    private fun handleStartDateSelection(millis: EpochMillis) {
         val formattedString = dateValidator.formatMillis(millis)
         _state.update {
             it.copy(
                 startDate = millis,
-                dateInputBuffer = formattedString,
-                isDateError = false
+                startDateInputBuffer = formattedString,
+                isStartDateError = false
+            )
+        }
+    }
+
+    private fun handleEndDateInput(newText: String) {
+        if (newText.length > 8 || !newText.all { it.isDigit() }) return
+
+        val isPartialValid = newText.isEmpty() || dateValidator.isPartialInputValid(newText)
+
+        _state.update { currentState ->
+            var updatedState = currentState.copy(
+                endDateInputBuffer = newText,
+                isEndDateError = !isPartialValid
+            )
+
+            if (newText.length == 8 && isPartialValid) {
+                updatedState = updatedState.copy(endDate = dateValidator.deriveMillis(newText))
+            } else if (newText.isEmpty()) {
+                updatedState = updatedState.copy(endDate = null)
+            }
+            updatedState
+        }
+    }
+
+    private fun handleEndDateSelection(millis: EpochMillis) {
+        _state.update {
+            it.copy(
+                endDate = millis,
+                endDateInputBuffer = dateValidator.formatMillis(millis),
+                isEndDateError = false
+            )
+        }
+    }
+
+    private fun handleEndSubscription() {
+        val now = timeProvider.now()
+        _state.update {
+            it.copy(
+                endDate = now,
+                endDateInputBuffer = dateValidator.formatMillis(now),
+                isEndDateError = false
+            )
+        }
+    }
+
+    private fun handleClearEndDate() {
+        _state.update {
+            it.copy(
+                endDate = null,
+                endDateInputBuffer = "",
+                isEndDateError = false
             )
         }
     }
@@ -144,6 +205,8 @@ internal class OperationPresenterImpl(
 
             val amountInCents = currentState.amount.toCents()
 
+            val sanitizedEndDate = if (currentState.recurrence == Recurrence.UNIQUE) null else currentState.endDate
+
             val result = saveOperation(
                 id = currentState.operationId,
                 walletId = currentState.walletId,
@@ -152,7 +215,7 @@ internal class OperationPresenterImpl(
                 type = currentState.type,
                 recurrence = currentState.recurrence,
                 startDate = currentState.startDate,
-                endDate = currentState.endDate
+                endDate = sanitizedEndDate
             )
 
             when (result) {

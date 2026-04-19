@@ -86,7 +86,8 @@ fun ListScreen(
             AnimatedContent(
                 targetState = state,
                 transitionSpec = {
-                    fadeIn(animationSpec = tween(DesignAnimations.NORMAL)) togetherWith fadeOut(animationSpec = tween(DesignAnimations.NORMAL))
+                    fadeIn(animationSpec = tween(DesignAnimations.NORMAL)) togetherWith
+                            fadeOut(animationSpec = tween(DesignAnimations.NORMAL))
                 },
                 label = "ListCrossfade"
             ) { animatedState ->

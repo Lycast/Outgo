@@ -84,7 +84,5 @@ fun ListFilterZone(
                 Spacer(modifier = Modifier.height(48.dp).fillMaxWidth())
             }
         }
-
-        Spacer(modifier = Modifier.height(AppTheme.dimens.large))
     }
 }

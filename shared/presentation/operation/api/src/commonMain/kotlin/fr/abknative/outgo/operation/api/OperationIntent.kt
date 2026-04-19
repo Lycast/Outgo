@@ -18,7 +18,7 @@ sealed interface OperationIntent {
         val initialAmount: String = "",
         val initialType: OperationType = OperationType.EXPENSE,
         val initialRecurrence: Recurrence = Recurrence.UNIQUE,
-        val initialDate: EpochMillis? = null,
+        val initialStartDate: EpochMillis? = null,
         val initialEndDate: EpochMillis? = null
     ) : OperationIntent
 
@@ -34,12 +34,25 @@ sealed interface OperationIntent {
     data class Duplicate(val copySuffix: String) : OperationIntent
 
     /** Called when the user types in the date text field (e.g., "1404") */
-    data class UpdateDateInput(val text: String) : OperationIntent
+    data class UpdateStartDateInput(val text: String) : OperationIntent
 
     /** Called when the user selects a date from the visual DatePicker */
-    data class SelectDateFromPicker(val millis: EpochMillis) : OperationIntent
+    data class SelectStartDateFromPicker(val millis: EpochMillis) : OperationIntent
+
+    /** Called when the user types in the end date text field */
+    data class UpdateEndDateInput(val text: String) : OperationIntent
+
+    /** Called when the user selects an end date from the visual DatePicker */
+    data class SelectEndDateFromPicker(val millis: EpochMillis) : OperationIntent
 
     // --- Actions ---
+
+    /** Automatically sets the end date to "Today" */
+    object EndSubscription : OperationIntent
+
+    /** Clears the end date if the user changes their mind */
+    object ClearEndDate : OperationIntent
+
     data object Delete : OperationIntent
 
     /** Triggers the validation and save process. */

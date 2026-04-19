@@ -94,12 +94,12 @@ fun OperationFormContent(
 
         // --- Field: StartDate ---
         FormattedDateInput(
-            value = state.dateInputBuffer,
-            onValueChange = { onIntent(OperationIntent.UpdateDateInput(it)) },
-            onDateSelected = { onIntent(OperationIntent.SelectDateFromPicker(it)) },
+            value = state.startDateInputBuffer,
+            onValueChange = { onIntent(OperationIntent.UpdateStartDateInput(it)) },
+            onDateSelected = { onIntent(OperationIntent.SelectStartDateFromPicker(it)) },
             initialDateMillis = state.startDate,
             label = FormLabels.FIELD_DATE_LABEL,
-            isError = state.isDateError,
+            isError = state.isStartDateError,
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Number,
                 imeAction = if (isPremium) ImeAction.Next else ImeAction.Done

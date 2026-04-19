@@ -20,8 +20,10 @@ data class OperationState(
     val startDate: EpochMillis = 0L,
     val endDate: EpochMillis? = null,
 
-    val dateInputBuffer: String = "",
-    val isDateError: Boolean = false,
+    val startDateInputBuffer: String = "",
+    val isStartDateError: Boolean = false,
+    val endDateInputBuffer: String = "",
+    val isEndDateError: Boolean = false,
 
     // Form Status
     val isSaving: Boolean = false,
@@ -34,8 +36,14 @@ data class OperationState(
      * we just need to check if it's not blank.
      */
     val isFormValid: Boolean
-        get() = name.isNotBlank()
-                && amount.isNotBlank()
-                && !isDateError
-                && dateInputBuffer.length == 8
+        get() {
+            val isBaseValid = name.isNotBlank() && amount.isNotBlank() && !isStartDateError && startDateInputBuffer.length == 8
+
+            val isEndDateValid = recurrence == Recurrence.UNIQUE ||
+                    (!isEndDateError && (endDateInputBuffer.isEmpty() || endDateInputBuffer.length == 8))
+
+            val isDateOrderValid = endDate == null || startDate <= endDate
+
+            return isBaseValid && isEndDateValid && isDateOrderValid
+        }
 }

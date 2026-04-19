@@ -218,7 +218,7 @@ fun ShellScreen(
                         initialAmount = payload.amount,
                         initialType = payload.type,
                         initialRecurrence = payload.recurrence,
-                        initialDate = payload.startDate
+                        initialStartDate = payload.startDate
                     )
                 )
             }

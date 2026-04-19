@@ -72,7 +72,7 @@ fun OperationListContainer(
 
     LazyColumn(
         modifier = modifier.fillMaxWidth().padding(horizontal = AppTheme.dimens.medium),
-        contentPadding = PaddingValues(bottom = 80.dp, top = AppTheme.dimens.small)
+        contentPadding = PaddingValues(bottom = 80.dp, top = AppTheme.dimens.medium)
     ) {
         val entries = groupedOperations.entries.toList()
 
