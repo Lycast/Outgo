@@ -31,12 +31,11 @@ fun OperationCard(
     iconColor: Color,
     modifier: Modifier = Modifier,
     isExpanded: Boolean = false,
-    isSubscription: Boolean = false,
     onToggleExpand: (() -> Unit)? = null,
-    onEditRequest: (() -> Unit)? = null,
     onDeleteRequest: (() -> Unit)? = null,
-    onDuplicateRequest: (() -> Unit)? = null,
-    onUnsubscribeRequest: (() -> Unit)? = null
+    onUnsubscribeRequest: (() -> Unit)? = null,
+    onEditRequest: (() -> Unit)? = null,
+    onDuplicateRequest: (() -> Unit)? = null
 ) {
 
     val isInteractive = onToggleExpand != null
@@ -122,20 +121,10 @@ fun OperationCard(
 
             AnimatedVisibility(visible = isExpanded) {
                 ExtendCardMenu(
-                    onEditClicked = {
-                        onEditRequest?.invoke()
-                    },
-                    onDuplicateClicked = {
-                        onDuplicateRequest?.invoke()
-                    },
-                    onDeleteClicked = {
-                        onDeleteRequest?.invoke()
-                    },
-                    onUnsubscribeClicked = if (isSubscription) {
-                        {
-                            onUnsubscribeRequest?.invoke()
-                        }
-                    } else null
+                    onEditClicked = { onEditRequest?.invoke() },
+                    onDuplicateClicked = { onDuplicateRequest?.invoke() },
+                    onDeleteClicked = { onDeleteRequest?.invoke() },
+                    onUnsubscribeClicked = onUnsubscribeRequest?.let { action -> { action.invoke() } }
                 )
             }
         }

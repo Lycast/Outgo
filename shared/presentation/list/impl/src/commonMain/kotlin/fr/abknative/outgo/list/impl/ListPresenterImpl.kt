@@ -10,10 +10,7 @@ import fr.abknative.outgo.core.api.time.TimeProvider
 import fr.abknative.outgo.list.api.*
 import fr.abknative.outgo.subscription.api.FeatureManager
 import fr.abknative.outgo.wallet.api.model.presenter.ProjectedOperation
-import fr.abknative.outgo.wallet.api.usecase.DeleteOperationUseCase
-import fr.abknative.outgo.wallet.api.usecase.ObserveProjectedOperationsUseCase
-import fr.abknative.outgo.wallet.api.usecase.ObserveStandardOperationsUseCase
-import fr.abknative.outgo.wallet.api.usecase.ObserveWalletsUseCase
+import fr.abknative.outgo.wallet.api.usecase.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 
@@ -22,6 +19,7 @@ internal class ListPresenterImpl(
     private val observeStandardOperations: ObserveStandardOperationsUseCase,
     private val observeWallets: ObserveWalletsUseCase,
     private val deleteOperation: DeleteOperationUseCase,
+    private val saveOperation: SaveOperationUseCase,
     private val mapper: ListStateMapper,
     private val dateTimeFormatter: DateTimeFormatter,
     private val timeProvider: TimeProvider,
@@ -118,8 +116,8 @@ internal class ListPresenterImpl(
         when (intent) {
             is ListIntent.NavigateMonth -> handleNavigateMonth(intent.isNext)
             is ListIntent.Delete -> handleDelete(intent)
+            is ListIntent.EndSubscription -> handleEndSubscription(intent.projectedOp)
             is ListIntent.DismissError -> _state.update { it.copy(error = null) }
-
             is ListIntent.SwitchViewMode -> {
                 selectionFlow.update { it.copy(viewMode = intent.mode) }
                 storage.putString(keyViewMode, intent.mode.name)
@@ -151,6 +149,28 @@ internal class ListPresenterImpl(
         viewModelScope.safeLaunch(onError = onCoroutineError) {
             val result = deleteOperation(intent.id)
             if (result is Result.Error) _state.update { it.copy(error = result.error) }
+        }
+    }
+
+    private fun handleEndSubscription(projectedOp: ProjectedOperation) {
+        val op = projectedOp.operation
+        val activeWalletId = _state.value.activeWalletId ?: return
+
+        viewModelScope.safeLaunch(onError = onCoroutineError) {
+            val result = saveOperation(
+                id = op.id,
+                walletId = activeWalletId,
+                name = op.name,
+                amountInCents = op.amountInCents,
+                type = op.type,
+                recurrence = op.recurrence,
+                startDate = op.startDate,
+                endDate = timeProvider.now()
+            )
+
+            if (result is Result.Error) {
+                _state.update { it.copy(error = result.error) }
+            }
         }
     }
 }

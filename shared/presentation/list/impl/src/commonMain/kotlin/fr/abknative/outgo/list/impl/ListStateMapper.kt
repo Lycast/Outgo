@@ -47,6 +47,7 @@ internal class ListStateMapper(
 
             selectedMonth = input.month,
             selectedYear = input.year,
+            currentDateMillis = timeProvider.now(),
             canGoToPreviousMonth = calculateCanGoBack(input),
             currentDay = timeProvider.dayOfMonth(),
             currentMonth = timeProvider.monthValue(),

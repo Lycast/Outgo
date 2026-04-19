@@ -1,20 +1,21 @@
 package fr.abknative.outgo.android.components.operation
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.BottomSheetDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.SheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
-import fr.abknative.outgo.android.R
-import fr.abknative.outgo.android.designsystem.components.buttons.AppHeaderButton
 import fr.abknative.outgo.android.designsystem.components.cards.GlassCard
 import fr.abknative.outgo.android.designsystem.foundation.AppTheme
 import fr.abknative.outgo.android.designsystem.foundation.toColor
-import fr.abknative.outgo.android.ui.AccessibilityLabels
 import fr.abknative.outgo.operation.api.OperationIntent
 import fr.abknative.outgo.operation.api.OperationState
 import kotlinx.coroutines.launch
@@ -26,60 +27,13 @@ fun OperationFormSheet(
     sheetState: SheetState,
     isPremium: Boolean,
     onIntent: (OperationIntent) -> Unit,
-    onDismiss: () -> Unit,
-    onDeleteRequest: () -> Unit,
-    onDuplicateRequest: () -> Unit
+    onDismiss: () -> Unit
 ) {
     val scope = rememberCoroutineScope()
 
     val closeSheet = {
         scope.launch { sheetState.hide() }.invokeOnCompletion {
             if (!sheetState.isVisible) onDismiss()
-        }
-    }
-
-    val sheetHeader = @Composable {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = AppTheme.dimens.medium),
-            contentAlignment = Alignment.Center
-        ) {
-            BottomSheetDefaults.DragHandle(
-                color = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.5f)
-            )
-
-            if (!state.operationId.isNullOrBlank()) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    AppHeaderButton(
-                        onClick = onDeleteRequest,
-                        elevation = 1.dp
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.trash),
-                            contentDescription = AccessibilityLabels.DELETE_EXPENSE,
-                            tint = AppTheme.colors.error.toColor().copy(alpha = 0.5f)
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.weight(1f))
-
-                    AppHeaderButton(
-                        onClick = onDuplicateRequest,
-                        elevation = 1.dp
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.copy),
-                            contentDescription = AccessibilityLabels.DUPLICATE_EXPENSE,
-                            tint = AppTheme.colors.primary.toColor()
-                        )
-                    }
-                }
-            }
         }
     }
 
@@ -96,9 +50,18 @@ fun OperationFormSheet(
                 .padding(horizontal = AppTheme.dimens.small)
                 .padding(vertical = AppTheme.dimens.medium)
         ) {
-            Column(modifier = Modifier.padding(top = AppTheme.dimens.small, bottom = AppTheme.dimens.big)) {
-                sheetHeader()
-
+            Column(
+                modifier = Modifier
+                    .padding(bottom = AppTheme.dimens.extraLarge)
+            ) {
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    BottomSheetDefaults.DragHandle(
+                        color = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.8f)
+                    )
+                }
                 OperationFormContent(
                     state = state,
                     onIntent = onIntent,

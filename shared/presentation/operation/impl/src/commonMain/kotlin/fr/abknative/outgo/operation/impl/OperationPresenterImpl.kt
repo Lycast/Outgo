@@ -13,7 +13,6 @@ import fr.abknative.outgo.operation.api.OperationIntent
 import fr.abknative.outgo.operation.api.OperationPresenter
 import fr.abknative.outgo.operation.api.OperationState
 import fr.abknative.outgo.wallet.api.model.operation.Recurrence
-import fr.abknative.outgo.wallet.api.usecase.DeleteOperationUseCase
 import fr.abknative.outgo.wallet.api.usecase.SaveOperationUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -23,7 +22,6 @@ import kotlin.math.roundToLong
 
 internal class OperationPresenterImpl(
     private val saveOperation: SaveOperationUseCase,
-    private val deleteOperation: DeleteOperationUseCase,
     private val timeProvider: TimeProvider
 ) : OperationPresenter() {
 
@@ -52,21 +50,16 @@ internal class OperationPresenterImpl(
             is OperationIntent.SelectStartDateFromPicker -> handleStartDateSelection(intent.millis)
             is OperationIntent.UpdateEndDateInput -> handleEndDateInput(intent.text)
             is OperationIntent.SelectEndDateFromPicker -> handleEndDateSelection(intent.millis)
-            is OperationIntent.EndSubscription -> handleEndSubscription()
             is OperationIntent.ClearEndDate -> handleClearEndDate()
             is OperationIntent.UpdateType -> _state.update { it.copy(type = intent.type) }
             is OperationIntent.UpdateRecurrence -> _state.update { it.copy(recurrence = intent.recurrence) }
-            is OperationIntent.Duplicate -> handleDuplicate(intent.copySuffix)
-            is OperationIntent.Delete -> handleDelete()
             is OperationIntent.Save -> handleSave()
             is OperationIntent.DismissError -> _state.update { it.copy(error = null) }
         }
     }
 
     private fun handleInit(intent: OperationIntent.Init) {
-
         val initialStartDate = intent.initialStartDate ?: timeProvider.now()
-
         val initialDateBuffer = dateValidator.formatMillis(initialStartDate)
         val initialEndDateBuffer = intent.initialEndDate?.let { dateValidator.formatMillis(it) } ?: ""
 
@@ -91,20 +84,16 @@ internal class OperationPresenterImpl(
 
     private fun handleStartDateInput(newText: String) {
         if (newText.length > 8 || !newText.all { it.isDigit() }) return
-
         val isPartialValid = dateValidator.isPartialInputValid(newText)
-
         _state.update { currentState ->
             var updatedState = currentState.copy(
                 startDateInputBuffer = newText,
                 isStartDateError = !isPartialValid
             )
-
             if (newText.length == 8 && isPartialValid) {
                 val newMillis = dateValidator.deriveMillis(newText)
                 updatedState = updatedState.copy(startDate = newMillis)
             }
-
             updatedState
         }
     }
@@ -122,15 +111,12 @@ internal class OperationPresenterImpl(
 
     private fun handleEndDateInput(newText: String) {
         if (newText.length > 8 || !newText.all { it.isDigit() }) return
-
         val isPartialValid = newText.isEmpty() || dateValidator.isPartialInputValid(newText)
-
         _state.update { currentState ->
             var updatedState = currentState.copy(
                 endDateInputBuffer = newText,
                 isEndDateError = !isPartialValid
             )
-
             if (newText.length == 8 && isPartialValid) {
                 updatedState = updatedState.copy(endDate = dateValidator.deriveMillis(newText))
             } else if (newText.isEmpty()) {
@@ -150,17 +136,6 @@ internal class OperationPresenterImpl(
         }
     }
 
-    private fun handleEndSubscription() {
-        val now = timeProvider.now()
-        _state.update {
-            it.copy(
-                endDate = now,
-                endDateInputBuffer = dateValidator.formatMillis(now),
-                isEndDateError = false
-            )
-        }
-    }
-
     private fun handleClearEndDate() {
         _state.update {
             it.copy(
@@ -168,31 +143,6 @@ internal class OperationPresenterImpl(
                 endDateInputBuffer = "",
                 isEndDateError = false
             )
-        }
-    }
-
-    private fun handleDuplicate(copySuffix: String) {
-        _state.update { currentState ->
-            currentState.copy(
-                operationId = null,
-                name = "${currentState.name} $copySuffix".trim()
-            )
-        }
-    }
-
-    private fun handleDelete() {
-        val id = _state.value.operationId ?: return
-
-        viewModelScope.safeLaunch(onError = onCoroutineError) {
-            _state.update { it.copy(isSaving = true) }
-            when (val result = deleteOperation(id)) {
-                is Result.Success -> {
-                    _state.update { it.copy(isSaving = false, isSavedSuccessfully = true) }
-                }
-                is Result.Error -> {
-                    _state.update { it.copy(isSaving = false, error = result.error) }
-                }
-            }
         }
     }
 
@@ -204,7 +154,6 @@ internal class OperationPresenterImpl(
             _state.update { it.copy(isSaving = true, error = null) }
 
             val amountInCents = currentState.amount.toCents()
-
             val sanitizedEndDate = if (currentState.recurrence == Recurrence.UNIQUE) null else currentState.endDate
 
             val result = saveOperation(

@@ -32,6 +32,7 @@ data class ListState(
     val currentMonth: Int = 0,
     val selectedMonth: Int,
     val selectedYear: Int,
+    val currentDateMillis: Long = 0L,
     val canGoToPreviousMonth: Boolean = false,
     val walletCreationMonth: Int? = null,
     val walletCreationYear: Int? = null,

@@ -1,13 +1,14 @@
 package fr.abknative.outgo.android.components.operation
 
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
@@ -15,6 +16,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.dp
 import fr.abknative.outgo.android.designsystem.components.buttons.AppButton
 import fr.abknative.outgo.android.designsystem.components.buttons.AppTextButton
 import fr.abknative.outgo.android.designsystem.components.feedback.FormattedDateInput
@@ -113,18 +115,34 @@ fun OperationFormContent(
             rightContent = {
                 // --- Field: EndDate ---
                 if (state.recurrence != Recurrence.UNIQUE) {
-                    FormattedDateInput(
-                        value = state.endDateInputBuffer,
-                        onValueChange = { onIntent(OperationIntent.UpdateEndDateInput(it)) },
-                        onDateSelected = { onIntent(OperationIntent.SelectEndDateFromPicker(it)) },
-                        initialDateMillis = state.endDate,
-                        label = FormLabels.FIELD_END_DATE_LABEL,
-                        isError = state.isEndDateError,
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Number,
-                            imeAction = if (isPremium) ImeAction.Next else ImeAction.Done
+                    Box {
+                        FormattedDateInput(
+                            value = state.endDateInputBuffer,
+                            onValueChange = { onIntent(OperationIntent.UpdateEndDateInput(it)) },
+                            onDateSelected = { onIntent(OperationIntent.SelectEndDateFromPicker(it)) },
+                            initialDateMillis = state.endDate,
+                            label = FormLabels.FIELD_END_DATE_LABEL,
+                            isError = state.isEndDateError,
                         )
-                    )
+                        if (state.endDateInputBuffer.isNotEmpty()) {
+                            Box(Modifier
+                                .offset(y = (-2).dp)
+                                .padding(start = AppTheme.dimens.medium)
+                                .border(1.dp, AppTheme.colors.textSecondary.toColor().copy(0.2f) ,shape = AppTheme.shapes.small)
+                                .clip(RoundedCornerShape(AppTheme.dimens.small))
+                                .background(AppTheme.colors.surface200.toColor())
+                            ) {
+                                AppText(
+                                    text = CommonLabels.ACTION_CLEAR,
+                                    style = AppTheme.typo.label,
+                                    color = AppTheme.colors.error.toColor().copy(alpha = 0.4f),
+                                    modifier = Modifier
+                                        .padding(horizontal = AppTheme.dimens.extraLarge, vertical = AppTheme.dimens.extraSmall)
+                                        .clickable { onIntent(OperationIntent.ClearEndDate) }
+                                )
+                            }
+                        }
+                    }
                 }
             }
         )

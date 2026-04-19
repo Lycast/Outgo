@@ -1,10 +1,12 @@
 package fr.abknative.outgo.android.designsystem.components.feedback
 
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import fr.abknative.outgo.android.designsystem.components.inputs.AppDatePickerDialog
@@ -33,6 +35,7 @@ fun FormattedDateInput(
     var showDatePicker by remember { mutableStateOf(false) }
 
     AppTextField(
+        modifier = Modifier.padding(top = AppTheme.dimens.extraSmall),
         value = value,
         onValueChange = { input ->
             val digitsOnly = input.filter { it.isDigit() }.take(8)

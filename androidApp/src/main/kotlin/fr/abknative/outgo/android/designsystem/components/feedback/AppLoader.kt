@@ -2,7 +2,7 @@ package fr.abknative.outgo.android.designsystem.components.feedback
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -25,8 +25,7 @@ fun AppLoader(
 
     Box(
         modifier = modifier
-            .fillMaxWidth()
-            .padding(AppTheme.dimens.big)
+            .fillMaxWidth().sizeIn(maxWidth = AppTheme.dimens.big, maxHeight = AppTheme.dimens.big)
             .semantics { contentDescription = contentDesc },
         contentAlignment = Alignment.Center
     ) {

@@ -94,8 +94,10 @@ fun ListScreen(
                 OperationListContainer(
                     isLoading = animatedState.isLoading,
                     viewMode = state.viewMode,
+                    currentDateMillis = state.currentDateMillis,
                     groupedOperations = animatedState.groupedOperations,
                     onDeleteRequest = { projectedOp -> operationToDelete = projectedOp },
+                    onUnsubscribe = { projectedOp -> presenter.onIntent(ListIntent.EndSubscription(projectedOp)) },
                     onEdit = { projectedOp ->
                         val op = projectedOp.operation
                         val formattedAmount = op.amountInCents.formatForInput()
@@ -104,6 +106,24 @@ fun ListScreen(
                             ShellIntent.OpenOperationForm(
                                 payload = OperationPayload(
                                     id = op.id,
+                                    name = op.name,
+                                    amount = formattedAmount,
+                                    type = op.type,
+                                    recurrence = op.recurrence,
+                                    startDate = op.startDate,
+                                    endDate = op.endDate
+                                )
+                            )
+                        )
+                    },
+                    onDuplicate = { projectedOp ->
+                        val op = projectedOp.operation
+                        val formattedAmount = op.amountInCents.formatForInput()
+
+                        shellPresenter.onIntent(
+                            ShellIntent.OpenOperationForm(
+                                payload = OperationPayload(
+                                    id = null,
                                     name = op.name,
                                     amount = formattedAmount,
                                     type = op.type,

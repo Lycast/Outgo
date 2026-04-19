@@ -1,51 +1,73 @@
 package fr.abknative.outgo.android.components.list
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import fr.abknative.outgo.android.R
+import fr.abknative.outgo.android.designsystem.components.buttons.AppIconTextButton
+import fr.abknative.outgo.android.designsystem.components.buttons.AppIconTextButtonHold
 import fr.abknative.outgo.android.designsystem.foundation.AppTheme
 import fr.abknative.outgo.android.designsystem.foundation.toColor
+import fr.abknative.outgo.android.ui.CommonLabels
 
 @Composable
 fun ExtendCardMenu(
     modifier: Modifier = Modifier,
     onEditClicked: () -> Unit,
-    onDeleteClicked: () -> Unit,
     onDuplicateClicked: () -> Unit,
+    onDeleteClicked: () -> Unit,
     onUnsubscribeClicked: (() -> Unit)? = null
 ) {
-    Row(
+    Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(bottom = AppTheme.dimens.medium, start = AppTheme.dimens.large, end = AppTheme.dimens.large),
-        horizontalArrangement = Arrangement.SpaceEvenly,
-        verticalAlignment = Alignment.CenterVertically
+            .padding(horizontal = AppTheme.dimens.large)
+            .padding(bottom = AppTheme.dimens.medium, top = AppTheme.dimens.small),
+        verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.small)
     ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(AppTheme.dimens.small)
+        ) {
+            AppIconTextButton(
+                text = CommonLabels.ACTION_EDIT,
+                iconRes = R.drawable.pencil_simple,
+                onClick = onEditClicked,
+                modifier = Modifier.weight(1f)
+            )
 
-        IconButton(onClick = onEditClicked) {
-            Icon(painterResource(R.drawable.pencil_simple), contentDescription = "Éditer", tint = AppTheme.colors.textPrimary.toColor())
+            AppIconTextButton(
+                text = CommonLabels.ACTION_DUPLICATE,
+                iconRes = R.drawable.copy,
+                onClick = onDuplicateClicked,
+                tint = AppTheme.colors.primary.toColor(),
+                modifier = Modifier.weight(1f)
+            )
         }
 
-        IconButton(onClick = onDuplicateClicked) {
-            Icon(painterResource(R.drawable.copy), contentDescription = "Dupliquer", tint = AppTheme.colors.primary.toColor())
-        }
-
-        if (onUnsubscribeClicked != null) {
-            IconButton(onClick = onUnsubscribeClicked) {
-                Icon(painterResource(R.drawable.sign_out_duotone), contentDescription = "Résilier", tint = AppTheme.colors.error.toColor())
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(AppTheme.dimens.small)
+        ) {
+            if (onUnsubscribeClicked != null) {
+                AppIconTextButton(
+                    text = CommonLabels.ACTION_CLOSURE,
+                    iconRes = R.drawable.calendar_slash,
+                    onClick = onUnsubscribeClicked,
+                    tint = AppTheme.colors.tertiary.toColor().copy(alpha = 0.8f),
+                    modifier = Modifier.weight(1f)
+                )
             }
-        }
 
-        IconButton(onClick = onDeleteClicked) {
-            Icon(painterResource(R.drawable.trash), contentDescription = "Supprimer", tint = AppTheme.colors.error.toColor().copy(alpha = 0.5f))
+            AppIconTextButtonHold(
+                text = CommonLabels.ACTION_DELETE,
+                iconRes = R.drawable.trash,
+                onConfirm = onDeleteClicked,
+                tint = AppTheme.colors.error.toColor().copy(alpha = 0.5f),
+                modifier = Modifier.weight(1f)
+            )
+
+            if (onUnsubscribeClicked == null) { Spacer(modifier = Modifier.weight(1f)) }
         }
     }
 }

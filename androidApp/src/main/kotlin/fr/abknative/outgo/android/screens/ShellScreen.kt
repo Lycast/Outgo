@@ -218,7 +218,8 @@ fun ShellScreen(
                         initialAmount = payload.amount,
                         initialType = payload.type,
                         initialRecurrence = payload.recurrence,
-                        initialStartDate = payload.startDate
+                        initialStartDate = payload.startDate,
+                        initialEndDate = payload.endDate
                     )
                 )
             }
@@ -234,9 +235,7 @@ fun ShellScreen(
                 onIntent = { operationPresenter.onIntent(it) },
                 sheetState = sheetState,
                 isPremium = shellState.isPremium,
-                onDismiss = { shellPresenter.onIntent(ShellIntent.CloseOperationForm) },
-                onDeleteRequest = { operationPresenter.onIntent(OperationIntent.Delete) },
-                onDuplicateRequest = {operationPresenter.onIntent(OperationIntent.Duplicate(copySubname)) }
+                onDismiss = { shellPresenter.onIntent(ShellIntent.CloseOperationForm) }
             )
         }
     }

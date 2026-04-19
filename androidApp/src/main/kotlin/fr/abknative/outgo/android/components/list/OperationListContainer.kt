@@ -30,13 +30,15 @@ import fr.abknative.outgo.wallet.api.model.presenter.ProjectedOperation
 fun OperationListContainer(
     isLoading: Boolean,
     viewMode: ListViewMode,
+    currentDateMillis: Long,
     groupedOperations: Map<String, List<ProjectedOperation>>,
     onDeleteRequest: (ProjectedOperation) -> Unit,
+    onUnsubscribe: (ProjectedOperation) -> Unit,
     onEdit: (ProjectedOperation) -> Unit,
+    onDuplicate: (ProjectedOperation) -> Unit,
     modifier: Modifier = Modifier
 ) {
 
-    // 1. Gestion du chargement
     if (isLoading) {
         Box(modifier = Modifier.fillMaxSize()) {
             AppLoader()
@@ -102,6 +104,7 @@ fun OperationListContainer(
 
                 val currentItemKey = "${projectedOp.operation.id}_${projectedOp.projectedDate}"
                 val op = projectedOp.operation
+                val isClosable = op.recurrence != Recurrence.UNIQUE && (op.endDate == null || op.endDate!! > currentDateMillis)
 
                 if (viewMode == ListViewMode.PROJECTED) Spacer(modifier = Modifier.height(AppTheme.dimens.extraSmall))
                 else Spacer(modifier = Modifier.height(AppTheme.dimens.medium))
@@ -125,10 +128,11 @@ fun OperationListContainer(
                         amountColor = if(op.type == OperationType.INCOME) AppTheme.colors.primary.toColor() else AppTheme.colors.secondary.toColor(),
                         iconColor = op.recurrence.getUiColor().copy(alpha = 0.7f),
                         isExpanded = expandedCardKey == currentItemKey,
-                        isSubscription = op.recurrence != Recurrence.UNIQUE,
                         onToggleExpand = { expandedCardKey = if (expandedCardKey == currentItemKey) null else currentItemKey },
+                        onDeleteRequest = { onDeleteRequest(projectedOp) },
+                        onUnsubscribeRequest = if (isClosable) { { onUnsubscribe(projectedOp) } } else null,
                         onEditRequest = { onEdit(projectedOp) },
-                        onDeleteRequest = { onDeleteRequest(projectedOp) }
+                        onDuplicateRequest = { onDuplicate(projectedOp) }
                     )
                 }
             }

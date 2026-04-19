@@ -1,5 +1,7 @@
 package fr.abknative.outgo.list.api
 
+import fr.abknative.outgo.wallet.api.model.presenter.ProjectedOperation
+
 /**
  * Represents all possible user actions (intents) triggered from the List UI.
  * Follows the Unidirectional Data Flow (UDF) architecture.
@@ -9,6 +11,11 @@ sealed interface ListIntent {
     /** * Intent to soft-delete an operation by its [id].
      */
     data class Delete(val id: String) : ListIntent
+
+    /** * Intent to end a subscription by setting its end date to today.
+     * Reuses the save use case to update the existing operation in the database.
+     */
+    data class EndSubscription(val projectedOp: ProjectedOperation) : ListIntent
 
     // --- UI Navigation & Filtering ---
     /** * Intent to change the currently displayed month.
