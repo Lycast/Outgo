@@ -45,7 +45,7 @@ fun AppIconTextButtonHold(
 
     Box(
         modifier = modifier
-            .height(AppTheme.dimens.big)
+            .height(42.dp)
             .clip(AppTheme.shapes.medium)
             .background(color = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.05f))
             .pointerInput(Unit) {

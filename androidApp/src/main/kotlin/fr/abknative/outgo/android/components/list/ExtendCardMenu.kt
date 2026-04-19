@@ -22,12 +22,12 @@ fun ExtendCardMenu(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = AppTheme.dimens.large)
-            .padding(bottom = AppTheme.dimens.large, top = AppTheme.dimens.large),
-        verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.large)
+            .padding(bottom = AppTheme.dimens.large, top = AppTheme.dimens.small),
+        verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.small)
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(AppTheme.dimens.large)
+            horizontalArrangement = Arrangement.spacedBy(AppTheme.dimens.small)
         ) {
             AppIconTextButton(
                 text = CommonLabels.ACTION_EDIT,
@@ -47,7 +47,7 @@ fun ExtendCardMenu(
 
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(AppTheme.dimens.large)
+            horizontalArrangement = Arrangement.spacedBy(AppTheme.dimens.small)
         ) {
             if (onUnsubscribeClicked != null) {
                 AppIconTextButtonHold(

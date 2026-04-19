@@ -3,10 +3,13 @@ package fr.abknative.outgo.android.components.list
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -40,6 +43,7 @@ fun OperationCard(
 ) {
 
     val isInteractive = onToggleExpand != null
+    val interaction = remember { MutableInteractionSource() }
 
     val baseModifier = modifier
         .fillMaxWidth()
@@ -54,7 +58,11 @@ fun OperationCard(
                 .clip(AppTheme.shapes.large)
                 .then(
                     if (isInteractive) {
-                        Modifier.clickable { onToggleExpand.invoke() }
+                        Modifier.clickable(
+                            interactionSource = interaction,
+                            indication = LocalIndication.current,
+                            onClick = { onToggleExpand.invoke() }
+                        )
                     } else Modifier
                 )
                 .padding(horizontal = AppTheme.dimens.large, vertical = AppTheme.dimens.large),

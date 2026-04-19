@@ -1,10 +1,13 @@
 package fr.abknative.outgo.android.designsystem.components.buttons
 
+import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -23,12 +26,19 @@ fun AppIconTextButton(
     modifier: Modifier = Modifier,
     tint: Color = AppTheme.colors.textPrimary.toColor()
 ) {
+
+    val interactionSource = remember { MutableInteractionSource() }
+
     Row(
         modifier = modifier
-            .height(AppTheme.dimens.big)
+            .height(42.dp)
             .clip(AppTheme.shapes.medium)
             .background(color = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.05f))
-            .clickable(onClick = onClick)
+            .clickable(
+                interactionSource = interactionSource,
+                indication = LocalIndication.current,
+                onClick = onClick
+            )
             .padding(horizontal = AppTheme.dimens.large, vertical = AppTheme.dimens.small),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Start
