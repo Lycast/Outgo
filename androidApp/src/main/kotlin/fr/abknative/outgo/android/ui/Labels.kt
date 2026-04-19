@@ -125,6 +125,8 @@ object MonthLabels {
     val SECTION_EXPENSES @Composable get() = stringResource(Res.string.month_section_expenses)
     val SECTION_UPCOMING @Composable get() = stringResource(Res.string.month_section_upcoming)
     val SECTION_RECURRENCE @Composable get() = stringResource(Res.string.month_section_recurrence)
+    val EMPTY_STATE_TITLE @Composable get() = stringResource(Res.string.month_empty_state_title)
+    val EMPTY_STATE_DESC @Composable get() = stringResource(Res.string.month_empty_state_desc)
 }
 
 object ListLabels {

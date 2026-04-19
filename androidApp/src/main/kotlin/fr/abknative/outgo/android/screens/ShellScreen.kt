@@ -140,7 +140,10 @@ fun ShellScreen(
 
                                 AppStep.Month -> MonthScreen(
                                     presenter = koinViewModel(),
-                                    onNavigateToList = { coordinator.navigateTo(AppStep.List) }
+                                    onNavigateToList = { coordinator.navigateTo(AppStep.List) },
+                                    onAddOperationClick = {
+                                        shellPresenter.onIntent(ShellIntent.OpenOperationForm(payload = OperationPayload()))
+                                    }
                                 )
 
                                 AppStep.Year -> {
@@ -184,7 +187,9 @@ fun ShellScreen(
 
                         SnackbarHost(
                             hostState = shellSnackbarHostState,
-                            modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = AppTheme.dimens.big)
+                            modifier = Modifier
+                                .align(Alignment.BottomCenter)
+                                .padding(bottom = AppTheme.dimens.big)
                         ) { data -> AppSnackbar(data) }
                     }
                 }

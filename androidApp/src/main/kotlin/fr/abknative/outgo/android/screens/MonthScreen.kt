@@ -18,10 +18,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import fr.abknative.outgo.android.components.list.OperationCard
-import fr.abknative.outgo.android.components.month.StatsCardExpense
-import fr.abknative.outgo.android.components.month.StatsCardRecurrence
-import fr.abknative.outgo.android.components.month.StatsCardWallet
-import fr.abknative.outgo.android.components.month.WalletEditDialog
+import fr.abknative.outgo.android.components.month.*
 import fr.abknative.outgo.android.designsystem.components.cards.GlassCard
 import fr.abknative.outgo.android.designsystem.components.feedback.AppSnackbar
 import fr.abknative.outgo.android.designsystem.components.selection.MonthTimeSelector
@@ -43,6 +40,7 @@ import java.util.Locale.getDefault
 fun MonthScreen(
     presenter: MonthPresenter,
     onNavigateToList: () -> Unit,
+    onAddOperationClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
 
@@ -109,21 +107,30 @@ fun MonthScreen(
                         }
                     }
 
-                    // Expenses Section
-                    Column {
-                        AppText(
-                            text = MonthLabels.SECTION_EXPENSES.uppercase(getDefault()),
-                            style = AppTheme.typo.label.copy(fontWeight = FontWeight.Bold),
-                            color = AppTheme.colors.primary.toColor(),
-                            modifier = Modifier.padding(bottom = AppTheme.dimens.small, start = AppTheme.dimens.medium)
-                        )
-                        GlassCard {
-                            StatsCardExpense(
-                                totalOutgoingsInCents = state.totalOutgoingsInCents,
-                                remainingToPayInCents = state.remainingToPayInCents,
-                                progress = state.outgoingsProgress
+                    if (state.totalOutgoingsInCents > 0) {
+                        // Expenses Section
+                        Column {
+                            AppText(
+                                text = MonthLabels.SECTION_EXPENSES.uppercase(getDefault()),
+                                style = AppTheme.typo.label.copy(fontWeight = FontWeight.Bold),
+                                color = AppTheme.colors.primary.toColor(),
+                                modifier = Modifier.padding(
+                                    bottom = AppTheme.dimens.small,
+                                    start = AppTheme.dimens.medium
+                                )
                             )
+                            GlassCard {
+                                StatsCardExpense(
+                                    totalOutgoingsInCents = state.totalOutgoingsInCents,
+                                    remainingToPayInCents = state.remainingToPayInCents,
+                                    progress = state.outgoingsProgress
+                                )
+                            }
                         }
+                    } else {
+                        StatsCardEmptyState(
+                            onAddOperationClick = onAddOperationClick
+                        )
                     }
 
                     // Upcoming Expenses
@@ -173,7 +180,10 @@ fun MonthScreen(
                                 text = MonthLabels.SECTION_RECURRENCE.uppercase(getDefault()),
                                 style = AppTheme.typo.label.copy(fontWeight = FontWeight.Bold),
                                 color = AppTheme.colors.primary.toColor(),
-                                modifier = Modifier.padding(bottom = AppTheme.dimens.small, start = AppTheme.dimens.medium)
+                                modifier = Modifier.padding(
+                                    bottom = AppTheme.dimens.small,
+                                    start = AppTheme.dimens.medium
+                                )
                             )
                             GlassCard {
                                 StatsCardRecurrence(

@@ -14,9 +14,11 @@ import fr.abknative.outgo.android.designsystem.foundation.AppTheme
 import fr.abknative.outgo.android.designsystem.foundation.toColor
 
 @Composable
-fun BottomCentralAction() {
+fun BottomCentralAction(
+    modifier: Modifier = Modifier,
+) {
     Surface(
-        modifier = Modifier.size(48.dp),
+        modifier = modifier.size(48.dp),
         shape = CircleShape,
         color = AppTheme.colors.secondary.toColor().copy(alpha = 0.3f)
     ) {

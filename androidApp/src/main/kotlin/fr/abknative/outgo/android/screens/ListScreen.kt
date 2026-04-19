@@ -97,7 +97,7 @@ fun ListScreen(
                     viewMode = state.viewMode,
                     currentDateMillis = state.currentDateMillis,
                     groupedOperations = animatedState.groupedOperations,
-                    onDeleteRequest = { projectedOp -> ListIntent.Delete(projectedOp.operation.id) },
+                    onDeleteRequest = { projectedOp -> presenter.onIntent(ListIntent.Delete(projectedOp.operation.id)) },
                     onUnsubscribe = { projectedOp -> presenter.onIntent(ListIntent.EndSubscription(projectedOp)) },
                     onEdit = { projectedOp ->
                         val op = projectedOp.operation
