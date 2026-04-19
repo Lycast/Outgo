@@ -77,7 +77,8 @@
     <string name="form_field_type_desc">Sélectionnez le type d'opération</string>
     <string name="form_type_expense">Dépense</string>
     <string name="form_type_income">Revenu</string>
-    <string name="form_field_date_label">Date de l'opération</string>
+    <string name="form_field_start_date_label">Date de début</string>
+    <string name="form_field_end_date_label">Date de fin</string>
 
     <string name="a11y_loading">Chargement en cours</string>
     <string name="a11y_synced">Synchronisé avec le serveur</string>

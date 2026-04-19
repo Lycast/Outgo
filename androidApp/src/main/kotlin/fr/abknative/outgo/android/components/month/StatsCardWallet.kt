@@ -62,14 +62,14 @@ fun StatsCardWallet(
         }
 
         CardSplitSkeleton(
-            dataContent = {
+            leftContent = {
                 HeroStatItem(
                     iconRes = R.drawable.bank_duotone,
                     amount = monthlyIncomeInCents.uiAmount,
                     liveColor = AppTheme.colors.secondary.toColor()
                 )
             },
-            visualContent = {
+            rightContent = {
                 HeroStatItem(
                     iconRes = R.drawable.piggy_bank_duotone,
                     amount = disposableIncomeInCents.uiAmount,

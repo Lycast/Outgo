@@ -4,7 +4,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -22,6 +22,7 @@ import fr.abknative.outgo.android.ui.extensions.uiLabel
 import fr.abknative.outgo.android.ui.extensions.uiTitle
 import fr.abknative.outgo.list.api.ListViewMode
 import fr.abknative.outgo.wallet.api.model.operation.OperationType
+import fr.abknative.outgo.wallet.api.model.operation.Recurrence
 import fr.abknative.outgo.wallet.api.model.presenter.ProjectedOperation
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -37,7 +38,7 @@ fun OperationListContainer(
 
     // 1. Gestion du chargement
     if (isLoading) {
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Box(modifier = Modifier.fillMaxSize()) {
             AppLoader()
         }
         return
@@ -70,6 +71,8 @@ fun OperationListContainer(
         return
     }
 
+    var expandedCardKey by remember { mutableStateOf<String?>(null) }
+
     LazyColumn(
         modifier = modifier.fillMaxWidth().padding(horizontal = AppTheme.dimens.medium),
         contentPadding = PaddingValues(bottom = 80.dp, top = AppTheme.dimens.medium)
@@ -96,6 +99,8 @@ fun OperationListContainer(
                 items = operations,
                 key = { "${it.operation.id}_${it.projectedDate}" }
             ) { projectedOp ->
+
+                val currentItemKey = "${projectedOp.operation.id}_${projectedOp.projectedDate}"
                 val op = projectedOp.operation
 
                 if (viewMode == ListViewMode.PROJECTED) Spacer(modifier = Modifier.height(AppTheme.dimens.extraSmall))
@@ -119,7 +124,10 @@ fun OperationListContainer(
                         amountText = op.amountInCents.uiAmount,
                         amountColor = if(op.type == OperationType.INCOME) AppTheme.colors.primary.toColor() else AppTheme.colors.secondary.toColor(),
                         iconColor = op.recurrence.getUiColor().copy(alpha = 0.7f),
-                        onEdit = { onEdit(projectedOp) },
+                        isExpanded = expandedCardKey == currentItemKey,
+                        isSubscription = op.recurrence != Recurrence.UNIQUE,
+                        onToggleExpand = { expandedCardKey = if (expandedCardKey == currentItemKey) null else currentItemKey },
+                        onEditRequest = { onEdit(projectedOp) },
                         onDeleteRequest = { onDeleteRequest(projectedOp) }
                     )
                 }

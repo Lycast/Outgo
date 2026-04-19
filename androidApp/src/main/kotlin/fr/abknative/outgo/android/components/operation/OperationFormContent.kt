@@ -19,6 +19,7 @@ import fr.abknative.outgo.android.designsystem.components.buttons.AppButton
 import fr.abknative.outgo.android.designsystem.components.buttons.AppTextButton
 import fr.abknative.outgo.android.designsystem.components.feedback.FormattedDateInput
 import fr.abknative.outgo.android.designsystem.components.inputs.AppTextField
+import fr.abknative.outgo.android.designsystem.components.layout.CardSplitSkeleton
 import fr.abknative.outgo.android.designsystem.foundation.AppText
 import fr.abknative.outgo.android.designsystem.foundation.AppTheme
 import fr.abknative.outgo.android.designsystem.foundation.toColor
@@ -26,6 +27,7 @@ import fr.abknative.outgo.android.ui.CommonLabels
 import fr.abknative.outgo.android.ui.FormLabels
 import fr.abknative.outgo.operation.api.OperationIntent
 import fr.abknative.outgo.operation.api.OperationState
+import fr.abknative.outgo.wallet.api.model.operation.Recurrence
 
 @Composable
 fun OperationFormContent(
@@ -92,18 +94,39 @@ fun OperationFormContent(
             }
         )
 
-        // --- Field: StartDate ---
-        FormattedDateInput(
-            value = state.startDateInputBuffer,
-            onValueChange = { onIntent(OperationIntent.UpdateStartDateInput(it)) },
-            onDateSelected = { onIntent(OperationIntent.SelectStartDateFromPicker(it)) },
-            initialDateMillis = state.startDate,
-            label = FormLabels.FIELD_DATE_LABEL,
-            isError = state.isStartDateError,
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Number,
-                imeAction = if (isPremium) ImeAction.Next else ImeAction.Done
-            )
+        CardSplitSkeleton(
+            leftContent = {
+                // --- Field: StartDate ---
+                FormattedDateInput(
+                    value = state.startDateInputBuffer,
+                    onValueChange = { onIntent(OperationIntent.UpdateStartDateInput(it)) },
+                    onDateSelected = { onIntent(OperationIntent.SelectStartDateFromPicker(it)) },
+                    initialDateMillis = state.startDate,
+                    label = FormLabels.FIELD_START_DATE_LABEL,
+                    isError = state.isStartDateError,
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Number,
+                        imeAction = if (isPremium) ImeAction.Next else ImeAction.Done
+                    )
+                )
+            },
+            rightContent = {
+                // --- Field: EndDate ---
+                if (state.recurrence != Recurrence.UNIQUE) {
+                    FormattedDateInput(
+                        value = state.endDateInputBuffer,
+                        onValueChange = { onIntent(OperationIntent.UpdateEndDateInput(it)) },
+                        onDateSelected = { onIntent(OperationIntent.SelectEndDateFromPicker(it)) },
+                        initialDateMillis = state.endDate,
+                        label = FormLabels.FIELD_END_DATE_LABEL,
+                        isError = state.isEndDateError,
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Number,
+                            imeAction = if (isPremium) ImeAction.Next else ImeAction.Done
+                        )
+                    )
+                }
+            }
         )
 
         // --- Field: Recurrence ---

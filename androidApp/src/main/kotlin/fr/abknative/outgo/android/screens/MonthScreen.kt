@@ -158,9 +158,7 @@ fun MonthScreen(
                                         )
 
                                         if (index < state.nextUpcomingExpenses.lastIndex) {
-                                            HorizontalDivider(
-                                                color = AppTheme.colors.surface100.toColor(),
-                                            )
+                                            HorizontalDivider(color = AppTheme.colors.surface100.toColor())
                                         }
                                     }
                                 }

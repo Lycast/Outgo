@@ -3,10 +3,7 @@ package fr.abknative.outgo.android.designsystem.components.feedback
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.rememberDatePickerState
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -47,7 +44,12 @@ fun FormattedDateInput(
         keyboardOptions = keyboardOptions,
         visualTransformation = DateTransformation(),
         trailingIcon = {
-            IconButton(onClick = { showDatePicker = true }) {
+            IconButton(
+                onClick = { showDatePicker = true },
+                colors = IconButtonDefaults.iconButtonColors(
+                    containerColor = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.1f),
+                )
+            ) {
                 Icon(
                     imageVector = Icons.Default.DateRange,
                     contentDescription = AccessibilityLabels.DAY_SELECTOR,

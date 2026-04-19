@@ -32,8 +32,7 @@ fun AppButton(
         colors = ButtonDefaults.buttonColors(
             containerColor = containerColor,
             contentColor = contentColor,
-            disabledContainerColor = AppTheme.colors.surface50.toColor().copy(alpha = 0.5f),
-            disabledContentColor = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.5f)
+            disabledContainerColor = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.1f)
         )
     ) {
         content()

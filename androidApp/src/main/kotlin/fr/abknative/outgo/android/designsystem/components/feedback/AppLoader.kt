@@ -3,7 +3,7 @@ package fr.abknative.outgo.android.designsystem.components.feedback
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,7 +30,7 @@ fun AppLoader(
             .semantics { contentDescription = contentDesc },
         contentAlignment = Alignment.Center
     ) {
-        LinearProgressIndicator(
+        CircularProgressIndicator(
             color = primaryColor,
             trackColor = primaryColor.copy(alpha = 0.15f),
             strokeCap = strokeCap,

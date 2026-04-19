@@ -8,8 +8,8 @@ import fr.abknative.outgo.android.designsystem.foundation.AppTheme
 
 @Composable
 fun CardSplitSkeleton(
-    dataContent: @Composable () -> Unit,
-    visualContent: @Composable () -> Unit,
+    leftContent: @Composable () -> Unit,
+    rightContent: @Composable () -> Unit,
     modifier: Modifier = Modifier,
     leftWeight: Float = 1f,
     rightWeight: Float = 1f
@@ -24,7 +24,7 @@ fun CardSplitSkeleton(
             modifier = Modifier.weight(leftWeight),
             contentAlignment = Alignment.Center
         ) {
-            dataContent()
+            leftContent()
         }
 
         Spacer(modifier = Modifier.width(AppTheme.dimens.medium))
@@ -33,7 +33,7 @@ fun CardSplitSkeleton(
             modifier = Modifier.weight(rightWeight),
             contentAlignment = Alignment.Center
         ) {
-            visualContent()
+            rightContent()
         }
     }
 }

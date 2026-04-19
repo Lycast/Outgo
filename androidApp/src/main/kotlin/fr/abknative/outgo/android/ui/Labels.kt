@@ -69,7 +69,8 @@ object FormLabels {
     val FIELD_TYPE_DESC @Composable get() = stringResource(Res.string.form_field_type_desc)
     val TYPE_EXPENSE @Composable get() = stringResource(Res.string.form_type_expense)
     val TYPE_INCOME @Composable get() = stringResource(Res.string.form_type_income)
-    val FIELD_DATE_LABEL @Composable get() = stringResource(Res.string.form_field_date_label)
+    val FIELD_START_DATE_LABEL @Composable get() = stringResource(Res.string.form_field_start_date_label)
+    val FIELD_END_DATE_LABEL @Composable get() = stringResource(Res.string.form_field_end_date_label)
 }
 
 object AccessibilityLabels {

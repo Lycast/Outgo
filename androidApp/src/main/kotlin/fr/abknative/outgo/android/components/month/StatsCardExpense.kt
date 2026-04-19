@@ -26,7 +26,7 @@ fun StatsCardExpense(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         CardSplitSkeleton(
-            dataContent = {
+            leftContent = {
                 Column(
                     verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.extraSmall),
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -56,7 +56,7 @@ fun StatsCardExpense(
                     )
                 }
             },
-            visualContent = {
+            rightContent = {
                 AppDonutChart(
                     progress = progress,
                     isMirrored = true,
