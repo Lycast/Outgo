@@ -9,7 +9,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -28,7 +31,6 @@ import fr.abknative.outgo.list.api.ListPresenter
 import fr.abknative.outgo.shell.api.ShellIntent
 import fr.abknative.outgo.shell.api.ShellPresenter
 import fr.abknative.outgo.shell.api.payload.OperationPayload
-import fr.abknative.outgo.wallet.api.model.presenter.ProjectedOperation
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -39,7 +41,6 @@ fun ListScreen(
 ) {
 
     val state by presenter.state.collectAsStateWithLifecycle()
-    var operationToDelete by remember { mutableStateOf<ProjectedOperation?>(null) }
     val snackbarHostState = remember { SnackbarHostState() }
     val currentError = state.error
     val errorMessage = currentError?.toUIString()
@@ -96,7 +97,7 @@ fun ListScreen(
                     viewMode = state.viewMode,
                     currentDateMillis = state.currentDateMillis,
                     groupedOperations = animatedState.groupedOperations,
-                    onDeleteRequest = { projectedOp -> operationToDelete = projectedOp },
+                    onDeleteRequest = { projectedOp -> ListIntent.Delete(projectedOp.operation.id) },
                     onUnsubscribe = { projectedOp -> presenter.onIntent(ListIntent.EndSubscription(projectedOp)) },
                     onEdit = { projectedOp ->
                         val op = projectedOp.operation
@@ -142,11 +143,4 @@ fun ListScreen(
             modifier = Modifier.align(Alignment.TopCenter)
         ) { data -> AppSnackbar(data) }
     }
-
-    // --- MODALS ---
-    ListScreenModals(
-        operationToDelete = operationToDelete,
-        onDismissDelete = { operationToDelete = null },
-        presenter = presenter,
-    )
 }

@@ -22,12 +22,12 @@ fun ExtendCardMenu(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = AppTheme.dimens.large)
-            .padding(bottom = AppTheme.dimens.medium, top = AppTheme.dimens.small),
-        verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.small)
+            .padding(bottom = AppTheme.dimens.large, top = AppTheme.dimens.large),
+        verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.large)
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(AppTheme.dimens.small)
+            horizontalArrangement = Arrangement.spacedBy(AppTheme.dimens.large)
         ) {
             AppIconTextButton(
                 text = CommonLabels.ACTION_EDIT,
@@ -47,13 +47,13 @@ fun ExtendCardMenu(
 
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(AppTheme.dimens.small)
+            horizontalArrangement = Arrangement.spacedBy(AppTheme.dimens.large)
         ) {
             if (onUnsubscribeClicked != null) {
-                AppIconTextButton(
+                AppIconTextButtonHold(
                     text = CommonLabels.ACTION_CLOSURE,
                     iconRes = R.drawable.calendar_slash,
-                    onClick = onUnsubscribeClicked,
+                    onConfirm = onUnsubscribeClicked,
                     tint = AppTheme.colors.tertiary.toColor().copy(alpha = 0.8f),
                     modifier = Modifier.weight(1f)
                 )

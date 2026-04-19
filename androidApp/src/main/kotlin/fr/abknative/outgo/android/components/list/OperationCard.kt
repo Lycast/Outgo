@@ -2,13 +2,11 @@ package fr.abknative.outgo.android.components.list
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -40,29 +38,22 @@ fun OperationCard(
 
     val isInteractive = onToggleExpand != null
 
-    val chevronRotation by animateFloatAsState(
-        targetValue = if (isExpanded) 180f else 0f,
-        label = "chevronRotation"
-    )
-
     val baseModifier = modifier
         .fillMaxWidth()
         .clip(AppTheme.shapes.large)
         .animateContentSize()
 
-    val clickModifier = if (isInteractive) {
-        baseModifier.clickable { onToggleExpand() }
-    } else {
-        baseModifier
-    }
-
-    Column(modifier = clickModifier) {
+    Column(modifier = baseModifier) {
 
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(AppTheme.shapes.large)
-                .then(clickModifier)
+                .then(
+                    if (isInteractive) {
+                        Modifier.clickable { onToggleExpand?.invoke() }
+                    } else Modifier
+                )
                 .padding(horizontal = AppTheme.dimens.large, vertical = AppTheme.dimens.large),
             verticalAlignment = Alignment.CenterVertically
         ) {
