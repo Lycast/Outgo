@@ -130,7 +130,16 @@
     <string name="list_empty_all">Aucune opération.</string>
     <string name="list_empty_state_desc">Appuyez sur + pour ajouter votre premier abonnement ou dépense récurrente.</string>
     <string name="list_default_name">Sans nom</string>
+    <string name="list_cycle_unique_formatted">Une seule fois</string>
+    <string name="list_cycle_weekly_formatted">Toutes les semaines</string>
+    <string name="list_cycle_monthly_formatted">Tous les mois</string>
+    <string name="list_cycle_yearly_formatted">Tous les ans</string>
+
     <string name="list_due_prefix">Le</string>
+    <string name="list_from_prefix">Du</string>
+    <string name="list_to_prefix">au</string>
+    <string name="list_since_prefix">Depuis le</string>
+
     <string name="list_month_1">Janvier</string>
     <string name="list_month_2">Février</string>
     <string name="list_month_3">Mars</string>

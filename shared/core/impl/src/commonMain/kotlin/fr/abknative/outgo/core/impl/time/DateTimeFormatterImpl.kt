@@ -10,7 +10,7 @@ internal expect fun formatTimestamp(millis: EpochMillis, pattern: String): Strin
 
 internal class DateTimeFormatterImpl : DateTimeFormatter {
     override fun formatShortDate(millis: EpochMillis): String {
-        return formatTimestamp(millis, "dd MMM")
+        return formatTimestamp(millis, "dd MMMM")
     }
 
     override fun formatLongDate(millis: EpochMillis): String {
@@ -21,7 +21,7 @@ internal class DateTimeFormatterImpl : DateTimeFormatter {
         return formatTimestamp(millis, "MMMM yyyy")
     }
 
-    override fun formatTime(millis: EpochMillis): String {
-        return formatTimestamp(millis, "HH:mm")
+    override fun formatNumericDate(millis: EpochMillis): String {
+        return formatTimestamp(millis, "dd/MM/yyyy")
     }
 }

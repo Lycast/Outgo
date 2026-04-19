@@ -4,6 +4,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -11,15 +12,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import fr.abknative.outgo.android.designsystem.components.cards.GlassCard
-import fr.abknative.outgo.android.designsystem.components.feedback.AppLoader
 import fr.abknative.outgo.android.designsystem.foundation.AppText
 import fr.abknative.outgo.android.designsystem.foundation.AppTheme
 import fr.abknative.outgo.android.designsystem.foundation.toColor
 import fr.abknative.outgo.android.ui.ListLabels
-import fr.abknative.outgo.android.ui.extensions.getUiColor
-import fr.abknative.outgo.android.ui.extensions.uiAmount
-import fr.abknative.outgo.android.ui.extensions.uiLabel
-import fr.abknative.outgo.android.ui.extensions.uiTitle
+import fr.abknative.outgo.android.ui.extensions.*
 import fr.abknative.outgo.list.api.ListViewMode
 import fr.abknative.outgo.wallet.api.model.operation.OperationType
 import fr.abknative.outgo.wallet.api.model.operation.Recurrence
@@ -41,7 +38,7 @@ fun OperationListContainer(
 
     if (isLoading) {
         Box(modifier = Modifier.fillMaxSize()) {
-            AppLoader()
+            CircularProgressIndicator(Modifier.align(Alignment.Center))
         }
         return
     }
@@ -112,20 +109,26 @@ fun OperationListContainer(
                 GlassCard(
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    val subtitleText = when (viewMode) {
-                        ListViewMode.PROJECTED -> {
-                            op.recurrence.uiLabel
-                        }
+                    val bottomLeftText = when (viewMode) {
+                        ListViewMode.PROJECTED -> { op.recurrence.uiFormattedLabel }
                         ListViewMode.STANDARD -> {
-                            "${ListLabels.DUE_PREFIX} ${projectedOp.formattedDate} • ${op.recurrence.uiLabel}"
+                            if (projectedOp.formattedEndDate.isNotEmpty()) {
+                                "${ListLabels.FROM_PREFIX} ${projectedOp.formattedStartDate} ${ListLabels.TO_PREFIX} ${projectedOp.formattedEndDate}"
+                            } else { "${ListLabels.SINCE_PREFIX} ${projectedOp.formattedStartDate}" }
                         }
                     }
 
+                    val topRightText = when (viewMode) {
+                        ListViewMode.PROJECTED -> { null }
+                        ListViewMode.STANDARD -> { projectedOp.operation.recurrence.uiLabel }
+                    }
+
                     OperationCard(
-                        title = op.uiTitle,
-                        subtitle = subtitleText,
-                        amountText = op.amountInCents.uiAmount,
-                        amountColor = if(op.type == OperationType.INCOME) AppTheme.colors.primary.toColor() else AppTheme.colors.secondary.toColor(),
+                        topLeftText = op.uiTitle,
+                        topRightText = topRightText,
+                        bottomLeftText = bottomLeftText,
+                        bottomRightText = op.amountInCents.uiAmount,
+                        amountColor = if(op.type == OperationType.INCOME) AppTheme.colors.primary.toColor() else AppTheme.colors.textPrimary.toColor(),
                         iconColor = op.recurrence.getUiColor().copy(alpha = 0.7f),
                         isExpanded = expandedCardKey == currentItemKey,
                         onToggleExpand = { expandedCardKey = if (expandedCardKey == currentItemKey) null else currentItemKey },

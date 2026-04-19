@@ -1,6 +1,5 @@
 package fr.abknative.outgo.wallet.impl.usecase
 
-import fr.abknative.outgo.core.api.time.DateTimeFormatter
 import fr.abknative.outgo.core.api.time.TimeProvider
 import fr.abknative.outgo.wallet.api.model.Operation
 import fr.abknative.outgo.wallet.api.model.operation.Recurrence
@@ -12,7 +11,6 @@ import kotlinx.coroutines.flow.map
 
 internal class ObserveProjectedOperationsUseCaseImpl(
     private val repository: OperationRepository,
-    private val dateTimeFormatter: DateTimeFormatter,
     private val timeProvider: TimeProvider
 ) : ObserveProjectedOperationsUseCase {
 
@@ -53,7 +51,7 @@ internal class ObserveProjectedOperationsUseCaseImpl(
         return when (op.recurrence) {
             Recurrence.UNIQUE -> {
                 if (opMonth == targetMonth && opYear == targetYear) {
-                    listOf(ProjectedOperation(operation = op, projectedDate = op.startDate, formattedDate = dateTimeFormatter.formatShortDate(op.startDate)))
+                    listOf(ProjectedOperation(operation = op, projectedDate = op.startDate))
                 } else emptyList()
             }
 
@@ -101,13 +99,7 @@ internal class ObserveProjectedOperationsUseCaseImpl(
         while (currentPointer <= absoluteEndLimit) {
             val finalDate = timeProvider.combineDateAndTime(currentPointer, 0, 0)
 
-            occurrences.add(
-                ProjectedOperation(
-                    operation = op,
-                    projectedDate = finalDate,
-                    formattedDate = dateTimeFormatter.formatShortDate(finalDate)
-                )
-            )
+            occurrences.add(ProjectedOperation(operation = op, projectedDate = finalDate))
 
             currentPointer = timeProvider.plusDays(currentPointer, 7)
         }
@@ -135,6 +127,6 @@ internal class ObserveProjectedOperationsUseCaseImpl(
         val projected = timeProvider.plusDays(targetStartOfMonth, safeDay - 1)
         val finalDate = timeProvider.combineDateAndTime(projected, 0, 0)
 
-        return listOf(ProjectedOperation(operation = op, projectedDate = finalDate, formattedDate = dateTimeFormatter.formatShortDate(finalDate)))
+        return listOf(ProjectedOperation(operation = op, projectedDate = finalDate))
     }
 }

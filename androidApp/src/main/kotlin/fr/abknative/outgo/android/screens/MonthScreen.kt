@@ -150,10 +150,10 @@ fun MonthScreen(
                                         )
 
                                         OperationCard(
-                                            title = displayOperation.name,
-                                            subtitle = "${ListLabels.DUE_PREFIX} ${projectedOp.formattedDate} • ${displayOperation.recurrence.uiLabel}",
-                                            amountText = displayOperation.amountInCents.uiAmount,
-                                            amountColor = AppTheme.colors.textPrimary.toColor(),
+                                            topLeftText = displayOperation.name,
+                                            topRightText = displayOperation.recurrence.uiLabel,
+                                            bottomLeftText = "${ListLabels.DUE_PREFIX} ${projectedOp.formattedStartDate}",
+                                            bottomRightText = displayOperation.amountInCents.uiAmount,
                                             iconColor = displayOperation.recurrence.getUiColor().copy(alpha = 0.7f),
                                         )
 

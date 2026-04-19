@@ -11,8 +11,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.em
 import fr.abknative.outgo.android.R
 import fr.abknative.outgo.android.designsystem.atoms.CircleIcon
 import fr.abknative.outgo.android.designsystem.foundation.AppText
@@ -22,12 +24,13 @@ import fr.abknative.outgo.android.designsystem.foundation.toColor
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun OperationCard(
-    title: String,
-    subtitle: String,
-    amountText: String,
-    amountColor: Color,
-    iconColor: Color,
     modifier: Modifier = Modifier,
+    topLeftText: String,
+    topRightText: String? = null,
+    bottomLeftText: String,
+    bottomRightText: String,
+    amountColor: Color = AppTheme.colors.textPrimary.toColor(),
+    iconColor: Color,
     isExpanded: Boolean = false,
     onToggleExpand: (() -> Unit)? = null,
     onDeleteRequest: (() -> Unit)? = null,
@@ -51,7 +54,7 @@ fun OperationCard(
                 .clip(AppTheme.shapes.large)
                 .then(
                     if (isInteractive) {
-                        Modifier.clickable { onToggleExpand?.invoke() }
+                        Modifier.clickable { onToggleExpand.invoke() }
                     } else Modifier
                 )
                 .padding(horizontal = AppTheme.dimens.large, vertical = AppTheme.dimens.large),
@@ -68,33 +71,50 @@ fun OperationCard(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.Center
             ) {
-                // --- Titre ---
-                AppText(
-                    text = title,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
+
+                // --- TOP LINE ---
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.Top
+                ) {
+                    AppText(
+                        text = topLeftText,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.weight(1f)
+                    )
+
+                    Spacer(modifier = Modifier.width(AppTheme.dimens.medium))
+
+                    if (topRightText != null) {
+                        Spacer(modifier = Modifier.width(AppTheme.dimens.small))
+                        AppText(
+                            text = topRightText,
+                            style = AppTheme.typo.label.copy(fontWeight = FontWeight.Normal),
+                            color = AppTheme.colors.textSecondary.toColor(),
+                            textAlign = TextAlign.End
+                        )
+                    }
+                }
 
                 Spacer(modifier = Modifier.height(AppTheme.dimens.small))
 
-                // --- Sous-titre et Montant ---
+                // --- BOTTOM LINE ---
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.Bottom
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // Sous-titre (Date + Récurrence)
                     AppText(
-                        text = subtitle,
-                        style = AppTheme.typo.caption,
+                        text = bottomLeftText,
+                        style = AppTheme.typo.label.copy(fontWeight = FontWeight.Normal, letterSpacing = (-0.02).em),
                         color = AppTheme.colors.textSecondary.toColor(),
                         modifier = Modifier.weight(1f)
                     )
 
                     Spacer(modifier = Modifier.width(AppTheme.dimens.medium))
 
-                    // Montant
                     AppText(
-                        text = amountText,
+                        text = bottomRightText,
                         color = amountColor,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,

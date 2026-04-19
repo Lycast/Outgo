@@ -57,6 +57,18 @@ val Recurrence.uiLabel: String
         Recurrence.UNKNOWN -> ""
     }
 
+/**
+ * Returns the localized label for a [Recurrence] type.
+ */
+val Recurrence.uiFormattedLabel: String
+    @Composable get() = when (this) {
+        Recurrence.UNIQUE -> ListLabels.CYCLE_UNIQUE_FORMATTED
+        Recurrence.WEEKLY -> ListLabels.CYCLE_WEEKLY_FORMATTED
+        Recurrence.MONTHLY -> ListLabels.CYCLE_MONTHLY_FORMATTED
+        Recurrence.YEARLY -> ListLabels.CYCLE_YEARLY_FORMATTED
+        Recurrence.UNKNOWN -> ""
+    }
+
 // --- List Filters UI Mapping ---
 
 /**

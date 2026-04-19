@@ -15,7 +15,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 
 internal class ListPresenterImpl(
-    private val observeActiveOperations: ObserveProjectedOperationsUseCase,
+    private val observeProjectedOperations: ObserveProjectedOperationsUseCase,
     private val observeStandardOperations: ObserveStandardOperationsUseCase,
     private val observeWallets: ObserveWalletsUseCase,
     private val deleteOperation: DeleteOperationUseCase,
@@ -93,13 +93,18 @@ internal class ListPresenterImpl(
                 }
                 .flatMapLatest { input ->
                     val operationsFlow = when (input.viewMode) {
-                        ListViewMode.PROJECTED -> observeActiveOperations(input.wallet.id, input.month, input.year)
+                        ListViewMode.PROJECTED -> observeProjectedOperations(input.wallet.id, input.month, input.year)
                         ListViewMode.STANDARD -> observeStandardOperations(input.wallet.id).map { rawOps ->
                             rawOps.map { op ->
+
+                                val startDateStr = dateTimeFormatter.formatNumericDate(op.startDate)
+                                val endDateStr = op.endDate?.let { dateTimeFormatter.formatNumericDate(it) }
+
                                 ProjectedOperation(
                                     operation = op,
                                     projectedDate = op.startDate,
-                                    formattedDate = dateTimeFormatter.formatShortDate(op.startDate)
+                                    formattedStartDate = startDateStr,
+                                    formattedEndDate = endDateStr ?: ""
                                 )
                             }
                         }

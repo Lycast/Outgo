@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import fr.abknative.outgo.core.api.extensions.safeLaunch
 import fr.abknative.outgo.core.api.logs.AppException
 import fr.abknative.outgo.core.api.logs.Result
+import fr.abknative.outgo.core.api.time.DateTimeFormatter
 import fr.abknative.outgo.core.api.time.TimeProvider
 import fr.abknative.outgo.core.api.validators.AmountValidator
 import fr.abknative.outgo.core.api.validators.NameValidator
@@ -19,13 +20,14 @@ import kotlinx.coroutines.flow.*
 import kotlin.math.roundToLong
 
 internal class MonthPresenterImpl(
-    private val observeActiveOperations: ObserveProjectedOperationsUseCase,
+    private val observeProjectedOperations: ObserveProjectedOperationsUseCase,
     private val observeWallets: ObserveWalletsUseCase,
     private val calculateDashboardData: CalculatePeriodStatsUseCase,
     private val saveWallet: SaveWalletUseCase,
     private val saveOperation: SaveOperationUseCase,
     private val featureManager: FeatureManager,
     private val mapper: MonthStateMapper,
+    private val dateTimeFormatter: DateTimeFormatter,
     private val timeProvider: TimeProvider
 ) : MonthPresenter() {
 
@@ -69,10 +71,15 @@ internal class MonthPresenterImpl(
                             MonthPipelineInput(wallet = wallets.first(), month = m, year = y, isPremium = p)
                         }
                             .flatMapLatest { input ->
-                                observeActiveOperations(input.wallet.id, input.month, input.year)
+                                observeProjectedOperations(input.wallet.id, input.month, input.year)
                                     .map { ops ->
+                                        val formattedOps = ops.map { pop ->
+                                            pop.copy(
+                                                formattedStartDate = dateTimeFormatter.formatShortDate(pop.projectedDate)
+                                            )
+                                        }
                                         val stats = calculateDashboardData(ops, input.month, input.year)
-                                        Triple(ops, stats, input)
+                                        Triple(formattedOps, stats, input)
                                     }
                             }
                     }

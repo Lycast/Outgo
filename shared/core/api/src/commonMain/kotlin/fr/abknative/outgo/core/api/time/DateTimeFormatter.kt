@@ -14,6 +14,6 @@ interface DateTimeFormatter {
     /** format: "April 2026" (utile pour tes en-têtes de mois) */
     fun formatMonthAndYear(millis: EpochMillis): String
 
-    /** format: "14:30" */
-    fun formatTime(millis: EpochMillis): String
+    /** format: "04/05/2026" */
+    fun formatNumericDate(millis: EpochMillis): String
 }
