@@ -25,5 +25,9 @@ gradlePlugin {
             id = "outgo.kmp.library"
             implementationClass = "fr.abknative.outgo.convention.OutgoKmpLibraryConventionPlugin"
         }
+        register("androidComposeConvention") {
+            id = "outgo.android.compose"
+            implementationClass = "fr.abknative.outgo.convention.OutgoAndroidComposeConventionPlugin"
+        }
     }
 }

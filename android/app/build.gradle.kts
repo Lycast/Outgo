@@ -1,0 +1,60 @@
+plugins {
+    alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.google.android.secrets)
+    alias(libs.plugins.google.services)
+    id("outgo.android.application")
+}
+
+android {
+    namespace = "fr.abknative.outgo.android.app"
+
+    defaultConfig {
+        applicationId = "fr.abknative.outgo.android"
+        versionCode = 1
+        versionName = "1.0"
+    }
+
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
+    }
+
+    buildTypes {
+        getByName("release") {
+            isMinifyEnabled = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
+    }
+}
+
+dependencies {
+    // KMP Shared (Pour instancier Koin et la Database)
+    implementation(projects.shared.app)
+    implementation(projects.shared.core.api)
+    implementation(projects.shared.database)
+
+    // Android Modules (On assemble l'app)
+    implementation(projects.android.core)
+    implementation(projects.android.ui.list)
+    implementation(projects.android.ui.login)
+    implementation(projects.android.ui.month)
+    implementation(projects.android.ui.onboarding)
+    implementation(projects.android.ui.operation)
+    implementation(projects.android.ui.settings)
+    implementation(projects.android.ui.year)
+
+    // Compose Activity & Navigation
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.compose.runtime)
+
+    // Koin Android (Seul l'app initialise Koin)
+    implementation(libs.koin.android)
+    implementation(libs.koin.androidx.compose)
+
+    // Database Driver
+    implementation(libs.sqldelight.driver.android)
+}
