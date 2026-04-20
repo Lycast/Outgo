@@ -156,7 +156,7 @@ fun ShellScreen(
 
                                 AppStep.Year -> {
                                     if (shellState.isPremium) YearScreen()
-                                    else PremiumShowcaseScreen(onNotifyMeClick = {})
+                                    else PremiumShowcaseScreen()
                                 }
 
                                 AppStep.List -> ListScreen(
