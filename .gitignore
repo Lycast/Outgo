@@ -24,3 +24,4 @@ kotlin-js-store/
 /server/api/src/firebase-adminsdk.json
 /.dockerignore
 /android/app/google-services.json
+/android/ui/year/src/main/kotlin/fr/abknative/outgo/android/ui/year/Url.kt

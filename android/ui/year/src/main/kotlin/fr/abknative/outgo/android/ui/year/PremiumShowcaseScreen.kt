@@ -6,6 +6,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import fr.abknative.outgo.android.core.PremiumLabels
@@ -21,10 +22,11 @@ import fr.abknative.outgo.android.core.designsystem.toColor
  */
 @Composable
 fun PremiumShowcaseScreen(
-    onNotifyMeClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val scrollState = rememberScrollState()
+
+    val uriHandler = LocalUriHandler.current
 
     Column(
         modifier = modifier
@@ -56,6 +58,7 @@ fun PremiumShowcaseScreen(
             badge = PremiumLabels.ESSENTIAL_BADGE,
             description = PremiumLabels.ESSENTIAL_DESC,
             features = PremiumLabels.ESSENTIAL_FEATURES,
+            ending = null,
             isActive = true
         )
 
@@ -67,6 +70,7 @@ fun PremiumShowcaseScreen(
             badge = PremiumLabels.PREMIUM_BADGE,
             description = PremiumLabels.PREMIUM_DESC,
             features = PremiumLabels.PREMIUM_FEATURES,
+            ending = PremiumLabels.PREMIUM_ENDING,
             isActive = false
         )
 
@@ -74,7 +78,7 @@ fun PremiumShowcaseScreen(
 
         // --- Call To Action ---
         AppButton(
-            onClick = onNotifyMeClick,
+            onClick = { uriHandler.openUri(Url.LINK_URL) },
             modifier = Modifier.fillMaxWidth()
         ) {
             AppText(
@@ -93,6 +97,7 @@ private fun ShowcaseCard(
     badge: String,
     description: String,
     features: List<String>,
+    ending: String?,
     isActive: Boolean
 ) {
     GlassCard(
@@ -120,6 +125,14 @@ private fun ShowcaseCard(
                     text = "• $feature",
                     color = AppTheme.colors.textSecondary.toColor(),
                     modifier = Modifier.padding(vertical = 2.dp)
+                )
+            }
+
+            if (ending != null) {
+                Spacer(modifier = Modifier.height(AppTheme.dimens.medium))
+                AppText(
+                    text = ending,
+                    modifier = Modifier.padding(top = AppTheme.dimens.small)
                 )
             }
         }

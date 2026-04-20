@@ -207,15 +207,15 @@
     <string name="premium_essential_desc">Le contrôle de votre mois en cours.</string>
     <string name="premium_essential_feature_1">Enveloppe mensuelle simple</string>
     <string name="premium_essential_feature_2">Suivi instantané des dépenses</string>
-    <string name="premium_essential_feature_3">Jauge de survie en temps réel</string>
+    <string name="premium_essential_feature_3">Synchronisation multi-appareils</string>
     <string name="premium_premium_title">Outgo Premium</string>
-    <string name="premium_premium_badge">BIENTÔT DISPONIBLE</string>
+    <string name="premium_premium_badge">Intéressé par une version premium à petit prix ?</string>
     <string name="premium_premium_desc">Le pilotage de votre trésorerie à long terme.</string>
     <string name="premium_premium_feature_1">Véritable Gestion de Trésorerie</string>
     <string name="premium_premium_feature_2">Portefeuilles Multiples</string>
-    <string name="premium_premium_feature_3">Projections sur 12 Mois</string>
-    <string name="premium_premium_feature_4">Synchro avec le compte Bancaire ?</string>
-    <string name="premium_notify_me_action">Prévenez-moi du lancement</string>
+    <string name="premium_premium_feature_3">Synchro avec le compte Bancaire ?</string>
+    <string name="premium_premium_feature_4">Aidez-moi à construire la version qui vous correspond en répondant à 3 questions rapides.</string>
+    <string name="premium_notify_me_action">Donner mon avis (1 min)</string>
 
     <string name="dialog_logout_desc">Vous devrez vous reconnecter pour synchroniser vos prochaines modifications avec le cloud.</string>
     <string name="dialog_logout_confirm">Déconnexion</string>

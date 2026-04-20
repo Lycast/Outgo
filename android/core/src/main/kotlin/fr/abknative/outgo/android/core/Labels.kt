@@ -237,9 +237,9 @@ object PremiumLabels {
     val PREMIUM_FEATURES @Composable get() = listOf(
         stringResource(Res.string.premium_premium_feature_1),
         stringResource(Res.string.premium_premium_feature_2),
-        stringResource(Res.string.premium_premium_feature_3),
-        stringResource(Res.string.premium_premium_feature_4)
+        stringResource(Res.string.premium_premium_feature_3)
     )
 
+    val PREMIUM_ENDING @Composable get() = stringResource(Res.string.premium_premium_feature_4)
     val NOTIFY_ME_ACTION @Composable get() = stringResource(Res.string.premium_notify_me_action)
 }
