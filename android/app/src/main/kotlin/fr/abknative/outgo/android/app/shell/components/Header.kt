@@ -15,6 +15,7 @@ import fr.abknative.outgo.sync.api.model.SyncState
 fun Header(
     modifier: Modifier = Modifier,
     syncState: SyncState,
+    subtitle: String = "",
     isVertical: Boolean = false,
     onSyncIconClick: () -> Unit,
 ) {
@@ -42,7 +43,7 @@ fun Header(
     // --- RENDER ---
     if (isVertical) {
         Column(
-            modifier = containerModifier,
+            modifier = containerModifier.padding(horizontal = AppTheme.dimens.medium),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceBetween
         ) {
@@ -53,10 +54,18 @@ fun Header(
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = AppTheme.dimens.medium)
                     .padding(top = AppTheme.dimens.medium)
             )
-
+            Spacer(Modifier.height(AppTheme.dimens.small))
+            if (subtitle.isNotBlank()) {
+                AppText(
+                    text = subtitle,
+                    style = AppTheme.typo.label,
+                    color = AppTheme.colors.textSecondary.toColor(),
+                    textAlign = TextAlign.Center
+                )
+            }
+            Spacer(Modifier.weight(1f))
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.medium)
@@ -70,11 +79,21 @@ fun Header(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            AppText(
-                text = CommonLabels.APP_NAME,
-                style = AppTheme.typo.title,
-                color = AppTheme.colors.primary.toColor()
-            )
+            Column {
+                AppText(
+                    text = CommonLabels.APP_NAME,
+                    style = AppTheme.typo.title,
+                    color = AppTheme.colors.primary.toColor()
+                )
+                Spacer(Modifier.height(AppTheme.dimens.small))
+                if (subtitle.isNotBlank()) {
+                    AppText(
+                        text = subtitle,
+                        style = AppTheme.typo.label,
+                        color = AppTheme.colors.textSecondary.toColor()
+                    )
+                }
+            }
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,

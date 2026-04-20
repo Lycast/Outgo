@@ -4,11 +4,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.input.VisualTransformation
-import fr.abknative.outgo.android.core.designsystem.AppText
 import fr.abknative.outgo.android.core.designsystem.AppTheme
 import fr.abknative.outgo.android.core.designsystem.toColor
 
@@ -37,6 +37,8 @@ fun AppTextField(
         unfocusedBorderColor = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.2f),
         focusedLabelColor = AppTheme.colors.primary.toColor(),
         unfocusedLabelColor = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.6f),
+        focusedPlaceholderColor = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.4f),
+        unfocusedPlaceholderColor = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.4f),
         cursorColor = AppTheme.colors.primary.toColor(),
         focusedTextColor = AppTheme.colors.textPrimary.toColor(),
         unfocusedTextColor = AppTheme.colors.textPrimary.toColor(),
@@ -48,8 +50,8 @@ fun AppTextField(
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
-        label = { AppText(text = label, style = AppTheme.typo.caption) },
-        placeholder = { AppText(text = placeholder) },
+        label = { Text(text = label, style = AppTheme.typo.caption,) },
+        placeholder = { Text(text = placeholder) },
         isError = isError,
         enabled = enabled,
         singleLine = singleLine,

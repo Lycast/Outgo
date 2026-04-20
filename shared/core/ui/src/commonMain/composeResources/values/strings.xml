@@ -116,9 +116,9 @@
 
     <string name="month_default_error">Une erreur inattendue est survenue</string>
     <string name="month_section_budget">Budget</string>
-    <string name="month_section_expenses">Dépenses</string>
+    <string name="month_section_expenses">Dépenses du mois</string>
     <string name="month_section_upcoming">Dépenses à venir</string>
-    <string name="month_section_recurrence">Répartition</string>
+    <string name="month_section_recurrence">Répartition du mois</string>
     <string name="month_empty_state_title">Commencez votre suivi</string>
     <string name="month_empty_state_desc">Ajoutez votre première dépense pour voir votre budget prendre vie.</string>
 

@@ -14,6 +14,7 @@ fun AppGlobalHeader(
 ) {
     Header(
         syncState = shellState.syncState,
+        subtitle = shellState.todayFormatted,
         isVertical = isVertical,
         onSyncIconClick = {
             if (shellState.syncState.isUnauthenticated) {

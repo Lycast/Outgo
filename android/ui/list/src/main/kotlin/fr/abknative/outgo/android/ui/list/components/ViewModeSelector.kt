@@ -1,9 +1,6 @@
 package fr.abknative.outgo.android.ui.list.components
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -33,7 +30,8 @@ fun ViewModeSelector(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = AppTheme.dimens.medium),
+            .padding(horizontal = AppTheme.dimens.medium)
+        ,
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(AppTheme.dimens.small)
     ) {
@@ -52,8 +50,10 @@ fun ViewModeSelector(
             Icon(
                 painter = painterResource(id = R.drawable.info),
                 contentDescription = AccessibilityLabels.VIEW_MODE,
-                tint = AppTheme.colors.textPrimary.toColor()
+                tint = AppTheme.colors.primary.toColor(),
+                modifier = Modifier.size(AppTheme.dimens.big)
             )
         }
+        Spacer(Modifier.width(AppTheme.dimens.medium))
     }
 }

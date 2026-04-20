@@ -1,11 +1,9 @@
 package fr.abknative.outgo.android.ui.month
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
@@ -14,22 +12,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import fr.abknative.outgo.android.core.CommonLabels
-import fr.abknative.outgo.android.core.ListLabels
 import fr.abknative.outgo.android.core.MonthLabels
-import fr.abknative.outgo.android.core.components.cards.GlassCard
-import fr.abknative.outgo.android.core.components.cards.OperationCard
 import fr.abknative.outgo.android.core.components.feedback.AppSnackbar
 import fr.abknative.outgo.android.core.components.selection.MonthTimeSelector
-import fr.abknative.outgo.android.core.designsystem.AppText
 import fr.abknative.outgo.android.core.designsystem.AppTheme
 import fr.abknative.outgo.android.core.designsystem.toColor
 import fr.abknative.outgo.android.core.extensions.getMonthName
-import fr.abknative.outgo.android.core.extensions.uiAmount
-import fr.abknative.outgo.android.ui.month.month.*
+import fr.abknative.outgo.android.ui.month.components.*
 import fr.abknative.outgo.month.api.MonthIntent
 import fr.abknative.outgo.month.api.MonthPresenter
 import java.util.Locale.getDefault
@@ -87,44 +79,22 @@ fun MonthScreen(
                         .padding(top = AppTheme.dimens.large, bottom = 100.dp),
                     verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.extraLarge)
                 ) {
-                    // Budget Section
-                    Column {
-                        AppText(
-                            text = MonthLabels.SECTION_BUDGET.uppercase(getDefault()),
-                            style = AppTheme.typo.label.copy(fontWeight = FontWeight.Bold),
-                            color = AppTheme.colors.primary.toColor(),
-                            modifier = Modifier.padding(bottom = AppTheme.dimens.small, start = AppTheme.dimens.medium)
-                        )
-                        GlassCard {
-                            StatsCardWallet(
-                                activeWalletName = state.activeWalletName,
-                                monthlyIncomeInCents = state.monthlyIncomeInCents,
-                                disposableIncomeInCents = state.disposableIncomeInCents,
-                                onEditBudgetClick = { presenter.onIntent(MonthIntent.OpenEditWalletDialog) }
-                            )
-                        }
-                    }
 
+                    // Budget Section
+                    StatsCardWallet(
+                        activeWalletName = state.activeWalletName,
+                        monthlyIncomeInCents = state.monthlyIncomeInCents,
+                        disposableIncomeInCents = state.disposableIncomeInCents,
+                        onEditBudgetClick = { presenter.onIntent(MonthIntent.OpenEditWalletDialog) }
+                    )
+
+                    // Expenses Section
                     if (state.totalOutgoingsInCents > 0) {
-                        // Expenses Section
-                        Column {
-                            AppText(
-                                text = MonthLabels.SECTION_EXPENSES.uppercase(getDefault()),
-                                style = AppTheme.typo.label.copy(fontWeight = FontWeight.Bold),
-                                color = AppTheme.colors.primary.toColor(),
-                                modifier = Modifier.padding(
-                                    bottom = AppTheme.dimens.small,
-                                    start = AppTheme.dimens.medium
-                                )
-                            )
-                            GlassCard {
-                                StatsCardExpense(
-                                    totalOutgoingsInCents = state.totalOutgoingsInCents,
-                                    remainingToPayInCents = state.remainingToPayInCents,
-                                    progress = state.outgoingsProgress
-                                )
-                            }
-                        }
+                        StatsCardExpense(
+                            totalOutgoingsInCents = state.totalOutgoingsInCents,
+                            remainingToPayInCents = state.remainingToPayInCents,
+                            progress = state.outgoingsProgress
+                        )
                     } else {
                         StatsCardEmptyState(
                             onAddOperationClick = onAddOperationClick
@@ -132,64 +102,16 @@ fun MonthScreen(
                     }
 
                     // Upcoming Expenses
-                    if (state.nextUpcomingExpenses.isNotEmpty()) {
-                        Column {
-                            AppText(
-                                text = MonthLabels.SECTION_UPCOMING.uppercase(getDefault()),
-                                style = AppTheme.typo.label.copy(fontWeight = FontWeight.Bold),
-                                color = AppTheme.colors.primary.toColor(),
-                                modifier = Modifier.padding(
-                                    bottom = AppTheme.dimens.small,
-                                    start = AppTheme.dimens.medium
-                                )
-                            )
-                            GlassCard {
-                                Column(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .clickable(onClick = onNavigateToList)
-                                ) {
-                                    state.nextUpcomingExpenses.forEachIndexed { index, projectedOp ->
-                                        val displayOperation = projectedOp.operation.copy(
-                                            startDate = projectedOp.projectedDate
-                                        )
+                    CardUpcomingExpenses(
+                        nextUpcomingExpenses = state.nextUpcomingExpenses,
+                        onNavigateToList = onNavigateToList
+                    )
 
-                                        OperationCard(
-                                            topLeftText = displayOperation.name,
-                                            topRightText = displayOperation.recurrence.uiLabel,
-                                            bottomLeftText = "${ListLabels.DUE_PREFIX} ${projectedOp.formattedStartDate}",
-                                            bottomRightText = displayOperation.amountInCents.uiAmount,
-                                            iconColor = displayOperation.recurrence.getUiColor().copy(alpha = 0.7f),
-                                        )
-
-                                        if (index < state.nextUpcomingExpenses.lastIndex) {
-                                            HorizontalDivider(color = AppTheme.colors.surface100.toColor())
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
 
                     // Recurrence Breakdown
-                    if (state.expensesByRecurrence.isNotEmpty()) {
-                        Column {
-                            AppText(
-                                text = MonthLabels.SECTION_RECURRENCE.uppercase(getDefault()),
-                                style = AppTheme.typo.label.copy(fontWeight = FontWeight.Bold),
-                                color = AppTheme.colors.primary.toColor(),
-                                modifier = Modifier.padding(
-                                    bottom = AppTheme.dimens.small,
-                                    start = AppTheme.dimens.medium
-                                )
-                            )
-                            GlassCard {
-                                StatsCardRecurrence(
-                                    breakdown = state.expensesByRecurrence
-                                )
-                            }
-                        }
-                    }
+                    StatsCardRecurrence(
+                        breakdown = state.expensesByRecurrence
+                    )
                 }
             }
         }

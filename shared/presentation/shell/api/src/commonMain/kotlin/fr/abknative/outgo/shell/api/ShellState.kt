@@ -11,6 +11,7 @@ import fr.abknative.outgo.sync.api.model.SyncState
 data class ShellState(
     val activeWalletId: String? = null,
     val operationPayload: OperationPayload? = null,
+    val todayFormatted: String = "",
 
     val isOperationFormVisible: Boolean = false,
 

@@ -7,6 +7,8 @@ import fr.abknative.outgo.core.api.logs.AppException
 import fr.abknative.outgo.core.api.logs.Result
 import fr.abknative.outgo.core.api.nav.AppStep
 import fr.abknative.outgo.core.api.nav.NavCoordinator
+import fr.abknative.outgo.core.api.time.DateTimeFormatter
+import fr.abknative.outgo.core.api.time.TimeProvider
 import fr.abknative.outgo.shell.api.ShellIntent
 import fr.abknative.outgo.shell.api.ShellPresenter
 import fr.abknative.outgo.shell.api.ShellState
@@ -25,6 +27,8 @@ internal class ShellPresenterImpl(
     private val featureManager: FeatureManager,
     private val observeWallets: ObserveWalletsUseCase,
     private val coordinator: NavCoordinator,
+    private val dateTimeFormatter: DateTimeFormatter,
+    private val timeProvider: TimeProvider,
     private val storage: KeyValueStorage
 ) : ShellPresenter() {
 
@@ -38,10 +42,17 @@ internal class ShellPresenterImpl(
     }
 
     init {
+        initTodayDate()
         startObservingSyncState()
         startObservingPremiumStatus()
         startGlobalNavigationLogic()
         startObservingCriticalSyncErrors()
+    }
+
+    private fun initTodayDate() {
+        val now = timeProvider.now()
+        val formatted = dateTimeFormatter.formatLongDate(now)
+        _state.update { it.copy(todayFormatted = formatted) }
     }
 
     private fun startObservingSyncState() {
