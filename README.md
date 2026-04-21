@@ -46,10 +46,14 @@ To manage its modular complexity, Outgo uses a custom **`build-logic`** module. 
 * **Sync Orchestrator**: A sophisticated push/pull system with debouncing and network monitoring to optimize battery and data usage.
 * **Reactive UI State**: Heavy use of `combine` and `StateFlow` to ensure the UI perfectly mirrors the database state in real-time.
 
-## 📄 License
+## 📄 License & Copyright
 
-This project is licensed under the **MIT License**. It is intended as a reference for modern KMP development and a foundation for scalable mobile applications.
+**© 2026 ABK Native (Anthony). All rights reserved.**
 
+The source code in this repository is made public for portfolio and demonstration purposes only.
+**No license is granted** for the use, modification, distribution, or commercialization of this code.
+
+You are welcome to read the code to evaluate my technical skills, but you may not use it to build your own application.
 ---
 Created by **ABK Native**.
 [Get in touch](https://www.abknative.fr/contact)

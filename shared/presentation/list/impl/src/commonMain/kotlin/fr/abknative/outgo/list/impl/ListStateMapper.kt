@@ -73,7 +73,7 @@ internal class ListStateMapper(
             ProjectedFilter.PAST -> when {
                 viewAbsolute < nowAbsolute -> ops
                 viewAbsolute > nowAbsolute -> emptyList()
-                else -> ops.filter { timeProvider.dayOfMonth(it.projectedDate) < currentDay }
+                else -> ops.filter { timeProvider.dayOfMonth(it.projectedDate) < currentDay }.reversed()
             }
             ProjectedFilter.REMAINING -> when {
                 viewAbsolute < nowAbsolute -> emptyList()

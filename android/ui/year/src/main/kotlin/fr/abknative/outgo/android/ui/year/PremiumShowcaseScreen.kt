@@ -10,6 +10,7 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import fr.abknative.outgo.android.core.PremiumLabels
+import fr.abknative.outgo.android.core.Url
 import fr.abknative.outgo.android.core.components.buttons.AppButton
 import fr.abknative.outgo.android.core.components.cards.GlassCard
 import fr.abknative.outgo.android.core.designsystem.AppText
@@ -78,7 +79,7 @@ fun PremiumShowcaseScreen(
 
         // --- Call To Action ---
         AppButton(
-            onClick = { uriHandler.openUri(Url.LINK_URL) },
+            onClick = { uriHandler.openUri(Url.FORM_URL) },
             modifier = Modifier.fillMaxWidth()
         ) {
             AppText(

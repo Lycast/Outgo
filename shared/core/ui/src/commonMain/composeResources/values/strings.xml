@@ -162,8 +162,10 @@
     <string name="settings_section_account">Compte</string>
     <string name="settings_dark_mode_title">Mode sombre</string>
     <string name="settings_dark_mode_subtitle">Réduire la fatigue visuelle</string>
-    <string name="settings_tips_title">Découvrir Outgo</string>
-    <string name="settings_tips_subtitle">Présentation du projet et de son créateur</string>
+    <string name="settings_info_outgo_title">Découvrir Outgo</string>
+    <string name="settings_info_outgo_subtitle">Présentation du projet et de son créateur</string>
+    <string name="settings_rating_title">Noter l'application</string>
+    <string name="settings_rating_subtitle">Soutenez le projet sur le Play Store</string>
     <string name="settings_contact_title">Me contacter</string>
     <string name="settings_contact_subtitle">Une question, une idée ou un bug ?</string>
     <string name="settings_sync_title">Synchronisation cloud</string>
@@ -175,8 +177,6 @@
     <string name="settings_local_purge_title">Supprimer les données</string>
     <string name="settings_local_purge_subtitle">Réinitialise l'application sur cet appareil.</string>
     <string name="settings_app_version_prefix">Outgo v1.0.0</string>
-    <string name="settings_url_site">https://abknative.fr</string>
-    <string name="settings_url_contact">https://abknative.fr/contact</string>
     <string name="settings_section_data_account">Données &amp; Compte</string>
 
     <string name="login_title">Synchronisez vos données de façon sécurisée. Les serveurs Outgo sont hébergés en France</string>

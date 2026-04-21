@@ -172,8 +172,11 @@ object SettingsLabels {
     val SECTION_ACCOUNT @Composable get() = stringResource(Res.string.settings_section_account)
     val DARK_MODE_TITLE @Composable get() = stringResource(Res.string.settings_dark_mode_title)
     val DARK_MODE_SUBTITLE @Composable get() = stringResource(Res.string.settings_dark_mode_subtitle)
-    val TIPS_TITLE @Composable get() = stringResource(Res.string.settings_tips_title)
-    val TIPS_SUBTITLE @Composable get() = stringResource(Res.string.settings_tips_subtitle)
+    val INFO_OUTGO_TITLE @Composable get() = stringResource(Res.string.settings_info_outgo_title)
+    val INFO_OUTGO_SUBTITLE @Composable get() = stringResource(Res.string.settings_info_outgo_subtitle)
+
+    val RATING_TITLE @Composable get() = stringResource(Res.string.settings_rating_title)
+    val RATING_SUBTITLE @Composable get() = stringResource(Res.string.settings_rating_subtitle)
     val CONTACT_TITLE @Composable get() = stringResource(Res.string.settings_contact_title)
     val CONTACT_SUBTITLE @Composable get() = stringResource(Res.string.settings_contact_subtitle)
     val SYNC_TITLE @Composable get() = stringResource(Res.string.settings_sync_title)
@@ -185,9 +188,6 @@ object SettingsLabels {
     val PURGE_TITLE @Composable get() = stringResource(Res.string.settings_local_purge_title)
     val PURGE_SUBTITLE @Composable get() = stringResource(Res.string.settings_local_purge_subtitle)
     val APP_VERSION_PREFIX @Composable get() = stringResource(Res.string.settings_app_version_prefix)
-
-    val URL_SITE @Composable get() = stringResource(Res.string.settings_url_site)
-    val URL_CONTACT @Composable get() = stringResource(Res.string.settings_url_contact)
     val SECTION_DATA_AND_ACCOUNT @Composable get() = stringResource(Res.string.settings_section_data_account)
 }
 
