@@ -53,7 +53,7 @@ To manage its modular complexity, Outgo uses a custom **`build-logic`** module. 
 The source code in this repository is made public for portfolio and demonstration purposes only.
 **No license is granted** for the use, modification, distribution, or commercialization of this code.
 
-**You are welcome to read the code to evaluate my technical skills, but you may not use it to build your own application.
+You are welcome to read the code to evaluate my technical skills, but you may not use it to build your own application.
 
 ---
 Created by **ABK Native**.
