@@ -19,8 +19,7 @@ dependencies {
     implementation(libs.ktor.server.auth)
 
     // Sentry
-    implementation(libs.sentry.otel)
-    implementation(libs.ktor.otel)
+    implementation(libs.sentry.core)
 
     implementation(libs.logback)
 

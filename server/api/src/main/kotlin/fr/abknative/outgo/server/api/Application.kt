@@ -30,6 +30,7 @@ fun main() {
  */
 fun Application.module() {
 
+    configureMonitoring()
     configureLogging()
     configureSerialization()
     configureStatusPages()
@@ -53,15 +54,16 @@ fun Application.module() {
             adminRoutes()
         }
     } catch (e: Exception) {
-        // En cas de crash, on capture l'erreur exacte et on la stocke
         startupStatus = "CRASH D'INITIALISATION : ${e.message} \n Cause : ${e.cause}"
-        println(startupStatus) // Utile pour les logs internes
+        println(startupStatus)
     }
 
-    // Le point de survie : cette route est chargée quoi qu'il arrive
     routing {
         get("/health") {
             call.respondText(startupStatus)
+        }
+        get("/sentry-test") {
+            throw RuntimeException("Boum ! Test Sentry Ktor réussi.")
         }
     }
 }
