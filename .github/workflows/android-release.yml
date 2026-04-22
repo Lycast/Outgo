@@ -21,7 +21,7 @@ jobs:
 
       - name: Decode Keystore
         env:
-          KEYSTORE_B64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          KEYSTORE_B64: ${{ secrets.ANDROID_KEYSTORE_FILE }}
         run: echo "$KEYSTORE_B64" | base64 -di > outgo-upload-key.jks
 
       - name: Decode Google Services JSON
@@ -40,7 +40,7 @@ jobs:
         uses: r0adkll/sign-android-release@v1
         with:
           releaseDirectory: android/app/build/outputs/bundle/release
-          signingKeyBase64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          signingKeyBase64: ${{ secrets.ANDROID_KEYSTORE_FILE }}
           alias: ${{ secrets.ANDROID_KEY_ALIAS }}
           keyStorePassword: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
           keyPassword: ${{ secrets.ANDROID_KEY_PASSWORD }}
