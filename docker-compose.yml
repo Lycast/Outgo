@@ -29,6 +29,7 @@ services:
       DB_URL: jdbc:postgresql://db:5432/outgo_db
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
+      SENTRY_DSN: ${SENTRY_DSN}
       FIREBASE_ADMIN_PATH: /app/config/firebase-adminsdk.json
     volumes:
       - ./server/api/src/firebase-adminsdk.json:/app/config/firebase-adminsdk.json:ro

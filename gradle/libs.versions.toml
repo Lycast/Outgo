@@ -5,6 +5,8 @@ kotlin = "2.2.21"
 compose-multiplatform = "1.7.3"
 sqldelight = "2.3.2"
 ktor = "3.4.1"
+sentry = "8.39.1"
+otel-instrumentation = "2.26.1-alpha"
 google-secrets-plugin = "2.0.1"
 firebase-admin = "9.2.0"
 firebase-gitlive = "2.4.0"
@@ -113,6 +115,10 @@ koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose", versi
 # --- KOIN SERVER (Integration) ---
 koin-ktor = { module = "io.insert-koin:koin-ktor", version.ref = "koin" }
 koin-logger-slf4j = { module = "io.insert-koin:koin-logger-slf4j", version.ref = "koin" }
+# Sentry pour Ktor
+sentry-core = { module = "io.sentry:sentry", version.ref = "sentry" }
+sentry-otel = { module = "io.sentry:sentry-opentelemetry-agentless", version.ref = "sentry" }
+ktor-otel = { module = "io.opentelemetry.instrumentation:opentelemetry-ktor-3.0", version.ref = "otel-instrumentation" }
 
 # --- KTOR (Client for Mobile/Web) ---
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
