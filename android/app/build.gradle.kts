@@ -22,7 +22,7 @@ android {
 
     signingConfigs {
         create("release") {
-            val keystoreFile = file("../outgo-upload-key.jks")
+            val keystoreFile = file("../../outgo-upload-key.jks")
 
             if (keystoreFile.exists()) {
                 storeFile = keystoreFile

@@ -24,7 +24,7 @@ jobs:
           echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 --decode > outgo-upload-key.jks
 
       - name: Build with Gradle
-        run: ./gradlew :android:bundleRelease
+        run: ./gradlew :android:app:bundleRelease
         env:
           ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
           ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
@@ -33,7 +33,7 @@ jobs:
       - name: Sign Android Release
         uses: r0adkll/sign-android-release@v1
         with:
-          releaseDirectory: android/build/outputs/bundle/release
+          releaseDirectory: android/app/build/outputs/bundle/release
           signingKeyBase64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
           alias: ${{ secrets.ANDROID_KEY_ALIAS }}
           keyStorePassword: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
@@ -43,4 +43,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: outgo-release-bundle
-          path: android/build/outputs/bundle/release/*.aab
+          path: android/app/build/outputs/bundle/release/*.aab
