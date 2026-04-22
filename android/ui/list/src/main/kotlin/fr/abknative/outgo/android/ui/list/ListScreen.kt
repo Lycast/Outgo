@@ -7,20 +7,15 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import fr.abknative.outgo.android.core.ListLabels
-import fr.abknative.outgo.android.core.components.feedback.AppSnackbar
 import fr.abknative.outgo.android.core.designsystem.AppTheme
 import fr.abknative.outgo.android.core.extensions.getMonthName
-import fr.abknative.outgo.android.core.toUIString
+import fr.abknative.outgo.android.core.toCommonUIString
 import fr.abknative.outgo.android.ui.list.components.ListFilterZone
 import fr.abknative.outgo.android.ui.list.components.OperationListContainer
 import fr.abknative.outgo.android.ui.list.components.ViewModeSelector
@@ -33,20 +28,20 @@ import fr.abknative.outgo.wallet.api.model.presenter.ProjectedOperation
 @Composable
 fun ListScreen(
     presenter: ListPresenter,
+    onError: (String) -> Unit,
     onEditOperation: (ProjectedOperation) -> Unit,
     onDuplicateOperation: (ProjectedOperation) -> Unit,
     modifier: Modifier = Modifier
 ) {
 
     val state by presenter.state.collectAsStateWithLifecycle()
-    val snackbarHostState = remember { SnackbarHostState() }
     val currentError = state.error
-    val errorMessage = currentError?.toUIString()
+    val errorMessage = currentError?.toCommonUIString()
     val formattedSelectedMonth = "${getMonthName(state.selectedMonth)} ${state.selectedYear}".uppercase()
 
     LaunchedEffect(currentError) {
         if (currentError != null && errorMessage != null) {
-            snackbarHostState.showSnackbar(message = errorMessage, withDismissAction = true)
+            onError(errorMessage)
             presenter.onIntent(ListIntent.DismissError)
         }
     }
@@ -102,9 +97,5 @@ fun ListScreen(
                 )
             }
         }
-        SnackbarHost(
-            hostState = snackbarHostState,
-            modifier = Modifier.align(Alignment.TopCenter)
-        ) { data -> AppSnackbar(data) }
     }
 }

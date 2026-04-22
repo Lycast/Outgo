@@ -10,8 +10,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import fr.abknative.outgo.android.core.toCommonUIString
 import fr.abknative.outgo.android.ui.onboarding.components.ConfigurationStep
 import fr.abknative.outgo.android.ui.onboarding.components.WelcomeStep
+import fr.abknative.outgo.core.ui.DesignAnimations
 import fr.abknative.outgo.onboarding.api.OnboardingIntent
 import fr.abknative.outgo.onboarding.api.OnboardingPresenter
 
@@ -25,6 +27,7 @@ fun OnboardingScreen(
 ) {
 
     val state by presenter.state.collectAsStateWithLifecycle()
+    val translatedError = state.error?.toCommonUIString()
     var currentStep by remember { mutableIntStateOf(1) }
 
     BackHandler(enabled = currentStep == 2) {
@@ -46,11 +49,11 @@ fun OnboardingScreen(
             targetState = currentStep,
             transitionSpec = {
                 if (targetState > initialState) {
-                    slideInHorizontally(animationSpec = tween(400)) { fullWidth -> fullWidth } + fadeIn() togetherWith
-                            slideOutHorizontally(animationSpec = tween(400)) { fullWidth -> -fullWidth } + fadeOut()
+                    slideInHorizontally(animationSpec = tween(DesignAnimations.NORMAL)) { fullWidth -> fullWidth } + fadeIn() togetherWith
+                            slideOutHorizontally(animationSpec = tween(DesignAnimations.NORMAL)) { fullWidth -> -fullWidth } + fadeOut()
                 } else {
-                    slideInHorizontally(animationSpec = tween(400)) { fullWidth -> -fullWidth } + fadeIn() togetherWith
-                            slideOutHorizontally(animationSpec = tween(400)) { fullWidth -> fullWidth } + fadeOut()
+                    slideInHorizontally(animationSpec = tween(DesignAnimations.NORMAL)) { fullWidth -> -fullWidth } + fadeIn() togetherWith
+                            slideOutHorizontally(animationSpec = tween(DesignAnimations.NORMAL)) { fullWidth -> fullWidth } + fadeOut()
                 }
             },
             label = "OnboardingTransition",
@@ -67,7 +70,7 @@ fun OnboardingScreen(
                     walletName = state.walletName,
                     incomeAmountText = state.incomeAmountText,
                     isLoading = state.isLoading,
-                    errorMessage = state.error?.message,
+                    errorMessage = translatedError,
                     onNameChange = { presenter.onIntent(OnboardingIntent.UpdateWalletName(it)) },
                     onAmountChange = { presenter.onIntent(OnboardingIntent.UpdateIncomeAmount(it)) },
                     onSubmit = { presenter.onIntent(OnboardingIntent.Submit) },

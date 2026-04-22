@@ -7,7 +7,7 @@ import fr.abknative.outgo.shared.core.ui.resources.*
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
-fun AppException.toUIString(): String {
+fun AppException.toCommonUIString(): String {
     return when (this) {
 
         // --- Domaine : Global / Technique ---

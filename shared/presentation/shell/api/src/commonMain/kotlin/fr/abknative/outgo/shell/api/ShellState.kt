@@ -23,5 +23,6 @@ data class ShellState(
 
     val isPremium: Boolean = false,
     val error: AppException? = null,
+    val globalErrorMessage: String? = null,
     val syncState: SyncState = SyncState.UNAUTHENTICATED
 )

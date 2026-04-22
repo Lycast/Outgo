@@ -1,6 +1,7 @@
 package fr.abknative.outgo.android.ui.operation
 
 import androidx.compose.runtime.Composable
+import fr.abknative.outgo.android.core.toCommonUIString
 import fr.abknative.outgo.core.api.logs.AppException
 import fr.abknative.outgo.shared.core.ui.resources.*
 import fr.abknative.outgo.wallet.api.logs.OperationError
@@ -8,7 +9,7 @@ import fr.abknative.outgo.wallet.api.logs.WalletError
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
-fun AppException.toUIString(): String {
+fun AppException.toOperationUIString(): String {
     return when (this) {
 
         // --- Domaine : Portefeuille (Wallet) ---
@@ -24,7 +25,7 @@ fun AppException.toUIString(): String {
         is OperationError.UnknownCycle -> stringResource(Res.string.error_operation_unknow_cycle)
 
         // --- Sécurité (Fallback) ---
-        else -> stringResource(Res.string.error_global_unknown)
+        else -> this.toCommonUIString()
     }
 }
 

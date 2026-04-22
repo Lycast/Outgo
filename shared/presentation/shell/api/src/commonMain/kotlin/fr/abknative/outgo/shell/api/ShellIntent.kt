@@ -15,6 +15,9 @@ sealed interface ShellIntent {
     /** Intent to manually trigger a cloud synchronization from the global header. */
     object RefreshSync : ShellIntent
 
+    /** Intent to display an error from a child screen in the global Snackbar. */
+    data class ShowGlobalError(val message: String) : ShellIntent
+
     /** Intent to clear any global error message. */
     object DismissError : ShellIntent
 

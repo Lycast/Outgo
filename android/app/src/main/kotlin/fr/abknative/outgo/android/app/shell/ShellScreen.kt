@@ -21,12 +21,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import fr.abknative.outgo.android.app.shell.components.AppGlobalHeader
 import fr.abknative.outgo.android.app.shell.components.BottomNavBar
 import fr.abknative.outgo.android.core.CommonLabels
-import fr.abknative.outgo.android.core.ShellLabels
 import fr.abknative.outgo.android.core.components.feedback.AppSnackbar
 import fr.abknative.outgo.android.core.designsystem.AppBackground
 import fr.abknative.outgo.android.core.designsystem.AppTheme
 import fr.abknative.outgo.android.core.designsystem.toColor
-import fr.abknative.outgo.android.core.toUIString
+import fr.abknative.outgo.android.core.toCommonUIString
 import fr.abknative.outgo.android.ui.list.ListScreen
 import fr.abknative.outgo.android.ui.login.LoginScreen
 import fr.abknative.outgo.android.ui.month.MonthScreen
@@ -62,22 +61,25 @@ fun ShellScreen(
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
     val currentStep = navState.currentStep
     val shouldShowScaffoldComponents = currentStep != AppStep.Login && currentStep != AppStep.Splash && currentStep != AppStep.Onboarding
-    val copySubname = ShellLabels.COPY_SUBNAME
     val textRetry = CommonLabels.ACTION_RETRY
     val isInitialSyncInProgress = shellState.syncState.isInProgress && currentStep == AppStep.Onboarding
 
     val shellSnackbarHostState = remember { SnackbarHostState() }
-    val currentError = shellState.error
-    val errorMessage = currentError?.toUIString()
+    val shellInternalError = shellState.error?.toCommonUIString()
+    val childScreenError = shellState.globalErrorMessage
+    val messageToShow = childScreenError ?: shellInternalError
+    val onShowGlobalError: (String) -> Unit = { message ->
+        shellPresenter.onIntent(ShellIntent.ShowGlobalError(message))
+    }
 
     BackHandler(enabled = navState.canGoBack) {
         coordinator.handleBack()
     }
 
-    LaunchedEffect(currentError) {
-        if (currentError != null && errorMessage != null) {
+    LaunchedEffect(messageToShow) {
+        if (messageToShow != null) {
             val snackbarResult = shellSnackbarHostState.showSnackbar(
-                message = errorMessage,
+                message = messageToShow,
                 actionLabel = textRetry,
                 withDismissAction = true,
                 duration = SnackbarDuration.Long
@@ -148,6 +150,7 @@ fun ShellScreen(
 
                                 AppStep.Month -> MonthScreen(
                                     presenter = koinViewModel(),
+                                    onError = onShowGlobalError,
                                     onNavigateToList = { coordinator.navigateTo(AppStep.List) },
                                     onAddOperationClick = {
                                         shellPresenter.onIntent(ShellIntent.OpenOperationForm(payload = OperationPayload()))
@@ -161,6 +164,7 @@ fun ShellScreen(
 
                                 AppStep.List -> ListScreen(
                                     presenter = koinViewModel(),
+                                    onError = onShowGlobalError,
                                     onEditOperation = { projectedOp ->
                                         val op = projectedOp.operation
                                         val formattedAmount = op.amountInCents.formatForInput()
@@ -201,6 +205,7 @@ fun ShellScreen(
 
                                 AppStep.Settings -> SettingsScreen(
                                     presenter = koinViewModel(),
+                                    onError = onShowGlobalError,
                                     onNavigateToLogin = { coordinator.navigateTo(AppStep.Login) },
                                     isDarkMode = isDarkMode,
                                     onToggleDarkMode = onToggleDarkMode
@@ -208,6 +213,7 @@ fun ShellScreen(
 
                                 AppStep.Login -> LoginScreen(
                                     presenter = koinViewModel<LoginPresenter>(),
+                                    onError = onShowGlobalError,
                                     onNavigateBack = { coordinator.handleBack() },
                                     onLoginSuccess = { coordinator.handleBack() }
                                 )
@@ -280,6 +286,7 @@ fun ShellScreen(
 
             OperationFormSheet(
                 state = operationState,
+                onError = onShowGlobalError,
                 onIntent = { operationPresenter.onIntent(it) },
                 sheetState = sheetState,
                 isPremium = shellState.isPremium,

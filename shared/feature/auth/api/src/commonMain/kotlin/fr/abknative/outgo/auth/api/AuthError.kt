@@ -8,4 +8,5 @@ sealed class AuthError(cause: Throwable? = null) : AppException(cause) {
     class SessionExpired : AuthError()
     class NeedsReauthentication : AuthError()
     class DataConflict : AuthError()
+    class SystemError : AuthError()
 }

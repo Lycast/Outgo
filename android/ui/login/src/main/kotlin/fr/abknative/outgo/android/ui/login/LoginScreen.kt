@@ -14,7 +14,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import fr.abknative.outgo.android.core.LoginLabels
 import fr.abknative.outgo.android.core.R
-import fr.abknative.outgo.android.core.components.feedback.AppSnackbar
 import fr.abknative.outgo.android.core.designsystem.AppBackground
 import fr.abknative.outgo.android.core.designsystem.AppText
 import fr.abknative.outgo.android.core.designsystem.AppTheme
@@ -25,7 +24,9 @@ import fr.abknative.outgo.android.ui.login.helper.launchGoogleSignIn
 import fr.abknative.outgo.android.ui.login.login.EmailAuthForm
 import fr.abknative.outgo.android.ui.login.login.SocialLoginButton
 import fr.abknative.outgo.android.ui.login.login.SocialProvider
+import fr.abknative.outgo.auth.api.AuthError
 import fr.abknative.outgo.core.api.SecretConfig
+import fr.abknative.outgo.core.api.logs.CommonError
 import fr.abknative.outgo.login.api.LoginEvent
 import fr.abknative.outgo.login.api.LoginIntent
 import fr.abknative.outgo.login.api.LoginPresenter
@@ -36,12 +37,12 @@ import org.koin.compose.koinInject
 @Composable
 fun LoginScreen(
     presenter: LoginPresenter,
+    onError: (String) -> Unit,
     onNavigateBack: () -> Unit,
     onLoginSuccess: () -> Unit
 ) {
 
     val state by presenter.state.collectAsStateWithLifecycle()
-    val snackbarHostState = remember { SnackbarHostState() }
     val secretConfig = koinInject<SecretConfig>()
     var isLoginMode by remember { mutableStateOf(true) }
     var googleAuthError by remember { mutableStateOf<CredentialErrorType?>(null) }
@@ -53,28 +54,34 @@ fun LoginScreen(
     LaunchedEffect(Unit) {
         presenter.events.collect { event ->
             when (event) {
-                is LoginEvent.NavigateBack -> {
-                    onLoginSuccess()
-                }
+                is LoginEvent.NavigateBack -> { onLoginSuccess() }
             }
         }
     }
 
     val presenterError = state.error
-    val presenterErrorMessage = presenterError?.toUIString()
+    val presenterErrorMessage = presenterError?.toLoginUIString()
 
     LaunchedEffect(presenterError) {
         if (presenterError != null && presenterErrorMessage != null) {
-            snackbarHostState.showSnackbar(message = presenterErrorMessage, withDismissAction = true)
+            onError(presenterErrorMessage)
             presenter.onIntent(LoginIntent.DismissError)
         }
     }
 
+    val googleException = remember(googleAuthError) {
+        when (googleAuthError) {
+            CredentialErrorType.NO_ACCOUNT_FOUND -> AuthError.UserNotFound()
+            CredentialErrorType.INVALID_TOKEN -> AuthError.InvalidCredentials()
+            CredentialErrorType.SYSTEM_ERROR -> AuthError.SystemError()
+            null -> null
+            else -> CommonError.UnknownError()
+        }
+    }
+    val googleErrorMessage = googleException?.toLoginUIString()
     LaunchedEffect(googleAuthError) {
-        val currentError = googleAuthError
-        if (currentError != null) {
-            val message = currentError.resolveUIString()
-            snackbarHostState.showSnackbar(message = message, withDismissAction = true)
+        if (googleAuthError != null && googleErrorMessage != null) {
+            onError(googleErrorMessage)
             googleAuthError = null
         }
     }
@@ -192,13 +199,6 @@ fun LoginScreen(
                         },
                         onToggleMode = { isLoginMode = !isLoginMode }
                     )
-                }
-
-                SnackbarHost(
-                    hostState = snackbarHostState,
-                    modifier = Modifier.align(Alignment.TopCenter)
-                ) { data ->
-                    AppSnackbar(data)
                 }
             }
         }

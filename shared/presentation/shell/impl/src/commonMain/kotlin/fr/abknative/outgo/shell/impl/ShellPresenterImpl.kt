@@ -111,13 +111,20 @@ internal class ShellPresenterImpl(
     override fun onIntent(intent: ShellIntent) {
         when (intent) {
             is ShellIntent.OpenOperationForm -> {
-                _state.update { it.copy(operationPayload = intent.payload) }
+                _state.update { it.copy(
+                    operationPayload = intent.payload,
+                    isOperationFormVisible = true
+                ) }
             }
             is ShellIntent.CloseOperationForm -> {
-                _state.update { it.copy(operationPayload = null) }
+                _state.update { it.copy(
+                    operationPayload = null,
+                    isOperationFormVisible = false
+                ) }
             }
             is ShellIntent.RefreshSync -> handleRefreshSync()
-            is ShellIntent.DismissError -> _state.update { it.copy(error = null) }
+            is ShellIntent.ShowGlobalError -> _state.update { it.copy(globalErrorMessage = intent.message) }
+            is ShellIntent.DismissError -> _state.update { it.copy(error = null, globalErrorMessage = null) }
             is ShellIntent.InitTheme -> handleInitTheme(intent.systemDefaultIsDark)
             is ShellIntent.UpdateDarkMode -> handleUpdateTheme(intent.isDarkMode)
         }

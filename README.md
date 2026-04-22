@@ -15,7 +15,7 @@
 
 ## 🛠 Tech Stack (2026)
 * **Core**: Kotlin 2.1+ & Coroutines/Flow.
-* **UI**: Compose Multiplatform (Android) & Native SwiftUI (iOS).
+* **UI Native**: Jetpack Compose (Android) & SwiftUI (iOS).
 * **Persistence**: SQLDelight (Local) + PostgreSQL (Cloud).
 * **Backend**: Ktor Server (Deployed on Scaleway Serverless).
 * **Auth**: Firebase Auth (Google & Apple Sign-In).

@@ -4,16 +4,17 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.*
+import androidx.compose.material3.BottomSheetDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.SheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import fr.abknative.outgo.android.core.components.cards.GlassCard
-import fr.abknative.outgo.android.core.components.feedback.AppSnackbar
 import fr.abknative.outgo.android.core.designsystem.AppTheme
 import fr.abknative.outgo.android.core.designsystem.toColor
 import fr.abknative.outgo.android.ui.operation.components.OperationFormContent
@@ -25,6 +26,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun OperationFormSheet(
     state: OperationState,
+    onError: (String) -> Unit,
     sheetState: SheetState,
     isPremium: Boolean,
     onIntent: (OperationIntent) -> Unit,
@@ -32,13 +34,12 @@ fun OperationFormSheet(
 ) {
     val scope = rememberCoroutineScope()
 
-    val snackbarHostState = remember { SnackbarHostState() }
     val currentError = state.error
-    val errorMessage = currentError?.toUIString()
+    val errorMessage = currentError?.toOperationUIString()
 
     LaunchedEffect(currentError) {
         if (currentError != null && errorMessage != null) {
-            snackbarHostState.showSnackbar(message = errorMessage, withDismissAction = true)
+            onError(errorMessage)
             onIntent(OperationIntent.DismissError)
         }
     }
@@ -83,12 +84,6 @@ fun OperationFormSheet(
                         onSave = { onIntent(OperationIntent.Save) }
                     )
                 }
-            }
-            SnackbarHost(
-                hostState = snackbarHostState,
-                modifier = Modifier.align(Alignment.BottomCenter)
-            ) { data ->
-                AppSnackbar(data)
             }
         }
     }

@@ -4,23 +4,18 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import fr.abknative.outgo.android.core.CommonLabels
-import fr.abknative.outgo.android.core.MonthLabels
-import fr.abknative.outgo.android.core.components.feedback.AppSnackbar
 import fr.abknative.outgo.android.core.components.selection.MonthTimeSelector
 import fr.abknative.outgo.android.core.designsystem.AppTheme
 import fr.abknative.outgo.android.core.designsystem.toColor
 import fr.abknative.outgo.android.core.extensions.getMonthName
+import fr.abknative.outgo.android.core.toCommonUIString
 import fr.abknative.outgo.android.ui.month.components.*
 import fr.abknative.outgo.month.api.MonthIntent
 import fr.abknative.outgo.month.api.MonthPresenter
@@ -29,6 +24,7 @@ import java.util.Locale.getDefault
 @Composable
 fun MonthScreen(
     presenter: MonthPresenter,
+    onError: (String) -> Unit,
     onNavigateToList: () -> Unit,
     onAddOperationClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -37,17 +33,13 @@ fun MonthScreen(
     val state by presenter.state.collectAsStateWithLifecycle()
     val formattedSelectedMonth = "${getMonthName(state.selectedMonth)} ${state.selectedYear}".uppercase(getDefault())
     val scrollState = rememberScrollState()
-    val snackbarHostState = remember { SnackbarHostState() }
-    val defaultErrorMsg = MonthLabels.DEFAULT_ERROR
-    val actionOkLabel = CommonLabels.ACTION_OK
 
-    LaunchedEffect(state.error) {
-        state.error?.let { appError ->
-            val message = appError.message ?: defaultErrorMsg
-            snackbarHostState.showSnackbar(
-                message = message,
-                actionLabel = actionOkLabel
-            )
+    val currentError = state.error
+    val errorMessage = currentError?.toCommonUIString()
+
+    LaunchedEffect(currentError) {
+        if (currentError != null && errorMessage != null) {
+            onError(errorMessage)
             presenter.onIntent(MonthIntent.DismissError)
         }
     }
@@ -126,15 +118,6 @@ fun MonthScreen(
                 onDismiss = { presenter.onIntent(MonthIntent.CloseEditWalletDialog) },
                 onConfirm = { presenter.onIntent(MonthIntent.SubmitWalletAndIncome) }
             )
-        }
-
-        SnackbarHost(
-            hostState = snackbarHostState,
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(bottom = 80.dp)
-        ) { snackbarData ->
-            AppSnackbar(snackbarData = snackbarData)
         }
     }
 }
