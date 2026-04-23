@@ -21,6 +21,4 @@ sealed interface LoginIntent {
     object SubmitRegister : LoginIntent
     object Logout : LoginIntent
     object DismissError : LoginIntent
-    object ResolveConflict : LoginIntent
-    object CancelConflict : LoginIntent
 }

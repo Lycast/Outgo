@@ -22,15 +22,6 @@ internal class LoginPresenterImpl(
     private val observeUserSession: ObserveUserSessionUseCase
 ) : LoginPresenter() {
 
-    private sealed interface PendingAuth {
-        data object Register : PendingAuth
-        data object Login : PendingAuth
-        data class Google(val idToken: String) : PendingAuth
-        data class Apple(val idToken: String) : PendingAuth
-    }
-
-    private var pendingAuthAction: PendingAuth? = null
-
     private val _state = MutableStateFlow(LoginState(isLoading = false))
     override val state: StateFlow<LoginState> = _state.asStateFlow()
 
@@ -59,8 +50,6 @@ internal class LoginPresenterImpl(
             is LoginIntent.LoginWithApple -> handleAppleLogin(intent.idToken)
             is LoginIntent.Logout -> handleLogout()
             is LoginIntent.DismissError -> _state.update { it.copy(error = null) }
-            is LoginIntent.ResolveConflict -> handleResolveConflict()
-            is LoginIntent.CancelConflict -> _state.update { it.copy(showConflictDialog = false) }
         }
     }
 
@@ -69,9 +58,9 @@ internal class LoginPresenterImpl(
         if (!currentState.isFormValid) return
 
         viewModelScope.safeLaunch(onError = onCoroutineError) {
-            _state.update { it.copy(isLoading = true, error = null, showConflictDialog = false) }
+            _state.update { it.copy(isLoading = true, error = null) }
             val result = registerUseCase(currentState.emailInput, currentState.passwordInput)
-            processAuthResult(result, PendingAuth.Register)
+            processAuthResult(result)
         }
     }
 
@@ -80,44 +69,39 @@ internal class LoginPresenterImpl(
         if (!currentState.isFormValid) return
 
         viewModelScope.safeLaunch(onError = onCoroutineError) {
-            _state.update { it.copy(isLoading = true, error = null, showConflictDialog = false) }
+            _state.update { it.copy(isLoading = true, error = null) }
             val result = loginUseCase(currentState.emailInput, currentState.passwordInput)
-            processAuthResult(result, PendingAuth.Login)
+            processAuthResult(result)
         }
     }
 
     // --- NOUVEAU : Gestion Google ---
     private fun handleGoogleLogin(idToken: String) {
         viewModelScope.safeLaunch(onError = onCoroutineError) {
-            _state.update { it.copy(isLoading = true, error = null, showConflictDialog = false) }
-            val result = loginWithGoogleUseCase(idToken, forceSwitch = false)
-            processAuthResult(result, PendingAuth.Google(idToken))
+            _state.update { it.copy(isLoading = true, error = null) }
+            val result = loginWithGoogleUseCase(idToken)
+            processAuthResult(result)
         }
     }
 
     // --- NOUVEAU : Gestion Apple ---
     private fun handleAppleLogin(idToken: String) {
         viewModelScope.safeLaunch(onError = onCoroutineError) {
-            _state.update { it.copy(isLoading = true, error = null, showConflictDialog = false) }
-            val result = loginWithAppleUseCase(idToken, forceSwitch = false)
-            processAuthResult(result, PendingAuth.Apple(idToken))
+            _state.update { it.copy(isLoading = true, error = null) }
+            val result = loginWithAppleUseCase(idToken)
+            processAuthResult(result)
         }
     }
 
-    private fun processAuthResult(
-        result: Result<Unit, AppException>,
-        currentAuthAction: PendingAuth
-    ) {
+    private fun processAuthResult(result: Result<Unit, AppException>) {
         when (result) {
             is Result.Success -> {
                 _state.update { it.copy(isLoading = false, error = null, passwordInput = "") }
-                pendingAuthAction = null
                 _events.trySend(LoginEvent.NavigateBack)
             }
             is Result.Error -> {
                 if (result.error is AuthError.DataConflict) {
-                    pendingAuthAction = currentAuthAction
-                    _state.update { it.copy(isLoading = false, showConflictDialog = true) }
+                    _state.update { it.copy(isLoading = false) }
                 } else {
                     _state.update { it.copy(isLoading = false, error = result.error) }
                 }
@@ -125,23 +109,6 @@ internal class LoginPresenterImpl(
         }
     }
 
-    private fun handleResolveConflict() {
-        val actionToRetry = pendingAuthAction ?: return // Sécurité
-        val currentState = _state.value
-
-        viewModelScope.safeLaunch(onError = onCoroutineError) {
-            _state.update { it.copy(isLoading = true, showConflictDialog = false) }
-
-            val result = when (actionToRetry) {
-                is PendingAuth.Register -> registerUseCase(currentState.emailInput, currentState.passwordInput, forceSwitch = true)
-                is PendingAuth.Login -> loginUseCase(currentState.emailInput, currentState.passwordInput, forceSwitch = true)
-                is PendingAuth.Google -> loginWithGoogleUseCase(actionToRetry.idToken, forceSwitch = true)
-                is PendingAuth.Apple -> loginWithAppleUseCase(actionToRetry.idToken, forceSwitch = true)
-            }
-
-            processAuthResult(result, actionToRetry)
-        }
-    }
 
     private fun handleLogout() {
         viewModelScope.safeLaunch(onError = onCoroutineError) {

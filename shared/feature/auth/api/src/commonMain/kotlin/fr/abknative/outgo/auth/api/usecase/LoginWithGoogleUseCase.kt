@@ -5,7 +5,6 @@ import fr.abknative.outgo.core.api.logs.Result
 
 interface LoginWithGoogleUseCase {
     suspend operator fun invoke(
-        idToken: String,
-        forceSwitch: Boolean = false
+        idToken: String
     ): Result<Unit, AppException>
 }

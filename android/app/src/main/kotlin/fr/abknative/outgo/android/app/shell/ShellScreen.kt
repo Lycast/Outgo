@@ -78,9 +78,10 @@ fun ShellScreen(
 
     LaunchedEffect(messageToShow) {
         if (messageToShow != null) {
+            val actionLabelToShow = if (childScreenError != null) null else textRetry
             val snackbarResult = shellSnackbarHostState.showSnackbar(
                 message = messageToShow,
-                actionLabel = textRetry,
+                actionLabel = actionLabelToShow,
                 withDismissAction = true,
                 duration = SnackbarDuration.Long
             )

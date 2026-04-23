@@ -207,9 +207,4 @@ fun LoginScreen(
             }
         }
     }
-
-    LoginScreenModals(
-        showConflictDialog = state.showConflictDialog,
-        presenter = presenter
-    )
 }

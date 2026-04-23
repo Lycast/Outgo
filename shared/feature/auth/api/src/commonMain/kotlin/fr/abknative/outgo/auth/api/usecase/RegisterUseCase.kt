@@ -10,7 +10,6 @@ import fr.abknative.outgo.core.api.logs.Result
 interface RegisterUseCase {
     suspend operator fun invoke(
         email: String,
-        password: String,
-        forceSwitch: Boolean = false
+        password: String
     ): Result<Unit, AppException>
 }
