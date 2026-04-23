@@ -95,7 +95,7 @@ fun ShellScreen(
         modifier = Modifier.fillMaxSize(),
         color = AppTheme.colors.background.toColor()
     ) {
-        AppBackground {
+        AppBackground(isDarkMode = isDarkMode) {
             Row(modifier = Modifier.fillMaxSize()) {
 
                 // --- Header en mode Paysage ---

@@ -15,10 +15,13 @@ import fr.abknative.outgo.android.core.R
 @Composable
 fun AppBackground(
     modifier: Modifier = Modifier,
+    isDarkMode: Boolean,
     content: @Composable () -> Unit
 ) {
     val primaryColor = AppTheme.colors.primary.toColor()
     val bgColor = AppTheme.colors.background.toColor()
+
+    val backgroundRes = if (isDarkMode) R.drawable.bg_dark else R.drawable.bg_light
 
     val backgroundBrush = remember(primaryColor, bgColor) {
         Brush.verticalGradient(
@@ -37,7 +40,7 @@ fun AppBackground(
         )
 
         Image(
-            painter = painterResource(id = R.drawable.parametric_lines),
+            painter = painterResource(id = backgroundRes),
             contentDescription = null,
             contentScale = ContentScale.FillBounds,
             modifier = Modifier.matchParentSize(),

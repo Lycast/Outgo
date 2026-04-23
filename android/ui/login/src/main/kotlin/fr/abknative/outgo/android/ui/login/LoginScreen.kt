@@ -14,7 +14,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import fr.abknative.outgo.android.core.LoginLabels
 import fr.abknative.outgo.android.core.R
-import fr.abknative.outgo.android.core.designsystem.AppBackground
 import fr.abknative.outgo.android.core.designsystem.AppText
 import fr.abknative.outgo.android.core.designsystem.AppTheme
 import fr.abknative.outgo.android.core.designsystem.toColor
@@ -54,7 +53,9 @@ fun LoginScreen(
     LaunchedEffect(Unit) {
         presenter.events.collect { event ->
             when (event) {
-                is LoginEvent.NavigateBack -> { onLoginSuccess() }
+                is LoginEvent.NavigateBack -> {
+                    onLoginSuccess()
+                }
             }
         }
     }
@@ -86,126 +87,129 @@ fun LoginScreen(
         }
     }
 
-    AppBackground {
-        Scaffold(
-            topBar = {
-                TopAppBar(
-                    title = {
-                        AppText(
-                            text = LoginLabels.BACK_TITLE,
-                            style = AppTheme.typo.title.copy(fontWeight = FontWeight.Medium),
-                            color = AppTheme.colors.textSecondary.toColor(),
-                        )
-                    },
-                    navigationIcon = {
-                        IconButton(
-                            enabled = !state.isLoading,
-                            onClick = onNavigateBack
-                        ) {
-                            Icon(
-                                painter = painterResource(R.drawable.caret_left),
-                                contentDescription = LoginLabels.BACK_TITLE,
-                                tint = AppTheme.colors.textSecondary.toColor()
-                            )
-                        }
-                    },
-                    colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = Color.Transparent
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    AppText(
+                        text = LoginLabels.BACK_TITLE,
+                        style = AppTheme.typo.title.copy(fontWeight = FontWeight.Medium),
+                        color = AppTheme.colors.textSecondary.toColor(),
                     )
+                },
+                navigationIcon = {
+                    IconButton(
+                        enabled = !state.isLoading,
+                        onClick = onNavigateBack
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.caret_left),
+                            contentDescription = LoginLabels.BACK_TITLE,
+                            tint = AppTheme.colors.textSecondary.toColor()
+                        )
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = Color.Transparent
                 )
-            },
-            containerColor = Color.Transparent
-        ) { paddingValues ->
-            Box(
+            )
+        },
+        containerColor = Color.Transparent
+    ) { paddingValues ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+        ) {
+            Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(paddingValues)
+                    .padding(horizontal = AppTheme.dimens.large),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(horizontal = AppTheme.dimens.large),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    AppText(
-                        text = LoginLabels.TITLE,
-                        style = AppTheme.typo.subtitle.copy(fontWeight = FontWeight.SemiBold),
-                        color = AppTheme.colors.primary.toColor(),
-                        textAlign = TextAlign.Center
-                    )
+                AppText(
+                    text = LoginLabels.TITLE,
+                    style = AppTheme.typo.subtitle.copy(fontWeight = FontWeight.SemiBold),
+                    color = AppTheme.colors.primary.toColor(),
+                    textAlign = TextAlign.Center
+                )
 
-                    Spacer(modifier = Modifier.height(AppTheme.dimens.big))
+                Spacer(modifier = Modifier.height(AppTheme.dimens.big))
 
-                    // --- Zone des Boutons Sociaux ---
-                    SocialLoginButton(
-                        provider = SocialProvider.GOOGLE,
-                        onClick = {
-                            coroutineScope.launch {
-                                when (val result = launchGoogleSignIn(context, secretConfig.webClientId)) {
-                                    is CredentialResult.Success -> {
-                                        presenter.onIntent(LoginIntent.LoginWithGoogle(result.idToken))
-                                    }
-                                    is CredentialResult.Error -> { googleAuthError = result.type }
-                                    is CredentialResult.Cancelled -> { /* silencieux */ }
+                // --- Zone des Boutons Sociaux ---
+                SocialLoginButton(
+                    provider = SocialProvider.GOOGLE,
+                    onClick = {
+                        coroutineScope.launch {
+                            when (val result = launchGoogleSignIn(context, secretConfig.webClientId)) {
+                                is CredentialResult.Success -> {
+                                    presenter.onIntent(LoginIntent.LoginWithGoogle(result.idToken))
+                                }
+
+                                is CredentialResult.Error -> {
+                                    googleAuthError = result.type
+                                }
+
+                                is CredentialResult.Cancelled -> { /* silencieux */
                                 }
                             }
                         }
-                    )
-
-                    Spacer(modifier = Modifier.height(AppTheme.dimens.small))
-
-                    SocialLoginButton(
-                        provider = SocialProvider.APPLE,
-                        onClick = { /* TODO: Implémenter Apple Login */ }
-                    )
-
-                    Spacer(modifier = Modifier.height(AppTheme.dimens.large))
-
-                    // --- Séparateur visuel ---
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        HorizontalDivider(
-                            modifier = Modifier.weight(1f),
-                            color = AppTheme.colors.textSecondary.toColor()
-                        )
-                        AppText(
-                            text = LoginLabels.OR_LABEL,
-                            color = AppTheme.colors.textSecondary.toColor(),
-                            modifier = Modifier.padding(horizontal = AppTheme.dimens.small)
-                        )
-                        HorizontalDivider(
-                            modifier = Modifier.weight(1f),
-                            color = AppTheme.colors.textSecondary.toColor()
-                        )
                     }
+                )
 
-                    Spacer(modifier = Modifier.height(AppTheme.dimens.large))
+                Spacer(modifier = Modifier.height(AppTheme.dimens.small))
 
-                    // --- Zone Formulaire Email ---
-                    EmailAuthForm(
-                        emailInput = state.emailInput,
-                        passwordInput = state.passwordInput,
-                        isFormValid = state.isFormValid,
-                        isLoading = state.isLoading,
-                        isLoginMode = isLoginMode,
-                        onEmailChange = { presenter.onIntent(LoginIntent.UpdateEmail(it)) },
-                        onPasswordChange = { presenter.onIntent(LoginIntent.UpdatePassword(it)) },
-                        onSubmit = {
-                            if (isLoginMode) presenter.onIntent(LoginIntent.SubmitLogin)
-                            else presenter.onIntent(LoginIntent.SubmitRegister)
-                        },
-                        onToggleMode = { isLoginMode = !isLoginMode }
+                SocialLoginButton(
+                    provider = SocialProvider.APPLE,
+                    onClick = { /* TODO: Implémenter Apple Login */ }
+                )
+
+                Spacer(modifier = Modifier.height(AppTheme.dimens.large))
+
+                // --- Séparateur visuel ---
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    HorizontalDivider(
+                        modifier = Modifier.weight(1f),
+                        color = AppTheme.colors.textSecondary.toColor()
+                    )
+                    AppText(
+                        text = LoginLabels.OR_LABEL,
+                        color = AppTheme.colors.textSecondary.toColor(),
+                        modifier = Modifier.padding(horizontal = AppTheme.dimens.small)
+                    )
+                    HorizontalDivider(
+                        modifier = Modifier.weight(1f),
+                        color = AppTheme.colors.textSecondary.toColor()
                     )
                 }
+
+                Spacer(modifier = Modifier.height(AppTheme.dimens.large))
+
+                // --- Zone Formulaire Email ---
+                EmailAuthForm(
+                    emailInput = state.emailInput,
+                    passwordInput = state.passwordInput,
+                    isFormValid = state.isFormValid,
+                    isLoading = state.isLoading,
+                    isLoginMode = isLoginMode,
+                    onEmailChange = { presenter.onIntent(LoginIntent.UpdateEmail(it)) },
+                    onPasswordChange = { presenter.onIntent(LoginIntent.UpdatePassword(it)) },
+                    onSubmit = {
+                        if (isLoginMode) presenter.onIntent(LoginIntent.SubmitLogin)
+                        else presenter.onIntent(LoginIntent.SubmitRegister)
+                    },
+                    onToggleMode = { isLoginMode = !isLoginMode }
+                )
             }
         }
-
-        LoginScreenModals(
-            showConflictDialog = state.showConflictDialog,
-            presenter = presenter
-        )
     }
+
+    LoginScreenModals(
+        showConflictDialog = state.showConflictDialog,
+        presenter = presenter
+    )
 }
