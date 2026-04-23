@@ -12,8 +12,17 @@ sealed interface ShellIntent {
     /** Closes the global operation form. */
     data object CloseOperationForm : ShellIntent
 
+    /** User cancels the initial loading sync and wishes to disconnect. */
+    object CancelSyncAndLogout : ShellIntent
+
     /** Intent to manually trigger a cloud synchronization from the global header. */
     object RefreshSync : ShellIntent
+
+    /** User accepts overwriting local view to download cloud data. */
+    object ResolveConflictDownloadCloud : ShellIntent
+
+    /** User cancels and wishes to revert to local data. */
+    object ResolveConflictCancelLogin : ShellIntent
 
     /** Intent to display an error from a child screen in the global Snackbar. */
     data class ShowGlobalError(val message: String) : ShellIntent

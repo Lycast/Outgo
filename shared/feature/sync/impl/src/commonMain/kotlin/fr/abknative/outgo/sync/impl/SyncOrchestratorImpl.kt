@@ -1,8 +1,10 @@
 package fr.abknative.outgo.sync.impl
 
 import fr.abknative.outgo.auth.api.provider.SessionProvider
+import fr.abknative.outgo.auth.api.usecase.LogoutUseCase
 import fr.abknative.outgo.auth.api.usecase.ObserveUserSessionUseCase
 import fr.abknative.outgo.core.api.KeyValueStorage
+import fr.abknative.outgo.core.api.LocalDataMigrator
 import fr.abknative.outgo.core.api.NetworkMonitor
 import fr.abknative.outgo.core.api.logs.AppLogger
 import fr.abknative.outgo.core.api.logs.Result
@@ -21,9 +23,11 @@ internal class SyncOrchestratorImpl(
     private val syncManager: SyncManager,
     private val sessionProvider: SessionProvider,
     private val observeUserSession: ObserveUserSessionUseCase,
+    private val logoutUseCase: LogoutUseCase,
     private val walletRepository: WalletRepository,
     private val operationRepository: OperationRepository,
     private val networkMonitor: NetworkMonitor,
+    private val localDataMigrator: LocalDataMigrator,
     private val storage: KeyValueStorage,
     private val timeProvider: TimeProvider,
     private val scope: CoroutineScope
@@ -48,9 +52,32 @@ internal class SyncOrchestratorImpl(
         startObservingLogins()
     }
 
+    override fun triggerManualSync() {
+        val currentUserId = sessionProvider.getCurrentUserId()
+        if (currentUserId.startsWith("local_")) return
+
+        val lastSync = storage.getLong(LAST_SYNC_KEY, 0L)
+        if (lastSync == 0L) {
+            performInitialLoginCheck(currentUserId)
+        } else {
+            executeSafeFullSync(reason = "Manual refresh", emitErrorEvent = true)
+        }
+    }
+
+    override fun resolveConflictDownloadCloud() {
+        AppLogger.get()?.i(TAG, "Conflict resolved: User chose to keep Cloud data.")
+        executeSafeFullSync(reason = "Conflict resolved - Downloading cloud data", emitErrorEvent = true)
+    }
+
+    override fun resolveConflictCancelLogin() {
+        AppLogger.get()?.i(TAG, "Conflict resolved: User canceled login. Reverting to local data.")
+        scope.launch {
+            logoutUseCase(displayLocalData = false)
+        }
+    }
+
     private fun checkStartupSync() {
         scope.launch {
-
             val currentUserId = sessionProvider.observeUserId().first()
 
             if (currentUserId.startsWith("local_")) {
@@ -61,16 +88,19 @@ internal class SyncOrchestratorImpl(
             observeUserSession().filterNotNull().first()
 
             val lastSync = storage.getLong(LAST_SYNC_KEY, 0L)
-            val now = timeProvider.now()
 
-            if (now - lastSync > SYNC_THRESHOLD_MS) {
-                executeSafeFullSync(reason = "Startup > 12h", emitErrorEvent = false)
+            if (lastSync == 0L) {
+                performInitialLoginCheck(currentUserId)
+            } else {
+                val now = timeProvider.now()
+                if (now - lastSync > SYNC_THRESHOLD_MS) {
+                    executeSafeFullSync(reason = "Startup > 12h", emitErrorEvent = false)
+                }
             }
         }
     }
 
     private fun startObservingPendingData() {
-
         val hasPendingDataFlow = combine(
             walletRepository.observePendingWallets(),
             operationRepository.observePendingOperations()
@@ -101,11 +131,42 @@ internal class SyncOrchestratorImpl(
             sessionProvider.observeUserId()
                 .drop(1)
                 .distinctUntilChanged()
-                .collect { userId ->
-                    if (!userId.startsWith("local_")) {
-                        executeSafeFullSync(reason = "New connection detected", emitErrorEvent = true)
+                .collect { newUserId ->
+                    if (!newUserId.startsWith("local_")) {
+                        // ✨ CHANGEMENT : On délègue à la nouvelle méthode
+                        performInitialLoginCheck(newUserId)
+                    } else {
+                        AppLogger.get()?.i(TAG, "Switched back to local identity: $newUserId")
                     }
                 }
+        }
+    }
+
+    private fun performInitialLoginCheck(userId: String) {
+        scope.launch {
+            AppLogger.get()?.i(TAG, "Performing initial login check for $userId...")
+
+            when (val hasRemoteResult = syncManager.hasRemoteData()) {
+                is Result.Success -> {
+                    val serverHasData = hasRemoteResult.data
+                    val lastLocalId = sessionProvider.getLastLocalId()
+
+                    if (serverHasData) {
+                        AppLogger.get()?.i(TAG, "Server has data. Emitting Conflict event.")
+                        _syncEvents.emit(SyncEvent.ConflictRequiresResolution)
+                    } else {
+                        AppLogger.get()?.i(TAG, "Server is empty. Performing silent migration.")
+                        if (lastLocalId != null) {
+                            localDataMigrator.checkConflictAndMigrate(userId, lastLocalId)
+                        }
+                        executeSafeFullSync(reason = "Initial push after migration", emitErrorEvent = true)
+                    }
+                }
+                is Result.Error -> {
+                    AppLogger.get()?.e(TAG, "Failed to check remote data", hasRemoteResult.error)
+                    _syncEvents.emit(SyncEvent.Error(hasRemoteResult.error))
+                }
+            }
         }
     }
 

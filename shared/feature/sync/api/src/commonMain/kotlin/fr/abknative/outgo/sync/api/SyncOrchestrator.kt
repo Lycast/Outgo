@@ -1,6 +1,5 @@
 package fr.abknative.outgo.sync.api
 
-import fr.abknative.outgo.core.api.logs.AppException
 import kotlinx.coroutines.flow.SharedFlow
 
 /**
@@ -13,8 +12,12 @@ interface SyncOrchestrator {
     val syncEvents: SharedFlow<SyncEvent>
 
     fun start()
-}
 
-sealed interface SyncEvent {
-    data class Error(val exception: AppException) : SyncEvent
+    fun triggerManualSync()
+
+    /** User agreed to override local data; proceeding with cloud data synchronization. */
+    fun resolveConflictDownloadCloud()
+
+    /** User rejected: aborting connection and reverting to local data view. */
+    fun resolveConflictCancelLogin()
 }

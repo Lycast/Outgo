@@ -62,7 +62,6 @@ fun ShellScreen(
     val currentStep = navState.currentStep
     val shouldShowScaffoldComponents = currentStep != AppStep.Login && currentStep != AppStep.Splash && currentStep != AppStep.Onboarding
     val textRetry = CommonLabels.ACTION_RETRY
-    val isInitialSyncInProgress = shellState.syncState.isInProgress && currentStep == AppStep.Onboarding
 
     val shellSnackbarHostState = remember { SnackbarHostState() }
     val shellInternalError = shellState.error?.toCommonUIString()
@@ -250,12 +249,15 @@ fun ShellScreen(
         ShellModals(
             showSyncModal = showSyncModal,
             showPremiumTeasingModal = showPremiumTeasingModal,
-            showLoadingOverlay = isInitialSyncInProgress,
+            overlayState = shellState.overlayState,
             onDismissSync = { showSyncModal = false },
             onNavigateToLogin = {
                 showSyncModal = false
                 coordinator.navigateTo(AppStep.Login)
-            }
+            },
+            onResolveConflictDownloadCloud = { shellPresenter.onIntent(ShellIntent.ResolveConflictDownloadCloud) },
+            onResolveConflictCancel = { shellPresenter.onIntent(ShellIntent.CancelSyncAndLogout) },
+            onRetry = { shellPresenter.onIntent(ShellIntent.RefreshSync) }
         )
 
         // --- LE FORMULAIRE GLOBAL D'OPÉRATION ---

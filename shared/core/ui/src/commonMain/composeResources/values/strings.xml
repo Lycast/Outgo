@@ -155,7 +155,7 @@
     <string name="list_month_11">Novembre</string>
     <string name="list_month_12">Décembre</string>
     <string name="list_tooltip_view_mode_title">C'est quoi la différence ?</string>
-    <string name="list_tooltip_view_mode_desc">• Vue Projetée : C'est le calendrier. Les dépenses projetées à la date exacte où elles vont passer.\n\n• Vue Standard : C'est l'inventaire des abonnements et des frais fixes.</string>
+    <string name="list_tooltip_view_mode_desc">• Vue Projetée : C'est le calendrier. Les dépenses projetées au fil du temps.\n\n• Vue Standard : C'est l'inventaire des abonnements et des frais fixes trié par leurs dates de début.</string>
 
     <string name="settings_section_appearance">Apparence</string>
     <string name="settings_section_support">Soutenir le projet</string>

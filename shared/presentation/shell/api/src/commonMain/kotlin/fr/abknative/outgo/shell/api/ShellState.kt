@@ -1,6 +1,7 @@
 package fr.abknative.outgo.shell.api
 
 import fr.abknative.outgo.core.api.logs.AppException
+import fr.abknative.outgo.shell.api.model.ShellOverlayState
 import fr.abknative.outgo.shell.api.payload.OperationPayload
 import fr.abknative.outgo.sync.api.model.SyncState
 
@@ -24,5 +25,6 @@ data class ShellState(
     val isPremium: Boolean = false,
     val error: AppException? = null,
     val globalErrorMessage: String? = null,
-    val syncState: SyncState = SyncState.UNAUTHENTICATED
+    val syncState: SyncState = SyncState.UNAUTHENTICATED,
+    val overlayState: ShellOverlayState = ShellOverlayState.NONE
 )

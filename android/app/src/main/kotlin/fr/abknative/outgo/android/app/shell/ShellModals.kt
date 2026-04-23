@@ -1,16 +1,20 @@
 package fr.abknative.outgo.android.app.shell
 
 import androidx.compose.runtime.Composable
-import fr.abknative.outgo.android.app.shell.components.LoadingOverlay
 import fr.abknative.outgo.android.app.shell.components.SyncPromotionModal
+import fr.abknative.outgo.android.app.shell.overlay.GlobalStateOverlay // ✨ Ton nouvel import
+import fr.abknative.outgo.shell.api.model.ShellOverlayState
 
 @Composable
 fun ShellModals(
     showSyncModal: Boolean,
     showPremiumTeasingModal: Boolean,
-    showLoadingOverlay: Boolean,
+    overlayState: ShellOverlayState,
     onDismissSync: () -> Unit,
-    onNavigateToLogin: () -> Unit
+    onNavigateToLogin: () -> Unit,
+    onResolveConflictDownloadCloud: () -> Unit,
+    onResolveConflictCancel: () -> Unit,
+    onRetry: () -> Unit
 ) {
     if (showSyncModal) {
         SyncPromotionModal(
@@ -23,7 +27,10 @@ fun ShellModals(
         // PremiumTeasingModal(onDismiss = onDismissPremium)
     }
 
-    if (showLoadingOverlay) {
-        LoadingOverlay()
-    }
+    GlobalStateOverlay(
+        overlayState = overlayState,
+        onCancel = onResolveConflictCancel,
+        onConfirmCloud = onResolveConflictDownloadCloud,
+        onRetry = onRetry
+    )
 }

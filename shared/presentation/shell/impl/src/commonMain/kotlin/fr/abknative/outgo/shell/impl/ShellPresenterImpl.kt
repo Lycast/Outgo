@@ -4,7 +4,6 @@ import androidx.lifecycle.viewModelScope
 import fr.abknative.outgo.core.api.KeyValueStorage
 import fr.abknative.outgo.core.api.extensions.safeLaunch
 import fr.abknative.outgo.core.api.logs.AppException
-import fr.abknative.outgo.core.api.logs.Result
 import fr.abknative.outgo.core.api.nav.AppStep
 import fr.abknative.outgo.core.api.nav.NavCoordinator
 import fr.abknative.outgo.core.api.time.DateTimeFormatter
@@ -12,6 +11,7 @@ import fr.abknative.outgo.core.api.time.TimeProvider
 import fr.abknative.outgo.shell.api.ShellIntent
 import fr.abknative.outgo.shell.api.ShellPresenter
 import fr.abknative.outgo.shell.api.ShellState
+import fr.abknative.outgo.shell.api.model.ShellOverlayState
 import fr.abknative.outgo.subscription.api.FeatureManager
 import fr.abknative.outgo.sync.api.SyncEvent
 import fr.abknative.outgo.sync.api.SyncManager
@@ -58,7 +58,20 @@ internal class ShellPresenterImpl(
     private fun startObservingSyncState() {
         viewModelScope.safeLaunch(onError = onCoroutineError) {
             observeSyncState().collect { globalSyncState ->
-                _state.update { it.copy(syncState = globalSyncState) }
+                val lastSync = storage.getLong("last_sync_timestamp", 0L)
+
+                _state.update { currentState ->
+                    val newOverlay = when {
+                        globalSyncState.isInProgress && lastSync == 0L -> ShellOverlayState.LOADING
+                        currentState.overlayState == ShellOverlayState.LOADING && lastSync != 0L -> ShellOverlayState.NONE
+                        else -> currentState.overlayState
+                    }
+
+                    currentState.copy(
+                        syncState = globalSyncState,
+                        overlayState = newOverlay
+                    )
+                }
             }
         }
     }
@@ -76,15 +89,16 @@ internal class ShellPresenterImpl(
 
             combine(
                 observeWallets(),
-                coordinator.state.map { it.currentStep }.distinctUntilChanged()
-            ) { wallets, currentStep ->
-                Pair(wallets, currentStep)
-            }.collect { (wallets, currentStep) ->
+                coordinator.state.map { it.currentStep }.distinctUntilChanged(),
+                observeSyncState()
+            ) { wallets, currentStep, syncState ->
+                Triple(wallets, currentStep, syncState)
+            }.collect { (wallets, currentStep, syncState) ->
 
                 _state.update { it.copy(activeWalletId = wallets.firstOrNull()?.id) }
 
                 if (wallets.isEmpty()) {
-                    if (currentStep == AppStep.Month || currentStep == AppStep.Splash) {
+                    if (!syncState.isInProgress && (currentStep == AppStep.Month || currentStep == AppStep.Splash)) {
                         coordinator.replaceRoot(AppStep.Onboarding)
                     }
                 } else {
@@ -101,7 +115,14 @@ internal class ShellPresenterImpl(
             syncOrchestrator.syncEvents.collect { event ->
                 when (event) {
                     is SyncEvent.Error -> {
-                        _state.update { it.copy(error = event.exception) }
+                        val lastSync = storage.getLong("last_sync_timestamp", 0L)
+                        _state.update { it.copy(
+                            error = event.exception,
+                            overlayState = if (lastSync == 0L) ShellOverlayState.ERROR else ShellOverlayState.NONE
+                        ) }
+                    }
+                    is SyncEvent.ConflictRequiresResolution -> {
+                        _state.update { it.copy(overlayState = ShellOverlayState.CONFLICT) }
                     }
                 }
             }
@@ -122,7 +143,10 @@ internal class ShellPresenterImpl(
                     isOperationFormVisible = false
                 ) }
             }
+            is ShellIntent.CancelSyncAndLogout -> handleResolveConflictCancelLogin()
             is ShellIntent.RefreshSync -> handleRefreshSync()
+            is ShellIntent.ResolveConflictDownloadCloud -> handleResolveConflictDownloadCloud()
+            is ShellIntent.ResolveConflictCancelLogin -> handleResolveConflictCancelLogin()
             is ShellIntent.ShowGlobalError -> _state.update { it.copy(globalErrorMessage = intent.message) }
             is ShellIntent.DismissError -> _state.update { it.copy(error = null, globalErrorMessage = null) }
             is ShellIntent.InitTheme -> handleInitTheme(intent.systemDefaultIsDark)
@@ -132,13 +156,7 @@ internal class ShellPresenterImpl(
 
     private fun handleRefreshSync() {
         if (_state.value.syncState.isUnauthenticated || _state.value.syncState.isInProgress) return
-
-        viewModelScope.safeLaunch(onError = onCoroutineError) {
-            val result = syncManager.syncAll()
-            if (result is Result.Error) {
-                _state.update { it.copy(error = result.error) }
-            }
-        }
+        syncOrchestrator.triggerManualSync()
     }
 
     private fun handleInitTheme(systemDefaultIsDark: Boolean) {
@@ -156,5 +174,15 @@ internal class ShellPresenterImpl(
     private fun handleUpdateTheme(isDarkMode: Boolean) {
         storage.putBoolean(themeKey, isDarkMode)
         _state.update { it.copy(isDarkMode = isDarkMode) }
+    }
+
+    private fun handleResolveConflictDownloadCloud() {
+        _state.update { it.copy(overlayState = ShellOverlayState.NONE) }
+        syncOrchestrator.resolveConflictDownloadCloud()
+    }
+
+    private fun handleResolveConflictCancelLogin() {
+        _state.update { it.copy(overlayState = ShellOverlayState.NONE) }
+        syncOrchestrator.resolveConflictCancelLogin()
     }
 }
