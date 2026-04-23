@@ -117,7 +117,10 @@ internal class SyncOrchestratorImpl(
             hasPendingData && isConnected && !userId.startsWith("local_") && session != null
         }
             .distinctUntilChanged()
-            .filter { shouldSync -> shouldSync }
+            .filter { shouldSync ->
+                val lastSync = storage.getLong(LAST_SYNC_KEY, 0L)
+                shouldSync && lastSync != 0L
+            }
             .debounce(DEBOUNCE_DELAY_MS.milliseconds)
             .onEach {
                 AppLogger.get()?.i(TAG, "Conditions met. Triggering Push.")
