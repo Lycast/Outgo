@@ -178,6 +178,7 @@
     <string name="settings_local_purge_subtitle">Réinitialise l'application sur cet appareil.</string>
     <string name="settings_app_version_prefix">Outgo v1.0.0</string>
     <string name="settings_section_data_account">Données &amp; Compte</string>
+    <string name="settings_section_data">Données</string>
 
     <string name="login_title">Synchronisez vos données de façon sécurisée. Les serveurs Outgo sont hébergés en France</string>
     <string name="login_email_label">Email</string>
@@ -238,6 +239,9 @@
     <string name="list_hero_disposable_income">Restant</string>
     <string name="list_hero_missing_income">Manquant</string>
     <string name="list_month_all">Tous les mois</string>
-    <string name="settings_section_data">Données</string>
+
+
+    <string name="shell_sync_error_title">Oups, problème de réseau</string>
+    <string name="shell_sync_error_message">Nous n'avons pas pu récupérer vos données. Vérifiez votre connexion et réessayez.</string>
 
 </resources>

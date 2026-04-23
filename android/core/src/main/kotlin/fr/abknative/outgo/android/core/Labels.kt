@@ -92,7 +92,8 @@ object AccessibilityLabels {
 }
 
 object ShellLabels {
-    val COPY_SUBNAME @Composable get() = stringResource(Res.string.shell_copy_subname)
+    val SYNC_ERROR_TITLE @Composable get() = stringResource(Res.string.shell_sync_error_title)
+    val SYNC_ERROR_MESSAGE @Composable get() = stringResource(Res.string.shell_sync_error_message)
 }
 
 object HeaderLabels {

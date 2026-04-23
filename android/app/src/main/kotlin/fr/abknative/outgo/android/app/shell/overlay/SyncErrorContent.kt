@@ -7,6 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import fr.abknative.outgo.android.core.CommonLabels
 import fr.abknative.outgo.android.core.LoginLabels
+import fr.abknative.outgo.android.core.ShellLabels
 import fr.abknative.outgo.android.core.components.buttons.AppButton
 import fr.abknative.outgo.android.core.components.buttons.AppTextButton
 import fr.abknative.outgo.android.core.designsystem.AppText
@@ -22,7 +23,7 @@ fun SyncErrorContent(onRetry: () -> Unit, onCancel: () -> Unit) {
     ) {
 
         AppText(
-            text = "Oups, problème de réseau",
+            text = ShellLabels.SYNC_ERROR_TITLE,
             style = AppTheme.typo.subtitle,
             textAlign = TextAlign.Center
         )
@@ -30,7 +31,7 @@ fun SyncErrorContent(onRetry: () -> Unit, onCancel: () -> Unit) {
         Spacer(modifier = Modifier.height(AppTheme.dimens.medium))
 
         AppText(
-            text = "Nous n'avons pas pu récupérer vos données. Vérifiez votre connexion et réessayez.",
+            text = ShellLabels.SYNC_ERROR_MESSAGE,
             color = AppTheme.colors.textSecondary.toColor(),
             textAlign = TextAlign.Center
         )
