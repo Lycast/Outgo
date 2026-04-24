@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import fr.abknative.outgo.core.api.KeyValueStorage
 import fr.abknative.outgo.core.api.extensions.safeLaunch
 import fr.abknative.outgo.core.api.logs.AppException
+import fr.abknative.outgo.core.api.logs.AppLogger
 import fr.abknative.outgo.core.api.nav.AppStep
 import fr.abknative.outgo.core.api.nav.NavCoordinator
 import fr.abknative.outgo.core.api.time.DateTimeFormatter
@@ -14,7 +15,6 @@ import fr.abknative.outgo.shell.api.ShellState
 import fr.abknative.outgo.shell.api.model.ShellOverlayState
 import fr.abknative.outgo.subscription.api.FeatureManager
 import fr.abknative.outgo.sync.api.SyncEvent
-import fr.abknative.outgo.sync.api.SyncManager
 import fr.abknative.outgo.sync.api.SyncOrchestrator
 import fr.abknative.outgo.sync.api.usecase.ObserveSyncStateUseCase
 import fr.abknative.outgo.wallet.api.usecase.ObserveWalletsUseCase
@@ -22,7 +22,6 @@ import kotlinx.coroutines.flow.*
 
 internal class ShellPresenterImpl(
     private val observeSyncState: ObserveSyncStateUseCase,
-    private val syncManager: SyncManager,
     private val syncOrchestrator: SyncOrchestrator,
     private val featureManager: FeatureManager,
     private val observeWallets: ObserveWalletsUseCase,
@@ -98,12 +97,21 @@ internal class ShellPresenterImpl(
 
                 _state.update { it.copy(activeWalletId = wallets.firstOrNull()?.id) }
 
+                // Define Public vs Private steps
+                val isPublicStep = currentStep == AppStep.Onboarding
+                        || currentStep == AppStep.Login
+                        || currentStep == AppStep.Splash
+                        || currentStep == AppStep.DeleteAccount
+                        || currentStep == AppStep.Settings
+
                 if (wallets.isEmpty()) {
-                    if (!syncState.isInProgress && (currentStep == AppStep.Month || currentStep == AppStep.Splash)) {
+                    if (!syncState.isInProgress && (!isPublicStep || currentStep == AppStep.Splash)) {
+                        AppLogger.get()?.i("ShellNav", "No wallets found. Redirecting to Onboarding from $currentStep")
                         coordinator.replaceRoot(AppStep.Onboarding)
                     }
                 } else {
                     if (currentStep == AppStep.Onboarding || currentStep == AppStep.Splash) {
+                        AppLogger.get()?.i("ShellNav", "Wallets found. Proceeding to App from $currentStep")
                         coordinator.replaceRoot(AppStep.Month)
                     }
                 }
