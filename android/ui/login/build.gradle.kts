@@ -18,7 +18,6 @@ dependencies {
 
     implementation(libs.koin.compose)
 
-    // Spécifique à ce module uniquement
     implementation(libs.androidx.credentials)
     implementation(libs.androidx.credentials.play.auth)
     implementation(libs.googleid)

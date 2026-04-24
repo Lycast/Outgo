@@ -1,4 +1,4 @@
-package fr.abknative.outgo.android.ui.login.login
+package fr.abknative.outgo.android.ui.login.components
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.CircularProgressIndicator
@@ -17,16 +17,18 @@ import fr.abknative.outgo.android.core.designsystem.toColor
 
 @Composable
 fun EmailAuthForm(
+    modifier: Modifier = Modifier,
     emailInput: String,
     passwordInput: String,
     isFormValid: Boolean,
     isLoading: Boolean,
     isLoginMode: Boolean,
+    submitBtnLabel: String? = null,
+    showToggleMode: Boolean = true,
     onEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
     onSubmit: () -> Unit,
-    onToggleMode: () -> Unit,
-    modifier: Modifier = Modifier
+    onToggleMode: () -> Unit
 ) {
     Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
         AppTextField(
@@ -58,27 +60,29 @@ fun EmailAuthForm(
             if (isLoading) {
                 CircularProgressIndicator(
                     modifier = Modifier.size(24.dp),
-                    strokeWidth = 2.dp
+                    strokeWidth = 2.dp,
+                    color = AppTheme.colors.textOnBrand.toColor()
                 )
             } else {
                 AppText(
-                    text = if (isLoginMode) LoginLabels.SUBMIT_BUTTON else LoginLabels.REGISTER_BUTTON,
+                    text = submitBtnLabel ?: if (isLoginMode) LoginLabels.SUBMIT_BUTTON else LoginLabels.REGISTER_BUTTON,
                     color = AppTheme.colors.textOnBrand.toColor()
                 )
             }
         }
 
-        Spacer(modifier = Modifier.height(AppTheme.dimens.medium))
+        if (showToggleMode) {
+            Spacer(modifier = Modifier.height(AppTheme.dimens.medium))
 
-        // Le texte cliquable pour basculer de mode
-        AppTextButton(
-            onClick = onToggleMode,
-            enabled = !isLoading
-        ) {
-            AppText(
-                text = if (isLoginMode) LoginLabels.SUBMIT_ACTION else LoginLabels.REGISTER_ACTION,
-                color = AppTheme.colors.textSecondary.toColor()
-            )
+            AppTextButton(
+                onClick = onToggleMode,
+                enabled = !isLoading
+            ) {
+                AppText(
+                    text = if (isLoginMode) LoginLabels.SUBMIT_ACTION else LoginLabels.REGISTER_ACTION,
+                    color = AppTheme.colors.textSecondary.toColor()
+                )
+            }
         }
     }
 }

@@ -19,6 +19,7 @@ internal class LoginPresenterImpl(
     private val loginWithGoogleUseCase: LoginWithGoogleUseCase,
     private val loginWithAppleUseCase: LoginWithAppleUseCase,
     private val logoutUseCase: LogoutUseCase,
+    private val deleteFirebaseAuthUseCase: DeleteFirebaseAuthUseCase,
     private val observeUserSession: ObserveUserSessionUseCase
 ) : LoginPresenter() {
 
@@ -44,6 +45,7 @@ internal class LoginPresenterImpl(
         when (intent) {
             is LoginIntent.UpdateEmail -> _state.update { it.copy(emailInput = intent.email) }
             is LoginIntent.UpdatePassword -> _state.update { it.copy(passwordInput = intent.password) }
+            is LoginIntent.Init -> _state.update { it.copy(isDeletionMode = intent.isDeletionMode) }
             is LoginIntent.SubmitRegister -> handleRegister()
             is LoginIntent.SubmitLogin -> handleLogin()
             is LoginIntent.LoginWithGoogle -> handleGoogleLogin(intent.idToken)
@@ -70,25 +72,27 @@ internal class LoginPresenterImpl(
 
         viewModelScope.safeLaunch(onError = onCoroutineError) {
             _state.update { it.copy(isLoading = true, error = null) }
-            val result = loginUseCase(currentState.emailInput, currentState.passwordInput)
+            val result = loginUseCase(
+                email = currentState.emailInput,
+                password = currentState.passwordInput,
+                bypassMigration = currentState.isDeletionMode
+            )
             processAuthResult(result)
         }
     }
 
-    // --- NOUVEAU : Gestion Google ---
     private fun handleGoogleLogin(idToken: String) {
         viewModelScope.safeLaunch(onError = onCoroutineError) {
             _state.update { it.copy(isLoading = true, error = null) }
-            val result = loginWithGoogleUseCase(idToken)
+            val result = loginWithGoogleUseCase(idToken, bypassMigration = _state.value.isDeletionMode)
             processAuthResult(result)
         }
     }
 
-    // --- NOUVEAU : Gestion Apple ---
     private fun handleAppleLogin(idToken: String) {
         viewModelScope.safeLaunch(onError = onCoroutineError) {
             _state.update { it.copy(isLoading = true, error = null) }
-            val result = loginWithAppleUseCase(idToken)
+            val result = loginWithAppleUseCase(idToken, bypassMigration = _state.value.isDeletionMode)
             processAuthResult(result)
         }
     }
@@ -96,8 +100,23 @@ internal class LoginPresenterImpl(
     private fun processAuthResult(result: Result<Unit, AppException>) {
         when (result) {
             is Result.Success -> {
-                _state.update { it.copy(isLoading = false, error = null, passwordInput = "") }
-                _events.trySend(LoginEvent.NavigateBack)
+                if (_state.value.isDeletionMode) {
+                    viewModelScope.safeLaunch(onError = onCoroutineError) {
+                        when (val deleteResult = deleteFirebaseAuthUseCase()) {
+                            is Result.Success -> {
+                                _state.update { it.copy(isLoading = false, error = null, passwordInput = "") }
+                                _events.trySend(LoginEvent.NavigateBack)
+                            }
+                            is Result.Error -> {
+                                logoutUseCase(displayLocalData = true)
+                                _state.update { it.copy(isLoading = false, error = deleteResult.error) }
+                            }
+                        }
+                    }
+                } else {
+                    _state.update { it.copy(isLoading = false, error = null, passwordInput = "") }
+                    _events.trySend(LoginEvent.NavigateBack)
+                }
             }
             is Result.Error -> {
                 if (result.error is AuthError.DataConflict) {

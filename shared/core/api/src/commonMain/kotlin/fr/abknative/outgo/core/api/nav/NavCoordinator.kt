@@ -10,6 +10,7 @@ sealed interface AppStep {
     data object List : AppStep
     data object Settings : AppStep
     data object Login : AppStep
+    data object DeleteAccount : AppStep
 }
 
 data class NavigationState(

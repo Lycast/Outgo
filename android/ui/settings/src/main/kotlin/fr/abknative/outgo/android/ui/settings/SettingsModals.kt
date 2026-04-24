@@ -7,10 +7,10 @@ import fr.abknative.outgo.android.core.CommonLabels
 import fr.abknative.outgo.android.core.DialogLabels
 import fr.abknative.outgo.android.core.components.buttons.AppOutlinedButton
 import fr.abknative.outgo.android.core.components.buttons.HoldToConfirmButton
-import fr.abknative.outgo.android.core.components.feedback.ConfirmationDialog
 import fr.abknative.outgo.android.core.designsystem.AppText
 import fr.abknative.outgo.android.core.designsystem.AppTheme
 import fr.abknative.outgo.android.ui.settings.components.DeleteAccountDialog
+import fr.abknative.outgo.android.ui.settings.components.LocalPurgeDialog
 import fr.abknative.outgo.android.ui.settings.components.LogoutDialog
 import fr.abknative.outgo.settings.api.SettingsIntent
 import fr.abknative.outgo.settings.api.SettingsPresenter
@@ -18,11 +18,11 @@ import fr.abknative.outgo.settings.api.SettingsPresenter
 @Composable
 fun SettingsModals(
     showLogoutOptions: Boolean,
-    showDeleteAccountConfirm: Boolean,
-    showPurgeConfirm: Boolean,
+    showDeleteAccountDialog: Boolean,
+    showLocalPurgeDialog: Boolean,
     onDismissLogout: () -> Unit,
-    onDismissDelete: () -> Unit,
-    onDismissPurge: () -> Unit,
+    onDismissDeleteAccount: () -> Unit,
+    onDismissLocalPurge: () -> Unit,
     presenter: SettingsPresenter
 ) {
     if (showLogoutOptions) {
@@ -39,33 +39,33 @@ fun SettingsModals(
         )
     }
 
-    if (showDeleteAccountConfirm) {
+    if (showDeleteAccountDialog) {
         DeleteAccountDialog(
-            onConfirm = { wipeLocal, wipeServer, revokeAuth ->
-                presenter.onIntent(SettingsIntent.DeleteAccount(wipeLocal, wipeServer, revokeAuth))
-                onDismissDelete()
+            onConfirm = { wipeServer, revokeAuth ->
+                presenter.onIntent(SettingsIntent.DeleteAccount(wipeServer, revokeAuth))
+                onDismissDeleteAccount()
             },
-            onDismiss = onDismissDelete
+            onDismiss = onDismissDeleteAccount
         )
     }
 
-    if (showPurgeConfirm) {
-        ConfirmationDialog(
+    if (showLocalPurgeDialog) {
+        LocalPurgeDialog(
             title = DialogLabels.PURGE_TITLE,
             description = DialogLabels.PURGE_DESC,
-            onDismiss = onDismissPurge,
+            onDismiss = onDismissLocalPurge,
             confirmButton = {
                 HoldToConfirmButton(
                     label = DialogLabels.PURGE_CONFIRM,
                     onConfirm = {
                         presenter.onIntent(SettingsIntent.PurgeLocalData)
-                        onDismissPurge()
+                        onDismissLocalPurge()
                     }
                 )
             },
             dismissButton = {
                 AppOutlinedButton(
-                    onClick = onDismissPurge,
+                    onClick = onDismissLocalPurge,
                     modifier = Modifier.padding(end = AppTheme.dimens.medium)
                 ) { AppText(text = CommonLabels.ACTION_CANCEL) }
             }

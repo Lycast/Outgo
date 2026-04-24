@@ -22,6 +22,7 @@ import fr.abknative.outgo.onboarding.api.OnboardingPresenter
 fun OnboardingScreen(
     presenter: OnboardingPresenter,
     onLoginClicked: () -> Unit,
+    onSettingsClicked: () -> Unit,
     onOnboardingComplete: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -64,6 +65,7 @@ fun OnboardingScreen(
             when (targetStep) {
                 1 -> WelcomeStep(
                     onLoginClicked = onLoginClicked,
+                    onSettingsClicked = onSettingsClicked,
                     onStartClicked = { currentStep = 2 }
                 )
                 2 -> ConfigurationStep(

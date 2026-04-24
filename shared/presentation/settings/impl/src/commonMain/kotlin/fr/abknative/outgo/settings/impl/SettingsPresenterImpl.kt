@@ -1,9 +1,9 @@
 package fr.abknative.outgo.settings.impl
 
 import androidx.lifecycle.viewModelScope
-import fr.abknative.outgo.auth.api.usecase.DeleteAccountUseCase
 import fr.abknative.outgo.auth.api.usecase.LogoutUseCase
 import fr.abknative.outgo.auth.api.usecase.ObserveUserSessionUseCase
+import fr.abknative.outgo.auth.api.usecase.WipeDataAndLogoutUseCase
 import fr.abknative.outgo.core.api.extensions.safeLaunch
 import fr.abknative.outgo.core.api.logs.AppException
 import fr.abknative.outgo.core.api.logs.Result
@@ -19,7 +19,7 @@ import kotlinx.coroutines.flow.update
 internal class SettingsPresenterImpl(
     private val observeUserSession: ObserveUserSessionUseCase,
     private val logout: LogoutUseCase,
-    private val deleteAccount: DeleteAccountUseCase,
+    private val wipeDataAndLogout: WipeDataAndLogoutUseCase,
     private val clearLocalData: ClearLocalDataUseCase
 ) : SettingsPresenter() {
 
@@ -48,7 +48,9 @@ internal class SettingsPresenterImpl(
             is SettingsIntent.Logout -> handleLogout(intent.displayLocalData)
             is SettingsIntent.PurgeLocalData -> handlePurgeLocalData()
             is SettingsIntent.DismissError -> _state.update { it.copy(error = null) }
-            is SettingsIntent.ResetSuccessFlag -> _state.update { it.copy(actionSuccess = false) }
+            is SettingsIntent.ResetSuccessFlag -> _state.update {
+                it.copy(actionSuccess = false, requireAccountDeletionLogin = false)
+            }
         }
     }
 
@@ -73,16 +75,20 @@ internal class SettingsPresenterImpl(
         viewModelScope.safeLaunch(onError = onCoroutineError) {
             _state.update { it.copy(isProcessing = true) }
 
-            val result = deleteAccount(
-                wipeLocal = intent.wipeLocal,
-                wipeServer = intent.wipeServer,
-                revokeAuth = intent.revokeAuth
-            )
-
-            if (result is Result.Success) {
-                _state.update { it.copy(isProcessing = false, actionSuccess = true) }
-            } else if (result is Result.Error) {
-                _state.update { it.copy(isProcessing = false, error = result.error) }
+            if (intent.wipeServer || intent.revokeAuth) {
+                when (val result = wipeDataAndLogout()) {
+                    is Result.Success -> {
+                        _state.update { it.copy(
+                            isProcessing = false, requireAccountDeletionLogin = intent.revokeAuth, actionSuccess = !intent.revokeAuth
+                            )
+                        }
+                    }
+                    is Result.Error -> {
+                        _state.update { it.copy(isProcessing = false, error = result.error) }
+                    }
+                }
+            } else {
+                _state.update { it.copy(isProcessing = false) }
             }
         }
     }

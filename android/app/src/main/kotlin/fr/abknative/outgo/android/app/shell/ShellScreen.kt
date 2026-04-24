@@ -27,6 +27,7 @@ import fr.abknative.outgo.android.core.designsystem.AppTheme
 import fr.abknative.outgo.android.core.designsystem.toColor
 import fr.abknative.outgo.android.core.toCommonUIString
 import fr.abknative.outgo.android.ui.list.ListScreen
+import fr.abknative.outgo.android.ui.login.DeleteAccountScreen
 import fr.abknative.outgo.android.ui.login.LoginScreen
 import fr.abknative.outgo.android.ui.month.MonthScreen
 import fr.abknative.outgo.android.ui.onboarding.OnboardingScreen
@@ -60,7 +61,7 @@ fun ShellScreen(
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
     val currentStep = navState.currentStep
-    val shouldShowScaffoldComponents = currentStep != AppStep.Login && currentStep != AppStep.Splash && currentStep != AppStep.Onboarding
+    val shouldShowScaffoldComponents = currentStep !is AppStep.Login && currentStep != AppStep.Splash && currentStep != AppStep.Onboarding
     val textRetry = CommonLabels.ACTION_RETRY
 
     val shellSnackbarHostState = remember { SnackbarHostState() }
@@ -145,6 +146,7 @@ fun ShellScreen(
                                 AppStep.Onboarding -> OnboardingScreen(
                                     presenter = koinViewModel(),
                                     onLoginClicked = { coordinator.navigateTo(AppStep.Login) },
+                                    onSettingsClicked = { coordinator.navigateTo(AppStep.Settings) },
                                     onOnboardingComplete = { coordinator.replaceRoot(AppStep.Month) }
                                 )
 
@@ -207,15 +209,23 @@ fun ShellScreen(
                                     presenter = koinViewModel(),
                                     onError = onShowGlobalError,
                                     onNavigateToLogin = { coordinator.navigateTo(AppStep.Login) },
+                                    onNavigateToDeleteAccount = { coordinator.navigateTo(AppStep.DeleteAccount) },
                                     isDarkMode = isDarkMode,
                                     onToggleDarkMode = onToggleDarkMode
                                 )
 
-                                AppStep.Login -> LoginScreen(
+                                is AppStep.Login -> LoginScreen(
                                     presenter = koinViewModel<LoginPresenter>(),
                                     onError = onShowGlobalError,
                                     onNavigateBack = { coordinator.handleBack() },
                                     onLoginSuccess = { coordinator.handleBack() }
+                                )
+
+                                AppStep.DeleteAccount -> DeleteAccountScreen(
+                                    presenter = koinViewModel<LoginPresenter>(),
+                                    onError = onShowGlobalError,
+                                    onNavigateBack = { coordinator.handleBack() },
+                                    onDeleteSuccess = { coordinator.handleBack() }
                                 )
                             }
                         }

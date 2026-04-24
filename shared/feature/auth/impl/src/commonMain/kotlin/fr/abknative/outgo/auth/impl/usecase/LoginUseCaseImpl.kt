@@ -15,14 +15,15 @@ internal class LoginUseCaseImpl(
 
     override suspend fun invoke(
         email: String,
-        password: String
+        password: String,
+        bypassMigration: Boolean
     ): Result<Unit, AppException> {
-        return executeAuthWithMigration(
-            sessionProvider,
-            authRepository,
-            syncManager
-        ) {
+        return if (bypassMigration) {
             authRepository.login(email, password)
+        } else {
+            executeAuthWithMigration(sessionProvider, authRepository, syncManager) {
+                authRepository.login(email, password)
+            }
         }
     }
 }

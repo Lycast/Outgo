@@ -10,6 +10,7 @@ import fr.abknative.outgo.core.api.logs.Result
 interface LoginUseCase {
     suspend operator fun invoke(
         email: String,
-        password: String
+        password: String,
+        bypassMigration: Boolean = false
     ): Result<Unit, AppException>
 }

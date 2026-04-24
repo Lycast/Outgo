@@ -1,4 +1,4 @@
-package fr.abknative.outgo.android.core.components.feedback
+package fr.abknative.outgo.android.ui.settings.components
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
@@ -11,7 +11,7 @@ import fr.abknative.outgo.android.core.designsystem.AppText
 import fr.abknative.outgo.android.core.designsystem.AppTheme
 
 @Composable
-fun ConfirmationDialog(
+fun LocalPurgeDialog(
     title: String,
     description: String,
     onDismiss: () -> Unit,

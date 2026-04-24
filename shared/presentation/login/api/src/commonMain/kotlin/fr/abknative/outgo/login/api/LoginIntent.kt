@@ -11,10 +11,12 @@ sealed interface LoginIntent {
     /** Triggered when the user types in the password field. */
     data class UpdatePassword(val password: String) : LoginIntent
 
+    // --- Actions ---
+
+    data class Init(val isDeletionMode: Boolean) : LoginIntent
     data class LoginWithGoogle(val idToken: String) : LoginIntent
     data class LoginWithApple(val idToken: String) : LoginIntent
 
-    // --- Actions ---
     /** Submits the login request using the current state values. */
     object SubmitLogin : LoginIntent
     /** Submits the register request using the current state values. */

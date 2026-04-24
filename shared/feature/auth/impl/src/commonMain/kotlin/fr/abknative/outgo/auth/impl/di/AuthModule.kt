@@ -27,14 +27,14 @@ val authModule = module {
     factoryOf(::LogoutUseCaseImpl) { bind<LogoutUseCase>() }
     factoryOf(::ObserveUserSessionUseCaseImpl) { bind<ObserveUserSessionUseCase>() }
     factoryOf(::RegisterUseCaseImpl) { bind<RegisterUseCase>() }
+    factoryOf(::DeleteFirebaseAuthUseCaseImpl) { bind<DeleteFirebaseAuthUseCase>() }
 
-    factory<DeleteAccountUseCase> {
-        DeleteAccountUseCaseImpl(
+    factory<WipeDataAndLogoutUseCase> {
+        WipeDataAndLogoutUseCaseImpl(
             authRepository = get(),
             sessionProvider = get(),
             timeProvider = get(),
             httpClient = get(),
-            localDataPurgers = getAll<DataPurger>(),
             downgraders = getAll<LocalDataDowngrader>()
         )
     }

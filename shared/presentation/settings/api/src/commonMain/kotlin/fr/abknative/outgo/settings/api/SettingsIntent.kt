@@ -3,7 +3,6 @@ package fr.abknative.outgo.settings.api
 sealed interface SettingsIntent {
 
     data class DeleteAccount(
-        val wipeLocal: Boolean,
         val wipeServer: Boolean,
         val revokeAuth: Boolean
     ) : SettingsIntent

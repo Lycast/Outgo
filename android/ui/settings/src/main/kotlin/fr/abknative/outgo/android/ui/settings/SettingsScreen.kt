@@ -27,6 +27,7 @@ fun SettingsScreen(
     presenter: SettingsPresenter,
     onError: (String) -> Unit,
     onNavigateToLogin: () -> Unit,
+    onNavigateToDeleteAccount: () -> Unit,
     isDarkMode: Boolean,
     onToggleDarkMode: (Boolean) -> Unit,
     modifier: Modifier = Modifier
@@ -46,6 +47,13 @@ fun SettingsScreen(
     val userEmail = state.session?.email
     val logoutSubtitle = if (!userEmail.isNullOrBlank()) { userEmail } else {
         SettingsLabels.LOGOUT_SUBTITLE
+    }
+
+    LaunchedEffect(state.requireAccountDeletionLogin) {
+        if (state.requireAccountDeletionLogin) {
+            presenter.onIntent(SettingsIntent.ResetSuccessFlag)
+            onNavigateToDeleteAccount()
+        }
     }
 
     LaunchedEffect(currentError) {
@@ -113,7 +121,7 @@ fun SettingsScreen(
                         icon = R.drawable.arrows_clockwise_duotone,
                         title = SettingsLabels.SYNC_TITLE,
                         subtitle = SettingsLabels.SYNC_SUBTITLE,
-                        onClick = onNavigateToLogin
+                        onClick = { onNavigateToLogin() }
                     )
                     HorizontalDivider(color = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.1f))
                     SettingsRowClickable(
@@ -154,11 +162,11 @@ fun SettingsScreen(
         }
         SettingsModals(
             showLogoutOptions = showLogoutOptions,
-            showDeleteAccountConfirm = showDeleteAccountConfirm,
-            showPurgeConfirm = showPurgeConfirm,
+            showDeleteAccountDialog = showDeleteAccountConfirm,
+            showLocalPurgeDialog = showPurgeConfirm,
             onDismissLogout = { showLogoutOptions = false },
-            onDismissDelete = { showDeleteAccountConfirm = false },
-            onDismissPurge = { showPurgeConfirm = false },
+            onDismissDeleteAccount = { showDeleteAccountConfirm = false },
+            onDismissLocalPurge = { showPurgeConfirm = false },
             presenter = presenter
         )
     }

@@ -8,7 +8,8 @@ data class LoginState(
     val passwordInput: String = "",
     val session: UserSession? = null,
     val isLoading: Boolean = false,
-    val error: AppException? = null
+    val error: AppException? = null,
+    val isDeletionMode: Boolean = false
 ){
     /**
      * Indicates whether the login form contains valid data to be submitted.

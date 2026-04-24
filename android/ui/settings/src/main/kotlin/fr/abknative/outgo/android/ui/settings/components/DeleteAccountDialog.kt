@@ -21,21 +21,17 @@ import fr.abknative.outgo.android.core.designsystem.toColor
 
 @Composable
 fun DeleteAccountDialog(
-    onConfirm: (wipeLocal: Boolean, wipeServer: Boolean, revokeAuth: Boolean) -> Unit,
+    onConfirm: (wipeServer: Boolean, revokeAuth: Boolean) -> Unit,
     onDismiss: () -> Unit
 ) {
-
-    var wipeLocal by remember { mutableStateOf(false) }
     var wipeServer by remember { mutableStateOf(false) }
     var revokeAuth by remember { mutableStateOf(false) }
 
     LaunchedEffect(revokeAuth) {
-        if (revokeAuth) {
-            wipeServer = true
-        }
+        if (revokeAuth) { wipeServer = true }
     }
 
-    val canConfirm = wipeLocal || wipeServer || revokeAuth
+    val canConfirm = wipeServer || revokeAuth
 
     Dialog(onDismissRequest = onDismiss) {
         GlassCard {
@@ -62,12 +58,6 @@ fun DeleteAccountDialog(
                 Spacer(modifier = Modifier.height(24.dp))
 
                 Column(verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.medium)) {
-                    DialogSwitchRow(
-                        title = DialogLabels.DELETE_ACCOUNT_LOCAL_TITLE,
-                        subtitle = DialogLabels.DELETE_ACCOUNT_LOCAL_DESC,
-                        isChecked = wipeLocal,
-                        onCheckedChange = { wipeLocal = it }
-                    )
 
                     DialogSwitchRow(
                         title = DialogLabels.DELETE_ACCOUNT_SERVER_TITLE,
@@ -103,7 +93,7 @@ fun DeleteAccountDialog(
                         modifier = Modifier.weight(1f).fillMaxWidth(),
                         label = CommonLabels.ACTION_DELETE,
                         enabled = canConfirm,
-                        onConfirm = { onConfirm(wipeLocal, wipeServer, revokeAuth) }
+                        onConfirm = { onConfirm(wipeServer, revokeAuth) }
                     )
                 }
             }
@@ -111,9 +101,6 @@ fun DeleteAccountDialog(
     }
 }
 
-/**
- * Internal component to draw a compact Switch row adapted for modal views.
- */
 @Composable
 private fun DialogSwitchRow(
     title: String,

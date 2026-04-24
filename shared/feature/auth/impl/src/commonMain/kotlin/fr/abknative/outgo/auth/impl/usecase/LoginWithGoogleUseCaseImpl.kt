@@ -14,14 +14,15 @@ internal class LoginWithGoogleUseCaseImpl(
 ) : LoginWithGoogleUseCase {
 
     override suspend fun invoke(
-        idToken: String
+        idToken: String,
+        bypassMigration: Boolean
     ): Result<Unit, AppException> {
-        return executeAuthWithMigration(
-            sessionProvider,
-            authRepository,
-            syncManager
-        ) {
+        return if (bypassMigration) {
             authRepository.loginWithGoogle(idToken)
+        } else {
+            executeAuthWithMigration(sessionProvider, authRepository, syncManager) {
+                authRepository.loginWithGoogle(idToken)
+            }
         }
     }
 }
