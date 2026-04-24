@@ -34,6 +34,9 @@ internal class SyncManagerImpl(
     private val _isSyncing = MutableStateFlow(false)
     override val isSyncing: StateFlow<Boolean> = _isSyncing.asStateFlow()
 
+    private val _syncError = MutableStateFlow<AppException?>(null)
+    override val syncError: StateFlow<AppException?> = _syncError.asStateFlow()
+
     companion object {
         private const val LAST_SYNC_KEY = "last_sync_timestamp"
     }
@@ -48,15 +51,18 @@ internal class SyncManagerImpl(
 
         return syncMutex.withLock {
             _isSyncing.value = true
+            _syncError.value = null
             try {
                 val pushResult = doSyncOut()
                 if (pushResult is Result.Error) {
+                    _syncError.value = pushResult.error
                     AppLogger.get()?.e(tag, "Full sync failed during Push phase", pushResult.error)
                     return@withLock pushResult
                 }
 
                 val pullResult = doSyncIn()
                 if (pullResult is Result.Error) {
+                    _syncError.value = pullResult.error
                     AppLogger.get()?.e(tag, "Full sync failed during Pull phase", pullResult.error)
                     return@withLock pullResult
                 }
@@ -72,7 +78,12 @@ internal class SyncManagerImpl(
     override suspend fun syncOut(): Result<Unit, AppException> {
         return syncMutex.withLock {
             _isSyncing.value = true
-            try { doSyncOut() } finally { _isSyncing.value = false }
+            _syncError.value = null
+            try {
+                val result = doSyncOut()
+                if (result is Result.Error) _syncError.value = result.error
+                return@withLock result
+            } finally { _isSyncing.value = false }
         }
     }
 
@@ -171,5 +182,6 @@ internal class SyncManagerImpl(
     override fun clearSyncState() {
         AppLogger.get()?.i(tag, "Clearing sync state (removing $LAST_SYNC_KEY)")
         storage.remove(LAST_SYNC_KEY)
+        _syncError.value = null
     }
 }

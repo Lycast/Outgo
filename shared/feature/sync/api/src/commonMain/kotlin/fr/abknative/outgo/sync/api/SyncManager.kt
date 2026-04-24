@@ -15,6 +15,11 @@ interface SyncManager {
      */
     val isSyncing: StateFlow<Boolean>
 
+    /** * Holds the last synchronization error.
+     * Resets to null when a new sync attempt starts.
+     */
+    val syncError: StateFlow<AppException?>
+
     /**
      * Performs a full synchronization: sends local data (Push)
      * and then fetches updates from the server (Pull).

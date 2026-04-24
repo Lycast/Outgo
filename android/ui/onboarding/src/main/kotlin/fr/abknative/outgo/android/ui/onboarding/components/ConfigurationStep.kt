@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -17,6 +16,7 @@ import fr.abknative.outgo.android.core.CommonLabels
 import fr.abknative.outgo.android.core.OnboardingLabels
 import fr.abknative.outgo.android.core.R
 import fr.abknative.outgo.android.core.components.buttons.AppButton
+import fr.abknative.outgo.android.core.components.buttons.AppIconTextButton
 import fr.abknative.outgo.android.core.components.inputs.AppTextField
 import fr.abknative.outgo.android.core.designsystem.AppText
 import fr.abknative.outgo.android.core.designsystem.AppTheme
@@ -36,25 +36,14 @@ fun ConfigurationStep(
 
     Box(Modifier.fillMaxSize()) {
 
-        Row(modifier = Modifier
-            .align(Alignment.TopStart)
-            .padding(top = AppTheme.dimens.extraSmall, start = AppTheme.dimens.medium),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            IconButton(
-                onClick = onBackClicked
-            ) {
-                Icon(
-                    painter = painterResource(R.drawable.caret_left),
-                    contentDescription = CommonLabels.ACTION_BACK,
-                    tint = AppTheme.colors.textPrimary.toColor()
-                )
-            }
-            AppText(
-                text = CommonLabels.ACTION_BACK
-            )
-        }
+        AppIconTextButton(
+            text = CommonLabels.ACTION_BACK,
+            iconRes = R.drawable.caret_left,
+            onClick = onBackClicked,
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .padding(AppTheme.dimens.medium)
+        )
 
         Column(
             modifier = Modifier

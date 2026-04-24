@@ -19,13 +19,15 @@ internal class ObserveSyncStateUseCaseImpl(
         return combine(
             observeUserSession(),
             networkMonitor.isConnected,
-            syncManager.isSyncing
-        ) { session, isConnected, isSyncing ->
+            syncManager.isSyncing,
+            syncManager.syncError
+        ) { session, isConnected, isSyncing, syncError ->
 
             when {
                 session == null -> SyncState.UNAUTHENTICATED
                 !isConnected -> SyncState.OFFLINE
                 isSyncing -> SyncState.IN_PROGRESS
+                syncError != null -> SyncState.ERROR
                 else -> SyncState.UP_TO_DATE
             }
         }.distinctUntilChanged()
