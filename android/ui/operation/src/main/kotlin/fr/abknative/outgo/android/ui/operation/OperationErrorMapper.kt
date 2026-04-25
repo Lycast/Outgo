@@ -12,11 +12,9 @@ import org.jetbrains.compose.resources.stringResource
 fun AppException.toOperationUIString(): String {
     return when (this) {
 
-        // --- Domaine : Portefeuille (Wallet) ---
         is WalletError.EmptyName -> stringResource(Res.string.error_wallet_empty_name)
         is WalletError.NotFound -> stringResource(Res.string.error_wallet_not_found, id)
 
-        // --- Domaine : Opération (Operation) ---
         is OperationError.EmptyName -> stringResource(Res.string.error_operation_empty_name)
         is OperationError.InvalidAmount -> stringResource(Res.string.error_operation_invalid_amount)
         is OperationError.NotFound -> stringResource(Res.string.error_operation_not_found, id)
@@ -24,7 +22,6 @@ fun AppException.toOperationUIString(): String {
         is OperationError.WalletNotFound -> stringResource(Res.string.error_operation_wallet_not_found, walletId)
         is OperationError.UnknownCycle -> stringResource(Res.string.error_operation_unknow_cycle)
 
-        // --- Sécurité (Fallback) ---
         else -> this.toCommonUIString()
     }
 }

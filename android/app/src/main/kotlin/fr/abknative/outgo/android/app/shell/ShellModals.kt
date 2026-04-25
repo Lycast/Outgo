@@ -2,7 +2,7 @@ package fr.abknative.outgo.android.app.shell
 
 import androidx.compose.runtime.Composable
 import fr.abknative.outgo.android.app.shell.components.SyncPromotionModal
-import fr.abknative.outgo.android.app.shell.overlay.GlobalStateOverlay // ✨ Ton nouvel import
+import fr.abknative.outgo.android.app.shell.overlay.GlobalStateOverlay
 import fr.abknative.outgo.shell.api.model.ShellOverlayState
 
 @Composable

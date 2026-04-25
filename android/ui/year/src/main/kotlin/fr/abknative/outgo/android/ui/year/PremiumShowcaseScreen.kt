@@ -36,7 +36,7 @@ fun PremiumShowcaseScreen(
             .padding(AppTheme.dimens.large),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // --- Header (Hook Visuel) ---
+
         Spacer(modifier = Modifier.height(AppTheme.dimens.extraLarge))
         AppText(
             text = PremiumLabels.SHOWCASE_TITLE,
@@ -53,7 +53,6 @@ fun PremiumShowcaseScreen(
 
         Spacer(modifier = Modifier.height(AppTheme.dimens.extraLarge))
 
-        // --- Carte Offre Actuelle (Essentiel) ---
         ShowcaseCard(
             title = PremiumLabels.ESSENTIAL_TITLE,
             badge = PremiumLabels.ESSENTIAL_BADGE,
@@ -65,7 +64,6 @@ fun PremiumShowcaseScreen(
 
         Spacer(modifier = Modifier.height(AppTheme.dimens.medium))
 
-        // --- Carte Futur (Premium) ---
         ShowcaseCard(
             title = PremiumLabels.PREMIUM_TITLE,
             badge = PremiumLabels.PREMIUM_BADGE,

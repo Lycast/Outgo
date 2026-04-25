@@ -48,7 +48,7 @@ fun ViewModeSelector(
             description = infoDescription
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.info),
+                painter = painterResource(id = R.drawable.question),
                 contentDescription = AccessibilityLabels.VIEW_MODE,
                 tint = AppTheme.colors.primary.toColor(),
                 modifier = Modifier.size(AppTheme.dimens.big)

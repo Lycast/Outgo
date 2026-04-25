@@ -13,7 +13,7 @@ import fr.abknative.outgo.wallet.api.model.Operation
 import fr.abknative.outgo.wallet.api.model.operation.Recurrence
 
 /**
- * Maps a [fr.abknative.outgo.wallet.api.model.operation.Recurrence] to its corresponding UI Color using the AppTheme.
+ * Maps a [Recurrence] to its corresponding UI Color using the AppTheme.
  */
 @Composable
 fun Recurrence.getUiColor(): Color {
@@ -38,7 +38,7 @@ val Operation.uiTitle: String
 
 
 /**
- * Returns the localized label for a [fr.abknative.outgo.wallet.api.model.operation.Recurrence] type.
+ * Returns the localized label for a [Recurrence] type.
  */
 val Recurrence.uiLabel: String
     @Composable get() = when (this) {
@@ -51,7 +51,7 @@ val Recurrence.uiLabel: String
 
 
 /**
- * Returns the localized label for a [fr.abknative.outgo.wallet.api.model.operation.Recurrence] type.
+ * Returns the localized label for a [Recurrence] type.
  */
 val Recurrence.uiFormattedLabel: String
     @Composable get() = when (this) {
@@ -67,7 +67,7 @@ val Recurrence.uiFormattedLabel: String
 
 
 /**
- * Returns the localized label for a [fr.abknative.outgo.list.api.ListViewMode].
+ * Returns the localized label for a [ListViewMode].
  */
 val ListViewMode.uiLabel: String
     @Composable get() = when (this) {
@@ -77,7 +77,7 @@ val ListViewMode.uiLabel: String
 
 
 /**
- * Returns the localized label for a [fr.abknative.outgo.list.api.ProjectedFilter].
+ * Returns the localized label for a [ProjectedFilter].
  */
 val ProjectedFilter.uiLabel: String
     @Composable get() = when (this) {
@@ -88,7 +88,7 @@ val ProjectedFilter.uiLabel: String
 
 
 /**
- * Returns the localized label for a [fr.abknative.outgo.list.api.StandardFilter].
+ * Returns the localized label for a [StandardFilter].
  */
 val StandardFilter.uiLabel: String
     @Composable get() = when (this) {

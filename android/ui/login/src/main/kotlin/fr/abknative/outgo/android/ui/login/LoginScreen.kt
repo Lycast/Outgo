@@ -31,7 +31,6 @@ fun LoginScreen(
         presenter.onIntent(LoginIntent.Init(isDeletionMode = false))
     }
 
-    // Gestion Events & Erreurs (Standard)
     HandleLoginSideEffects(presenter, onError, onLoginSuccess)
 
     AuthLayout(

@@ -11,7 +11,6 @@ import org.jetbrains.compose.resources.stringResource
 fun AppException.toLoginUIString(): String {
     return when (this) {
 
-        // --- Domaine : Authentification ---
         is AuthError.InvalidCredentials -> stringResource(Res.string.error_auth_invalid_credentials)
         is AuthError.UserNotFound -> stringResource(Res.string.error_auth_user_not_found)
         is AuthError.SessionExpired -> stringResource(Res.string.error_auth_session_expired)
@@ -19,7 +18,6 @@ fun AppException.toLoginUIString(): String {
         is AuthError.DataConflict -> stringResource(Res.string.error_auth_data_conflict)
         is AuthError.SystemError -> stringResource(Res.string.error_credential_system)
 
-        // --- Sécurité (Fallback) ---
         else -> this.toCommonUIString()
     }
 }

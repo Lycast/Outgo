@@ -103,7 +103,6 @@ fun AuthLayout(
 
                 Spacer(modifier = Modifier.height(AppTheme.dimens.large))
 
-                // --- Séparateur ---
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     HorizontalDivider(modifier = Modifier.weight(1f), color = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.2f))
                     AppText(text = LoginLabels.OR_LABEL, color = AppTheme.colors.textSecondary.toColor(), modifier = Modifier.padding(horizontal = AppTheme.dimens.small))
