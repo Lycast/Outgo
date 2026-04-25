@@ -62,6 +62,13 @@ fun commonCoreModule() = module {
          * when seamlessly switching between multiple local user accounts.
          */
         val client = HttpClient(engine) {
+
+            install(HttpTimeout) {
+                requestTimeoutMillis = 20000L // 20 seconds max for the entire request
+                connectTimeoutMillis = 10000L // 10 seconds max to establish the connection
+                socketTimeoutMillis = 20000L  // 20 seconds max between two data packets
+            }
+
             install(ContentNegotiation) {
                 json(Json {
                     prettyPrint = true
