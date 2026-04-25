@@ -62,8 +62,8 @@ internal class ShellPresenterImpl(
                 _state.update { currentState ->
                     val newOverlay = when {
                         globalSyncState.isInProgress && lastSync == 0L -> ShellOverlayState.LOADING
+                        globalSyncState.isError && lastSync == 0L -> ShellOverlayState.ERROR
                         !globalSyncState.isInProgress && currentState.overlayState == ShellOverlayState.LOADING && lastSync != 0L -> ShellOverlayState.NONE
-                        !globalSyncState.isInProgress && currentState.overlayState == ShellOverlayState.LOADING && lastSync == 0L -> ShellOverlayState.ERROR
                         else -> currentState.overlayState
                     }
 

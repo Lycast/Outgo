@@ -166,17 +166,25 @@ internal class SyncManagerImpl(
             return Result.Error(CommonError.NetworkError())
         }
 
-        val pullResult = networkApi.pullData(since = 0L)
-        if (pullResult is Result.Error) {
-            AppLogger.get()?.e(tag, "Failed to check remote data", pullResult.error)
-            return pullResult
+        return syncMutex.withLock {
+            _isSyncing.value = true
+            _syncError.value = null
+            try {
+                val pullResult = networkApi.pullData(since = 0L)
+                if (pullResult is Result.Error) {
+                    _syncError.value = pullResult.error
+                    return@withLock pullResult
+                }
+
+                val response = (pullResult as Result.Success).data
+                val hasData = response.wallets.isNotEmpty() || response.operations.isNotEmpty()
+
+                AppLogger.get()?.d(tag, "Remote data exists: $hasData")
+                Result.Success(hasData)
+            } finally {
+                _isSyncing.value = false
+            }
         }
-
-        val response = (pullResult as Result.Success).data
-        val hasData = response.wallets.isNotEmpty() || response.operations.isNotEmpty()
-
-        AppLogger.get()?.d(tag, "Remote data exists: $hasData")
-        return Result.Success(hasData)
     }
 
     override fun clearSyncState() {

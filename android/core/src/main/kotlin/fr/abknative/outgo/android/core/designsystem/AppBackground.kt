@@ -18,7 +18,7 @@ fun AppBackground(
     isDarkMode: Boolean,
     content: @Composable () -> Unit
 ) {
-    val primaryColor = AppTheme.colors.primary.toColor()
+    val primaryColor = AppTheme.colors.tertiary.toColor()
     val bgColor = AppTheme.colors.background.toColor()
 
     val backgroundRes = if (isDarkMode) R.drawable.bg_dark else R.drawable.bg_light
