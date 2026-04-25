@@ -10,7 +10,6 @@ dependencies {
     api(projects.shared.core.api)
     api(projects.shared.core.ui)
 
-    // Strictement les bases de Compose
     api(libs.compose.runtime)
     api(libs.compose.foundation)
     api(libs.compose.ui)

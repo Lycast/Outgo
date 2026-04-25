@@ -7,15 +7,12 @@ kotlin {
     
     sourceSets {
         commonMain.dependencies {
-            // Dépendance vers son propre contrat (API)
+
             implementation(projects.shared.presentation.onboarding.api)
 
-            // Dépendances vers les couches inférieures
             implementation(projects.shared.core.api)
             implementation(projects.shared.feature.wallet.api)
 
-
-            // Outils de présentation et d'injection
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.koin.core)

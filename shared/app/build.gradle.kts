@@ -1,6 +1,4 @@
 plugins {
-    alias(libs.plugins.compose.multiplatform)
-    alias(libs.plugins.compose.compiler)
     kotlin("native.cocoapods")
     id("outgo.kmp.library")
     alias(libs.plugins.skie)
@@ -35,6 +33,7 @@ kotlin {
             export(projects.shared.presentation.operation.api)
             export(projects.shared.presentation.settings.api)
             export(projects.shared.presentation.shell.api)
+            export(projects.shared.presentation.year.api)
         }
 
         pod("FirebaseCore") {
@@ -71,10 +70,13 @@ kotlin {
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.compose.runtime)
 
-            // --- APIs exposées aux applications natives (Android) ---
-            api(projects.shared.core.ui)
+            api(projects.shared.core.api)
 
-            // Exposer les contrats UI
+            api(projects.shared.feature.wallet.api)
+            api(projects.shared.feature.auth.api)
+            api(projects.shared.feature.sync.api)
+
+            api(projects.shared.core.ui)
             api(projects.shared.presentation.list.api)
             api(projects.shared.presentation.month.api)
             api(projects.shared.presentation.login.api)
@@ -83,11 +85,6 @@ kotlin {
             api(projects.shared.presentation.settings.api)
             api(projects.shared.presentation.shell.api)
             api(projects.shared.presentation.year.api)
-
-            // Exposer les contrats métier
-            api(projects.shared.feature.wallet.api)
-            api(projects.shared.feature.auth.api)
-            api(projects.shared.feature.sync.api)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

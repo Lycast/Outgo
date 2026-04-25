@@ -13,7 +13,6 @@ dependencies {
     implementation(projects.shared.presentation.settings.api)
     implementation(projects.shared.feature.auth.api)
 
-    implementation(libs.compose.runtime)
     implementation(libs.androidx.lifecycle.runtime)
     implementation(libs.androidx.lifecycle.viewmodel)
 }

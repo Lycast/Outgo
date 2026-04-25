@@ -13,7 +13,6 @@ dependencies {
     implementation(projects.shared.presentation.onboarding.api)
 
     implementation(libs.androidx.activity.compose)
-    implementation(libs.compose.runtime)
     implementation(libs.androidx.lifecycle.runtime)
     implementation(libs.androidx.lifecycle.viewmodel)
 }

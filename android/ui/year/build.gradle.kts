@@ -12,7 +12,6 @@ dependencies {
 
     implementation(projects.shared.presentation.year.api)
 
-    implementation(libs.compose.runtime)
     implementation(libs.androidx.lifecycle.runtime)
     implementation(libs.androidx.lifecycle.viewmodel)
 }

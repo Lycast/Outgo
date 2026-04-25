@@ -13,7 +13,6 @@ dependencies {
     implementation(projects.shared.presentation.operation.api)
     implementation(projects.shared.feature.wallet.api)
 
-    implementation(libs.compose.runtime)
     implementation(libs.androidx.lifecycle.runtime)
     implementation(libs.androidx.lifecycle.viewmodel)
 }

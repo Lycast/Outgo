@@ -23,7 +23,6 @@ android {
     namespace = "fr.abknative.outgo.shared.core.ui"
 }
 
-// Configuration officielle JetBrains pour les autres plateformes
 compose.resources {
     publicResClass = true
     packageOfResClass = "fr.abknative.outgo.shared.core.ui.resources"
