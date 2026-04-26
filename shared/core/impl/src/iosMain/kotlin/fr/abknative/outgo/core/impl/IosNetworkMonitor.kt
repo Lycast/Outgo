@@ -15,7 +15,6 @@ internal class IosNetworkMonitor : NetworkMonitor {
     private val pathMonitor = nw_path_monitor_create()
 
     init {
-        // Configuration du callback réseau
         nw_path_monitor_set_update_handler(pathMonitor) { path ->
             val status = nw_path_get_status(path)
             _isConnected.value = (status == nw_path_status_satisfied)

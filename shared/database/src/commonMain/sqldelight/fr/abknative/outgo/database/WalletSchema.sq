@@ -7,3 +7,6 @@ CREATE TABLE WalletEntity (
     deletedAt INTEGER,
     syncStatus TEXT NOT NULL
 );
+
+CREATE INDEX idx_wallet_active ON WalletEntity(userId, deletedAt);
+CREATE INDEX idx_wallet_sync ON WalletEntity(userId, syncStatus);

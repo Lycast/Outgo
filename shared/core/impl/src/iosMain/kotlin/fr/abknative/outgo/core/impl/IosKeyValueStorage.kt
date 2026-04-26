@@ -7,7 +7,6 @@ import fr.abknative.outgo.core.api.KeyValueStorage
 @OptIn(ExperimentalSettingsImplementation::class)
 class IosKeyValueStorage : KeyValueStorage {
 
-    // Utilisation du Keychain iOS (Trousseau d'accès)
     private val settings = KeychainSettings(service = "OutgoSecureStorage")
 
     override fun getBoolean(key: String, defaultValue: Boolean): Boolean {

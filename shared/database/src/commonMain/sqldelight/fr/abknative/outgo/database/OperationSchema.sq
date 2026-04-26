@@ -19,3 +19,6 @@ CREATE TABLE OperationEntity (
 
     FOREIGN KEY (walletId) REFERENCES WalletEntity(id) ON DELETE CASCADE
 );
+
+CREATE INDEX idx_operation_active_period ON OperationEntity(userId, walletId, deletedAt, startDate);
+CREATE INDEX idx_operation_sync ON OperationEntity(userId, syncStatus);

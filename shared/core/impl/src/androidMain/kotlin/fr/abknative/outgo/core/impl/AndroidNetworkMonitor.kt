@@ -13,7 +13,6 @@ internal class AndroidNetworkMonitor(context: Context) : NetworkMonitor {
 
     private val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
-    // Initialisation synchrone de l'état actuel
     private val _isConnected = MutableStateFlow(checkCurrentState())
     override val isConnected: StateFlow<Boolean> = _isConnected.asStateFlow()
 
