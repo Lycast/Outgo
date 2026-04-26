@@ -88,7 +88,7 @@ internal class ObserveProjectedOperationsUseCaseImpl(
         if (currentPointer < targetStartOfMonth) {
             val diffMillis = targetStartOfMonth - currentPointer
             val oneWeekMillis = 7L * 24 * 60 * 60 * 1000
-            val weeksToJump = (diffMillis / oneWeekMillis).toInt()
+            val weeksToJump = (diffMillis / oneWeekMillis).toInt() - 1
 
             if (weeksToJump > 0) {
                 currentPointer = timeProvider.plusDays(currentPointer, weeksToJump * 7)
