@@ -3,7 +3,6 @@ package fr.abknative.outgo.android.ui.login
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import fr.abknative.outgo.android.core.LoginLabels
 import fr.abknative.outgo.android.ui.login.components.AuthLayout
 import fr.abknative.outgo.android.ui.login.components.EmailAuthForm
 import fr.abknative.outgo.android.ui.login.components.HandleLoginSideEffects
@@ -26,6 +25,7 @@ fun LoginScreen(
     var isLoginMode by remember { mutableStateOf(true) }
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
+    val googleErrorMessage = LoginLabels.GOOGLE_AUTH_ERROR // todo l'erreur n'est pas géré ici
 
     LaunchedEffect(Unit) {
         presenter.onIntent(LoginIntent.Init(isDeletionMode = false))
@@ -39,7 +39,7 @@ fun LoginScreen(
         onBackClick = onNavigateBack,
         onGoogleClick = {
             coroutineScope.launch {
-                handleGoogleSignIn(context, secretConfig.webClientId, presenter, onError)
+                handleGoogleSignIn(context, secretConfig.webClientId, presenter, onError, errorMessage = googleErrorMessage)
             }
         },
         onAppleClick = { /* TODO */ }

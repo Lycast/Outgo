@@ -12,7 +12,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import fr.abknative.outgo.android.core.ListLabels
 import fr.abknative.outgo.android.core.designsystem.AppTheme
 import fr.abknative.outgo.android.core.extensions.getMonthName
 import fr.abknative.outgo.android.core.toCommonUIString

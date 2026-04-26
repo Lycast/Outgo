@@ -6,7 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
-import fr.abknative.outgo.android.core.LoginLabels
+import fr.abknative.outgo.android.app.shell.ShellLabels
 import fr.abknative.outgo.android.core.components.buttons.AppTextButton
 import fr.abknative.outgo.android.core.designsystem.AppText
 import fr.abknative.outgo.android.core.designsystem.AppTheme
@@ -24,7 +24,7 @@ fun SyncLoadingContent(onCancel: () -> Unit) {
         Spacer(modifier = Modifier.height(AppTheme.dimens.large))
 
         AppText(
-            text = LoginLabels.POST_LOGIN_SYNC_TITLE,
+            text = ShellLabels.SYNC_LOADING_TITLE,
             style = AppTheme.typo.subtitle,
             textAlign = TextAlign.Center
         )
@@ -32,7 +32,7 @@ fun SyncLoadingContent(onCancel: () -> Unit) {
         Spacer(modifier = Modifier.height(AppTheme.dimens.medium))
 
         AppText(
-            text = LoginLabels.POST_LOGIN_SYNC_MESSAGE,
+            text = ShellLabels.SYNC_LOADING_MESSAGE,
             color = AppTheme.colors.textSecondary.toColor(),
             textAlign = TextAlign.Center
         )
@@ -43,7 +43,7 @@ fun SyncLoadingContent(onCancel: () -> Unit) {
             onClick = onCancel,
             modifier = Modifier.fillMaxWidth()
         ) {
-            AppText(text = LoginLabels.CONFLICT_CANCEL)
+            AppText(text = ShellLabels.CONFLICT_CANCEL)
         }
     }
 }

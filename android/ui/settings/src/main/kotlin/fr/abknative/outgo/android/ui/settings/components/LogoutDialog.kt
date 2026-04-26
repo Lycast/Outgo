@@ -7,13 +7,13 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import fr.abknative.outgo.android.core.CommonLabels
-import fr.abknative.outgo.android.core.DialogLabels
 import fr.abknative.outgo.android.core.components.buttons.AppButton
 import fr.abknative.outgo.android.core.components.buttons.AppOutlinedButton
 import fr.abknative.outgo.android.core.components.buttons.AppTextButton
 import fr.abknative.outgo.android.core.designsystem.AppText
 import fr.abknative.outgo.android.core.designsystem.AppTheme
 import fr.abknative.outgo.android.core.designsystem.toColor
+import fr.abknative.outgo.android.ui.settings.SettingsLabels
 
 @Composable
 fun LogoutDialog(
@@ -26,14 +26,14 @@ fun LogoutDialog(
         containerColor = AppTheme.colors.surface100.toColor(),
         title = {
             AppText(
-                text = DialogLabels.LOGOUT_TITLE,
+                text = SettingsLabels.LOGOUT_TITLE,
                 style = AppTheme.typo.title
             )
         },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.small)) {
                 AppText(
-                    text = DialogLabels.LOGOUT_DATA_QUESTION,
+                    text = SettingsLabels.LOGOUT_DATA_QUESTION,
                     color = AppTheme.colors.textSecondary.toColor()
                 )
             }
@@ -47,13 +47,13 @@ fun LogoutDialog(
                     onClick = onKeepOffline,
                     modifier = Modifier.fillMaxWidth()
                 ) { AppText(
-                    text = DialogLabels.LOGOUT_ACTION_KEEP_BUDGET,
+                    text = SettingsLabels.LOGOUT_ACTION_KEEP_BUDGET,
                     color = AppTheme.colors.textOnBrand.toColor()
                 ) }
                 AppOutlinedButton(
                     onClick = onReturnToLocal,
                     modifier = Modifier.fillMaxWidth()
-                ) { AppText(text = DialogLabels.LOGOUT_ACTION_RETURN_LOCAL) }
+                ) { AppText(text = SettingsLabels.LOGOUT_ACTION_RETURN_LOCAL) }
                 AppTextButton(
                     onClick = onCancel,
                     modifier = Modifier.fillMaxWidth()

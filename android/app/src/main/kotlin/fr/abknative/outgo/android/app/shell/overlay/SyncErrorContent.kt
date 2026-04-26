@@ -5,9 +5,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
+import fr.abknative.outgo.android.app.shell.ShellLabels
 import fr.abknative.outgo.android.core.CommonLabels
-import fr.abknative.outgo.android.core.LoginLabels
-import fr.abknative.outgo.android.core.ShellLabels
 import fr.abknative.outgo.android.core.components.buttons.AppButton
 import fr.abknative.outgo.android.core.components.buttons.AppTextButton
 import fr.abknative.outgo.android.core.designsystem.AppText
@@ -51,7 +50,7 @@ fun SyncErrorContent(onRetry: () -> Unit, onCancel: () -> Unit) {
             onClick = onCancel,
             modifier = Modifier.fillMaxWidth()
         ) {
-            AppText(text = LoginLabels.CONFLICT_CANCEL)
+            AppText(text = ShellLabels.CONFLICT_CANCEL)
         }
     }
 }

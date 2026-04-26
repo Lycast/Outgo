@@ -11,8 +11,6 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.style.TextAlign
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import fr.abknative.outgo.android.core.R
-import fr.abknative.outgo.android.core.SettingsLabels
-import fr.abknative.outgo.android.core.Url
 import fr.abknative.outgo.android.core.designsystem.AppTheme
 import fr.abknative.outgo.android.core.designsystem.toColor
 import fr.abknative.outgo.android.core.toCommonUIString
@@ -96,21 +94,21 @@ fun SettingsScreen(
                     icon = R.drawable.lightbulb_duotone,
                     title = SettingsLabels.INFO_OUTGO_TITLE,
                     subtitle = SettingsLabels.INFO_OUTGO_SUBTITLE,
-                    onClick = { uriHandler.openUri(Url.OUTGO_URL) }
+                    onClick = { uriHandler.openUri(SettingsLabels.URL_OUTGO) }
                 )
                 HorizontalDivider(color = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.1f))
                 SettingsRowClickable(
                     icon = R.drawable.star_duotone,
                     title = SettingsLabels.RATING_TITLE,
                     subtitle = SettingsLabels.RATING_SUBTITLE,
-                    onClick = { uriHandler.openUri(Url.STORE_URL) }
+                    onClick = { uriHandler.openUri(SettingsLabels.URL_STORE) }
                 )
                 HorizontalDivider(color = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.1f))
                 SettingsRowClickable(
                     icon = R.drawable.envelope_duotone,
                     title = SettingsLabels.CONTACT_TITLE,
                     subtitle = SettingsLabels.CONTACT_SUBTITLE,
-                    onClick = { uriHandler.openUri(Url.CONTACT_URL) }
+                    onClick = { uriHandler.openUri(SettingsLabels.URL_CONTACT) }
                 )
             }
 

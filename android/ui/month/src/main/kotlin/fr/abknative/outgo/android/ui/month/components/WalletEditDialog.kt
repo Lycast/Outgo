@@ -12,14 +12,13 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.window.Dialog
 import fr.abknative.outgo.android.core.CommonLabels
-import fr.abknative.outgo.android.core.DialogLabels
-import fr.abknative.outgo.android.core.FormLabels
 import fr.abknative.outgo.android.core.components.buttons.AppButton
 import fr.abknative.outgo.android.core.components.buttons.AppTextButton
 import fr.abknative.outgo.android.core.components.cards.GlassCard
 import fr.abknative.outgo.android.core.components.inputs.AppTextField
 import fr.abknative.outgo.android.core.designsystem.AppTheme
 import fr.abknative.outgo.android.core.designsystem.toColor
+import fr.abknative.outgo.android.ui.month.MonthLabels
 
 @Composable
 fun WalletEditDialog(
@@ -40,7 +39,7 @@ fun WalletEditDialog(
             ) {
                 // --- Title ---
                 Text(
-                    text = DialogLabels.DIALOG_BUDGET_TITLE,
+                    text = MonthLabels.BUDGET_TITLE,
                     style = AppTheme.typo.subtitle,
                     color = AppTheme.colors.primary.toColor(),
                     fontWeight = FontWeight.Bold
@@ -49,7 +48,7 @@ fun WalletEditDialog(
                 Spacer(modifier = Modifier.height(AppTheme.dimens.medium))
 
                 Text(
-                    text = DialogLabels.DIALOG_BUDGET_DESC,
+                    text = MonthLabels.BUDGET_DESC,
                     style = AppTheme.typo.body,
                     color = AppTheme.colors.textSecondary.toColor()
                 )
@@ -60,8 +59,8 @@ fun WalletEditDialog(
                 AppTextField(
                     value = nameBuffer,
                     onValueChange = onNameChange,
-                    label = FormLabels.FIELD_NAME,
-                    placeholder = "Mon Compte Principal",
+                    label = MonthLabels.WALLET_NAME_LABEL,
+                    placeholder = MonthLabels.WALLET_NAME_PLACEHOLDER,
                     keyboardOptions = KeyboardOptions(
                         capitalization = KeyboardCapitalization.Sentences,
                         imeAction = ImeAction.Next
@@ -74,8 +73,8 @@ fun WalletEditDialog(
                 AppTextField(
                     value = amountBuffer,
                     onValueChange = onAmountChange,
-                    label = DialogLabels.DIALOG_BUDGET_FIELD,
-                    placeholder = FormLabels.FIELD_PLACE_HOLDER_AMOUNT,
+                    label = MonthLabels.BUDGET_FIELD,
+                    placeholder = MonthLabels.AMOUNT_PLACEHOLDER,
                     suffix = {
                         Text(CommonLabels.CURRENCY_SYMBOL, style = AppTheme.typo.body)
                     },
@@ -89,7 +88,7 @@ fun WalletEditDialog(
 
                 // --- Info Hint ---
                 Text(
-                    text = DialogLabels.DIALOG_BUDGET_INFO,
+                    text = MonthLabels.BUDGET_INFO,
                     style = AppTheme.typo.caption,
                     color = AppTheme.colors.textSecondary.toColor(),
                     modifier = Modifier.fillMaxWidth()

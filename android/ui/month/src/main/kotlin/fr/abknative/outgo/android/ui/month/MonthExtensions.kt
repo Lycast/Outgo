@@ -2,7 +2,7 @@ package fr.abknative.outgo.android.ui.month
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import fr.abknative.outgo.android.core.FormLabels
+import fr.abknative.outgo.android.core.CommonLabels
 import fr.abknative.outgo.android.core.designsystem.AppTheme
 import fr.abknative.outgo.android.core.designsystem.toColor
 import fr.abknative.outgo.wallet.api.model.operation.Recurrence
@@ -26,9 +26,9 @@ fun Recurrence.getUiColor(): Color {
  */
 val Recurrence.uiLabel: String
     @Composable get() = when (this) {
-        Recurrence.UNIQUE -> FormLabels.CYCLE_UNIQUE
-        Recurrence.WEEKLY -> FormLabels.CYCLE_WEEKLY
-        Recurrence.MONTHLY -> FormLabels.CYCLE_MONTHLY
-        Recurrence.YEARLY -> FormLabels.CYCLE_YEARLY
+        Recurrence.UNIQUE -> CommonLabels.CYCLE_UNIQUE
+        Recurrence.WEEKLY -> CommonLabels.CYCLE_WEEKLY
+        Recurrence.MONTHLY -> CommonLabels.CYCLE_MONTHLY
+        Recurrence.YEARLY -> CommonLabels.CYCLE_YEARLY
         Recurrence.UNKNOWN -> ""
     }

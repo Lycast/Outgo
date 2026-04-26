@@ -2,8 +2,7 @@ package fr.abknative.outgo.android.ui.list
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import fr.abknative.outgo.android.core.FormLabels
-import fr.abknative.outgo.android.core.ListLabels
+import fr.abknative.outgo.android.core.CommonLabels
 import fr.abknative.outgo.android.core.designsystem.AppTheme
 import fr.abknative.outgo.android.core.designsystem.toColor
 import fr.abknative.outgo.list.api.ListViewMode
@@ -42,10 +41,10 @@ val Operation.uiTitle: String
  */
 val Recurrence.uiLabel: String
     @Composable get() = when (this) {
-        Recurrence.UNIQUE -> FormLabels.CYCLE_UNIQUE
-        Recurrence.WEEKLY -> FormLabels.CYCLE_WEEKLY
-        Recurrence.MONTHLY -> FormLabels.CYCLE_MONTHLY
-        Recurrence.YEARLY -> FormLabels.CYCLE_YEARLY
+        Recurrence.UNIQUE -> CommonLabels.CYCLE_UNIQUE
+        Recurrence.WEEKLY -> CommonLabels.CYCLE_WEEKLY
+        Recurrence.MONTHLY -> CommonLabels.CYCLE_MONTHLY
+        Recurrence.YEARLY -> CommonLabels.CYCLE_YEARLY
         Recurrence.UNKNOWN -> ""
     }
 
@@ -93,8 +92,8 @@ val ProjectedFilter.uiLabel: String
 val StandardFilter.uiLabel: String
     @Composable get() = when (this) {
         StandardFilter.ALL -> ListLabels.TAB_ALL
-        StandardFilter.UNIQUE -> FormLabels.CYCLE_UNIQUE
-        StandardFilter.WEEKLY -> FormLabels.CYCLE_WEEKLY
-        StandardFilter.MONTHLY -> FormLabels.CYCLE_MONTHLY
-        StandardFilter.YEARLY -> FormLabels.CYCLE_YEARLY
+        StandardFilter.UNIQUE -> CommonLabels.CYCLE_UNIQUE
+        StandardFilter.WEEKLY -> CommonLabels.CYCLE_WEEKLY
+        StandardFilter.MONTHLY -> CommonLabels.CYCLE_MONTHLY
+        StandardFilter.YEARLY -> CommonLabels.CYCLE_YEARLY
     }

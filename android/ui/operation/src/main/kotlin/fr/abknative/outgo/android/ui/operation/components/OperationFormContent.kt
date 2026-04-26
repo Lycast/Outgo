@@ -18,7 +18,6 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import fr.abknative.outgo.android.core.CommonLabels
-import fr.abknative.outgo.android.core.FormLabels
 import fr.abknative.outgo.android.core.components.buttons.AppButton
 import fr.abknative.outgo.android.core.components.buttons.AppTextButton
 import fr.abknative.outgo.android.core.components.feedback.FormattedDateInput
@@ -27,6 +26,7 @@ import fr.abknative.outgo.android.core.components.layout.CardSplitSkeleton
 import fr.abknative.outgo.android.core.designsystem.AppText
 import fr.abknative.outgo.android.core.designsystem.AppTheme
 import fr.abknative.outgo.android.core.designsystem.toColor
+import fr.abknative.outgo.android.ui.operation.OperationLabels
 import fr.abknative.outgo.operation.api.OperationIntent
 import fr.abknative.outgo.operation.api.OperationState
 import fr.abknative.outgo.wallet.api.model.operation.Recurrence
@@ -61,7 +61,7 @@ fun OperationFormContent(
     ) {
         // --- Header Title ---
         AppText(
-            text = if (isEditMode) FormLabels.SHEET_TITLE_EDIT else FormLabels.SHEET_TITLE_ADD,
+            text = if (isEditMode) OperationLabels.SHEET_TITLE_EDIT else OperationLabels.SHEET_TITLE_ADD,
             style = AppTheme.typo.subtitle,
             modifier = Modifier.padding(top = AppTheme.dimens.medium)
         )
@@ -70,8 +70,8 @@ fun OperationFormContent(
         AppTextField(
             value = state.name,
             onValueChange = { onIntent(OperationIntent.UpdateName(it)) },
-            label = FormLabels.FIELD_NAME,
-            placeholder = FormLabels.FIELD_PLACE_HOLDER_NAME,
+            label = OperationLabels.FIELD_NAME,
+            placeholder = OperationLabels.FIELD_PLACE_HOLDER_NAME,
             keyboardOptions = KeyboardOptions(
                 capitalization = KeyboardCapitalization.Sentences,
                 imeAction = ImeAction.Next
@@ -82,8 +82,8 @@ fun OperationFormContent(
         AppTextField(
             value = state.amount,
             onValueChange = { onIntent(OperationIntent.UpdateAmount(it)) },
-            label = FormLabels.FIELD_AMOUNT,
-            placeholder = FormLabels.FIELD_PLACE_HOLDER_AMOUNT,
+            label = OperationLabels.FIELD_AMOUNT,
+            placeholder = OperationLabels.FIELD_PLACE_HOLDER_AMOUNT,
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Decimal,
                 imeAction = ImeAction.Next
@@ -104,7 +104,7 @@ fun OperationFormContent(
                     onValueChange = { onIntent(OperationIntent.UpdateStartDateInput(it)) },
                     onDateSelected = { onIntent(OperationIntent.SelectStartDateFromPicker(it)) },
                     initialDateMillis = state.startDate,
-                    label = FormLabels.FIELD_START_DATE_LABEL,
+                    label = OperationLabels.FIELD_START_DATE_LABEL,
                     isError = state.isStartDateError,
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Number,
@@ -121,7 +121,7 @@ fun OperationFormContent(
                             onValueChange = { onIntent(OperationIntent.UpdateEndDateInput(it)) },
                             onDateSelected = { onIntent(OperationIntent.SelectEndDateFromPicker(it)) },
                             initialDateMillis = state.endDate,
-                            label = FormLabels.FIELD_END_DATE_LABEL,
+                            label = OperationLabels.FIELD_END_DATE_LABEL,
                             isError = state.isEndDateError,
                         )
                         if (state.endDateInputBuffer.isNotEmpty()) {

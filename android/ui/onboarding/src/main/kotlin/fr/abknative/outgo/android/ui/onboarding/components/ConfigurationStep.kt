@@ -13,7 +13,6 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import fr.abknative.outgo.android.core.CommonLabels
-import fr.abknative.outgo.android.core.OnboardingLabels
 import fr.abknative.outgo.android.core.R
 import fr.abknative.outgo.android.core.components.buttons.AppButton
 import fr.abknative.outgo.android.core.components.buttons.AppIconTextButton
@@ -21,6 +20,7 @@ import fr.abknative.outgo.android.core.components.inputs.AppTextField
 import fr.abknative.outgo.android.core.designsystem.AppText
 import fr.abknative.outgo.android.core.designsystem.AppTheme
 import fr.abknative.outgo.android.core.designsystem.toColor
+import fr.abknative.outgo.android.ui.onboarding.OnboardingLabels
 
 @Composable
 fun ConfigurationStep(

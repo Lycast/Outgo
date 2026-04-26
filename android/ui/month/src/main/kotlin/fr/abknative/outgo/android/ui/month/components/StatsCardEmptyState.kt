@@ -11,12 +11,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import fr.abknative.outgo.android.core.MonthLabels
 import fr.abknative.outgo.android.core.components.buttons.BottomCentralAction
 import fr.abknative.outgo.android.core.components.cards.GlassCard
 import fr.abknative.outgo.android.core.designsystem.AppText
 import fr.abknative.outgo.android.core.designsystem.AppTheme
 import fr.abknative.outgo.android.core.designsystem.toColor
+import fr.abknative.outgo.android.ui.month.MonthLabels
 
 @Composable
 fun StatsCardEmptyState(

@@ -8,14 +8,13 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import fr.abknative.outgo.android.core.ListLabels
-import fr.abknative.outgo.android.core.MonthLabels
 import fr.abknative.outgo.android.core.components.cards.GlassCard
 import fr.abknative.outgo.android.core.components.cards.OperationCard
 import fr.abknative.outgo.android.core.designsystem.AppText
 import fr.abknative.outgo.android.core.designsystem.AppTheme
 import fr.abknative.outgo.android.core.designsystem.toColor
 import fr.abknative.outgo.android.core.extensions.uiAmount
+import fr.abknative.outgo.android.ui.month.MonthLabels
 import fr.abknative.outgo.android.ui.month.getUiColor
 import fr.abknative.outgo.android.ui.month.uiLabel
 import fr.abknative.outgo.wallet.api.model.presenter.ProjectedOperation
@@ -59,7 +58,7 @@ fun CardUpcomingExpenses(
                     OperationCard(
                         topLeftText = displayOperation.name,
                         topRightText = displayOperation.recurrence.uiLabel,
-                        bottomLeftText = "${ListLabels.DUE_PREFIX} ${projectedOp.formattedStartDate}",
+                        bottomLeftText = "${MonthLabels.DUE_PREFIX} ${projectedOp.formattedStartDate}",
                         bottomRightText = displayOperation.amountInCents.uiAmount,
                         iconColor = displayOperation.recurrence.getUiColor().copy(alpha = 0.7f),
                     )

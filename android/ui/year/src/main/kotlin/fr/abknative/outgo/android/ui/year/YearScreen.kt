@@ -19,7 +19,7 @@ fun YearScreen(modifier: Modifier = Modifier) {
         contentAlignment = Alignment.Center
     ) {
         AppText(
-            text = "Year analyze Screen\n(Coming Soon)",
+            text = YearLabels.PLACEHOLDER_TITLE,
             style = AppTheme.typo.title,
             textAlign = TextAlign.Center
         )

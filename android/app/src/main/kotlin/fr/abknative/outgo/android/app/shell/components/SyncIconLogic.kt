@@ -7,8 +7,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.res.painterResource
+import fr.abknative.outgo.android.app.shell.ShellLabels
 import fr.abknative.outgo.android.core.AccessibilityLabels
-import fr.abknative.outgo.android.core.CommonLabels
 import fr.abknative.outgo.android.core.R
 import fr.abknative.outgo.android.core.components.buttons.AppHeaderButton
 import fr.abknative.outgo.android.core.components.feedback.InfoTooltip
@@ -78,8 +78,8 @@ fun SyncIconLogic(
 
     if (syncState.isOffline) {
         InfoTooltip(
-            title = CommonLabels.SYNC_OFFLINE_TITLE,
-            description = CommonLabels.SYNC_OFFLINE_DESC,
+            title = ShellLabels.SYNC_OFFLINE_TITLE,
+            description = ShellLabels.SYNC_OFFLINE_DESC,
             modifier = modifier
         ) {
             AppHeaderButton(onClick = {}) {

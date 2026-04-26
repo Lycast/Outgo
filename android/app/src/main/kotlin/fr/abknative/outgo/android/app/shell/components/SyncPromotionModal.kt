@@ -9,7 +9,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import fr.abknative.outgo.android.core.HeaderLabels
+import fr.abknative.outgo.android.app.shell.ShellLabels
 import fr.abknative.outgo.android.core.R
 import fr.abknative.outgo.android.core.components.buttons.AppOutlinedButton
 import fr.abknative.outgo.android.core.components.buttons.AppTextButton
@@ -39,7 +39,7 @@ fun SyncPromotionModal(
                 Spacer(modifier = Modifier.height(AppTheme.dimens.medium))
 
                 AppText(
-                    text = HeaderLabels.SYNC_PROMO_TITLE,
+                    text = ShellLabels.SYNC_PROMO_TITLE,
                     style = AppTheme.typo.subtitle,
                     color = AppTheme.colors.primary.toColor(),
                     textAlign = TextAlign.Center,
@@ -49,7 +49,7 @@ fun SyncPromotionModal(
                 Spacer(modifier = Modifier.height(AppTheme.dimens.medium))
 
                 AppText(
-                    text = HeaderLabels.SYNC_PROMO_DESC,
+                    text = ShellLabels.SYNC_PROMO_DESC,
                     textAlign = TextAlign.Center
                 )
 
@@ -64,7 +64,7 @@ fun SyncPromotionModal(
                             onClick = onDismiss,
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            AppText(text = HeaderLabels.SYNC_PROMO_ACTION_LATER)
+                            AppText(text = ShellLabels.SYNC_PROMO_ACTION_LATER)
                         }
                     }
 
@@ -78,7 +78,7 @@ fun SyncPromotionModal(
                             },
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            AppText(text = HeaderLabels.SYNC_PROMO_ACTION_LOGIN)
+                            AppText(text = ShellLabels.SYNC_PROMO_ACTION_LOGIN)
                         }
                     }
                 }

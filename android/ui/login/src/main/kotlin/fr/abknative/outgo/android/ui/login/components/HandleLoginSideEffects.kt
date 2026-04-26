@@ -17,7 +17,7 @@ import fr.abknative.outgo.login.api.LoginPresenter
 fun HandleLoginSideEffects(
     presenter: LoginPresenter,
     onError: (String) -> Unit,
-    onSuccess: () -> Unit
+    onSuccess: () -> Unit,
 ) {
     val state by presenter.state.collectAsStateWithLifecycle()
     val presenterError = state.error
@@ -44,14 +44,15 @@ suspend fun handleGoogleSignIn(
     context: Context,
     webClientId: String,
     presenter: LoginPresenter,
-    onError: (String) -> Unit
+    onError: (String) -> Unit,
+    errorMessage: String
 ) {
     when (val result = launchGoogleSignIn(context, webClientId)) {
         is CredentialResult.Success -> {
             presenter.onIntent(LoginIntent.LoginWithGoogle(result.idToken))
         }
         is CredentialResult.Error -> {
-            onError("Connexion Google impossible")
+            onError(errorMessage)
         }
         is CredentialResult.Cancelled -> { /* Rien à faire */ }
     }

@@ -7,7 +7,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import fr.abknative.outgo.android.core.LoginLabels
+import fr.abknative.outgo.android.app.shell.ShellLabels
 import fr.abknative.outgo.android.core.components.buttons.AppButton
 import fr.abknative.outgo.android.core.components.buttons.AppTextButton
 import fr.abknative.outgo.android.core.designsystem.AppText
@@ -25,7 +25,7 @@ fun ConflictContent(
     ) {
         // --- Title ---
         Text(
-            text = LoginLabels.CONFLICT_TITLE,
+            text = ShellLabels.CONFLICT_TITLE,
             style = AppTheme.typo.title,
             color = AppTheme.colors.primary.toColor(),
             fontWeight = FontWeight.Bold,
@@ -36,7 +36,7 @@ fun ConflictContent(
 
         // --- Main Explanation ---
         AppText(
-            text = LoginLabels.CONFLICT_DESC,
+            text = ShellLabels.CONFLICT_DESC,
             color = AppTheme.colors.textSecondary.toColor(),
             textAlign = TextAlign.Center
         )
@@ -45,7 +45,7 @@ fun ConflictContent(
 
         // --- The "Question" ---
         AppText(
-            text = LoginLabels.CONFLICT_QUESTION,
+            text = ShellLabels.CONFLICT_QUESTION,
             style = AppTheme.typo.caption,
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth(),
@@ -59,7 +59,7 @@ fun ConflictContent(
             modifier = Modifier.fillMaxWidth()
         ) {
             AppText(
-                text = LoginLabels.CONFLICT_CONFIRM,
+                text = ShellLabels.CONFLICT_CONFIRM,
                 color = AppTheme.colors.textOnBrand.toColor()
             )
         }
@@ -71,7 +71,7 @@ fun ConflictContent(
             onClick = onCancel,
             modifier = Modifier.fillMaxWidth()
         ) {
-            AppText(text = LoginLabels.CONFLICT_CANCEL)
+            AppText(text = ShellLabels.CONFLICT_CANCEL)
         }
     }
 }

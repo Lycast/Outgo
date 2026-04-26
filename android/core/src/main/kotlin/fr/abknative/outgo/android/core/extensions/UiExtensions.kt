@@ -2,7 +2,6 @@ package fr.abknative.outgo.android.core.extensions
 
 import androidx.compose.runtime.Composable
 import fr.abknative.outgo.android.core.CommonLabels
-import fr.abknative.outgo.android.core.ListLabels
 import fr.abknative.outgo.core.api.formatters.formatAsCurrency
 
 // --- Currency Formatting ---
@@ -21,9 +20,9 @@ val Long.uiAmount: String
  */
 @Composable
 fun getMonthName(month: Int): String = when (month) {
-    1 -> ListLabels.MONTH_1; 2 -> ListLabels.MONTH_2; 3 -> ListLabels.MONTH_3
-    4 -> ListLabels.MONTH_4; 5 -> ListLabels.MONTH_5; 6 -> ListLabels.MONTH_6
-    7 -> ListLabels.MONTH_7; 8 -> ListLabels.MONTH_8; 9 -> ListLabels.MONTH_9
-    10 -> ListLabels.MONTH_10; 11 -> ListLabels.MONTH_11; 12 -> ListLabels.MONTH_12
+    1 -> CommonLabels.MONTH_1; 2 -> CommonLabels.MONTH_2; 3 -> CommonLabels.MONTH_3
+    4 -> CommonLabels.MONTH_4; 5 -> CommonLabels.MONTH_5; 6 -> CommonLabels.MONTH_6
+    7 -> CommonLabels.MONTH_7; 8 -> CommonLabels.MONTH_8; 9 -> CommonLabels.MONTH_9
+    10 -> CommonLabels.MONTH_10; 11 -> CommonLabels.MONTH_11; 12 -> CommonLabels.MONTH_12
     else -> ""
 }

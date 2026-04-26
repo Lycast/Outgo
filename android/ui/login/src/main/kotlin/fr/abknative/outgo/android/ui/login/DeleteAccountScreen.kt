@@ -25,6 +25,7 @@ fun DeleteAccountScreen(
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     var showCancelDialog by remember { mutableStateOf(false) }
+    val googleErrorMessage = LoginLabels.GOOGLE_AUTH_ERROR // todo l'erreur n'est pas géré ici
 
     LaunchedEffect(Unit) { presenter.onIntent(LoginIntent.Init(isDeletionMode = true)) }
 
@@ -33,16 +34,16 @@ fun DeleteAccountScreen(
     BackHandler(enabled = !state.isLoading) { showCancelDialog = true }
 
     AuthLayout(
-        title = "Sécurité du compte",
-        subtitle = "Veuillez confirmer votre identité pour finaliser la suppression.",
+        title = LoginLabels.DELETE_TITLE,
+        subtitle = LoginLabels.DELETE_SUBTITLE,
         titleColor = AppTheme.colors.error.toColor().copy(alpha = 0.5f),
-        googleLabel = "Supprimer via Google",
-        appleLabel = "Supprimer via Apple",
+        googleLabel = LoginLabels.DELETE_GOOGLE_BUTTON,
+        appleLabel = LoginLabels.DELETE_APPLE_BUTTON,
         isLoading = state.isLoading,
         onBackClick = { showCancelDialog = true },
         onGoogleClick = {
             coroutineScope.launch {
-                handleGoogleSignIn(context, secretConfig.webClientId, presenter, onError)
+                handleGoogleSignIn(context, secretConfig.webClientId, presenter, onError, errorMessage = googleErrorMessage)
             }
         },
         onAppleClick = { /* TODO */ }
@@ -53,7 +54,7 @@ fun DeleteAccountScreen(
             isFormValid = state.isFormValid,
             isLoading = state.isLoading,
             isLoginMode = true,
-            submitBtnLabel = "Confirmer la suppression",
+            submitBtnLabel = LoginLabels.DELETE_SUBMIT,
             showToggleMode = false,
             onEmailChange = { presenter.onIntent(LoginIntent.UpdateEmail(it)) },
             onPasswordChange = { presenter.onIntent(LoginIntent.UpdatePassword(it)) },

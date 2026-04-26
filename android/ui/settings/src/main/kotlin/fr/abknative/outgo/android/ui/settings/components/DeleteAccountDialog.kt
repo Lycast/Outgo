@@ -11,13 +11,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import fr.abknative.outgo.android.core.CommonLabels
-import fr.abknative.outgo.android.core.DialogLabels
 import fr.abknative.outgo.android.core.components.buttons.AppTextButton
 import fr.abknative.outgo.android.core.components.buttons.HoldToConfirmButton
 import fr.abknative.outgo.android.core.components.cards.GlassCard
 import fr.abknative.outgo.android.core.designsystem.AppText
 import fr.abknative.outgo.android.core.designsystem.AppTheme
 import fr.abknative.outgo.android.core.designsystem.toColor
+import fr.abknative.outgo.android.ui.settings.SettingsLabels
 
 @Composable
 fun DeleteAccountDialog(
@@ -40,7 +40,7 @@ fun DeleteAccountDialog(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 AppText(
-                    text = DialogLabels.DELETE_ACCOUNT_TITLE,
+                    text = SettingsLabels.DELETE_ACCOUNT_TITLE,
                     style = AppTheme.typo.title,
                     color = AppTheme.colors.primary.toColor(),
                     textAlign = TextAlign.Center,
@@ -50,7 +50,7 @@ fun DeleteAccountDialog(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 AppText(
-                    text = DialogLabels.DELETE_ACCOUNT_CHOICE_DESC,
+                    text = SettingsLabels.DELETE_ACCOUNT_CHOICE_DESC,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -60,16 +60,16 @@ fun DeleteAccountDialog(
                 Column(verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.medium)) {
 
                     DialogSwitchRow(
-                        title = DialogLabels.DELETE_ACCOUNT_SERVER_TITLE,
-                        subtitle = DialogLabels.DELETE_ACCOUNT_SERVER_DESC,
+                        title = SettingsLabels.DELETE_ACCOUNT_SERVER_TITLE,
+                        subtitle = SettingsLabels.DELETE_ACCOUNT_SERVER_DESC,
                         isChecked = wipeServer,
                         enabled = !revokeAuth,
                         onCheckedChange = { wipeServer = it }
                     )
 
                     DialogSwitchRow(
-                        title = DialogLabels.DELETE_ACCOUNT_AUTH_TITLE,
-                        subtitle = DialogLabels.DELETE_ACCOUNT_AUTH_DESC,
+                        title = SettingsLabels.DELETE_ACCOUNT_AUTH_TITLE,
+                        subtitle = SettingsLabels.DELETE_ACCOUNT_AUTH_DESC,
                         isChecked = revokeAuth,
                         onCheckedChange = { revokeAuth = it }
                     )

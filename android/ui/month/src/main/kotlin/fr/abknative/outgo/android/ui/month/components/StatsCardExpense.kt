@@ -7,8 +7,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import fr.abknative.outgo.android.core.ListLabels
-import fr.abknative.outgo.android.core.MonthLabels
 import fr.abknative.outgo.android.core.components.cards.GlassCard
 import fr.abknative.outgo.android.core.components.charts.AppDonutChart
 import fr.abknative.outgo.android.core.components.layout.CardSplitSkeleton
@@ -16,6 +14,7 @@ import fr.abknative.outgo.android.core.designsystem.AppText
 import fr.abknative.outgo.android.core.designsystem.AppTheme
 import fr.abknative.outgo.android.core.designsystem.toColor
 import fr.abknative.outgo.android.core.extensions.uiAmount
+import fr.abknative.outgo.android.ui.month.MonthLabels
 
 @Composable
 fun StatsCardExpense(
@@ -48,7 +47,7 @@ fun StatsCardExpense(
                             horizontalAlignment = Alignment.CenterHorizontally,
                         ) {
                             AppText(
-                                text = ListLabels.HERO_TOTAL_CHARGES_LABEL,
+                                text = MonthLabels.HERO_TOTAL_CHARGES_LABEL,
                                 style = AppTheme.typo.label
                             )
 
@@ -61,7 +60,7 @@ fun StatsCardExpense(
                             Spacer(modifier = Modifier.height(AppTheme.dimens.extraSmall))
 
                             AppText(
-                                text = ListLabels.HERO_REMAINING_TO_PAY_LABEL,
+                                text = MonthLabels.HERO_REMAINING_TO_PAY_LABEL,
                                 style = AppTheme.typo.label,
                             )
 

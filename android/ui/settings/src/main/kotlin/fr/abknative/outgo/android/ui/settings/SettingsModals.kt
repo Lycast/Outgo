@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import fr.abknative.outgo.android.core.CommonLabels
-import fr.abknative.outgo.android.core.DialogLabels
 import fr.abknative.outgo.android.core.components.buttons.AppOutlinedButton
 import fr.abknative.outgo.android.core.components.buttons.HoldToConfirmButton
 import fr.abknative.outgo.android.core.designsystem.AppText
@@ -51,12 +50,12 @@ fun SettingsModals(
 
     if (showLocalPurgeDialog) {
         LocalPurgeDialog(
-            title = DialogLabels.PURGE_TITLE,
-            description = DialogLabels.PURGE_DESC,
+            title = SettingsLabels.PURGE_TITLE,
+            description = SettingsLabels.PURGE_DESC,
             onDismiss = onDismissLocalPurge,
             confirmButton = {
                 HoldToConfirmButton(
-                    label = DialogLabels.PURGE_CONFIRM,
+                    label = SettingsLabels.PURGE_CONFIRM,
                     onConfirm = {
                         presenter.onIntent(SettingsIntent.PurgeLocalData)
                         onDismissLocalPurge()

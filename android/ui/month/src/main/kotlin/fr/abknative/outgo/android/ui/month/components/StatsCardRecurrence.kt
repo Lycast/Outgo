@@ -4,13 +4,13 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import fr.abknative.outgo.android.core.MonthLabels
 import fr.abknative.outgo.android.core.components.cards.GlassCard
 import fr.abknative.outgo.android.core.components.charts.AppProgressBar
 import fr.abknative.outgo.android.core.designsystem.AppText
 import fr.abknative.outgo.android.core.designsystem.AppTheme
 import fr.abknative.outgo.android.core.designsystem.toColor
 import fr.abknative.outgo.android.core.extensions.uiAmount
+import fr.abknative.outgo.android.ui.month.MonthLabels
 import fr.abknative.outgo.android.ui.month.getUiColor
 import fr.abknative.outgo.android.ui.month.uiLabel
 import fr.abknative.outgo.month.api.RecurrenceStat

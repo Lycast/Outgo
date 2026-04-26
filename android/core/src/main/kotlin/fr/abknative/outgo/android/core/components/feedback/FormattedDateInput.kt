@@ -10,7 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import fr.abknative.outgo.android.core.AccessibilityLabels
-import fr.abknative.outgo.android.core.OperationLabels
+import fr.abknative.outgo.android.core.CommonLabels
 import fr.abknative.outgo.android.core.components.inputs.AppDatePickerDialog
 import fr.abknative.outgo.android.core.components.inputs.AppTextField
 import fr.abknative.outgo.android.core.designsystem.AppTheme
@@ -42,7 +42,7 @@ fun FormattedDateInput(
             onValueChange(digitsOnly)
         },
         label = label,
-        placeholder = OperationLabels.PLACEHOLDER_DATE_FORMAT,
+        placeholder = CommonLabels.PLACEHOLDER_DATE_FORMAT,
         isError = isError,
         keyboardOptions = keyboardOptions,
         visualTransformation = DateTransformation(),

@@ -4,11 +4,11 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import fr.abknative.outgo.android.core.FormLabels
 import fr.abknative.outgo.android.core.components.selection.AppSegmentedControl
 import fr.abknative.outgo.android.core.designsystem.AppText
 import fr.abknative.outgo.android.core.designsystem.AppTheme
 import fr.abknative.outgo.android.core.designsystem.toColor
+import fr.abknative.outgo.android.ui.operation.OperationLabels
 import fr.abknative.outgo.wallet.api.model.operation.OperationType
 
 @Composable
@@ -18,7 +18,7 @@ fun OperationTypeSelector(
     modifier: Modifier = Modifier
 ) {
 
-    val options = listOf(FormLabels.TYPE_EXPENSE, FormLabels.TYPE_INCOME)
+    val options = listOf(OperationLabels.TYPE_EXPENSE, OperationLabels.TYPE_INCOME)
     val selectedIndex = if (selectedType == OperationType.EXPENSE) 0 else 1
 
     val activeColor = if (selectedIndex == 0) {
@@ -29,7 +29,7 @@ fun OperationTypeSelector(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         AppText(
-            text = FormLabels.FIELD_TYPE_DESC,
+            text = OperationLabels.FIELD_TYPE_DESC,
             style = AppTheme.typo.caption,
             color = AppTheme.colors.textSecondary.toColor(),
             modifier = Modifier.padding(horizontal = AppTheme.dimens.small)

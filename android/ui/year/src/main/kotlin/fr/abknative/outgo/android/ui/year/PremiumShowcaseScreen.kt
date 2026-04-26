@@ -9,8 +9,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import fr.abknative.outgo.android.core.PremiumLabels
-import fr.abknative.outgo.android.core.Url
 import fr.abknative.outgo.android.core.components.buttons.AppButton
 import fr.abknative.outgo.android.core.components.cards.GlassCard
 import fr.abknative.outgo.android.core.designsystem.AppText
@@ -39,13 +37,13 @@ fun PremiumShowcaseScreen(
 
         Spacer(modifier = Modifier.height(AppTheme.dimens.extraLarge))
         AppText(
-            text = PremiumLabels.SHOWCASE_TITLE,
+            text = YearLabels.SHOWCASE_TITLE,
             style = AppTheme.typo.title,
             color = AppTheme.colors.primary.toColor(),
             textAlign = TextAlign.Center
         )
         AppText(
-            text = PremiumLabels.SHOWCASE_SUBTITLE,
+            text = YearLabels.SHOWCASE_SUBTITLE,
             color = AppTheme.colors.textSecondary.toColor(),
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(top = AppTheme.dimens.small)
@@ -54,10 +52,10 @@ fun PremiumShowcaseScreen(
         Spacer(modifier = Modifier.height(AppTheme.dimens.extraLarge))
 
         ShowcaseCard(
-            title = PremiumLabels.ESSENTIAL_TITLE,
-            badge = PremiumLabels.ESSENTIAL_BADGE,
-            description = PremiumLabels.ESSENTIAL_DESC,
-            features = PremiumLabels.ESSENTIAL_FEATURES,
+            title = YearLabels.ESSENTIAL_TITLE,
+            badge = YearLabels.ESSENTIAL_BADGE,
+            description = YearLabels.ESSENTIAL_DESC,
+            features = YearLabels.ESSENTIAL_FEATURES,
             ending = null,
             isActive = true
         )
@@ -65,11 +63,11 @@ fun PremiumShowcaseScreen(
         Spacer(modifier = Modifier.height(AppTheme.dimens.medium))
 
         ShowcaseCard(
-            title = PremiumLabels.PREMIUM_TITLE,
-            badge = PremiumLabels.PREMIUM_BADGE,
-            description = PremiumLabels.PREMIUM_DESC,
-            features = PremiumLabels.PREMIUM_FEATURES,
-            ending = PremiumLabels.PREMIUM_ENDING,
+            title = YearLabels.PREMIUM_TITLE,
+            badge = YearLabels.PREMIUM_BADGE,
+            description = YearLabels.PREMIUM_DESC,
+            features = YearLabels.PREMIUM_FEATURES,
+            ending = YearLabels.PREMIUM_ENDING,
             isActive = false
         )
 
@@ -77,11 +75,11 @@ fun PremiumShowcaseScreen(
 
         // --- Call To Action ---
         AppButton(
-            onClick = { uriHandler.openUri(Url.FORM_URL) },
+            onClick = { uriHandler.openUri(YearLabels.URL_FORM) },
             modifier = Modifier.fillMaxWidth()
         ) {
             AppText(
-                text = PremiumLabels.NOTIFY_ME_ACTION,
+                text = YearLabels.NOTIFY_ME_ACTION,
                 color = AppTheme.colors.textOnBrand.toColor()
             )
         }
