@@ -30,6 +30,7 @@ fun AuthLayout(
     googleLabel: String = LoginLabels.GOOGLE_BUTTON,
     appleLabel: String = LoginLabels.APPLE_BUTTON,
     isLoading: Boolean = false,
+    isAppleAuthAvailable: Boolean = false,
     content: @Composable ColumnScope.() -> Unit
 ) {
     Scaffold(
@@ -94,12 +95,16 @@ fun AuthLayout(
 
                 Spacer(modifier = Modifier.height(AppTheme.dimens.small))
 
-                SocialLoginButton(
-                    provider = SocialProvider.APPLE,
-                    label = appleLabel,
-                    onClick = onAppleClick,
-                    enabled = !isLoading
-                )
+                if (isAppleAuthAvailable) {
+                    Spacer(modifier = Modifier.height(AppTheme.dimens.small))
+
+                    SocialLoginButton(
+                        provider = SocialProvider.APPLE,
+                        label = appleLabel,
+                        onClick = onAppleClick,
+                        enabled = !isLoading
+                    )
+                }
 
                 Spacer(modifier = Modifier.height(AppTheme.dimens.large))
 
