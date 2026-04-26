@@ -85,8 +85,17 @@ internal class ObserveProjectedOperationsUseCaseImpl(
 
         var currentPointer = op.startDate
 
-        while (currentPointer < targetStartOfMonth) {
-            currentPointer = timeProvider.plusDays(currentPointer, 7)
+        if (currentPointer < targetStartOfMonth) {
+            val diffMillis = targetStartOfMonth - currentPointer
+            val oneWeekMillis = 7L * 24 * 60 * 60 * 1000
+            val weeksToJump = (diffMillis / oneWeekMillis).toInt()
+
+            if (weeksToJump > 0) {
+                currentPointer = timeProvider.plusDays(currentPointer, weeksToJump * 7)
+            }
+            while (currentPointer < targetStartOfMonth) {
+                currentPointer = timeProvider.plusDays(currentPointer, 7)
+            }
         }
 
         val safeEndDate = op.endDate

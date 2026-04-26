@@ -108,8 +108,14 @@ internal class WalletRepositoryImpl(
                 val now = timeProvider.now()
                 val uid = currentUserId
 
-                queries.markAsDeleted(deletedAt = now, updatedAt = now, id = id, userId = uid)
-                operationQueries.softDeleteByWalletId(deletedAt = now, updatedAt = now, walletId = id, userId = uid)
+                val current = queries.getWalletById(id = id, userId = uid).executeAsOneOrNull()
+
+                if (current?.syncStatus == SyncStatus.PENDING_CREATE.name) {
+                    queries.hardDeletePendingCreate(id = id, userId = uid)
+                } else {
+                    queries.markAsDeleted(deletedAt = now, updatedAt = now, id = id, userId = uid)
+                    operationQueries.softDeleteByWalletId(deletedAt = now, updatedAt = now, walletId = id, userId = uid)
+                }
             }
         }
     }
