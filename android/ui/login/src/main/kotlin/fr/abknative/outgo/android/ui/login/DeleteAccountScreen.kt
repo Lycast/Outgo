@@ -7,6 +7,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import fr.abknative.outgo.android.core.designsystem.AppTheme
 import fr.abknative.outgo.android.core.designsystem.toColor
 import fr.abknative.outgo.android.ui.login.components.*
+import fr.abknative.outgo.android.ui.login.helper.CredentialErrorType
 import fr.abknative.outgo.core.api.SecretConfig
 import fr.abknative.outgo.login.api.LoginIntent
 import fr.abknative.outgo.login.api.LoginPresenter
@@ -25,9 +26,20 @@ fun DeleteAccountScreen(
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     var showCancelDialog by remember { mutableStateOf(false) }
-    val googleErrorMessage = LoginLabels.GOOGLE_AUTH_ERROR // todo l'erreur n'est pas géré ici
 
-    LaunchedEffect(Unit) { presenter.onIntent(LoginIntent.Init(isDeletionMode = true)) }
+    var localCredentialError by remember { mutableStateOf<CredentialErrorType?>(null) }
+    val credentialErrorMessage = localCredentialError?.toLoginUIString() // Résolution @Composable !
+
+    LaunchedEffect(credentialErrorMessage) {
+        if (credentialErrorMessage != null) {
+            onError(credentialErrorMessage)
+            localCredentialError = null
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        presenter.onIntent(LoginIntent.Init(isDeletionMode = true))
+    }
 
     HandleLoginSideEffects(presenter, onError, onDeleteSuccess)
 
@@ -43,7 +55,12 @@ fun DeleteAccountScreen(
         onBackClick = { showCancelDialog = true },
         onGoogleClick = {
             coroutineScope.launch {
-                handleGoogleSignIn(context, secretConfig.webClientId, presenter, onError, errorMessage = googleErrorMessage)
+                handleGoogleSignIn(
+                    context = context,
+                    webClientId = secretConfig.webClientId,
+                    presenter = presenter,
+                    onLocalError = { localCredentialError = it }
+                )
             }
         },
         onAppleClick = { /* TODO */ }

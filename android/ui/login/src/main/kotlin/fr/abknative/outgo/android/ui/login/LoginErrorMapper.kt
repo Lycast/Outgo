@@ -2,6 +2,7 @@ package fr.abknative.outgo.android.ui.login
 
 import androidx.compose.runtime.Composable
 import fr.abknative.outgo.android.core.toCommonUIString
+import fr.abknative.outgo.android.ui.login.helper.CredentialErrorType
 import fr.abknative.outgo.auth.api.AuthError
 import fr.abknative.outgo.core.api.logs.AppException
 import fr.abknative.outgo.shared.core.ui.resources.*
@@ -19,5 +20,15 @@ fun AppException.toLoginUIString(): String {
         is AuthError.SystemError -> stringResource(Res.string.error_credential_system)
 
         else -> this.toCommonUIString()
+    }
+}
+
+@Composable
+fun CredentialErrorType.toLoginUIString(): String {
+    return when (this) {
+        CredentialErrorType.INVALID_TOKEN -> stringResource(Res.string.error_credential_invalid_token)
+        CredentialErrorType.NO_ACCOUNT_FOUND -> stringResource(Res.string.error_credential_no_account)
+        CredentialErrorType.SYSTEM_ERROR,
+        CredentialErrorType.UNKNOWN -> stringResource(Res.string.error_credential_system)
     }
 }

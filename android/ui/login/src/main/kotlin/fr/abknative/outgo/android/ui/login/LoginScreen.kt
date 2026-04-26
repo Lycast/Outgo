@@ -7,6 +7,7 @@ import fr.abknative.outgo.android.ui.login.components.AuthLayout
 import fr.abknative.outgo.android.ui.login.components.EmailAuthForm
 import fr.abknative.outgo.android.ui.login.components.HandleLoginSideEffects
 import fr.abknative.outgo.android.ui.login.components.handleGoogleSignIn
+import fr.abknative.outgo.android.ui.login.helper.CredentialErrorType
 import fr.abknative.outgo.core.api.SecretConfig
 import fr.abknative.outgo.login.api.LoginIntent
 import fr.abknative.outgo.login.api.LoginPresenter
@@ -25,7 +26,16 @@ fun LoginScreen(
     var isLoginMode by remember { mutableStateOf(true) }
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
-    val googleErrorMessage = LoginLabels.GOOGLE_AUTH_ERROR // todo l'erreur n'est pas géré ici
+
+    var localCredentialError by remember { mutableStateOf<CredentialErrorType?>(null) }
+    val credentialErrorMessage = localCredentialError?.toLoginUIString() // Résolution @Composable !
+
+    LaunchedEffect(credentialErrorMessage) {
+        if (credentialErrorMessage != null) {
+            onError(credentialErrorMessage)
+            localCredentialError = null
+        }
+    }
 
     LaunchedEffect(Unit) {
         presenter.onIntent(LoginIntent.Init(isDeletionMode = false))
@@ -39,7 +49,12 @@ fun LoginScreen(
         onBackClick = onNavigateBack,
         onGoogleClick = {
             coroutineScope.launch {
-                handleGoogleSignIn(context, secretConfig.webClientId, presenter, onError, errorMessage = googleErrorMessage)
+                handleGoogleSignIn(
+                    context = context,
+                    webClientId = secretConfig.webClientId,
+                    presenter = presenter,
+                    onLocalError = { localCredentialError = it }
+                )
             }
         },
         onAppleClick = { /* TODO */ }

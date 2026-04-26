@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import fr.abknative.outgo.android.ui.login.helper.CredentialErrorType
 import fr.abknative.outgo.android.ui.login.helper.CredentialResult
 import fr.abknative.outgo.android.ui.login.helper.launchGoogleSignIn
 import fr.abknative.outgo.android.ui.login.toLoginUIString
@@ -44,15 +45,14 @@ suspend fun handleGoogleSignIn(
     context: Context,
     webClientId: String,
     presenter: LoginPresenter,
-    onError: (String) -> Unit,
-    errorMessage: String
+    onLocalError: (CredentialErrorType) -> Unit
 ) {
     when (val result = launchGoogleSignIn(context, webClientId)) {
         is CredentialResult.Success -> {
             presenter.onIntent(LoginIntent.LoginWithGoogle(result.idToken))
         }
         is CredentialResult.Error -> {
-            onError(errorMessage)
+            onLocalError(result.type)
         }
         is CredentialResult.Cancelled -> { /* Rien à faire */ }
     }

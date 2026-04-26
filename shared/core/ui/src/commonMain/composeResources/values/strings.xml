@@ -69,7 +69,6 @@
     <string name="login_delete_apple_button">Supprimer via Apple</string>
     <string name="login_delete_cancel_quit">Quitter</string>
     <string name="login_delete_cancel_continue">Continuer la suppression</string>
-    <string name="login_error_google_auth">Connexion Google impossible</string>
 
     <!--==========================================================================
     ============================ Month Labels ====================================

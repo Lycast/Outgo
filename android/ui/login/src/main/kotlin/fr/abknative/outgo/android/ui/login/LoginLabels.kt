@@ -29,5 +29,4 @@ internal object LoginLabels {
 
     val DELETE_CANCEL_QUIT @Composable get() = stringResource(Res.string.login_delete_cancel_quit)
     val DELETE_CANCEL_CONTINUE @Composable get() = stringResource(Res.string.login_delete_cancel_continue)
-    val GOOGLE_AUTH_ERROR @Composable get() = stringResource(Res.string.login_error_google_auth)
 }
