@@ -1,5 +1,6 @@
 package fr.abknative.outgo.android.ui.settings
 
+import android.content.pm.PackageManager
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -7,6 +8,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.style.TextAlign
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -34,6 +36,14 @@ fun SettingsScreen(
     val state by presenter.state.collectAsStateWithLifecycle()
     val scrollState = rememberScrollState()
     val uriHandler = LocalUriHandler.current
+
+    val context = LocalContext.current
+    val appVersion = remember(context) {
+        try {
+            val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
+            "${packageInfo.versionName}"
+        } catch (e: PackageManager.NameNotFoundException) { }
+    }
 
     var showLogoutOptions by remember { mutableStateOf(false) }
     var showDeleteAccountConfirm by remember { mutableStateOf(false) }
@@ -149,7 +159,7 @@ fun SettingsScreen(
 
             // Footer
             Text(
-                text = SettingsLabels.APP_VERSION_PREFIX,
+                text = "${SettingsLabels.APP_VERSION_PREFIX}$appVersion",
                 style = AppTheme.typo.caption,
                 color = AppTheme.colors.textPrimary.toColor(),
                 modifier = Modifier

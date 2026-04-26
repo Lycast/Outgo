@@ -139,7 +139,7 @@
     <string name="settings_delete_account_subtitle">Cette action est irréversible</string>
     <string name="settings_local_purge_title">Supprimer les données</string>
     <string name="settings_local_purge_subtitle">Réinitialise l'application sur cet appareil.</string>
-    <string name="settings_app_version_prefix">Outgo v1.0.0</string>
+    <string name="settings_app_version_prefix">Outgo v</string>
     <string name="settings_dialog_purge_desc">Cela supprimera toutes les données Outgo présentes sur cet appareil.</string>
     <string name="settings_dialog_purge_confirm">Vider le cache</string>
     <string name="settings_dialog_delete_account_choice_desc">Choisissez ce que vous souhaitez effacer. Cette action est irréversible.</string>
