@@ -120,6 +120,13 @@ fun SettingsScreen(
                     subtitle = SettingsLabels.CONTACT_SUBTITLE,
                     onClick = { uriHandler.openUri(SettingsLabels.URL_CONTACT) }
                 )
+                HorizontalDivider(color = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.1f))
+                SettingsRowClickable(
+                    icon = R.drawable.shield_duotone,
+                    title = SettingsLabels.PRIVACY_TITLE,
+                    subtitle = SettingsLabels.PRIVACY_SUBTITLE,
+                    onClick = { uriHandler.openUri(SettingsLabels.URL_PRIVACY) }
+                )
             }
 
             // --- SECTION Data & Account ---

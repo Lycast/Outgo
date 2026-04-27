@@ -150,6 +150,8 @@
     <string name="settings_dialog_logout_data_question">Que souhaitez-vous faire de vos données actuelles ?</string>
     <string name="settings_dialog_logout_action_keep_budget">Conserver ce budget</string>
     <string name="settings_dialog_logout_action_return_local">Retrouver mon budget local</string>
+    <string name="settings_privacy_title">Politique de confidentialité</string>
+    <string name="settings_privacy_subtitle">Consulter la gestion de vos données</string>
 
     <!--==========================================================================
     ============================ Year Labels =====================================

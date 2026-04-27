@@ -40,9 +40,12 @@ internal object SettingsLabels {
     val LOGOUT_DATA_QUESTION @Composable get() = stringResource(Res.string.settings_dialog_logout_data_question)
     val LOGOUT_ACTION_KEEP_BUDGET @Composable get() = stringResource(Res.string.settings_dialog_logout_action_keep_budget)
     val LOGOUT_ACTION_RETURN_LOCAL @Composable get() = stringResource(Res.string.settings_dialog_logout_action_return_local)
+    val PRIVACY_TITLE @Composable get() = stringResource(Res.string.settings_privacy_title)
+    val PRIVACY_SUBTITLE @Composable get() = stringResource(Res.string.settings_privacy_subtitle)
 
     val APP_VERSION_PREFIX @Composable get() = stringResource(Res.string.settings_app_version_prefix)
 
+    const val URL_PRIVACY = "https://abknative.fr/privacy-outgo"
     const val URL_OUTGO = "https://abknative.fr/outgo"
     const val URL_STORE = "https://play.google.com/store/apps/details?id=fr.abknative.outgo"
     const val URL_CONTACT = "https://abknative.fr/contact"
