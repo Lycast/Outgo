@@ -20,9 +20,12 @@ internal class RegisterUseCaseImpl(
         return executeAuthWithMigration(
             sessionProvider,
             authRepository,
-            syncManager,
+            syncManager
         ) {
-            authRepository.register(email, password)
+            val registerResult = authRepository.register(email, password)
+            if (registerResult is Result.Error) return@executeAuthWithMigration registerResult
+
+            authRepository.sendEmailVerification()
         }
     }
 }

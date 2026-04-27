@@ -32,6 +32,7 @@ internal class AuthRepositoryImpl(
         private const val KEY_USER_ID = "auth_user_id"
         private const val KEY_TOKEN = "auth_token"
         private const val KEY_EMAIL = "auth_email"
+        private const val KEY_EMAIL_VERIFIED = "auth_email_verified"
         private const val TAG = "FirebaseAuthRepo"
     }
 
@@ -65,10 +66,12 @@ internal class AuthRepositoryImpl(
                     val updatedSession = UserSession(
                         userId = currentUser.uid,
                         email = currentUser.email ?: "",
-                        token = freshToken
+                        token = freshToken,
+                        isEmailVerified = currentUser.isEmailVerified
                     )
 
-                    if (sessionState.value?.token != freshToken) {
+                    val currentSession = sessionState.value
+                    if (currentSession?.token != freshToken || currentSession.isEmailVerified != currentUser.isEmailVerified) {
                         saveSessionToStorage(updatedSession)
                         sessionState.value = updatedSession
                     }
@@ -97,6 +100,31 @@ internal class AuthRepositoryImpl(
 
         val authResult = firebaseAuth.signInWithEmailAndPassword(email, password)
         createAndSaveSession(authResult.user, email)
+    }
+
+    override suspend fun sendEmailVerification(): Result<Unit, AppException> = asResult(
+        onError = { it.toAuthAppException(TAG) }
+    ) {
+        val user = firebaseAuth.currentUser ?: throw AuthError.UserNotFound()
+        user.sendEmailVerification()
+    }
+
+    override suspend fun checkEmailVerified(): Result<Boolean, AppException> = asResult(
+        onError = { it.toAuthAppException(TAG) }
+    ) {
+        val user = firebaseAuth.currentUser ?: return@asResult false
+
+        user.reload()
+        val isVerified = user.isEmailVerified
+
+        val currentSession = sessionState.value
+        if (currentSession != null && currentSession.isEmailVerified != isVerified) {
+            val updatedSession = currentSession.copy(isEmailVerified = isVerified)
+            saveSessionToStorage(updatedSession)
+            sessionState.value = updatedSession
+        }
+
+        isVerified
     }
 
     override suspend fun loginWithGoogle(idToken: String): Result<Unit, AppException> = asResult(
@@ -149,7 +177,8 @@ internal class AuthRepositoryImpl(
         val session = UserSession(
             userId = user.uid,
             email = user.email ?: fallbackEmail,
-            token = token
+            token = token,
+            isEmailVerified = user.isEmailVerified
         )
 
         saveSessionToStorage(session)
@@ -160,6 +189,7 @@ internal class AuthRepositoryImpl(
         storage.remove(KEY_USER_ID)
         storage.remove(KEY_TOKEN)
         storage.remove(KEY_EMAIL)
+        storage.remove(KEY_EMAIL_VERIFIED)
         sessionState.value = null
     }
 
@@ -167,12 +197,20 @@ internal class AuthRepositoryImpl(
         val userId = storage.getString(KEY_USER_ID) ?: return null
         val token = storage.getString(KEY_TOKEN) ?: return null
         val email = storage.getString(KEY_EMAIL) ?: return null
-        return UserSession(userId = userId, email = email, token = token)
+        val isEmailVerified = storage.getBoolean(KEY_EMAIL_VERIFIED, false)
+
+        return UserSession(
+            userId = userId,
+            email = email,
+            token = token,
+            isEmailVerified = isEmailVerified
+        )
     }
 
     private fun saveSessionToStorage(session: UserSession) {
         storage.putString(KEY_USER_ID, session.userId)
         storage.putString(KEY_TOKEN, session.token)
         storage.putString(KEY_EMAIL, session.email)
+        storage.putBoolean(KEY_EMAIL_VERIFIED, session.isEmailVerified)
     }
 }

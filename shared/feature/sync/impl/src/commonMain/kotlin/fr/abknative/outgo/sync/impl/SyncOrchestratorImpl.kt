@@ -114,7 +114,7 @@ internal class SyncOrchestratorImpl(
             sessionProvider.observeUserId(),
             observeUserSession()
         ) { hasPendingData, isConnected, userId, session ->
-            hasPendingData && isConnected && !userId.startsWith("local_") && session != null
+            hasPendingData && isConnected && !userId.startsWith("local_") && session?.isEmailVerified == true
         }
             .distinctUntilChanged()
             .filter { shouldSync ->
@@ -180,14 +180,23 @@ internal class SyncOrchestratorImpl(
         }
 
         activeSyncJob = scope.launch {
-            AppLogger.get()?.i(TAG, "Starting full sync: $reason")
-            val result = syncManager.syncAll()
+            AppLogger.get()?.i(TAG, "Starting sync: $reason")
+
+            val session = observeUserSession().firstOrNull()
+            val isVerified = session?.isEmailVerified == true
+
+            val result = if (isVerified) {
+                syncManager.syncAll()
+            } else {
+                AppLogger.get()?.i(TAG, "Email not verified. Forcing Pull-only (syncIn).")
+                syncManager.syncIn()
+            }
 
             if (result is Result.Success) {
-                AppLogger.get()?.i(TAG, "Full sync successful. Resetting timer.")
+                AppLogger.get()?.i(TAG, "Sync operation successful. Resetting timer.")
                 storage.putLong(LAST_SYNC_KEY, timeProvider.now())
             } else if (result is Result.Error) {
-                AppLogger.get()?.w(TAG, "Full sync failed: $reason")
+                AppLogger.get()?.w(TAG, "Sync operation failed: $reason")
                 if (emitErrorEvent) {
                     _syncEvents.emit(SyncEvent.Error(result.error))
                 }
