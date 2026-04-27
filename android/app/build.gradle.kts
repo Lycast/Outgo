@@ -9,9 +9,9 @@ android {
     namespace = "fr.abknative.outgo.android.app"
 
     defaultConfig {
-        applicationId = "fr.abknative.outgo.android"
-        versionCode = 3
-        versionName = "1.0.2"
+        applicationId = "fr.abknative.outgo"
+        versionCode = 4
+        versionName = "1.0.3"
     }
 
     packaging {
