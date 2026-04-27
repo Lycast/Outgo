@@ -6,10 +6,7 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -20,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import fr.abknative.outgo.android.app.shell.components.AppGlobalHeader
 import fr.abknative.outgo.android.app.shell.components.BottomNavBar
+import fr.abknative.outgo.android.app.shell.components.EmailVerificationBanner
 import fr.abknative.outgo.android.core.CommonLabels
 import fr.abknative.outgo.android.core.components.feedback.AppSnackbar
 import fr.abknative.outgo.android.core.designsystem.AppBackground
@@ -35,6 +33,7 @@ import fr.abknative.outgo.android.ui.operation.OperationFormSheet
 import fr.abknative.outgo.android.ui.settings.SettingsScreen
 import fr.abknative.outgo.android.ui.year.PremiumShowcaseScreen
 import fr.abknative.outgo.android.ui.year.YearScreen
+import fr.abknative.outgo.auth.api.AuthError
 import fr.abknative.outgo.core.api.formatters.formatForInput
 import fr.abknative.outgo.core.api.nav.AppStep
 import fr.abknative.outgo.core.api.nav.NavCoordinator
@@ -61,11 +60,16 @@ fun ShellScreen(
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
     val currentStep = navState.currentStep
-    val shouldShowScaffoldComponents = currentStep !is AppStep.Login && currentStep != AppStep.Splash && currentStep != AppStep.Onboarding
+    val shouldShowScaffoldComponents =
+        currentStep !is AppStep.Login && currentStep != AppStep.Splash && currentStep != AppStep.Onboarding
     val textRetry = CommonLabels.ACTION_RETRY
 
     val shellSnackbarHostState = remember { SnackbarHostState() }
-    val shellInternalError = shellState.error?.toCommonUIString()
+    val shellInternalError = when (val error = shellState.error) {
+        null -> null
+        is AuthError.EmailNotVerified -> ShellLabels.EMAIL_NOT_VERIFIED_MESSAGE
+        else -> error.toCommonUIString()
+    }
     val childScreenError = shellState.globalErrorMessage
     val messageToShow = childScreenError ?: shellInternalError
     val onShowGlobalError: (String) -> Unit = { message ->
@@ -78,7 +82,12 @@ fun ShellScreen(
 
     LaunchedEffect(messageToShow) {
         if (messageToShow != null) {
-            val actionLabelToShow = if (childScreenError != null) null else textRetry
+            val actionLabelToShow = if (
+                shellState.error != null &&
+                shellState.error !is AuthError.EmailNotVerified &&
+                childScreenError == null
+            ) textRetry else null
+
             val snackbarResult = shellSnackbarHostState.showSnackbar(
                 message = messageToShow,
                 actionLabel = actionLabelToShow,
@@ -119,20 +128,32 @@ fun ShellScreen(
                     containerColor = Color.Transparent,
                     topBar = {
                         // --- Header en mode Portrait ---
-                        if (!isLandscape && shouldShowScaffoldComponents) {
-                            AppGlobalHeader(
-                                isVertical = false,
-                                shellPresenter = shellPresenter,
-                                shellState = shellState,
-                                onShowSyncModal = { showSyncModal = true }
-                            )
+                        Column {
+                            if (!isLandscape && shouldShowScaffoldComponents) {
+                                AppGlobalHeader(
+                                    isVertical = false,
+                                    shellPresenter = shellPresenter,
+                                    shellState = shellState,
+                                    onShowSyncModal = { showSyncModal = true }
+                                )
+                            }
+
+                            if (shellState.isEmailVerificationPending && shouldShowScaffoldComponents) {
+                                EmailVerificationBanner(
+                                    onCheckVerificationClick = {
+                                        shellPresenter.onIntent(ShellIntent.CheckEmailVerification)
+                                    }
+                                )
+                            }
                         }
                     }
                 ) { innerPadding ->
 
-                    Box(modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize()) {
+                    Box(
+                        modifier = Modifier
+                            .padding(innerPadding)
+                            .fillMaxSize()
+                    ) {
 
                         // --- Router Central ---
                         AnimatedContent(

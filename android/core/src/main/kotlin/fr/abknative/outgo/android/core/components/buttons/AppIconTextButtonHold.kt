@@ -15,6 +15,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
@@ -46,8 +47,9 @@ fun AppIconTextButtonHold(
     Box(
         modifier = modifier
             .height(42.dp)
+            .shadow(AppTheme.dimens.extraSmall, AppTheme.shapes.medium)
             .clip(AppTheme.shapes.medium)
-            .background(color = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.05f))
+            .background(color = AppTheme.colors.background.toColor())
             .pointerInput(Unit) {
                 awaitEachGesture {
                     awaitFirstDown()

@@ -17,10 +17,16 @@ fun AppGlobalHeader(
         subtitle = shellState.todayFormatted,
         isVertical = isVertical,
         onSyncIconClick = {
-            if (shellState.syncState.isUnauthenticated) {
-                onShowSyncModal()
-            } else {
-                shellPresenter.onIntent(ShellIntent.RefreshSync)
+            when {
+                shellState.syncState.isUnauthenticated && shellState.isEmailVerificationPending -> {
+                    shellPresenter.onIntent(ShellIntent.CheckEmailVerification)
+                }
+                shellState.syncState.isUnauthenticated -> {
+                    onShowSyncModal()
+                }
+                else -> {
+                    shellPresenter.onIntent(ShellIntent.RefreshSync)
+                }
             }
         }
     )

@@ -1,5 +1,6 @@
 package fr.abknative.outgo.server.api.routes
 
+import fr.abknative.outgo.server.api.extensions.isEmailVerified
 import fr.abknative.outgo.server.api.extensions.userEmail
 import fr.abknative.outgo.server.api.extensions.userId
 import fr.abknative.outgo.server.core.usecase.GetSyncPullUseCase
@@ -27,6 +28,13 @@ fun Route.syncRoutes() {
         rateLimit(RateLimitName("sync-limit")) {
             route("/sync") {
                 post("/push") {
+
+                    if (!call.isEmailVerified()) {
+                        logger.warn("PUSH BLOCKED: User ${call.userId()} attempted to push with unverified email.")
+                        call.respond(HttpStatusCode.Forbidden, "Email verification required to push data.")
+                        return@post
+                    }
+
                     val userId = call.userId()
                     val email = call.userEmail()
                     val request = call.receive<SyncPushRequest>()

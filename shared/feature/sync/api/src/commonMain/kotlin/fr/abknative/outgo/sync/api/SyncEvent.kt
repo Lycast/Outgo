@@ -9,11 +9,19 @@ import fr.abknative.outgo.core.api.logs.AppException
 sealed interface SyncEvent {
 
     /**
-     * Emitted when a background synchronization fails critically
-     * (e.g., network timeout, server error).
-     * The UI should typically display this in a global Snackbar.
+     * Emitted when the orchestrator starts verifying if the newly authenticated user
+     * already possesses remote data on the server.
+     * The UI should intercept this event to display a loading state, preventing
+     * premature navigation or user interactions during network latency (e.g., server cold starts).
      */
-    data class Error(val exception: AppException) : SyncEvent
+    data object CheckRemoteDataStarted : SyncEvent
+
+    /**
+     * Emitted when the initial remote data verification and any subsequent local data
+     * migrations are fully completed.
+     * The UI should intercept this event to dismiss the loading state and resume the normal flow.
+     */
+    data object CheckRemoteDataFinished : SyncEvent
 
     /**
      * Emitted when a user logs into an existing cloud account
@@ -22,4 +30,11 @@ sealed interface SyncEvent {
      * to choose a resolution strategy (e.g., Keep Cloud vs Overwrite with Local).
      */
     data object ConflictRequiresResolution : SyncEvent
+
+    /**
+     * Emitted when a background synchronization fails critically
+     * (e.g., network timeout, server error).
+     * The UI should typically display this in a global Snackbar.
+     */
+    data class Error(val exception: AppException) : SyncEvent
 }

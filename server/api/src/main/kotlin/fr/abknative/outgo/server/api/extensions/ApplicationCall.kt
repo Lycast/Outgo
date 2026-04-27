@@ -12,3 +12,7 @@ fun ApplicationCall.userId(): String {
 fun ApplicationCall.userEmail(): String {
     return principal<UserPrincipal>()?.email ?: "unknown@outgo.app"
 }
+
+fun ApplicationCall.isEmailVerified(): Boolean {
+    return principal<UserPrincipal>()?.isEmailVerified ?: false
+}

@@ -41,4 +41,9 @@ sealed interface ShellIntent {
      * Updates the dark mode preference and saves it persistently.
      */
     data class UpdateDarkMode(val isDarkMode: Boolean) : ShellIntent
+
+    // --- Auth Intents ---
+    /** * Triggered when the user wants to check if their email has been verified.
+     */
+    object CheckEmailVerification : ShellIntent
 }

@@ -2,11 +2,17 @@ package fr.abknative.outgo.android.ui.login.components
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.runtime.Composable
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import fr.abknative.outgo.android.core.AccessibilityLabels
+import fr.abknative.outgo.android.core.R
 import fr.abknative.outgo.android.core.components.buttons.AppButton
 import fr.abknative.outgo.android.core.components.buttons.AppTextButton
 import fr.abknative.outgo.android.core.components.inputs.AppTextField
@@ -30,6 +36,9 @@ fun EmailAuthForm(
     onSubmit: () -> Unit,
     onToggleMode: () -> Unit
 ) {
+
+    var isPasswordVisible by remember { mutableStateOf(false) }
+
     Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
         AppTextField(
             value = emailInput,
@@ -46,7 +55,18 @@ fun EmailAuthForm(
             onValueChange = onPasswordChange,
             label = LoginLabels.PASSWORD_LABEL,
             placeholder = "",
-            visualTransformation = PasswordVisualTransformation(),
+            visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+            trailingIcon = {
+                IconButton(onClick = { isPasswordVisible = !isPasswordVisible }) {
+                    Icon(
+                        painter = painterResource(
+                            id = if (isPasswordVisible) R.drawable.eye_slash_duotone else R.drawable.eye_duotone
+                        ),
+                        contentDescription = if (isPasswordVisible) AccessibilityLabels.HIDE else AccessibilityLabels.DISPLAY,
+                        tint = AppTheme.colors.textSecondary.toColor()
+                    )
+                }
+            },
             enabled = !isLoading
         )
 

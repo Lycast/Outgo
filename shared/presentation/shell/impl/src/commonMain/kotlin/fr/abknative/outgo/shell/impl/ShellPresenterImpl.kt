@@ -1,10 +1,14 @@
 package fr.abknative.outgo.shell.impl
 
 import androidx.lifecycle.viewModelScope
+import fr.abknative.outgo.auth.api.AuthError
+import fr.abknative.outgo.auth.api.repository.AuthRepository
+import fr.abknative.outgo.auth.api.usecase.ObserveUserSessionUseCase
 import fr.abknative.outgo.core.api.KeyValueStorage
 import fr.abknative.outgo.core.api.extensions.safeLaunch
 import fr.abknative.outgo.core.api.logs.AppException
 import fr.abknative.outgo.core.api.logs.AppLogger
+import fr.abknative.outgo.core.api.logs.Result
 import fr.abknative.outgo.core.api.nav.AppStep
 import fr.abknative.outgo.core.api.nav.NavCoordinator
 import fr.abknative.outgo.core.api.time.DateTimeFormatter
@@ -25,6 +29,8 @@ internal class ShellPresenterImpl(
     private val syncOrchestrator: SyncOrchestrator,
     private val featureManager: FeatureManager,
     private val observeWallets: ObserveWalletsUseCase,
+    private val observeUserSession: ObserveUserSessionUseCase,
+    private val authRepository: AuthRepository,
     private val coordinator: NavCoordinator,
     private val dateTimeFormatter: DateTimeFormatter,
     private val timeProvider: TimeProvider,
@@ -46,6 +52,7 @@ internal class ShellPresenterImpl(
         startObservingPremiumStatus()
         startGlobalNavigationLogic()
         startObservingCriticalSyncErrors()
+        startObservingEmailVerification()
     }
 
     private fun initTodayDate() {
@@ -123,6 +130,16 @@ internal class ShellPresenterImpl(
         viewModelScope.safeLaunch(onError = onCoroutineError) {
             syncOrchestrator.syncEvents.collect { event ->
                 when (event) {
+                    is SyncEvent.CheckRemoteDataStarted -> {
+                        _state.update { it.copy(overlayState = ShellOverlayState.LOADING) }
+                    }
+                    is SyncEvent.CheckRemoteDataFinished -> {
+                        _state.update { currentState ->
+                            if (currentState.overlayState == ShellOverlayState.LOADING) {
+                                currentState.copy(overlayState = ShellOverlayState.NONE)
+                            } else currentState
+                        }
+                    }
                     is SyncEvent.Error -> {
                         val lastSync = storage.getLong("last_sync_timestamp", 0L)
                         _state.update { it.copy(
@@ -134,6 +151,15 @@ internal class ShellPresenterImpl(
                         _state.update { it.copy(overlayState = ShellOverlayState.CONFLICT) }
                     }
                 }
+            }
+        }
+    }
+
+    private fun startObservingEmailVerification() {
+        viewModelScope.safeLaunch(onError = onCoroutineError) {
+            observeUserSession().collect { session ->
+                val isPending = session != null && !session.isEmailVerified
+                _state.update { it.copy(isEmailVerificationPending = isPending) }
             }
         }
     }
@@ -160,6 +186,7 @@ internal class ShellPresenterImpl(
             is ShellIntent.DismissError -> _state.update { it.copy(error = null, globalErrorMessage = null) }
             is ShellIntent.InitTheme -> handleInitTheme(intent.systemDefaultIsDark)
             is ShellIntent.UpdateDarkMode -> handleUpdateTheme(intent.isDarkMode)
+            is ShellIntent.CheckEmailVerification -> handleCheckEmailVerification()
         }
     }
 
@@ -183,6 +210,16 @@ internal class ShellPresenterImpl(
     private fun handleUpdateTheme(isDarkMode: Boolean) {
         storage.putBoolean(themeKey, isDarkMode)
         _state.update { it.copy(isDarkMode = isDarkMode) }
+    }
+
+    private fun handleCheckEmailVerification() {
+        viewModelScope.safeLaunch(onError = onCoroutineError) {
+            val result = authRepository.checkEmailVerified()
+
+            if (result is Result.Success && !result.data) {
+                onCoroutineError(AuthError.EmailNotVerified())
+            }
+        }
     }
 
     private fun handleResolveConflictDownloadCloud() {

@@ -37,6 +37,7 @@ internal class SyncOrchestratorImpl(
     override val syncEvents = _syncEvents.asSharedFlow()
 
     private var activeSyncJob: Job? = null
+    private var initialLoginCheckJob: Job? = null
 
     companion object {
         private const val LAST_SYNC_KEY = "last_sync_timestamp"
@@ -71,6 +72,8 @@ internal class SyncOrchestratorImpl(
 
     override fun resolveConflictCancelLogin() {
         AppLogger.get()?.i(TAG, "Conflict resolved: User canceled login. Reverting to local data.")
+        initialLoginCheckJob?.cancel()
+        activeSyncJob?.cancel()
         scope.launch {
             logoutUseCase(displayLocalData = false)
         }
@@ -136,7 +139,6 @@ internal class SyncOrchestratorImpl(
                 .distinctUntilChanged()
                 .collect { newUserId ->
                     if (!newUserId.startsWith("local_")) {
-                        // ✨ CHANGEMENT : On délègue à la nouvelle méthode
                         performInitialLoginCheck(newUserId)
                     } else {
                         AppLogger.get()?.i(TAG, "Switched back to local identity: $newUserId")
@@ -146,8 +148,10 @@ internal class SyncOrchestratorImpl(
     }
 
     private fun performInitialLoginCheck(userId: String) {
-        scope.launch {
+        initialLoginCheckJob = scope.launch {
             AppLogger.get()?.i(TAG, "Performing initial login check for $userId...")
+
+            _syncEvents.emit(SyncEvent.CheckRemoteDataStarted)
 
             when (val hasRemoteResult = syncManager.hasRemoteData()) {
                 is Result.Success -> {
@@ -162,6 +166,7 @@ internal class SyncOrchestratorImpl(
                         if (lastLocalId != null) {
                             localDataMigrator.checkConflictAndMigrate(userId, lastLocalId)
                         }
+                        _syncEvents.emit(SyncEvent.CheckRemoteDataFinished)
                         executeSafeFullSync(reason = "Initial push after migration", emitErrorEvent = true)
                     }
                 }

@@ -26,5 +26,8 @@ data class ShellState(
     val error: AppException? = null,
     val globalErrorMessage: String? = null,
     val syncState: SyncState = SyncState.UNAUTHENTICATED,
-    val overlayState: ShellOverlayState = ShellOverlayState.NONE
+    val overlayState: ShellOverlayState = ShellOverlayState.NONE,
+
+    // --- Auth State ---
+    val isEmailVerificationPending: Boolean = false
 )

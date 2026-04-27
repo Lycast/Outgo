@@ -60,4 +60,7 @@ object AccessibilityLabels {
     val NAVIGATE_LIST @Composable get() = stringResource(Res.string.a11y_navigate_list)
     val VIEW_MODE @Composable get() = stringResource(Res.string.a11y_view_mode_selector)
     val ADD_EXPENSE @Composable get() = stringResource(Res.string.a11y_add_expense)
+
+    val DISPLAY @Composable get() = stringResource(Res.string.a11y_display)
+    val HIDE @Composable get() = stringResource(Res.string.a11y_hide)
 }

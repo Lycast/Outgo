@@ -11,6 +11,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -32,8 +33,9 @@ fun AppIconTextButton(
     Row(
         modifier = modifier
             .height(42.dp)
+            .shadow(AppTheme.dimens.extraSmall, AppTheme.shapes.medium)
             .clip(AppTheme.shapes.medium)
-            .background(color = AppTheme.colors.textSecondary.toColor().copy(alpha = 0.05f))
+            .background(color = AppTheme.colors.background.toColor())
             .clickable(
                 interactionSource = interactionSource,
                 indication = LocalIndication.current,

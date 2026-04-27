@@ -24,7 +24,7 @@ internal class ObserveSyncStateUseCaseImpl(
         ) { session, isConnected, isSyncing, syncError ->
 
             when {
-                session == null -> SyncState.UNAUTHENTICATED
+                session == null || !session.isEmailVerified -> SyncState.UNAUTHENTICATED
                 !isConnected -> SyncState.OFFLINE
                 isSyncing -> SyncState.IN_PROGRESS
                 syncError != null -> SyncState.ERROR

@@ -181,7 +181,7 @@
     <string name="shell_header_sync_promo_action_later">Plus tard</string>
     <string name="shell_sync_offline_title">Réseau indisponible</string>
     <string name="shell_sync_offline_desc">Vérifiez votre connexion internet. L'application fonctionne normalement hors-ligne, la synchronisation reprendra plus tard.</string>
-    <string name="shell_dialog_sync_title">Recherche de vos données...</string>
+    <string name="shell_dialog_sync_title">Synchronisation avec le serveur...</string>
     <string name="shell_dialog_sync_message">Veuillez patienter quelques instants.</string>
     <string name="shell_sync_error_title">Oups, problème de réseau</string>
     <string name="shell_sync_error_message">Nous n'avons pas pu récupérer vos données. Vérifiez votre connexion et réessayez.</string>
@@ -190,6 +190,9 @@
     <string name="shell_conflict_question">Que voulez-vous faire ?</string>
     <string name="shell_conflict_confirm">Télécharger le Cloud</string>
     <string name="shell_conflict_cancel">Annuler la connexion</string>
+    <string name="shell_email_verification_message">Veuillez vérifier votre email pour activer la sauvegarde Cloud.</string>
+    <string name="shell_email_verification_action">Déjà fait ?</string>
+    <string name="shell_email_not_ferified_message">L'email n'est pas encore validé. Pensez à vérifier vos spams.</string>
 
     <!--==========================================================================
     ============================ Common & Accessibility Labels ===================
@@ -243,5 +246,7 @@
     <string name="a11y_navigate_list">Liste</string>
     <string name="a11y_view_mode_selector">Changer type de liste affichée.</string>
     <string name="a11y_add_expense">Ajouter une nouvelle dépense</string>
+    <string name="a11y_display">Afficher</string>
+    <string name="a11y_hide">Masquer</string>
 
 </resources>
