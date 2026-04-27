@@ -22,6 +22,10 @@ internal class WalletDataDowngrader(
     override suspend fun downgradeToLocal(firebaseId: String, newLocalId: String, now: Long) {
         withContext(dispatchers.io) {
             database.transaction {
+
+                database.operationQueries.deleteByUserId(userId = newLocalId)
+                database.walletQueries.deleteByUserId(userId = newLocalId)
+
                 database.walletQueries.downgradeToLocal(
                     newLocalId = newLocalId,
                     firebaseId = firebaseId,

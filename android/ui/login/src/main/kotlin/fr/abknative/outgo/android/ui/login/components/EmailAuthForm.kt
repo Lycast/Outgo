@@ -7,6 +7,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -29,6 +30,7 @@ fun EmailAuthForm(
     isFormValid: Boolean,
     isLoading: Boolean,
     isLoginMode: Boolean,
+    containerBtnColor: Color = AppTheme.colors.primary.toColor(),
     submitBtnLabel: String? = null,
     showToggleMode: Boolean = true,
     onEmailChange: (String) -> Unit,
@@ -75,6 +77,7 @@ fun EmailAuthForm(
         AppButton(
             onClick = onSubmit,
             enabled = isFormValid && !isLoading,
+            containerColor = containerBtnColor,
             modifier = Modifier.fillMaxWidth()
         ) {
             if (isLoading) {

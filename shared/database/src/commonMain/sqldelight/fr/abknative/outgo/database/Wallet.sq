@@ -44,6 +44,9 @@ hardDeletePendingCreate:
 DELETE FROM WalletEntity
 WHERE id = ? AND syncStatus = 'PENDING_CREATE' AND userId = ?;
 
+deleteByUserId:
+DELETE FROM WalletEntity WHERE userId = :userId;
+
 -- Total purge for the current user
 deleteAllForUser:
 DELETE FROM WalletEntity

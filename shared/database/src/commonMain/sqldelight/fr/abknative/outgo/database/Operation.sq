@@ -68,6 +68,9 @@ hardDeletePendingCreate:
 DELETE FROM OperationEntity
 WHERE id = ? AND syncStatus = 'PENDING_CREATE' AND userId = ?;
 
+deleteByUserId:
+DELETE FROM OperationEntity WHERE userId = :userId;
+
 -- Total purge for the current user
 deleteAllForUser:
 DELETE FROM OperationEntity

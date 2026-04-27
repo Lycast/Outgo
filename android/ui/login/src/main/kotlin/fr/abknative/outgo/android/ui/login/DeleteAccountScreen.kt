@@ -28,7 +28,7 @@ fun DeleteAccountScreen(
     var showCancelDialog by remember { mutableStateOf(false) }
 
     var localCredentialError by remember { mutableStateOf<CredentialErrorType?>(null) }
-    val credentialErrorMessage = localCredentialError?.toLoginUIString() // Résolution @Composable !
+    val credentialErrorMessage = localCredentialError?.toLoginUIString()
 
     LaunchedEffect(credentialErrorMessage) {
         if (credentialErrorMessage != null) {
@@ -48,7 +48,7 @@ fun DeleteAccountScreen(
     AuthLayout(
         title = LoginLabels.DELETE_TITLE,
         subtitle = LoginLabels.DELETE_SUBTITLE,
-        titleColor = AppTheme.colors.error.toColor().copy(alpha = 0.5f),
+        titleColor = AppTheme.colors.error.toColor().copy(alpha = 0.6f),
         googleLabel = LoginLabels.DELETE_GOOGLE_BUTTON,
         appleLabel = LoginLabels.DELETE_APPLE_BUTTON,
         isLoading = state.isLoading,
@@ -71,6 +71,7 @@ fun DeleteAccountScreen(
             isFormValid = state.isFormValid,
             isLoading = state.isLoading,
             isLoginMode = true,
+            containerBtnColor = AppTheme.colors.error.toColor().copy(alpha = 0.6f),
             submitBtnLabel = LoginLabels.DELETE_SUBMIT,
             showToggleMode = false,
             onEmailChange = { presenter.onIntent(LoginIntent.UpdateEmail(it)) },
