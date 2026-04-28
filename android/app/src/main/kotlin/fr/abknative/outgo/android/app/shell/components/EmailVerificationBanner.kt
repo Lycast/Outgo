@@ -20,7 +20,7 @@ fun EmailVerificationBanner(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .background(AppTheme.colors.surface200.toColor())
+            .background(AppTheme.colors.surface100.toColor())
             .padding(horizontal = AppTheme.dimens.large, vertical = AppTheme.dimens.medium),
         verticalAlignment = Alignment.CenterVertically
     ) {

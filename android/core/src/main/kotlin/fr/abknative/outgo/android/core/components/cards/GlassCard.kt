@@ -31,13 +31,13 @@ fun GlassCard(
 
     val backgroundBrush = remember(backgroundColorA, textSecondaryColor) {
         Brush.horizontalGradient(
-            colors = listOf(textSecondaryColor.copy(alpha = 0.05f), backgroundColorA)
+            colors = listOf(textSecondaryColor.copy(alpha = 0.2f), backgroundColorA)
         )
     }
 
     val borderBrush = remember(surface50Color) {
         Brush.verticalGradient(
-            colors = listOf(surface50Color.copy(alpha = 0.5f), surface50Color.copy(alpha = 0.1f))
+            colors = listOf(surface50Color.copy(alpha = 0.5f), textSecondaryColor.copy(alpha = 0.1f))
         )
     }
 

@@ -35,7 +35,7 @@ fun AppIconTextButton(
             .height(42.dp)
             .shadow(AppTheme.dimens.extraSmall, AppTheme.shapes.medium)
             .clip(AppTheme.shapes.medium)
-            .background(color = AppTheme.colors.background.toColor())
+            .background(color = AppTheme.colors.surface200.toColor())
             .clickable(
                 interactionSource = interactionSource,
                 indication = LocalIndication.current,

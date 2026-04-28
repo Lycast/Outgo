@@ -49,7 +49,7 @@ fun AppIconTextButtonHold(
             .height(42.dp)
             .shadow(AppTheme.dimens.extraSmall, AppTheme.shapes.medium)
             .clip(AppTheme.shapes.medium)
-            .background(color = AppTheme.colors.background.toColor())
+            .background(color = AppTheme.colors.surface200.toColor())
             .pointerInput(Unit) {
                 awaitEachGesture {
                     awaitFirstDown()

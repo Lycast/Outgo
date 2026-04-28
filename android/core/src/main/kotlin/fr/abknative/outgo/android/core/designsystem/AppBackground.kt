@@ -18,15 +18,15 @@ fun AppBackground(
     isDarkMode: Boolean,
     content: @Composable () -> Unit
 ) {
-    val primaryColor = AppTheme.colors.tertiary.toColor()
+    val primaryColor = AppTheme.colors.primary.toColor()
     val bgColor = AppTheme.colors.background.toColor()
 
-    val backgroundRes = if (isDarkMode) R.drawable.bg_dark else R.drawable.bg_light
+    val backgroundRes = if (isDarkMode) R.drawable.background_dark else R.drawable.background_light
 
     val backgroundBrush = remember(primaryColor, bgColor) {
         Brush.verticalGradient(
             colors = listOf(
-                primaryColor.copy(alpha = 0.1f),
+                if (isDarkMode) primaryColor.copy(alpha = 0.1f) else primaryColor.copy(alpha = 0.8f),
                 bgColor
             )
         )
@@ -44,7 +44,7 @@ fun AppBackground(
             contentDescription = null,
             contentScale = ContentScale.FillBounds,
             modifier = Modifier.matchParentSize(),
-            alpha = 0.3f
+            alpha = if (isDarkMode) 0.2f else 0.5f
         )
 
         content()
