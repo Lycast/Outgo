@@ -25,3 +25,6 @@ kotlin-js-store/
 /server/api/src/firebase-adminsdk.json
 /.dockerignore
 /android/app/google-services.json
+/android/app/release/baselineProfiles/0/outgo-android-app-release.dm
+/android/app/release/baselineProfiles/1/outgo-android-app-release.dm
+/android/app/release/output-metadata.json
