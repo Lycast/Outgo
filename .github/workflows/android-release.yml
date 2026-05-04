@@ -32,14 +32,7 @@ jobs:
       - name: Make Gradle executable
         run: chmod +x ./gradlew
 
-      - name: Build and Sign Release Bundle
-        run: ./gradlew :android:app:bundleRelease
-        env:
-          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
-          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
-          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
-          WEB_CLIENT_ID: ${{ secrets.WEB_CLIENT_ID }}
-
+      # Une seule étape de build suffit pour générer les deux formats (AAB et APK)
       - name: Build and Sign Release Bundle and APK
         run: ./gradlew :android:app:bundleRelease :android:app:assembleRelease
         env:
@@ -47,11 +40,12 @@ jobs:
           ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
           WEB_CLIENT_ID: ${{ secrets.WEB_CLIENT_ID }}
+          BASE_URL: ${{ secrets.BASE_URL }}
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: outgo-release-artifacts
           path: |
-                  android/app/build/outputs/bundle/release/*.aab
-                  android/app/build/outputs/apk/release/*.apk
+            android/app/build/outputs/bundle/release/*.aab
+            android/app/build/outputs/apk/release/*.apk
