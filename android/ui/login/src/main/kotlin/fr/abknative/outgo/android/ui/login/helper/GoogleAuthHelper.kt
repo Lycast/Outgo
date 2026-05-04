@@ -3,6 +3,7 @@ package fr.abknative.outgo.android.ui.login.helper
 import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
+import android.util.Log
 import androidx.credentials.CredentialManager
 import androidx.credentials.CustomCredential
 import androidx.credentials.GetCredentialRequest
@@ -64,12 +65,16 @@ suspend fun launchGoogleSignIn(context: Context, webClientId: String): Credentia
     } catch (e: CancellationException) {
         throw e
     } catch (e: GetCredentialCancellationException) {
+        Log.e("AuthDebug", "GetCredentialCancellationException: ", e)
         CredentialResult.Cancelled
     } catch (e: NoCredentialException) {
+        Log.e("AuthDebug", "NoCredentialException: ", e)
         CredentialResult.Error(CredentialErrorType.NO_ACCOUNT_FOUND)
     } catch (e: GetCredentialException) {
+        Log.e("AuthDebug", "Credential Exception: ", e)
         CredentialResult.Error(CredentialErrorType.SYSTEM_ERROR, e.message)
     } catch (e: Throwable) {
+        Log.e("AuthDebug", "Unknown Throwable: ", e)
         CredentialResult.Error(CredentialErrorType.UNKNOWN)
     }
 }
