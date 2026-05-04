@@ -20,10 +20,14 @@ buildkonfig {
     objectName = "OutgoConfig"
 
     defaultConfigs {
-        val baseUrl = envProperties.getProperty("BASE_URL") ?: "https://api.outgo.app"
+        val baseUrl = System.getenv("BASE_URL")
+            ?: envProperties.getProperty("BASE_URL")
+            ?: "https://api.outgo.app"
         buildConfigField(FieldSpec.Type.STRING, "BASE_URL", baseUrl)
 
-        val webClientId = envProperties.getProperty("DEFAULT_WEB_CLIENT_ID") ?: ""
+        val webClientId = System.getenv("WEB_CLIENT_ID")
+            ?: envProperties.getProperty("DEFAULT_WEB_CLIENT_ID")
+            ?: ""
         buildConfigField(FieldSpec.Type.STRING, "WEB_CLIENT_ID", webClientId)
     }
 }
