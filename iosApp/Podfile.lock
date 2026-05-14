@@ -1,0 +1,81 @@
+PODS:
+  - app (1.0.0):
+    - FirebaseAuth (= 12.11.0)
+    - FirebaseCore (= 12.11.0)
+  - FirebaseAppCheckInterop (12.11.0)
+  - FirebaseAuth (12.11.0):
+    - FirebaseAppCheckInterop (~> 12.11.0)
+    - FirebaseAuthInterop (~> 12.11.0)
+    - FirebaseCore (~> 12.11.0)
+    - FirebaseCoreExtension (~> 12.11.0)
+    - GoogleUtilities/AppDelegateSwizzler (~> 8.1)
+    - GoogleUtilities/Environment (~> 8.1)
+    - GTMSessionFetcher/Core (< 6.0, >= 3.4)
+    - RecaptchaInterop (~> 101.0)
+  - FirebaseAuthInterop (12.11.0)
+  - FirebaseCore (12.11.0):
+    - FirebaseCoreInternal (~> 12.11.0)
+    - GoogleUtilities/Environment (~> 8.1)
+    - GoogleUtilities/Logger (~> 8.1)
+  - FirebaseCoreExtension (12.11.0):
+    - FirebaseCore (~> 12.11.0)
+  - FirebaseCoreInternal (12.11.0):
+    - "GoogleUtilities/NSData+zlib (~> 8.1)"
+  - GoogleUtilities/AppDelegateSwizzler (8.1.0):
+    - GoogleUtilities/Environment
+    - GoogleUtilities/Logger
+    - GoogleUtilities/Network
+    - GoogleUtilities/Privacy
+  - GoogleUtilities/Environment (8.1.0):
+    - GoogleUtilities/Privacy
+  - GoogleUtilities/Logger (8.1.0):
+    - GoogleUtilities/Environment
+    - GoogleUtilities/Privacy
+  - GoogleUtilities/Network (8.1.0):
+    - GoogleUtilities/Logger
+    - "GoogleUtilities/NSData+zlib"
+    - GoogleUtilities/Privacy
+    - GoogleUtilities/Reachability
+  - "GoogleUtilities/NSData+zlib (8.1.0)":
+    - GoogleUtilities/Privacy
+  - GoogleUtilities/Privacy (8.1.0)
+  - GoogleUtilities/Reachability (8.1.0):
+    - GoogleUtilities/Logger
+    - GoogleUtilities/Privacy
+  - GTMSessionFetcher/Core (5.2.0)
+  - RecaptchaInterop (101.0.0)
+
+DEPENDENCIES:
+  - app (from `../shared/app`)
+
+SPEC REPOS:
+  trunk:
+    - FirebaseAppCheckInterop
+    - FirebaseAuth
+    - FirebaseAuthInterop
+    - FirebaseCore
+    - FirebaseCoreExtension
+    - FirebaseCoreInternal
+    - GoogleUtilities
+    - GTMSessionFetcher
+    - RecaptchaInterop
+
+EXTERNAL SOURCES:
+  app:
+    :path: "../shared/app"
+
+SPEC CHECKSUMS:
+  app: 44b367b95718613536c044000d9c0216786eb6d6
+  FirebaseAppCheckInterop: d9b5acb52c1141697215d08f719c332ed4740d8e
+  FirebaseAuth: d510c93904adc3d172d01c163bff76d6ecdacf3f
+  FirebaseAuthInterop: 8a470f4fee5a66c628e9cc4ffd3f3afa73672178
+  FirebaseCore: 1b39aa6e67b4b4d5771045abf9c9a57a585ff1e7
+  FirebaseCoreExtension: dd75d774a2d9bc48a4e559c5b80b7c43e30d66dd
+  FirebaseCoreInternal: 26601b1134d192ef73e80c0c0110fb96477db687
+  GoogleUtilities: 00c88b9a86066ef77f0da2fab05f65d7768ed8e1
+  GTMSessionFetcher: 904bdd2a82c635bcd6f44edf94cc8775c5d1d6e6
+  RecaptchaInterop: 11e0b637842dfb48308d242afc3f448062325aba
+
+PODFILE CHECKSUM: 6cd1204f531270a57ea82457424a23b2fd003869
+
+COCOAPODS: 1.16.2

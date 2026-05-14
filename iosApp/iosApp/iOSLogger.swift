@@ -1,13 +1,8 @@
 import Foundation
 import SharedApp
 
-/**
- * Implémentation du Logger pour iOS.
- * Utilise 'print' pour afficher les messages dans la console Xcode.
- */
 class iOSLogger: Logger {
     
-    // 1. La méthode principale (que vous aviez déjà)
     func log(level: LogLevel, tag: String, message: String, throwable: KotlinThrowable?) {
         let symbol: String
         switch level {
@@ -17,16 +12,13 @@ class iOSLogger: Logger {
         case .error: symbol = "❌"
         }
         
-        // Formatage : [Tag] ❌ Message
         print("[\(tag)] \(symbol) \(message)")
         
-        // Si on a une exception, on affiche le détail en dessous
         if let error = throwable {
             print("   └─ 🔴 Error Detail: \(error.message ?? "No message")")
         }
     }
     
-    // --- 2. LES MÉTHODES MANQUANTES EXIGÉES PAR SWIFT ---
     
     func d(tag: String, message: String) {
         log(level: .debug, tag: tag, message: message, throwable: nil)

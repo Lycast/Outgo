@@ -37,7 +37,7 @@ compose.resources {
  */
 tasks.register("generateIosStrings") {
     val inputFile = file("src/commonMain/composeResources/values/strings.xml")
-    val outputFile = rootProject.file("iosApp/iosApp/Localizable.strings")
+    val outputFile = rootProject.file("iosApp/CoreUI/Localizable.strings")
 
     inputs.file(inputFile)
     outputs.file(outputFile)
@@ -66,7 +66,7 @@ tasks.register("generateIosStrings") {
 
         outputFile.parentFile.mkdirs()
         outputFile.writeText(builder.toString())
-        println("Successfully generated Localizable.strings for iOS!")
+        println("Successfully generated Localizable.strings for CoreUI!")
     }
 }
 
